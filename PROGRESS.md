@@ -15,11 +15,11 @@ STEAM (Республіка) · **вівторок** · 5 курсів × 35 у�
 
 | Курс | Кл | Зміст | Акцент | Урок 1 | Готово |
 |---|---|---|---|---|---|
-| [Розробка мобільних додатків](steam/6-mobile/) | 6 | MIT App Inventor | purple | [презентація](steam/6-mobile/u01/prezentatsiya.html) (11 сл.) | 1 / 35 |
-| [Вступ до веброзробки](steam/6-web/) | 6 | HTML, CSS, основи JS | teal | [презентація](steam/6-web/u01/prezentatsiya.html) (10 сл.) | 1 / 35 |
-| [Front-end](steam/7-frontend/) | 7 | HTML, CSS, Flexbox, Grid, форми | blue | [презентація](steam/7-frontend/u01/prezentatsiya.html) (9 сл.) | 1 / 35 |
-| [Front-end](steam/8-frontend/) | 8 | Те саме + адаптив, темп швидший | green | [презентація](steam/8-frontend/u01/prezentatsiya.html) (9 сл.) | 1 / 35 |
-| [Git, GitHub та публікація проєктів](steam/8-git/) | 8 | Git, GitHub, GitHub Pages | yellow | [презентація](steam/8-git/u01/prezentatsiya.html) (13 сл.) | 1 / 35 |
+| [Розробка мобільних додатків](steam/6-mobile/) | 6 | App Inventor, застосунок на телефон | purple | [презентація](steam/6-mobile/u01/prezentatsiya.html) (11 сл.) | 1 / 35 |
+| [Вступ до веброзробки](steam/6-web/) | 6 | HTML, CSS, перше знайомство з JS | teal | [презентація](steam/6-web/u01/prezentatsiya.html) (10 сл.) | 1 / 35 |
+| [Front-end](steam/7-frontend/) | 7 | HTML, CSS, Flexbox і Grid, форми | blue | [презентація](steam/7-frontend/u01/prezentatsiya.html) (9 сл.) | 1 / 35 |
+| [Front-end](steam/8-frontend/) | 8 | Адаптивна верстка за зразком дизайну | green | [презентація](steam/8-frontend/u01/prezentatsiya.html) (9 сл.) | 1 / 35 |
+| [Git, GitHub та публікація проєктів](steam/8-git/) | 8 | Історія змін, гілки, портфоліо онлайн | yellow | [презентація](steam/8-git/u01/prezentatsiya.html) (13 сл.) | 1 / 35 |
 
 **Найближче:** 8 вересня — уроки 2 в усіх п'яти групах, **уже з ноутбуками**.
 
