@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Навіщо потрібен контроль версій · Git · 8 клас · Урок 1</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  Курс          Git, GitHub та публікація проєктів
+  Клас          8
+  Школа         STEAM (Республіка) · вівторок
+  Урок          1 з 35 · 01.09.2026
+  Тема          Вступне заняття. Навіщо потрібен контроль версій
+  Тривалість    45 хв — показ ~32 хв + діагностика 12 хв
+  Акцент        yellow (#ffd97a)
+  ────────────────────────────────────────────────────────────────
+  ⚠ БЕЗ НОУТБУКІВ  Урок 1 суто оглядовий. Термінал показую на проєкторі.
+                   Стартовий комплект і перший репозиторій — урок 2
+  ────────────────────────────────────────────────────────────────
+  ДІАГРАМИ      Слайд 6  — три стани файлу: папка → підготовлено → історія
+                Слайд 7  — навіщо проміжний крок: вибір, що саме зберегти
+                Слайд 9  — локально ↔ GitHub: push і pull
+                Це ядро уроку «як це працює». Слайди 6 і 7 не різати.
+  ────────────────────────────────────────────────────────────────
+  План          office/republic/Git, GitHub та публікація проєктів — 8 клас.docx
+  Діагностика   office/diahnostyka/05-git-8.html + 00-metodyka.md
+                ⚠ Половина аркуша — організаційна готовність, не знання.
+                  Три списки на виході: кому створювати пошту, кому GitHub,
+                  у кого немає власного телефона для 2FA
+  Конспект      репозиторій 2026-27-teacher (приватний)
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;600;800;900&family=JetBrains+Mono:wght@400;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1120; --surface:#141d2e; --surf2:#1a2438; --border:#253348;
+  --teal:#00e4c8; --blue:#63c5ff; --pink:#ff7fa0; --yellow:#ffd97a;
+  --purple:#d0a8f5; --green:#6ee7a0;
+  --text:#f0f6ff; --dim:#cbd5e1; --faint:#94a3b8;
+  --accent:var(--yellow);
+  --f-head:'Exo 2','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Nunito','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,217,122,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,217,122,.022) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--pink));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(255,255,255,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:#fff;font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.3rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:18px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:rgba(255,217,122,.13)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:rgba(0,228,200,.13);color:var(--teal)}
+.lb{background:rgba(99,197,255,.13);color:var(--blue)}
+.ly{background:rgba(255,217,122,.13);color:var(--yellow)}
+.lp{background:rgba(255,127,160,.13);color:var(--pink)}
+.lg{background:rgba(110,231,160,.13);color:var(--green)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cb h3{color:var(--blue)}
+.card.cp h3{color:var(--pink)} .card.cg h3{color:var(--green)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:13px 18px;margin:10px 0;font-size:18px;color:var(--text);line-height:1.65}
+.hbox.ht{border-color:var(--teal)} .hbox.hb{border-color:var(--blue)}
+.hbox.hp{border-color:var(--pink)} .hbox.hg{border-color:var(--green)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:rgba(255,217,122,.07);
+     border:1px solid rgba(255,217,122,.25);border-radius:11px;padding:13px 17px;
+     margin:11px 0;font-size:18px;line-height:1.65}
+.tip.tb{background:rgba(99,197,255,.07);border-color:rgba(99,197,255,.28)}
+.tip.tp{background:rgba(255,127,160,.07);border-color:rgba(255,127,160,.28)}
+.tip.tg{background:rgba(110,231,160,.07);border-color:rgba(110,231,160,.28)}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+.dp{border-radius:13px;overflow:hidden;border:1px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 8px 32px rgba(0,0,0,.35);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:#18202f;padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#090e1a;padding:15px 19px;font-size:16px;line-height:1.65;white-space:pre-wrap;color:#e8f2ff}
+.cm{color:#9ca3af;font-style:italic}
+.sg{color:#6ee7a0}.sy{color:#ffd97a}
+
+/* ─── ДІАГРАМИ ─── */
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+
+/* ─── «папка жаху» ─── */
+.mess{font-family:var(--f-mono);font-size:16px;line-height:2;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:16px 20px;color:var(--dim)}
+.mess .bad{color:#ff9db5}
+
+/* ─── історія комітів як ланцюг ─── */
+.hist{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:16px 20px;position:relative}
+.hist::before{content:'';position:absolute;left:25px;top:32px;bottom:32px;width:2px;background:var(--border)}
+.hrow{display:flex;align-items:center;gap:13px;padding:7px 0;position:relative;z-index:1}
+.hdot{width:12px;height:12px;border-radius:50%;background:var(--accent);flex-shrink:0;
+      box-shadow:0 0 0 4px rgba(255,217,122,.13),0 0 0 7px var(--surface)}
+.hmsg{font-size:17px;color:var(--text)}
+.hwhen{margin-left:auto;font-family:var(--f-mono);font-size:15px;color:var(--faint);flex-shrink:0}
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:400}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:rgba(255,217,122,.1);border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+/* ─── теми курсу ─── */
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:29px;height:29px;border-radius:8px;background:rgba(255,255,255,.06);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--text)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:14px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+  .hist::before{background:#253348 !important}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- 1 ─────────────────────────────── -->
+  <section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1">Git, GitHub<br>та публікація проєктів</div>
+    <div class="title-sub">8 клас · Урок 1 · 1 вересня 2026</div>
+    <div class="chips">
+      <span class="chip">Історія змін</span>
+      <span class="chip">GitHub</span>
+      <span class="chip">Спільна робота</span>
+      <span class="chip">Сайт у інтернеті</span>
+    </div>
+  </div></section>
+
+  <!-- 2 ─────────────────────────────── -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label ly">Про курс</span>
+      <h2>Що буде наприкінці року</h2>
+    </div></div>
+    <p><strong>Твоє портфоліо в інтернеті за живим посиланням.</strong> Не файл на флешці —
+       адреса, яку можна відправити будь-кому, і вона відкриється.</p>
+    <div class="themes mt">
+      <div class="th"><span class="th-n">1</span>
+        <span class="th-t">Контроль версій на власному комп'ютері</span><span class="th-h">7 уроків</span></div>
+      <div class="th"><span class="th-n">2</span>
+        <span class="th-t">Віддалений репозиторій і документація проєкту</span><span class="th-h">8 уроків</span></div>
+      <div class="th"><span class="th-n">3</span>
+        <span class="th-t">Гілки та спільна робота</span><span class="th-h">10 уроків</span></div>
+      <div class="th"><span class="th-n">4</span>
+        <span class="th-t">Публікація проєктів і портфоліо</span><span class="th-h">10 уроків</span></div>
+    </div>
+    <div class="tip tg mt"><span class="tip-ico">💼</span>
+      <div>Це <strong>єдиний курс, результат якого можна показати без комп'ютера</strong> —
+      просто назвати адресу.</div></div>
+  </div></section>
+
+  <!-- 3 ─────────────────────────────── -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">😱</div><div>
+      <span class="label lp">Задача, яку розв'язуємо</span>
+      <h2>Знайома папка?</h2>
+    </div></div>
+    <div class="two">
+      <div class="mess">
+        proekt.html<br>
+        <span class="bad">proekt_new.html</span><br>
+        <span class="bad">proekt_new2.html</span><br>
+        <span class="bad">proekt_final.html</span><br>
+        <span class="bad">proekt_final_OSTATOCHNO.html</span><br>
+        <span class="bad">proekt_final_OSTATOCHNO(2).html</span><br>
+        <span class="bad">proekt_ne_chipaty.html</span><br>
+        <span class="bad">proekt_tsey_tochno.html</span>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Три питання</h3>
+        <p class="rv-hint">Спробуйте відповісти. Клікніть, щоб побачити суть.</p>
+        <div class="rv-body">
+          <p><strong>1.</strong> Який із них робочий?</p>
+          <p><strong>2.</strong> Чим <span class="ic">final</span> відрізняється від
+             <span class="ic">OSTATOCHNO</span>?</p>
+          <p><strong>3.</strong> Учора все працювало. Як повернутись до вчора?</p>
+          <p class="mt" style="color:var(--yellow)">Жодної відповіді немає. Інформація втрачена.</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🙋</span>
+      <div>Підніміть руку, у кого <strong>колись була така папка</strong>.</div></div>
+  </div></section>
+
+  <!-- 4 ─────────────────────────────── -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🕰️</div><div>
+      <span class="label ly">Рішення</span>
+      <h2>Один файл + ланцюг історії</h2>
+    </div></div>
+    <p>Файл <strong>завжди один</strong>. А поруч — ланцюг усіх станів, у яких він колись був,
+       із підписами й датами. Одна ланка ланцюга називається <strong>коміт</strong>.</p>
+    <div class="hist mt">
+      <div class="hrow"><span class="hdot"></span>
+        <span class="hmsg">Додав сторінку контактів</span><span class="hwhen">сьогодні 14:20</span></div>
+      <div class="hrow"><span class="hdot"></span>
+        <span class="hmsg">Виправив меню, воно з'їжджало на телефоні</span><span class="hwhen">вчора 16:05</span></div>
+      <div class="hrow"><span class="hdot"></span>
+        <span class="hmsg">Поміняв кольори на темні</span><span class="hwhen">12 вересня</span></div>
+      <div class="hrow"><span class="hdot"></span>
+        <span class="hmsg">Перша робоча версія сайту</span><span class="hwhen">8 вересня</span></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hg">Можна <strong>повернутися</strong> до будь-якої ланки за одну команду</div>
+      <div class="hbox hb">Видно, <strong>що саме змінилося</strong> між двома ланками — до символа</div>
+    </div>
+  </div></section>
+
+  <!-- 5 ─────────────────────────────── -->
+  <section class="slide" id="s4"><div class="slide-inner big">
+    <div class="big-ico">📝</div>
+    <h2>Аркуш для мене</h2>
+    <div class="big-time">10–12 хвилин</div>
+    <p style="max-width:780px;margin:0 auto">Це <strong>не контрольна й не оцінка</strong>.
+       Правильна відповідь тут — чесна.<br>
+       «Не знаю» — нормальна відповідь. Вона потрібна мені більше за вгадану.</p>
+    <div class="tip mt" style="max-width:780px;margin:22px auto 0;text-align:left">
+      <span class="tip-ico">🔑</span>
+      <div>Половина питань — <strong>не про знання, а про доступи</strong>: пошта, акаунти,
+      телефон. Від них залежить, чи зможемо ми в грудні опублікувати ваші сайти.
+      Тут особливо важливо відповісти чесно.</div></div>
+    <p class="mt" style="color:var(--faint);font-size:16px">Аркуші іменні · нікому не показую · назад не повертаю</p>
+  </div></section>
+
+  <!-- 6 ── ГОЛОВНА ДІАГРАМА ─────────── -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">⚙️</div><div>
+      <span class="label ly">Як це працює</span>
+      <h2>Три стани файлу</h2>
+    </div></div>
+    <p>Файл не стрибає з твоєї папки одразу в історію. Він проходить <strong>три стани</strong>,
+       і між ними — дві команди.</p>
+
+    <svg class="diagram" viewBox="0 0 940 232" role="img"
+         aria-label="Схема: робоча папка, git add, підготовлено, git commit, історія"
+         font-family="Nunito, 'Segoe UI', system-ui, sans-serif">
+      <defs>
+        <marker id="ah" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+          <path d="M0,0 L11,4.5 L0,9 Z" fill="#cbd5e1"/>
+        </marker>
+      </defs>
+
+      <rect x="6" y="44" width="252" height="150" rx="15" fill="#141d2e" stroke="#ff7fa0" stroke-width="2"/>
+      <text x="132" y="30" text-anchor="middle" fill="#ff7fa0" font-size="14" font-weight="700" letter-spacing="1.4">СТАН 1</text>
+      <text x="132" y="90" text-anchor="middle" font-size="33">📁</text>
+      <text x="132" y="124" text-anchor="middle" fill="#ff7fa0" font-size="20" font-weight="700">Робоча папка</text>
+      <text x="132" y="150" text-anchor="middle" fill="#cbd5e1" font-size="15">ти редагуєш файли</text>
+      <text x="132" y="174" text-anchor="middle" fill="#94a3b8" font-size="14">зміни ніде не збережені</text>
+
+      <line x1="266" y1="119" x2="336" y2="119" stroke="#cbd5e1" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="301" y="106" text-anchor="middle" fill="#ffd97a" font-size="16" font-weight="700"
+            font-family="'JetBrains Mono', Menlo, monospace">git add</text>
+      <text x="301" y="141" text-anchor="middle" fill="#94a3b8" font-size="13">обираю</text>
+
+      <rect x="344" y="44" width="252" height="150" rx="15" fill="#141d2e" stroke="#ffd97a" stroke-width="2"/>
+      <text x="470" y="30" text-anchor="middle" fill="#ffd97a" font-size="14" font-weight="700" letter-spacing="1.4">СТАН 2</text>
+      <text x="470" y="90" text-anchor="middle" font-size="33">📋</text>
+      <text x="470" y="124" text-anchor="middle" fill="#ffd97a" font-size="20" font-weight="700">Підготовлено</text>
+      <text x="470" y="150" text-anchor="middle" fill="#cbd5e1" font-size="15">обрав, що саме зберегти</text>
+      <text x="470" y="174" text-anchor="middle" fill="#94a3b8" font-size="14">ще можна передумати</text>
+
+      <line x1="604" y1="119" x2="674" y2="119" stroke="#cbd5e1" stroke-width="2.5" marker-end="url(#ah)"/>
+      <text x="639" y="106" text-anchor="middle" fill="#6ee7a0" font-size="16" font-weight="700"
+            font-family="'JetBrains Mono', Menlo, monospace">git commit</text>
+      <text x="639" y="141" text-anchor="middle" fill="#94a3b8" font-size="13">зберігаю</text>
+
+      <rect x="682" y="44" width="252" height="150" rx="15" fill="#141d2e" stroke="#6ee7a0" stroke-width="2"/>
+      <text x="808" y="30" text-anchor="middle" fill="#6ee7a0" font-size="14" font-weight="700" letter-spacing="1.4">СТАН 3</text>
+      <text x="808" y="90" text-anchor="middle" font-size="33">📚</text>
+      <text x="808" y="124" text-anchor="middle" fill="#6ee7a0" font-size="20" font-weight="700">Історія</text>
+      <text x="808" y="150" text-anchor="middle" fill="#cbd5e1" font-size="15">збережено назавжди</text>
+      <text x="808" y="174" text-anchor="middle" fill="#94a3b8" font-size="14">сюди можна повернутись</text>
+
+      <text x="470" y="222" text-anchor="middle" fill="#94a3b8" font-size="14.5">Усе це — на твоєму комп'ютері. Інтернет не потрібен.</text>
+    </svg>
+  </div></section>
+
+  <!-- 7 ── ДІАГРАМА · навіщо staging ── -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lp">Найчастіше питання</span>
+      <h2>Навіщо проміжний крок?</h2>
+    </div></div>
+    <p>Ти правив сайт годину й зачепив п'ять файлів. Але <strong>завершена</strong> в них лише
+       одна справа — нове меню. Решта ще в процесі.</p>
+
+    <svg class="diagram" viewBox="0 0 940 226" role="img"
+         aria-label="Схема: з п'яти змінених файлів git add обирає два, з них виходить одна ланка історії"
+         font-family="Nunito, 'Segoe UI', system-ui, sans-serif">
+      <defs>
+        <marker id="ah2" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+          <path d="M0,0 L11,4.5 L0,9 Z" fill="#ffd97a"/>
+        </marker>
+        <marker id="ah3" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+          <path d="M0,0 L11,4.5 L0,9 Z" fill="#6ee7a0"/>
+        </marker>
+      </defs>
+
+      <text x="150" y="20" text-anchor="middle" fill="#ff7fa0" font-size="15" font-weight="700">Змінено 5 файлів</text>
+
+      <rect x="20" y="32" width="260" height="30" rx="8" fill="#1a2438" stroke="#ffd97a" stroke-width="2"/>
+      <text x="36" y="52" fill="#ffd97a" font-size="15" font-family="'JetBrains Mono', Menlo, monospace">index.html</text>
+      <text x="264" y="52" text-anchor="end" fill="#ffd97a" font-size="15">✓</text>
+
+      <rect x="20" y="70" width="260" height="30" rx="8" fill="#1a2438" stroke="#ffd97a" stroke-width="2"/>
+      <text x="36" y="90" fill="#ffd97a" font-size="15" font-family="'JetBrains Mono', Menlo, monospace">style.css</text>
+      <text x="264" y="90" text-anchor="end" fill="#ffd97a" font-size="15">✓</text>
+
+      <rect x="20" y="108" width="260" height="30" rx="8" fill="#141d2e" stroke="#2f3f57" stroke-width="1.5"/>
+      <text x="36" y="128" fill="#8496ad" font-size="15" font-family="'JetBrains Mono', Menlo, monospace">notes.txt</text>
+
+      <rect x="20" y="146" width="260" height="30" rx="8" fill="#141d2e" stroke="#2f3f57" stroke-width="1.5"/>
+      <text x="36" y="166" fill="#8496ad" font-size="15" font-family="'JetBrains Mono', Menlo, monospace">test.html</text>
+
+      <rect x="20" y="184" width="260" height="30" rx="8" fill="#141d2e" stroke="#2f3f57" stroke-width="1.5"/>
+      <text x="36" y="204" fill="#8496ad" font-size="15" font-family="'JetBrains Mono', Menlo, monospace">photo.jpg</text>
+
+      <line x1="300" y1="110" x2="392" y2="110" stroke="#ffd97a" stroke-width="2.5" marker-end="url(#ah2)"/>
+      <text x="346" y="97" text-anchor="middle" fill="#ffd97a" font-size="16" font-weight="700"
+            font-family="'JetBrains Mono', Menlo, monospace">git add</text>
+      <text x="346" y="130" text-anchor="middle" fill="#94a3b8" font-size="13">тільки ці два</text>
+
+      <rect x="412" y="44" width="290" height="132" rx="14" fill="#141d2e" stroke="#ffd97a" stroke-width="2"/>
+      <text x="557" y="32" text-anchor="middle" fill="#ffd97a" font-size="15" font-weight="700">Підготовлено</text>
+      <rect x="432" y="68" width="250" height="30" rx="7" fill="#1a2438" stroke="#ffd97a" stroke-width="1.5"/>
+      <text x="448" y="88" fill="#ffd97a" font-size="15" font-family="'JetBrains Mono', Menlo, monospace">index.html</text>
+      <rect x="432" y="106" width="250" height="30" rx="7" fill="#1a2438" stroke="#ffd97a" stroke-width="1.5"/>
+      <text x="448" y="126" fill="#ffd97a" font-size="15" font-family="'JetBrains Mono', Menlo, monospace">style.css</text>
+      <text x="557" y="161" text-anchor="middle" fill="#94a3b8" font-size="14">решта лишилась у папці</text>
+
+      <line x1="722" y1="110" x2="792" y2="110" stroke="#6ee7a0" stroke-width="2.5" marker-end="url(#ah3)"/>
+      <text x="757" y="97" text-anchor="middle" fill="#6ee7a0" font-size="15" font-weight="700"
+            font-family="'JetBrains Mono', Menlo, monospace">commit</text>
+
+      <rect x="806" y="58" width="128" height="104" rx="14" fill="#141d2e" stroke="#6ee7a0" stroke-width="2"/>
+      <text x="870" y="96" text-anchor="middle" font-size="26">📚</text>
+      <text x="870" y="124" text-anchor="middle" fill="#6ee7a0" font-size="16" font-weight="700">Одна</text>
+      <text x="870" y="145" text-anchor="middle" fill="#6ee7a0" font-size="16" font-weight="700">ланка</text>
+    </svg>
+
+    <div class="tip mt"><span class="tip-ico">💡</span>
+      <div>Ось навіщо середній крок: щоб у ланці історії була <strong>одна завершена справа</strong>,
+      а не «все, що я встиг за годину». Тоді через місяць зрозуміло, що там відбулося.</div></div>
+  </div></section>
+
+  <!-- 8 ─────────────────────────────── -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🧭</div><div>
+      <span class="label lb">Не плутати</span>
+      <h2>Git — це не GitHub</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Git</h3>
+        <p><strong>Програма на твоєму комп'ютері.</strong> Веде історію змін.
+           Працює без інтернету. Безкоштовна.</p>
+        <p class="mt" style="color:var(--faint)">Це блокнот, у якому записана вся історія.</p></div>
+      <div class="card cb"><h3>GitHub</h3>
+        <p><strong>Сайт в інтернеті.</strong> Місце, куди цю історію можна відправити:
+           щоб не загубити, показати іншим, працювати разом.</p>
+        <p class="mt" style="color:var(--faint)">Це хмара, куди блокнот копіюється.</p></div>
+    </div>
+    <div class="tip tb mt"><span class="tip-ico">📌</span>
+      <div>Git можна використовувати <strong>без</strong> GitHub — і всю першу тему ми саме так
+      і працюватимемо. GitHub без Git — не буває.</div></div>
+  </div></section>
+
+  <!-- 9 ── ДІАГРАМА push / pull ─────── -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">☁️</div><div>
+      <span class="label lb">Як це працює</span>
+      <h2>Твій комп'ютер ↔ GitHub</h2>
+    </div></div>
+    <p>Історія живе у двох місцях одночасно. Синхронізують їх <strong>дві команди</strong>.</p>
+
+    <svg class="diagram" viewBox="0 0 940 246" role="img"
+         aria-label="Схема: git push відправляє історію на GitHub, git pull забирає назад"
+         font-family="Nunito, 'Segoe UI', system-ui, sans-serif">
+      <defs>
+        <marker id="ap" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+          <path d="M0,0 L11,4.5 L0,9 Z" fill="#6ee7a0"/>
+        </marker>
+        <marker id="apl" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+          <path d="M0,0 L11,4.5 L0,9 Z" fill="#63c5ff"/>
+        </marker>
+      </defs>
+
+      <rect x="14" y="50" width="286" height="148" rx="15" fill="#141d2e" stroke="#ffd97a" stroke-width="2"/>
+      <text x="157" y="92" text-anchor="middle" font-size="32">💻</text>
+      <text x="157" y="126" text-anchor="middle" fill="#ffd97a" font-size="20" font-weight="700">Твій комп'ютер</text>
+      <text x="157" y="152" text-anchor="middle" fill="#cbd5e1" font-size="15">Git + уся історія</text>
+      <text x="157" y="176" text-anchor="middle" fill="#94a3b8" font-size="14">працює без інтернету</text>
+
+      <line x1="312" y1="96" x2="624" y2="96" stroke="#6ee7a0" stroke-width="2.5" marker-end="url(#ap)"/>
+      <text x="468" y="82" text-anchor="middle" fill="#6ee7a0" font-size="17" font-weight="700"
+            font-family="'JetBrains Mono', Menlo, monospace">git push</text>
+      <text x="468" y="117" text-anchor="middle" fill="#94a3b8" font-size="14">відправити свою історію в хмару</text>
+
+      <line x1="624" y1="162" x2="312" y2="162" stroke="#63c5ff" stroke-width="2.5" marker-end="url(#apl)"/>
+      <text x="468" y="148" text-anchor="middle" fill="#63c5ff" font-size="17" font-weight="700"
+            font-family="'JetBrains Mono', Menlo, monospace">git pull</text>
+      <text x="468" y="183" text-anchor="middle" fill="#94a3b8" font-size="14">забрати те, що змінили інші</text>
+
+      <rect x="636" y="50" width="290" height="148" rx="15" fill="#141d2e" stroke="#63c5ff" stroke-width="2"/>
+      <text x="781" y="92" text-anchor="middle" font-size="32">☁️</text>
+      <text x="781" y="126" text-anchor="middle" fill="#63c5ff" font-size="20" font-weight="700">GitHub</text>
+      <text x="781" y="152" text-anchor="middle" fill="#cbd5e1" font-size="15">та сама історія, у хмарі</text>
+      <text x="781" y="176" text-anchor="middle" fill="#94a3b8" font-size="14">звідси й публікуємо сайт</text>
+
+      <text x="470" y="228" text-anchor="middle" fill="#94a3b8" font-size="14.5">Комп'ютер зламався — історія ціла на GitHub. Інтернету немає — працюєш локально.</text>
+    </svg>
+  </div></section>
+
+  <!-- 10 ── РЕЗЕРВ ─────────────────── -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">⌨️</div><div>
+      <span class="label lg">Показую на проєкторі · резерв</span>
+      <h2>Як ці команди виглядають</h2>
+    </div></div>
+    <p>Git не має вікна з кнопками. Це <strong>термінал</strong> — команди пишуть текстом.
+       Виглядає суворо, але за рік їх набереться близько десяти.</p>
+    <div class="dp mt">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">Термінал</span></div>
+      <div class="dp-code"><span class="cm"># 1 · обираю, що зберегти</span>
+<span class="sy">$</span> git add index.html style.css
+
+<span class="cm"># 2 · зберігаю в історію з підписом</span>
+<span class="sy">$</span> git commit -m <span class="sg">"Зробив нове меню"</span>
+<span class="sg">[main a3f7c21] Зробив нове меню</span>
+
+<span class="cm"># 3 · відправляю в хмару</span>
+<span class="sy">$</span> git push</div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🔗</span>
+      <div>Три команди — це <strong>рівно три стрілки</strong> зі схем, які ми щойно розібрали.
+      Нічого нового тут немає.</div></div>
+  </div></section>
+
+  <!-- 11 ── РЕЗЕРВ ─────────────────── -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lt">Матеріал курсу · резерв</span>
+      <h2>Стартовий комплект</h2>
+    </div></div>
+    <p>Щоб вести історію змін, потрібен проєкт, який змінюється. Я видам усім
+       <strong>однаковий готовий сайт</strong> — далі кожен переробляє його під себе.</p>
+    <div class="two mt">
+      <div class="tree">
+        <b>starter/</b><br>
+        &nbsp;&nbsp;├── index.html<span class="cm">     головна</span><br>
+        &nbsp;&nbsp;├── about.html<span class="cm">     про мене</span><br>
+        &nbsp;&nbsp;├── works.html<span class="cm">     роботи</span><br>
+        &nbsp;&nbsp;├── style.css<span class="cm">      оформлення</span><br>
+        &nbsp;&nbsp;└── <b>img/</b>
+      </div>
+      <div>
+        <div class="hbox ht">Три сторінки, зв'язані меню. Один файл оформлення.</div>
+        <div class="hbox hg">Хто вже має <strong>власні HTML-файли</strong> — можна працювати
+          з ними. Але комплект однаково візьми.</div>
+        <div class="hbox hp">Ніхто нічого не «повинен був зробити раніше».
+          Стартуємо всі з одного місця.</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- 12 ── НЕ РІЗАТИ ──────────────── -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🔐</div><div>
+      <span class="label lp">Організаційне · важливо</span>
+      <h2>Три речі, без яких курс стане</h2>
+    </div></div>
+    <div class="three">
+      <div class="card cb"><h3>1 · Пошта</h3>
+        <p>Робоча адреса, до якої ти <strong>маєш доступ</strong> і пам'ятаєш пароль.
+           На неї реєструється GitHub</p></div>
+      <div class="card ct"><h3>2 · Акаунт GitHub</h3>
+        <p>Створимо разом на уроці. Безкоштовно. Ім'я акаунта стане
+           <strong>частиною адреси твого сайту</strong></p></div>
+      <div class="card cp"><h3>3 · Телефон</h3>
+        <p>На нього приходить код підтвердження. Без нього акаунт
+           у якийсь момент заблокується</p></div>
+    </div>
+    <div class="tip tp mt"><span class="tip-ico">⏰</span>
+      <div>Якщо чогось із цього немає — <strong>скажи мені зараз, а не в грудні</strong>.
+      Зараз це вирішується спокійно. У грудні, коли треба публікувати сайт — уже ні.</div></div>
+  </div></section>
+
+  <!-- 13 ─────────────────────────────── -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label ly">Підсумок</span>
+      <h2>Що ти вже знаєш</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Розумієш</h3><ul>
+        <li>яку задачу розв'язує контроль версій</li>
+        <li>один файл + ланцюг історії замість купи копій</li>
+        <li><strong>три стани:</strong> папка → підготовлено → історія</li>
+        <li>Git — програма, GitHub — сайт у хмарі</li>
+      </ul></div>
+      <div class="card cb"><h3>Наступного разу — за комп'ютерами</h3><ul>
+        <li>отримаєш стартовий комплект</li>
+        <li>відкриєш термінал</li>
+        <li>створиш свій перший репозиторій</li>
+        <li>зробиш перший коміт</li>
+      </ul></div>
+    </div>
+    <div class="hbox hb mt"><strong>На наступний урок:</strong> згадай пароль від своєї пошти
+      й перевір, що вона відкривається. Це все. Домашнього завдання немає.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 2 · 8 вересня · Перший репозиторій</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 13</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

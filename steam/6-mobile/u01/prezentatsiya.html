@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Перший застосунок · Розробка мобільних додатків · 6 клас · Урок 1</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  Курс          Розробка мобільних додатків (MIT App Inventor)
+  Клас          6
+  Школа         STEAM (Республіка) · вівторок
+  Урок          1 з 35 · 01.09.2026
+  Тема          Вступне заняття. Перший застосунок
+  Тривалість    45 хв — показ ~31 хв + діагностика 12 хв
+  ⚠ БЕЗ НОУТБУКІВ  Урок 1 суто оглядовий. App Inventor показую
+                   на проєкторі. Google-акаунти з'ясовуємо руками + аркуш
+  Акцент        purple (#d0a8f5)
+  ────────────────────────────────────────────────────────────────
+  План          office/republic/Розробка мобільних додатків — 6 клас.docx
+  Діагностика   office/diahnostyka/02-mobilna-6.html + 00-metodyka.md
+                ⚠ Головне питання аркуша — Scratch (задає темп I періоду)
+                ⚠ Головний ризик курсу — Google-акаунти. З'ясовуємо на слайді 7
+  Конспект      репозиторій 2026-27-teacher (приватний)
+  ────────────────────────────────────────────────────────────────
+  ПЕРЕД УРОКОМ  Перевірити, що ai2.appinventor.mit.edu відкривається
+                зі шкільної мережі. Якщо заблокований — весь курс стоїть
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;600;800;900&family=JetBrains+Mono:wght@400;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1120; --surface:#141d2e; --surf2:#1a2438; --border:#253348;
+  --teal:#00e4c8; --blue:#63c5ff; --pink:#ff7fa0; --yellow:#ffd97a;
+  --purple:#d0a8f5; --green:#6ee7a0;
+  --text:#f0f6ff; --dim:#cbd5e1; --faint:#94a3b8;
+  --accent:var(--purple);
+  --f-head:'Exo 2','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Nunito','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(208,168,245,.025) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(208,168,245,.025) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--pink));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(255,255,255,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:#fff;font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:rgba(208,168,245,.13)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:rgba(0,228,200,.13);color:var(--teal)}
+.lb{background:rgba(99,197,255,.13);color:var(--blue)}
+.ly{background:rgba(255,217,122,.13);color:var(--yellow)}
+.lp{background:rgba(255,127,160,.13);color:var(--pink)}
+.lg{background:rgba(110,231,160,.13);color:var(--green)}
+.lpu{background:rgba(208,168,245,.13);color:var(--purple)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cy h3{color:var(--yellow)}
+.card.cp h3{color:var(--pink)} .card.cg h3{color:var(--green)} .card.cb h3{color:var(--blue)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--text);line-height:1.7}
+.hbox.ht{border-color:var(--teal)} .hbox.hy{border-color:var(--yellow)}
+.hbox.hp{border-color:var(--pink)} .hbox.hg{border-color:var(--green)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:rgba(208,168,245,.07);
+     border:1px solid rgba(208,168,245,.25);border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7}
+.tip.ty{background:rgba(255,217,122,.07);border-color:rgba(255,217,122,.28)}
+.tip.tp{background:rgba(255,127,160,.07);border-color:rgba(255,127,160,.28)}
+.tip.tg{background:rgba(110,231,160,.07);border-color:rgba(110,231,160,.28)}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+/* ─── макет телефона ─── */
+.phone{width:190px;border:3px solid var(--border);border-radius:22px;background:#fff;
+       padding:26px 14px 20px;position:relative;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.phone::before{content:'';position:absolute;top:9px;left:50%;transform:translateX(-50%);
+       width:52px;height:5px;border-radius:3px;background:#d0d0d0}
+.ph-label{color:#111;font-size:17px;font-weight:700;text-align:center;margin-bottom:14px;font-family:var(--f-body)}
+.ph-btn{background:#e8e8e8;border:1px solid #b8b8b8;border-radius:5px;color:#111;
+        font-size:15px;text-align:center;padding:8px 10px;font-family:var(--f-body)}
+
+/* ─── візуальні блоки App Inventor ─── */
+.blk{font-family:var(--f-body);font-size:16px;color:#2b2b2b;border-radius:7px;
+     padding:9px 14px;display:inline-block;font-weight:600;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.blk-event{background:#d5a04b;border:1px solid #b7863a}
+.blk-set{background:#6fbf5f;border:1px solid #5aa04c}
+.blk-text{background:#e57a72;border:1px solid #c9645d}
+.blk-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+.blk-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:11px}
+.blk-row:last-child{margin-bottom:0}
+.blk-indent{margin-left:34px}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:rgba(208,168,245,.15);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:rgba(255,217,122,.1);border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+/* ─── макет робочої області Blocks ─── */
+.bl-ide{display:flex;gap:0;border:1px solid var(--border);border-radius:13px;overflow:hidden}
+.bl-rail{width:172px;background:#18202f;border-right:1px solid var(--border);
+         padding:13px 12px;flex-shrink:0}
+.bl-rail-t{font-family:var(--f-mono);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;
+           color:var(--faint);margin-bottom:11px}
+.bl-item{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);
+         padding:7px 10px;border-radius:6px;margin-bottom:5px}
+.bl-item.on{background:rgba(208,168,245,.15);color:var(--purple);font-weight:700}
+.bl-canvas{flex:1;background:var(--surface);padding:18px 20px;
+           background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);
+           background-size:17px 17px}
+.bl-cap{margin-top:13px;font-size:14.5px;color:var(--faint);font-style:italic}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- 1 -->
+  <section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1">Розробка мобільних додатків</div>
+    <div class="title-sub">6 клас · Урок 1 · 1 вересня 2026</div>
+    <div class="chips">
+      <span class="chip">MIT App Inventor</span>
+      <span class="chip">Кнопки й екрани</span>
+      <span class="chip">Блоки замість коду</span>
+      <span class="chip">Застосунок на телефоні</span>
+    </div>
+  </div></section>
+
+  <!-- 2 -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lpu">Про курс</span>
+      <h2>Що буде наприкінці року</h2>
+    </div></div>
+    <p><strong>Твій власний застосунок — на твоєму телефоні.</strong> Не картинка, не макет.
+       Справжній: із іконкою, встановлений, працює без інтернету.</p>
+    <div class="three mt">
+      <div class="card"><h3>Вікторина</h3><p>Питання, варіанти відповідей, підрахунок очок</p></div>
+      <div class="card cp"><h3>Клікер</h3><p>Тиснеш — число росте. Звук, вібрація, рекорд</p></div>
+      <div class="card cb"><h3>Тренажер</h3><p>Приклади, перевірка відповіді, результат</p></div>
+    </div>
+    <div class="tip tg mt"><span class="tip-ico">🧩</span>
+      <div>Програму ми <strong>не друкуємо текстом</strong> — ми складаємо її з різнокольорових
+      блоків, які чіпляються один за одного, як пазл. Помилитися в літері неможливо.</div></div>
+  </div></section>
+
+  <!-- 3 -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📱</div><div>
+      <span class="label lb">Основне поняття</span>
+      <h2>З чого складається застосунок</h2>
+    </div></div>
+    <p>Будь-який застосунок на твоєму телефоні — це дві речі разом.</p>
+    <div class="two mt">
+      <div class="card"><h3>1 · Що видно</h3>
+        <p>Написи, кнопки, картинки, поля для вводу. Це <strong>інтерфейс</strong> —
+           те, що людина бачить і чіпає пальцем.</p></div>
+      <div class="card cg"><h3>2 · Що відбувається</h3>
+        <p>Натиснув кнопку — програвся звук. Ввів відповідь — з'явився результат.
+           Це <strong>поведінка</strong> — правила, за якими застосунок реагує.</p></div>
+    </div>
+    <div class="hbox hy mt">Відкрий будь-який застосунок на своєму телефоні.
+      Усе, що ти <strong>бачиш</strong> — хтось поставив на екран. Усе, що
+      <strong>відбувається</strong> після натискання — хтось описав правилом.
+      Цього року цим «хтось» будеш ти.</div>
+  </div></section>
+
+  <!-- 4 -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🛠️</div><div>
+      <span class="label lpu">Середовище розробки</span>
+      <h2>App Inventor: два режими</h2>
+    </div></div>
+    <p>Ми працюємо на сайті <span class="ic">ai2.appinventor.mit.edu</span> — просто в браузері,
+       нічого встановлювати не треба. Там є дві кнопки-перемикачі у правому верхньому куті.</p>
+    <div class="two mt">
+      <div class="card cb"><h3>Designer — «що видно»</h3>
+        <p>Перетягуєш кнопки й написи на екран телефона. Міняєш їх колір, розмір, текст.</p>
+        <p class="mt" style="color:var(--faint)">Тут ти — художник.</p></div>
+      <div class="card cg"><h3>Blocks — «що відбувається»</h3>
+        <p>Складаєш різнокольорові блоки в правила: «коли натиснули кнопку — зроби ось це».</p>
+        <p class="mt" style="color:var(--faint)">Тут ти — програміст.</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🔄</span>
+      <div>Між режимами перемикаються <strong>постійно</strong>: поставив кнопку в Designer —
+      пішов у Blocks описати, що вона робить — повернувся назад. Туди-сюди весь урок.</div></div>
+  </div></section>
+
+  <!-- 5 -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">⚡</div><div>
+      <span class="label ly">Головне слово курсу</span>
+      <h2>Подія</h2>
+    </div></div>
+    <p><strong>Подія</strong> — це те, що <em>сталося</em>. Натиснули кнопку. Струснули телефон.
+       Запустили застосунок. У відповідь на подію застосунок щось <strong>робить</strong>.</p>
+    <div class="two mt">
+      <div class="blk-wrap">
+        <div class="blk-row"><span class="blk blk-event">коли Кнопка1 · натиснули</span></div>
+        <div class="blk-row blk-indent">
+          <span class="blk blk-set">встановити Напис1 · Текст</span>
+          <span class="blk blk-text">"Привіт!"</span>
+        </div>
+      </div>
+      <div>
+        <div class="hbox"><strong>Жовтий</strong> блок — подія. Він завжди зверху
+          і обгортає решту.</div>
+        <div class="hbox hg"><strong>Зелений</strong> блок — дія. Він усередині події.</div>
+        <div class="hbox hp"><strong>Червоний</strong> блок — текст, який підставляємо.</div>
+      </div>
+    </div>
+    <div class="tip ty mt"><span class="tip-ico">🧠</span>
+      <div>Читається як звичайне речення: <strong>«коли кнопку натиснули — встанови напису
+      текст "Привіт!"»</strong>. Це вже справжня програма.</div></div>
+  </div></section>
+
+  <!-- 6 -->
+  <section class="slide" id="s5"><div class="slide-inner big">
+    <div class="big-ico">📝</div>
+    <h2>Аркуш для мене</h2>
+    <div class="big-time">10–12 хвилин</div>
+    <p style="max-width:760px;margin:0 auto">Це <strong>не контрольна й не оцінка</strong>.
+       Правильна відповідь тут — чесна.<br>
+       «Не знаю» — нормальна відповідь. Вона потрібна мені більше за вгадану.</p>
+    <div class="tip mt" style="max-width:760px;margin:22px auto 0;text-align:left">
+      <span class="tip-ico">🙋</span>
+      <div>Я не знаю, що ви вчили раніше. Мені треба це дізнатися за 10 хвилин —
+      щоб не витрачати ваш час на те, що ви вже вмієте.</div></div>
+    <p class="mt" style="color:var(--faint);font-size:16px">Аркуші іменні · нікому не показую · назад не повертаю</p>
+  </div></section>
+
+  <!-- 7 -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🔑</div><div>
+      <span class="label lp">Важливо · підніміть руки</span>
+      <h2>Google-акаунт</h2>
+    </div></div>
+    <p>Щоб працювати в App Inventor, потрібен <strong>Google-акаунт</strong> — та сама пошта
+       Gmail. Наступного тижня ми сідаємо за комп'ютери, і без нього почати не вийде.</p>
+    <div class="three mt">
+      <div class="card cg"><h3>Є, пам'ятаю пароль</h3><p>Чудово. Наступного разу просто заходиш</p></div>
+      <div class="card cy"><h3>Є, але пароль забув</h3><p>Теж нормально. Відновимо разом на уроці 2</p></div>
+      <div class="card cp"><h3>Немає</h3><p>Не проблема й не твоя провина. Я випишу список,
+        і акаунти зроблять</p></div>
+    </div>
+    <div class="tip tp mt"><span class="tip-ico">🙋</span>
+      <div>Підніміть руку ті, у кого <strong>третій варіант</strong>. Соромитись нема чого —
+      мені треба це знати сьогодні, а не за тиждень, коли половина групи сидітиме без справи.</div></div>
+  </div></section>
+
+  <!-- 8 -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🖥️</div><div>
+      <span class="label lb">Так це виглядає</span>
+      <h2>Екран Designer — чотири частини</h2>
+    </div></div>
+    <p>Ось що ви побачите наступного тижня. Екран поділений на чотири колонки,
+       і в кожної своя робота.</p>
+
+    <svg class="diagram" viewBox="0 0 940 258" role="img"
+         aria-label="Макет екрана App Inventor Designer: Palette, Viewer, Components, Properties"
+         font-family="Nunito, 'Segoe UI', system-ui, sans-serif">
+      <!-- 1 · Palette -->
+      <rect x="6" y="30" width="186" height="176" rx="11" fill="#141d2e" stroke="#63c5ff" stroke-width="2"/>
+      <text x="99" y="21" text-anchor="middle" fill="#63c5ff" font-size="15" font-weight="700">Palette</text>
+      <rect x="20" y="46" width="158" height="26" rx="6" fill="#1a2438" stroke="#2f3f57"/>
+      <text x="34" y="64" fill="#cbd5e1" font-size="14">Button</text>
+      <rect x="20" y="78" width="158" height="26" rx="6" fill="#1a2438" stroke="#2f3f57"/>
+      <text x="34" y="96" fill="#cbd5e1" font-size="14">Label</text>
+      <rect x="20" y="110" width="158" height="26" rx="6" fill="#1a2438" stroke="#2f3f57"/>
+      <text x="34" y="128" fill="#cbd5e1" font-size="14">Image</text>
+      <rect x="20" y="142" width="158" height="26" rx="6" fill="#1a2438" stroke="#2f3f57"/>
+      <text x="34" y="160" fill="#cbd5e1" font-size="14">Sound</text>
+      <text x="99" y="192" text-anchor="middle" fill="#7c8ba1" font-size="13">…і ще багато</text>
+      <text x="99" y="228" text-anchor="middle" fill="#63c5ff" font-size="14.5" font-weight="700">звідки береш</text>
+      <text x="99" y="248" text-anchor="middle" fill="#94a3b8" font-size="13">склад деталей</text>
+
+      <!-- 2 · Viewer -->
+      <rect x="202" y="30" width="268" height="176" rx="11" fill="#141d2e" stroke="#d0a8f5" stroke-width="2"/>
+      <text x="336" y="21" text-anchor="middle" fill="#d0a8f5" font-size="15" font-weight="700">Viewer</text>
+      <rect x="266" y="44" width="140" height="150" rx="12" fill="#ffffff" stroke="#8b95a5" stroke-width="2"/>
+      <rect x="312" y="52" width="48" height="4" rx="2" fill="#d0d0d0"/>
+      <text x="336" y="92" text-anchor="middle" fill="#111111" font-size="15" font-weight="700">Мій застосунок</text>
+      <rect x="288" y="108" width="96" height="30" rx="5" fill="#e8e8e8" stroke="#b8b8b8"/>
+      <text x="336" y="128" text-anchor="middle" fill="#111111" font-size="13">Натисни мене</text>
+      <text x="336" y="228" text-anchor="middle" fill="#d0a8f5" font-size="14.5" font-weight="700">як виглядатиме</text>
+      <text x="336" y="248" text-anchor="middle" fill="#94a3b8" font-size="13">сюди перетягуєш</text>
+
+      <!-- 3 · Components -->
+      <rect x="480" y="30" width="204" height="176" rx="11" fill="#141d2e" stroke="#6ee7a0" stroke-width="2"/>
+      <text x="582" y="21" text-anchor="middle" fill="#6ee7a0" font-size="15" font-weight="700">Components</text>
+      <text x="498" y="66" fill="#cbd5e1" font-size="14.5" font-family="'JetBrains Mono', Menlo, monospace">Screen1</text>
+      <text x="518" y="94" fill="#6ee7a0" font-size="14.5" font-family="'JetBrains Mono', Menlo, monospace">Label1</text>
+      <text x="518" y="122" fill="#6ee7a0" font-size="14.5" font-family="'JetBrains Mono', Menlo, monospace">Button1</text>
+      <text x="582" y="228" text-anchor="middle" fill="#6ee7a0" font-size="14.5" font-weight="700">що вже поставив</text>
+      <text x="582" y="248" text-anchor="middle" fill="#94a3b8" font-size="13">список деталей</text>
+
+      <!-- 4 · Properties -->
+      <rect x="694" y="30" width="240" height="176" rx="11" fill="#141d2e" stroke="#ffd97a" stroke-width="2"/>
+      <text x="814" y="21" text-anchor="middle" fill="#ffd97a" font-size="15" font-weight="700">Properties</text>
+      <text x="712" y="64" fill="#94a3b8" font-size="13.5">Text</text>
+      <rect x="712" y="72" width="204" height="26" rx="6" fill="#1a2438" stroke="#ffd97a"/>
+      <text x="726" y="90" fill="#ffd97a" font-size="14">Натисни мене</text>
+      <text x="712" y="122" fill="#94a3b8" font-size="13.5">BackgroundColor</text>
+      <rect x="712" y="130" width="204" height="26" rx="6" fill="#1a2438" stroke="#2f3f57"/>
+      <rect x="722" y="136" width="14" height="14" rx="3" fill="#63c5ff"/>
+      <text x="746" y="148" fill="#cbd5e1" font-size="14">Blue</text>
+      <text x="712" y="180" fill="#94a3b8" font-size="13.5">FontSize · Width · Height…</text>
+      <text x="814" y="228" text-anchor="middle" fill="#ffd97a" font-size="14.5" font-weight="700">як налаштувати</text>
+      <text x="814" y="248" text-anchor="middle" fill="#94a3b8" font-size="13">колір, розмір, текст</text>
+    </svg>
+
+    <div class="tip ty mt"><span class="tip-ico">👆</span>
+      <div>Робота проста: <strong>береш деталь ліворуч — тягнеш на телефон — налаштовуєш праворуч.</strong>
+      Нічого не друкуєш.</div></div>
+  </div></section>
+
+  <!-- 9 -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🧩</div><div>
+      <span class="label lg">Так це виглядає</span>
+      <h2>Екран Blocks</h2>
+    </div></div>
+    <p>Друга кнопка вгорі — і той самий проєкт показує вже <strong>не вигляд, а поведінку</strong>.
+       Клікаєш на деталь ліворуч — випадає список її блоків.</p>
+
+    <div class="bl-ide mt">
+      <div class="bl-rail">
+        <div class="bl-rail-t">Blocks</div>
+        <div class="bl-item">Screen1</div>
+        <div class="bl-item on">Button1</div>
+        <div class="bl-item">Label1</div>
+      </div>
+      <div class="bl-canvas">
+        <div class="blk-row"><span class="blk blk-event">коли Button1 · Click</span></div>
+        <div class="blk-row blk-indent">
+          <span class="blk blk-set">встановити Label1 · Text до</span>
+          <span class="blk blk-text">"Ura, pratsyuye!"</span>
+        </div>
+        <div class="bl-cap">два блоки — і кнопка вже щось робить</div>
+      </div>
+    </div>
+
+    <div class="two mt">
+      <div class="hbox hg">Блоки <strong>чіпляються</strong> один за одного зі звуком клацання.
+        Не чіпляються — значить, не підходять сюди.</div>
+      <div class="hbox hp">Помилитися в написанні <strong>неможливо</strong> —
+        ти нічого не друкуєш, ти перетягуєш.</div>
+    </div>
+  </div></section>
+
+  <!-- 10 -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">📲</div><div>
+      <span class="label lpu">Показую на своєму телефоні</span>
+      <h2>Як застосунок потрапляє на телефон</h2>
+    </div></div>
+    <div class="three">
+      <div class="card cb"><h3>1 · AI2 Companion</h3>
+        <p>Застосунок на телефоні. Показує твій проєкт <strong>наживо</strong>:
+           міняєш блок на комп'ютері — на телефоні змінюється відразу</p></div>
+      <div class="card cy"><h3>2 · Емулятор</h3>
+        <p>Телефон, намальований на екрані комп'ютера. Якщо свого телефона немає —
+           працюємо так</p></div>
+      <div class="card cg"><h3>3 · APK-файл</h3>
+        <p>Готовий застосунок одним файлом. Встановлюється як звичайний.
+           Це <strong>кінець року</strong></p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">📵</span>
+      <div>Телефона немає або він батьківський — <strong>це не проблема</strong>.
+      Увесь курс можна пройти в емуляторі, на оцінку це ніяк не впливає.</div></div>
+  </div></section>
+
+  <!-- 11 -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lpu">Підсумок</span>
+      <h2>Що ти вже знаєш</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Розумієш</h3><ul>
+        <li>застосунок = що видно + що відбувається</li>
+        <li>Designer малює, Blocks описує правила</li>
+        <li>подія — це «коли щось сталося»</li>
+      </ul></div>
+      <div class="card cb"><h3>Наступного разу — за комп'ютерами</h3><ul>
+        <li>увійдеш в App Inventor</li>
+        <li>створиш свій перший проєкт</li>
+        <li>поставиш напис і кнопку</li>
+        <li>складеш свій перший блок</li>
+      </ul></div>
+    </div>
+    <div class="hbox hy mt"><strong>На наступний урок:</strong> згадай пароль від Gmail.
+      Хто має власний телефон на Android — принеси його й кабель.
+      Домашнього завдання немає.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 2 · 8 вересня · Властивості компонентів</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 11</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

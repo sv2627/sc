@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Будова вебсторінки. Каркас документа · Front-end · 8 клас · Урок 1</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  Курс          Front-end
+  Клас          8
+  Школа         STEAM (Республіка) · вівторок
+  Урок          1 з 35 · 01.09.2026
+  Тема          Вступне заняття. Будова вебсторінки. Каркас документа
+  Тривалість    45 хв — показ ~28 хв + діагностика 15 хв
+  ⚠ БЕЗ НОУТБУКІВ  Урок 1 суто оглядовий: поняття, приклади, питання.
+                   Каркас документа розбираємо на екрані, набираємо з уроку 2
+  Акцент        green (#6ee7a0)
+  ────────────────────────────────────────────────────────────────
+  План          office/republic/Front-end — 8 клас.docx
+                ⚠ Тема 1 (HTML) — лише 5 годин проти 7 у 7 класі.
+                  Темп пришвидшений, основна вага курсу — адаптивна верстка
+  Діагностика   office/diahnostyka/04-frontend-8.html + 00-metodyka.md
+                ⚠ 19 питань, 2 сторінки. Той самий аркуш, що у 7 класі,
+                  плюс п. 16 про адаптив. Вирішує, за яким планом іде рік
+  Конспект      репозиторій 2026-27-teacher (приватний)
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;600;800;900&family=JetBrains+Mono:wght@400;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1120; --surface:#141d2e; --surf2:#1a2438; --border:#253348;
+  --teal:#00e4c8; --blue:#63c5ff; --pink:#ff7fa0; --yellow:#ffd97a;
+  --purple:#d0a8f5; --green:#6ee7a0;
+  --text:#f0f6ff; --dim:#cbd5e1; --faint:#94a3b8;
+  --accent:var(--green);
+  --f-head:'Exo 2','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Nunito','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(110,231,160,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(110,231,160,.022) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(255,255,255,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:#fff;font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:rgba(110,231,160,.13)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:rgba(0,228,200,.13);color:var(--teal)}
+.lb{background:rgba(99,197,255,.13);color:var(--blue)}
+.ly{background:rgba(255,217,122,.13);color:var(--yellow)}
+.lp{background:rgba(255,127,160,.13);color:var(--pink)}
+.lg{background:rgba(110,231,160,.13);color:var(--green)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cb h3{color:var(--blue)}
+.card.cp h3{color:var(--pink)} .card.cy h3{color:var(--yellow)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--text);line-height:1.7}
+.hbox.ht{border-color:var(--teal)} .hbox.hb{border-color:var(--blue)}
+.hbox.hp{border-color:var(--pink)} .hbox.hy{border-color:var(--yellow)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:rgba(110,231,160,.07);
+     border:1px solid rgba(110,231,160,.25);border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7}
+.tip.ty{background:rgba(255,217,122,.07);border-color:rgba(255,217,122,.28)}
+.tip.tp{background:rgba(255,127,160,.07);border-color:rgba(255,127,160,.28)}
+.tip.tb{background:rgba(99,197,255,.07);border-color:rgba(99,197,255,.28)}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+.dp{border-radius:13px;overflow:hidden;border:1px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 8px 32px rgba(0,0,0,.35);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:#18202f;padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#090e1a;padding:15px 19px;font-size:16px;line-height:1.6;white-space:pre-wrap}
+.dp-out{background:#fff;color:#111;padding:18px 22px;font-family:var(--f-body)}
+.dp-out h1{font-size:1.9rem;color:#111;font-family:var(--f-head)}
+.sk{color:#74b0ff}.ss{color:#e8a87a}.sn{color:#c8dfa8}
+.cm{color:#9ca3af;font-style:italic}
+.sa{color:#5ddfc0}
+
+/* ─── розбір каркаса: рядок «тег → що робить» ─── */
+.brk{display:flex;flex-direction:column;gap:9px}
+.brow{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:11px;padding:11px 16px}
+.btag{font-family:var(--f-mono);font-size:16px;color:var(--accent);flex-shrink:0;
+      min-width:172px;font-weight:700}
+.bwhat{font-size:17px;line-height:1.6;color:var(--dim)}
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:400}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:rgba(110,231,160,.15);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:rgba(255,217,122,.1);border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- 1 -->
+  <section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1">Front-end</div>
+    <div class="title-sub">8 клас · Урок 1 · 1 вересня 2026</div>
+    <div class="chips">
+      <span class="chip">HTML</span>
+      <span class="chip">CSS</span>
+      <span class="chip">Адаптивна верстка</span>
+      <span class="chip">Робота за зразком</span>
+    </div>
+  </div></section>
+
+  <!-- 2 -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lg">Про курс</span>
+      <h2>Куди ми йдемо</h2>
+    </div></div>
+    <p>Наприкінці року — <strong>власний адаптивний сайт</strong>, зроблений за поданим ескізом.
+       Однаково добре виглядає на комп'ютері, планшеті й телефоні.</p>
+    <div class="three mt">
+      <div class="card ct"><h3>Основа · швидко</h3>
+        <p>HTML і CSS. Стисло, п'ять уроків на розмітку — далі одразу оформлення</p></div>
+      <div class="card cb"><h3>Макети</h3>
+        <p>Flexbox, Grid, форми. Як розкласти блоки так, щоб не поїхало</p></div>
+      <div class="card cy"><h3>Адаптив · головне</h3>
+        <p>Більша частина курсу. Одна сторінка — три різні екрани</p></div>
+    </div>
+    <div class="tip ty mt"><span class="tip-ico">⚡</span>
+      <div>Курс не потребує підготовки — починаємо з першого тега. Але
+      <strong>темп пришвидшений</strong>: базовий матеріал проходимо швидко, щоб більше часу
+      лишилось на адаптив і проєкт.</div></div>
+  </div></section>
+
+  <!-- 3 -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📁</div><div>
+      <span class="label lb">Швидко, для рівного старту</span>
+      <h2>Сайт — це папка з файлами</h2>
+    </div></div>
+    <p>Браузер — програма, яка <strong>читає файл і малює його на екрані</strong>.
+       Сайт не живе «в інтернеті» чарівним чином: це папка з файлами, які посилаються один на одного.</p>
+    <div class="two mt">
+      <div class="tree">
+        <b>portfolio/</b><br>
+        &nbsp;&nbsp;├── index.html<span class="cm">     головна</span><br>
+        &nbsp;&nbsp;├── about.html<span class="cm">     про мене</span><br>
+        &nbsp;&nbsp;├── style.css<span class="cm">      оформлення</span><br>
+        &nbsp;&nbsp;└── <b>img/</b>
+      </div>
+      <div>
+        <div class="hbox"><span class="ic">index.html</span> — головна сторінка.
+          Назва не випадкова: браузер шукає саме її.</div>
+        <div class="hbox hb">Назви файлів — <strong>латиницею, без пробілів</strong>.</div>
+        <div class="hbox hy">Браузер <strong>нічого не вигадує сам</strong>. Виглядає не так,
+          як хотілось — значить, у файлі написано інше.</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- 4 -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🔧</div><div>
+      <span class="label lp">Живий показ на проєкторі</span>
+      <h2>F12 — інструменти розробника</h2>
+    </div></div>
+    <p>Код будь-якого сайту відкритий. Більше того — його можна
+       <strong>змінити прямо в браузері</strong> і побачити результат миттєво.</p>
+    <div class="two mt">
+      <div class="card"><h3>Що дивимось</h3>
+        <p><span class="ic">F12</span> → вкладка <strong>Elements</strong>. Наводиш на рядок
+           коду — на сторінці підсвічується відповідний блок.</p>
+        <p class="mt">Тут же видно <strong>вкладеність</strong>: які теги всередині яких.</p></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Я змінив заголовок чужого сайту. Що сталося?</h3>
+        <p class="rv-hint">Подумайте 15 секунд. Клікніть, щоб перевірити.</p>
+        <div class="rv-body">
+          <p><strong>Нічого.</strong> Змінилася лише копія сторінки у твоєму браузері.
+             <span class="ic">F5</span> — і все повернулось.</p>
+          <p class="mt">Справжній сайт лежить на чужому комп'ютері.</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip tb mt"><span class="tip-ico">🛠️</span>
+      <div>F12 — <strong>головний інструмент пошуку помилок</strong> на весь курс.
+      Щось «не працює» → перше, що ти робиш, це відкриваєш F12.</div></div>
+  </div></section>
+
+  <!-- 5 -->
+  <section class="slide" id="s4"><div class="slide-inner big">
+    <div class="big-ico">📝</div>
+    <h2>Аркуш для мене</h2>
+    <div class="big-time">10–15 хвилин · дві сторони</div>
+    <p style="max-width:780px;margin:0 auto">Це <strong>не контрольна й не оцінка</strong>.
+       Правильна відповідь тут — чесна.<br>
+       «Не знаю» — нормальна відповідь. Вона потрібна мені більше за вгадану.</p>
+    <div class="tip ty mt" style="max-width:780px;margin:22px auto 0;text-align:left">
+      <span class="tip-ico">⚠️</span>
+      <div><strong>Питання 9 — розвилка.</strong> Якщо ти обрав «ні, ніколи не вчив HTML» —
+      питання 10–16 пропускай, іди відразу до блоку Д. Це не помилка й не мінус.</div></div>
+    <p class="mt" style="color:var(--faint);font-size:16px">Аркуші іменні · нікому не показую · назад не повертаю</p>
+  </div></section>
+
+  <!-- 6 -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🏷️</div><div>
+      <span class="label lg">Два поняття</span>
+      <h2>Тег і атрибут</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Тег</h3>
+        <p>Каже, <strong>чим є</strong> шматок вмісту: заголовком, абзацом, зображенням.</p>
+        <p style="font-family:var(--f-mono);font-size:16px;color:var(--text);margin-top:10px">
+          &lt;h1&gt;Портфоліо&lt;/h1&gt;</p></div>
+      <div class="card cb"><h3>Атрибут</h3>
+        <p>Пишеться <strong>всередині</strong> відкривального тега й уточнює деталі.
+           Завжди у форматі <span class="ic">ім'я="значення"</span>.</p>
+        <p style="font-family:var(--f-mono);font-size:16px;color:var(--text);margin-top:10px">
+          &lt;img <span class="sa">src</span>=<span class="ss">"kit.jpg"</span>
+          <span class="sa">alt</span>=<span class="ss">"кіт"</span>&gt;</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🔑</span>
+      <div>Тег — <strong>що це</strong>. Атрибут — <strong>які подробиці</strong>.
+      У <span class="ic">&lt;img&gt;</span> сам тег каже «тут картинка», а атрибут
+      <span class="ic">src</span> — яка саме.</div></div>
+  </div></section>
+
+  <!-- 8 -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🧱</div><div>
+      <span class="label lb">Розбираємо разом</span>
+      <h2>Каркас HTML-документа</h2>
+    </div></div>
+    <p>Так починається <strong>кожна</strong> сторінка, яку ти зробиш цього року.
+       Наступного тижня наберемо це руками — сьогодні розберемо, що тут навіщо.</p>
+    <div class="dp mt">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+      <div class="dp-code"><span class="sk">&lt;!DOCTYPE html&gt;</span>
+<span class="sk">&lt;html</span> <span class="sa">lang</span>=<span class="ss">"uk"</span><span class="sk">&gt;</span>
+<span class="sk">&lt;head&gt;</span>
+  <span class="sk">&lt;meta</span> <span class="sa">charset</span>=<span class="ss">"UTF-8"</span><span class="sk">&gt;</span>
+  <span class="sk">&lt;title&gt;</span>Моє портфоліо<span class="sk">&lt;/title&gt;</span>
+<span class="sk">&lt;/head&gt;</span>
+<span class="sk">&lt;body&gt;</span>
+  <span class="sk">&lt;h1&gt;</span>Портфоліо<span class="sk">&lt;/h1&gt;</span>
+<span class="sk">&lt;/body&gt;</span>
+<span class="sk">&lt;/html&gt;</span></div>
+    </div>
+    <div class="tip ty mt"><span class="tip-ico">🔍</span>
+      <div>Питання в клас: <strong>скільки рядків із цих десяти видно на сторінці?</strong>
+      Підказка — рахуйте лише те, що між <span class="ic">&lt;body&gt;</span> і
+      <span class="ic">&lt;/body&gt;</span>.</div></div>
+  </div></section>
+
+  <!-- 9 -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🔍</div><div>
+      <span class="label lg">Розбір</span>
+      <h2>Що робить кожна частина</h2>
+    </div></div>
+    <div class="brk">
+      <div class="brow"><span class="btag">&lt;!DOCTYPE html&gt;</span>
+        <span class="bwhat">«Це сучасний HTML». Найперший рядок, завжди. Не тег — оголошення</span></div>
+      <div class="brow"><span class="btag">&lt;html lang="uk"&gt;</span>
+        <span class="bwhat">Обгортає всю сторінку. <span class="ic">lang</span> — мова тексту:
+          підказка для пошуку й для програм читання з екрана</span></div>
+      <div class="brow"><span class="btag">&lt;head&gt;</span>
+        <span class="bwhat">Службова частина. <strong>На сторінці не видно</strong> —
+          це інформація про сторінку, а не її вміст</span></div>
+      <div class="brow"><span class="btag">&lt;meta charset&gt;</span>
+        <span class="bwhat">Кодування. <strong>Без нього кирилиця перетвориться на кракозябри</strong></span></div>
+      <div class="brow"><span class="btag">&lt;title&gt;</span>
+        <span class="bwhat">Назва у вкладці браузера й у результатах пошуку. Теж не на сторінці</span></div>
+      <div class="brow"><span class="btag">&lt;body&gt;</span>
+        <span class="bwhat">Усе, що <strong>видно</strong>. Решту року ми пишемо переважно сюди</span></div>
+    </div>
+  </div></section>
+
+  <!-- 10 -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lg">Підсумок</span>
+      <h2>Що вже є після першого уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Розумієш</h3><ul>
+        <li>сайт — це папка з файлами</li>
+        <li>тег каже що це, атрибут — подробиці</li>
+        <li><span class="ic">head</span> не видно, <span class="ic">body</span> видно</li>
+        <li>F12 показує код і вкладеність</li>
+      </ul></div>
+      <div class="card cb"><h3>Наступного разу — за комп'ютерами</h3><ul>
+        <li>створимо папку проєкту й <span class="ic">index.html</span></li>
+        <li>напишеш каркас документа з нуля</li>
+        <li>заголовки, списки, зображення</li>
+        <li>цикл зберегти → F5</li>
+      </ul></div>
+    </div>
+    <div class="hbox hy mt"><strong>Домашнього завдання немає.</strong> За бажанням — відкрий
+      F12 на будь-якому сайті й знайди в ньому <span class="ic">&lt;head&gt;</span> та
+      <span class="ic">&lt;body&gt;</span>.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 2 · 8 вересня · Текст, списки, зображення</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 9</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
