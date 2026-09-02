@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · IT-англійська · 9 клас · Урок 1</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · не тест, не практична — вижимка уроку
+  Курс          IT-англійська (Cambridge Lower Secondary Computing 0860)
+  Клас          9
+  Урок          1 / 36 · 03.09.2026 · юніт 9.1 Algorithms and data
+  Тема          Loops in pseudocode · Цикли у псевдокоді
+  Цілі          9CT.01, 9CT.02
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок —
+                на ксероксі вони зникають. Тільки чорне на білому.
+  ОБСЯГ         Рівно одна сторінка A4.
+  ────────────────────────────────────────────────────────────────
+  АКЦЕНТ        Словник і command words — угорі аркуша, до техніки.
+                Цей аркуш живе в зошиті весь рік як зразок house style.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+.hd{border-bottom:4px solid #000; padding-bottom:3mm; margin-bottom:3.2mm}
+.hd .meta{font-family:var(--fm); font-size:10.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:2.5mm}
+.hd h1{font-size:19pt; line-height:1.14; font-weight:800; letter-spacing:-.2px}
+.hd .sub{font-size:12pt; margin-top:2mm; font-weight:600}
+.b{margin-bottom:2.2mm; break-inside:avoid}
+.b > h2{font-size:12.5pt; font-weight:800; text-transform:uppercase; letter-spacing:.8px;
+  border-bottom:var(--line); padding-bottom:.8mm; margin-bottom:1.6mm}
+ul.k{list-style:none; margin:0}
+ul.k li{position:relative; padding-left:7mm; margin-bottom:1.1mm; font-size:12pt}
+ul.k li::before{content:''; position:absolute; left:0; top:2.1mm;
+  width:3.2mm; height:3.2mm; background:#000}
+pre.c{font-family:var(--fm); font-size:11pt; line-height:1.28; border:var(--line);
+  padding:2mm 3mm; white-space:pre-wrap; font-weight:600}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.box{border:var(--line); padding:2.4mm 3mm}
+.box.thick{border-width:3px}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+ul.chk{list-style:none; margin:0}
+ul.chk li{position:relative; padding-left:8mm; margin-bottom:1.3mm; font-size:12pt}
+ul.chk li::before{content:''; position:absolute; left:0; top:1mm;
+  width:4.5mm; height:4.5mm; border:var(--line)}
+.ft{border-top:var(--line); margin-top:auto; padding-top:2mm; font-family:var(--fm);
+  font-size:10pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:.6mm 0; font-size:11.5pt; vertical-align:top}
+table.voc td.en{width:42%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+table.voc tr:last-child td{border-bottom:0}
+
+table.g{width:100%; border-collapse:collapse; border:var(--line)}
+table.g th, table.g td{border:var(--thin); padding:1mm 2mm; font-size:11.5pt; text-align:left}
+table.g th{font-weight:800; text-transform:uppercase; font-size:10pt; letter-spacing:.4px}
+table.g td.m{font-family:var(--fm); font-weight:700}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta">IT-англійська · 9 клас · Урок 1 / 36 · 3 вересня</div>
+    <h1>Loops in pseudocode · Цикли у псевдокоді</h1>
+    <div class="sub">Логіка вам знайома з Python. Новий тут — <b>запис</b>, той, що просить Cambridge.</div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>Key words · Слова уроку</h2>
+      <table class="voc">
+        <tr><td class="en"><code>iteration</code></td><td>один прохід тіла циклу</td></tr>
+        <tr><td class="en"><code>loop</code></td><td>цикл</td></tr>
+        <tr><td class="en"><code>count-controlled</code></td><td>кількість відома наперед</td></tr>
+        <tr><td class="en"><code>condition-controlled</code></td><td>керований умовою</td></tr>
+        <tr><td class="en"><code>counter</code></td><td>лічильник</td></tr>
+        <tr><td class="en"><code>infinite loop</code></td><td>нескінченний цикл</td></tr>
+        <tr><td class="en"><code>trace table</code></td><td>трасувальна таблиця</td></tr>
+        <tr><td class="en"><code>logic error</code></td><td>працює, але відповідь хибна</td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>Command words</h2>
+      <table class="voc">
+        <tr><td class="en"><code>identify</code></td><td>назви — без пояснень</td></tr>
+        <tr><td class="en"><code>describe</code></td><td>скажи, <b>що</b> робить</td></tr>
+        <tr><td class="en"><code>explain</code></td><td>скажи, <b>чому</b> так</td></tr>
+        <tr><td class="en"><code>compare</code></td><td>і спільне, і відмінне</td></tr>
+      </table>
+      <div class="box" style="margin-top:2.5mm">
+        <b>Правило мови.</b> Помилка <b>в терміні</b> — виправляємо. Граматика <b>поза</b>
+        терміном бал не знижує.
+      </div>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>Three forms of loop · Три форми циклу</h2>
+    <table class="g">
+      <tr><th>Форма</th><th>Умова перевіряється</th><th>Тіло виконається</th><th>Коли брати</th></tr>
+      <tr><td class="m">FOR … TO … NEXT</td><td>кількість відома наперед</td><td>рівно стільки разів</td><td>«зроби 10 разів»</td></tr>
+      <tr><td class="m">WHILE … ENDWHILE</td><td><b>перед</b> тілом</td><td>може <b>жодного</b> разу</td><td>«роби, доки…»</td></tr>
+      <tr><td class="m">REPEAT … UNTIL</td><td><b>після</b> тіла</td><td>щонайменше <b>один</b> раз</td><td>«зроби, тоді перевір»</td></tr>
+    </table>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>House style · на весь рік</h2>
+      <pre class="c">BEGIN
+  SET total TO 0
+  FOR i &#8592; 1 TO 5
+    SET total TO total + i
+  NEXT i
+  OUTPUT total
+END</pre>
+    </div>
+    <div>
+      <h2>Домовленість класу</h2>
+      <ul class="k">
+        <li>Ключові слова — <b>ВЕЛИКИМИ</b></li>
+        <li>Вкладене — <b>з відступом</b></li>
+        <li><code>SET _ TO _</code> — присвоєння, <b>не</b> <code>=</code></li>
+        <li><code>&#8592;</code> — <b>тільки</b> в заголовку <code>FOR</code></li>
+        <li><code>BEGIN … END</code> — обов'язкові</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>Дві пастки</h2>
+      <ul class="k">
+        <li>Python <code>range(1, 6)</code> = 1…5, верхня межа <b>не</b> входить</li>
+        <li>Псевдокод <code>FOR i &#8592; 1 TO 5</code> = 1…5, межа <b>входить</b></li>
+        <li><code>FOR i &#8592; 4 TO 1</code> — <b>нуль</b> проходів, і нічого не падає</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Питання, що рятує від infinite loop</h2>
+      <div class="box thick">
+        У <code>WHILE</code> і <code>REPEAT</code> завжди питай:<br>
+        <b>що саме в тілі змінює умову?</b><br>
+        Немає відповіді — цикл нескінченний.
+      </div>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>I can… · Я вмію після уроку</h2>
+    <ul class="chk">
+      <li>I can write a simple algorithm in <b>pseudocode</b> using our house style.</li>
+      <li>I can name the three forms of <b>loop</b> and explain the difference between <b>WHILE</b> and <b>REPEAT</b>.</li>
+      <li>I can find an <b>infinite loop</b> in someone else's algorithm.</li>
+    </ul>
+  </div>
+
+  <div class="ft">
+    <span>IT-англійська · 9 клас</span>
+    <span>Урок 1 · 03.09.2026</span>
+  </div>
+
+</div>
+</body>
+</html>
