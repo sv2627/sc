@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Що не так із моїм сайтом · Front-end II · 7 клас · Урок 1</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  Курс          Front-end II (адаптивна верстка, робота за зразком)
+  Клас          7 (12–13 років) · 2-й рік з 2
+  Школа         A+ (Архітектурно-Інженерний коледж) · пн, ср, чт, пт
+  Урок          1 з 36 · 02.09.2026, середа
+  Тема          Що не так із моїм сайтом (діагностика сайту 6 класу)
+  Тривалість    45 хв — показ ~18 хв · практика ~22 хв · підсумок ~5 хв
+  Акцент        синій (--accent: var(--blue) = #0253b3)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ  Урок 1 із практикою за машинами
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКА      Слайд 7  — відкрити свій сайт із 6 класу (5 хв)
+                Слайд 14 — знайти 3 поломки на 360 px (10 хв)
+                Слайд 16 — копія папки в frontend7/ (5 хв)
+  План          office/plany/03-frontend-7.md, урок 1.1
+  Конспект      репозиторій 2026-27-teacher (приватний)
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+.dp-out h1{font-size:1.9rem;color:var(--ink);font-family:var(--f-head)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово / тег */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* атрибут / селектор */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:700}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:#9c5b00;
+               background:#fdf0d9;border:1.5px solid #f2ddb5;
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:29px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--ink)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 1: макет «два екрани» (слайд 6) і лічильники ═══ */
+.scrs{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
+.scr-cap{font-family:var(--f-mono);font-size:16px;color:var(--dim);text-align:center;margin-bottom:8px}
+.scr-win{border:2px solid var(--border);border-radius:10px;background:var(--surface);
+         padding:11px;overflow:hidden;box-shadow:0 1px 3px rgba(89,20,41,.06)}
+.scr-win.bad{border-color:var(--rose)}
+.scr-bar{height:15px;border-radius:5px;background:var(--sky);margin-bottom:10px}
+.scr-cards{display:flex;gap:8px}
+.scr-cards .blk{height:60px;border-radius:7px;background:var(--pink);flex:1 0 90px}
+.scr-line{height:9px;border-radius:5px;background:var(--border);margin-top:10px}
+.scr-line.s{width:58%}
+.scr-win.bad .scr-cards{width:235%}
+.scr-tag{font-family:var(--f-mono);font-size:16px;text-align:center;margin-top:10px;color:var(--dim)}
+.scr-tag.bad{color:var(--rose);font-weight:700}
+.nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center}
+.num{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:18px 12px;
+     box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.num b{display:block;font-family:var(--f-mono);font-size:2.3rem;color:var(--accent);line-height:1.2}
+.num span{display:block;font-size:17px;color:var(--dim);margin-top:6px}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:17px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:6px 14px;flex-shrink:0}
+.prac-lead{font-size:18px;line-height:1.65;color:var(--dim);margin-bottom:13px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" aria-label="Назад"></button>
+  <button class="tapzone tr" aria-label="Вперед"></button>
+
+  <!-- ═══════════ 1 ═══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Що не так із моїм сайтом</h1>
+      <p class="title-sub">Front-end II · 7 клас · Урок 1 з 36 · 2 вересня</p>
+      <div class="chips">
+        <span class="chip">HTML+CSS з 6 класу</span>
+        <span class="chip">Адаптивність</span>
+        <span class="chip">DevTools</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══════════ 2 ═══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <span class="label lb">Куди ми йдемо</span>
+    <h2>У червні ти станеш біля проєктора</h2>
+    <div class="hbox">В одній руці — <strong>аркуш із власним ескізом</strong>, на екрані — <strong>сайт,
+    зроблений точно за цим ескізом</strong>. Потім той самий сайт на телефоні.</div>
+    <div class="two mt">
+      <div class="card">
+        <h3>Що покажеш</h3>
+        <ul>
+          <li>3 сторінки, спільне меню</li>
+          <li>семантичний каркас</li>
+          <li>галерея карток на Grid</li>
+          <li>форма або таблиця</li>
+        </ul>
+      </div>
+      <div class="card cm">
+        <h3>Що перевіримо</h3>
+        <ul>
+          <li>360 · 768 · 1280 пікселів</li>
+          <li>жодної прокрутки вбік</li>
+          <li>палітра в CSS-змінних</li>
+          <li>сайт за живим посиланням</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tip"><span class="tip-ico">📅</span><span>Між сьогодні і тим днем — <strong>36 уроків</strong>.
+    Сьогодні перший.</span></div>
+  </div></section>
+
+  <!-- ═══════════ 3 ═══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <span class="label lb">Стартова позиція</span>
+    <h2>Що ти вже вмієш</h2>
+    <div class="themes mt">
+      <div class="th"><div class="th-n">✓</div><div class="th-t">Каркас HTML-документа з пам'яті: заголовки, абзаци, списки, <span class="ic">img</span>, <span class="ic">a</span></div></div>
+      <div class="th"><div class="th-n">✓</div><div class="th-t">Підключити <span class="ic">style.css</span> і написати селектор тегу, класу та id</div></div>
+      <div class="th"><div class="th-n">✓</div><div class="th-t">Колір, шрифт, <span class="ic">margin</span>, <span class="ic">padding</span>, <span class="ic">border</span>, <span class="ic">border-radius</span></div></div>
+      <div class="th"><div class="th-n">✓</div><div class="th-t">Flexbox: ряд карток і горизонтальне меню</div></div>
+      <div class="th"><div class="th-n">✓</div><div class="th-t"><span class="ic">:hover</span> з <span class="ic">transition</span>, проста CSS-анімація</div></div>
+      <div class="th"><div class="th-n">✓</div><div class="th-t">Структура папок проєкту і пошук своєї помилки в DevTools</div></div>
+    </div>
+    <div class="tip"><span class="tip-ico">💪</span><span>Це багато. <strong>Ми не з нуля</strong> — цього року
+    ми не вчимо верстку заново, ми її доводимо.</span></div>
+  </div></section>
+
+  <!-- ═══════════ 4 ═══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <span class="label lm">Програма року</span>
+    <h2>Чого ще немає</h2>
+    <div class="three mt">
+      <div class="card">
+        <h3>Семантика</h3>
+        <p>Не <span class="ic">div</span> на все підряд, а <span class="ic">header</span>, <span class="ic">nav</span>, <span class="ic">main</span>, <span class="ic">footer</span></p>
+      </div>
+      <div class="card cm">
+        <h3>Grid по-справжньому</h3>
+        <p><span class="ic">fr</span>, <span class="ic">repeat()</span>, сітка, що сама рахує колонки</p>
+      </div>
+      <div class="card cr">
+        <h3>Адаптивність</h3>
+        <p>Медіа-запити, mobile-first, <span class="ic">rem</span> замість <span class="ic">px</span></p>
+      </div>
+      <div class="card cp">
+        <h3>Форми</h3>
+        <p>Поля, підписи, вибір, перевірка браузером</p>
+      </div>
+      <div class="card co">
+        <h3>Робота за зразком</h3>
+        <p>Чужий дизайн → твій код. І свій ескіз → свій сайт</p>
+      </div>
+    </div>
+    <div class="hbox hm mt">Ці п'ять пунктів — це і є <strong>програма 7 класу</strong>. Ось звідки беруться 36 уроків.</div>
+  </div></section>
+
+  <!-- ═══════════ 5 ═══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <span class="label lr">Головне слово року</span>
+    <h2>Адаптивність</h2>
+    <div class="hbox hr"><strong>Адаптивний сайт</strong> — це сайт, який сам підлаштовується під ширину
+    екрана: на телефоні картки стають одна під одною, меню — стовпчиком, текст лишається читабельним.</div>
+    <div class="two mt">
+      <div class="card cr">
+        <h3>❌ Як НЕ треба</h3>
+        <p>Зробити три різні сайти: один для комп'ютера, один для планшета, один для телефона. Три папки, три
+        style.css, три рази правити кожну кому.</p>
+      </div>
+      <div class="card">
+        <h3>✅ Як треба</h3>
+        <p><strong>Один сайт</strong>, один <span class="ic">style.css</span> — і кілька правил, які кажуть:
+        «якщо екран вузький, розстав блоки інакше».</p>
+      </div>
+    </div>
+    <div class="tip to"><span class="tip-ico">🔑</span><span>Запам'ятай фразу: <strong>один сайт, який працює
+    на всіх ширинах — а не три різні сайти</strong>.</span></div>
+  </div></section>
+
+  <!-- ═══════════ 6 ═══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <span class="label lb">Порівняння</span>
+    <h2>Що бачить телефон</h2>
+    <div class="scrs mt">
+      <div>
+        <div class="scr-cap">Ноутбук · 1280 px</div>
+        <div class="scr-win">
+          <div class="scr-bar"></div>
+          <div class="scr-cards"><span class="blk"></span><span class="blk"></span><span class="blk"></span></div>
+          <div class="scr-line"></div><div class="scr-line s"></div>
+        </div>
+        <div class="scr-tag">усе на місці</div>
+      </div>
+      <div>
+        <div class="scr-cap">Телефон · 360 px</div>
+        <div class="scr-win bad">
+          <div class="scr-bar"></div>
+          <div class="scr-cards"><span class="blk"></span><span class="blk"></span><span class="blk"></span></div>
+          <div class="scr-line"></div><div class="scr-line s"></div>
+        </div>
+        <div class="scr-tag bad">→ вилазить за екран</div>
+      </div>
+    </div>
+    <div class="hbox hr mt">Сайт не «зменшився». Блоки лишилися такої самої ширини в пікселях —
+    просто екран став утричі вужчим. Тому вони <strong>вилазять</strong>, а браузер додає прокрутку вбік.</div>
+  </div></section>
+
+  <!-- ═══════════ 7 ═══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h">
+        <span class="badge">Практика 1</span>
+        <span class="t">Відкриваємо свій сайт із 6 класу</span>
+        <span class="ptime">5 хв</span>
+      </div>
+      <p class="prac-lead">VS Code → <span class="ic">File → Open Folder</span> →
+      папка твого сайту. Далі правою кнопкою по <span class="ic">index.html</span> → <span class="ic">Open with Live Server</span>.</p>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">Папку відкрито у VS Code, Live Server запущено, головна сторінка видно в браузері</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">Відкрито всі 3 сторінки, переходи по меню працюють в обидва боки</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">Те саме + знайшов і полагодив биті посилання (файл перейменований, шлях із помилкою)</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══════════ 8 ═══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <span class="label lo">Якщо сайту немає</span>
+    <h2>Немає сайту? Не проблема</h2>
+    <div class="hbox ho">Файли губляться, флешки ламаються, комп'ютери міняють. Це не привід сидіти
+    без роботи — бери <strong>шаблон «GameStore»</strong> зі спільної папки і працюй на ньому весь рік.</div>
+    <div class="two mt">
+      <div class="tree">GameStore/
+├── <b>index.html</b>   головна
+├── igry.html     каталог ігор
+├── pro.html      про магазин
+├── <b>style.css</b>    один на всі
+└── images/       3 картинки</div>
+      <div class="card co">
+        <h3>Що в ньому вже є</h3>
+        <ul>
+          <li>3 сторінки зі спільним меню</li>
+          <li>картки на Flexbox</li>
+          <li>кольори, шрифти, <span class="ic">:hover</span></li>
+        </ul>
+        <p style="margin-top:9px"><strong>Немає</strong> семантики й адаптивності — рівно як у решти класу.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══════════ 9 ═══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <span class="label lb">Інструмент</span>
+    <h2>F12 і режим телефона</h2>
+    <div class="steps mt">
+      <div class="step"><div class="step-n">1</div><div class="step-t">Натисни <span class="ic">F12</span> — унизу або збоку відкриються DevTools</div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-t">Угорі панелі знайди <strong>іконку телефона й планшета</strong> 📱 — або натисни <span class="ic">Ctrl + Shift + M</span></div></div>
+      <div class="step"><div class="step-n">3</div><div class="step-t">Над сторінкою з'явиться рядок із розмірами. Обери <span class="ic">Responsive</span></div></div>
+      <div class="step"><div class="step-n">4</div><div class="step-t">Впиши ширину <strong>360</strong> і натисни Enter. Це і є телефон</div></div>
+    </div>
+    <div class="tip tr"><span class="tip-ico">⚠️</span><span><span class="ic">Ctrl+Shift+M</span> працює
+    <strong>тільки коли DevTools уже відкриті</strong>. Спочатку F12 — потім усе інше.</span></div>
+  </div></section>
+
+  <!-- ═══════════ 10 ═══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <span class="label lb">Три числа</span>
+    <h2>Чому саме 360</h2>
+    <div class="nums mt">
+      <div class="num"><b>360</b><span>телефон<br>найпоширеніша ширина</span></div>
+      <div class="num"><b>768</b><span>планшет<br>і телефон боком</span></div>
+      <div class="num"><b>1280</b><span>ноутбук<br>твій екран зараз</span></div>
+    </div>
+    <div class="hbox mt">Ширин у світі сотні, але перевіряти на всіх безглуздо. Ми беремо
+    <strong>три контрольні точки</strong> і весь рік звіряємось саме з ними.</div>
+    <div class="tip"><span class="tip-ico">📏</span><span>Якщо сайт нормальний на 360, 768 і 1280 —
+    він майже напевно нормальний і на всьому, що між ними.</span></div>
+  </div></section>
+
+  <!-- ═══════════ 11 ═══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <span class="label lr">Що шукаємо</span>
+    <h2>Три типові поломки</h2>
+    <div class="three mt">
+      <div class="card cr">
+        <h3>1. Прокрутка вбік</h3>
+        <p>Сторінка їздить ліворуч-праворуч. Внизу з'явилася горизонтальна смуга прокрутки. Частина
+        контенту заїхала за край екрана.</p>
+      </div>
+      <div class="card cr">
+        <h3>2. Дрібний текст</h3>
+        <p>Щоб прочитати, треба розсунути пальцями. Літери менші за нігтик — читати неможливо.</p>
+      </div>
+      <div class="card cr">
+        <h3>3. Картинка вилазить</h3>
+        <p>Фото ширше за екран: видно тільки ліву частину, права поїхала кудись убік разом зі сторінкою.</p>
+      </div>
+    </div>
+    <div class="hbox hr mt">Ці три є <strong>в усіх без винятку</strong> сайтах із 6 класу. Не тому, що
+    хтось погано вчився, — а тому, що про телефон торік ніхто й не думав.</div>
+  </div></section>
+
+  <!-- ═══════════ 12 ═══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <span class="label lr">Поломка 1</span>
+    <h2>Звідки береться прокрутка</h2>
+    <div class="dp mt">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">style.css</span></div>
+      <pre class="dp-code"><span class="cm">/* так написано з 6 класу */</span>
+<span class="st">.container</span> {
+  <span class="sk">width</span>: <span class="sn">900px</span>;   <span class="cm">/* ← ось воно */</span>
+}
+
+<span class="cm">/* Екран телефона — 360 px.
+   Блок ширший за екран на 540 px
+   → браузер додає прокрутку вбік. */</span></pre>
+    </div>
+    <div class="tip tr"><span class="tip-ico">🔍</span><span>Правило на весь рік: <strong>горизонтальна
+    прокрутка = десь стоїть фіксована ширина в пікселях</strong>. Шукай <span class="ic">width</span> у px.</span></div>
+  </div></section>
+
+  <!-- ═══════════ 13 ═══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <span class="label lb">Поломки 2 і 3</span>
+    <h2>Як знайти винний елемент</h2>
+    <div class="steps mt">
+      <div class="step"><div class="step-n">1</div><div class="step-t">У DevTools вкладка <strong>Elements</strong> — там увесь HTML сторінки</div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-t"><strong>Наведи мишею</strong> на рядок коду — на сторінці підсвітиться саме цей блок</div></div>
+      <div class="step"><div class="step-n">3</div><div class="step-t">Біля підсвітки браузер пише розмір: <span class="ic">div.container 900 × 420</span></div></div>
+      <div class="step"><div class="step-n">4</div><div class="step-t">Перше число більше за 360 → <strong>винний знайдено</strong>. Дивись його CSS у панелі Styles</div></div>
+    </div>
+    <div class="tip"><span class="tip-ico">💡</span><span>Для дрібного тексту — вкладка <strong>Computed</strong>:
+    там видно справжній <span class="ic">font-size</span> у пікселях.</span></div>
+  </div></section>
+
+  <!-- ═══════════ 14 ═══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h">
+        <span class="badge">Практика 2</span>
+        <span class="t">Знайди поломки на своєму сайті</span>
+        <span class="ptime">10 хв</span>
+      </div>
+      <p class="prac-lead">Свій сайт у режимі телефона, ширина 360.
+      Пройди всі 3 сторінки. Виписуй поломки на чернетку — записувати в код будемо далі.</p>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">Знайшов і назвав 3 поломки</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">Знайшов 3 і для кожної назвав винний елемент (<span class="ic">.container</span>, <span class="ic">.nav</span>, <span class="ic">img</span>)</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">Знайшов 5 і для кожної написав, яка саме CSS-властивість винна</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══════════ 15 ═══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <span class="label lb">Артефакт уроку</span>
+    <h2>Як це записати</h2>
+    <div class="dp mt">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">index.html — найперші рядки файлу</span></div>
+      <pre class="dp-code"><span class="cm">&lt;!-- ПОЛОМКИ НА 360 px, 02.09.2026
+  1. Прокрутка вбік:
+     .container має width: 900px
+  2. Меню вилазить за екран:
+     .nav — 5 пунктів у ряд, не влазять
+  3. Картинка ширша за екран:
+     img у .hero без max-width
+--&gt;</span>
+<span class="sk">&lt;!DOCTYPE html&gt;</span>
+<span class="sk">&lt;html</span> <span class="st">lang</span>=<span class="ss">"uk"</span><span class="sk">&gt;</span></pre>
+    </div>
+    <div class="tip"><span class="tip-ico">📝</span><span>Коментар не видно на сторінці — але він лишається
+    у файлі. <strong>Це наш список справ на перші уроки.</strong></span></div>
+  </div></section>
+
+  <!-- ═══════════ 16 ═══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h">
+        <span class="badge">Практика 3</span>
+        <span class="t">Копіюємо папку в frontend7/</span>
+        <span class="ptime">5 хв</span>
+      </div>
+      <p class="prac-lead">Виділи <strong>всю</strong> папку сайту →
+      <span class="ic">Ctrl+C</span> → <span class="ic">Ctrl+V</span> поруч → перейменуй копію на
+      <span class="ic">frontend7</span>. Копію — <strong>поруч</strong>, а не всередину оригіналу.</p>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">Папка <span class="ic">frontend7/</span> існує, у ній усі файли й папка <span class="ic">images/</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">Відкрив копію у VS Code, Live Server працює, картинки на місці</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">Те саме + перейменував файли осмислено латиницею: <span class="ic">index.html</span>, <span class="ic">igry.html</span>, <span class="ic">pro.html</span></span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══════════ 17 ═══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <span class="label lm">Навіщо</span>
+    <h2>Чому копія, а не оригінал</h2>
+    <div class="tree mt">Документи/
+├── sait6/        <b>← робота 6 класу. НЕ ЧІПАЄМО</b>
+└── <b>frontend7/</b>    ← копія, працюємо тут до червня
+    ├── index.html
+    ├── style.css
+    └── images/</div>
+    <div class="two mt">
+      <div class="card cm">
+        <h3>Оригінал</h3>
+        <p>Лишається таким, яким ти його здав торік. У травні буде цікаво порівняти.</p>
+      </div>
+      <div class="card">
+        <h3>Копія</h3>
+        <p>Матеріал усього року. Ламай, переписуй, експериментуй — тут можна все.</p>
+      </div>
+    </div>
+    <div class="tip tm"><span class="tip-ico">🗄️</span><span><span class="ic">frontend7/</span> — це твоя
+    робоча папка до червня. <strong>Нічого з неї не видаляй.</strong></span></div>
+  </div></section>
+
+  <!-- ═══════════ 18 ═══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <span class="label lp">Домовляємось</span>
+    <h2>Правила курсу</h2>
+    <div class="three mt">
+      <div class="card cp"><h3>Поточна</h3><p>5-хвилинна перевірка на уроці: написати щось із пам'яті</p></div>
+      <div class="card cp"><h3>Практична</h3><p>Ціле заняття самостійно, за завданням. 4 рази на рік</p></div>
+      <div class="card cp"><h3>Міні-проєкт</h3><p>Готова сторінка на свою тему + показ класу</p></div>
+    </div>
+    <div class="hbox hp mt">Мінімум <strong>3 оцінки за період</strong>. До кожної оцінки нижче 7 —
+    конкретний коментар, що саме доробити.</div>
+    <div class="two">
+      <div class="tip tm"><span class="tip-ico">⭐</span><span>Рівні <strong>⭐ / ⭐⭐ / ⭐⭐⭐</strong> обираєш
+      сам. ⭐ обов'язковий для всіх.</span></div>
+      <div class="tip"><span class="tip-ico">🏠</span><span>Домашок майже немає — <strong>4 рази на рік</strong>,
+      до 20 хв, без комп'ютера.</span></div>
+    </div>
+  </div></section>
+
+  <!-- ═══════════ 19 ═══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <span class="label lo">До наступного уроку</span>
+    <h2>Що принести і що зберегти</h2>
+    <div class="steps mt">
+      <div class="step"><div class="step-n">📐</div><div class="step-t"><strong>2 аркуші паперу в клітинку</strong> — знадобляться в другому півріччі, але хай лежать у папці</div></div>
+      <div class="step"><div class="step-n">💾</div><div class="step-t">Нічого не видаляти з <span class="ic">frontend7/</span> — ані файлів, ані картинок, ані коментаря з поломками</div></div>
+      <div class="step"><div class="step-n">✅</div><div class="step-t">Сайт має відкриватися. Перевір удома або на початку наступного уроку</div></div>
+    </div>
+    <div class="tip to"><span class="tip-ico">☁️</span><span>Працюєш на шкільній машині — скинь
+    <span class="ic">frontend7/</span> на флешку або в хмару. <strong>Файли губляться саме тоді, коли їх
+    не скопіювали.</strong></span></div>
+  </div></section>
+
+  <!-- ═══════════ 20 ═══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <span class="label lb">Підсумок</span>
+    <h2>Після уроку 1 у тебе є</h2>
+    <div class="themes mt">
+      <div class="th"><div class="th-n">1</div><div class="th-t">Свій сайт із 6 класу, відкритий у VS Code і Live Server</div><div class="th-h">робоче місце</div></div>
+      <div class="th"><div class="th-n">2</div><div class="th-t">Уміння вмикати режим телефона: <span class="ic">F12 → Ctrl+Shift+M → 360</span></div><div class="th-h">інструмент</div></div>
+      <div class="th"><div class="th-n">3</div><div class="th-t">Список із 3 поломок у коментарі вгорі <span class="ic">index.html</span></div><div class="th-h">артефакт</div></div>
+      <div class="th"><div class="th-n">4</div><div class="th-t">Папка <span class="ic">frontend7/</span> — матеріал на всі 36 уроків</div><div class="th-h">матеріал</div></div>
+    </div>
+    <div class="hbox mt">Сьогодні ми лише <strong>поставили діагноз</strong>. Наступного разу починаємо
+    лагодити — і починаємо з <strong>семантичного каркаса</strong>.</div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <span id="ctr">1 / 1</span>
+  <div id="dots"></div>
+  <button class="nbtn" onclick="next()">Вперед →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pseudocode: rules of the game · IT-англійська · 8 клас · Урок 1</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge Lower Secondary Computing 0860)
+  Клас          8 (13–14 років)
+  Школа         A+ (Архітектурно-Інженерний коледж) · пн, ср, чт, пт
+  Урок          1 з 36 · 02.09.2026 · юніт 8.1 Algorithms and data
+  Тема          Pseudocode: rules of the game · Псевдокод: правила гри
+  Тривалість    45 хв — діагностика 10 · показ 15 · практика 15 · словник і підсумок 5
+  Ціль          8CT.03 characteristics of pseudocode
+  Акцент        rose (#af3b41)
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ПАПІР + НОУТБУК  Практики 1 і 2 — на аркушах (Cambridge викладає
+                      цю тему unplugged). Ноутбук вмикається на практиці 3
+                      (слайд 18) і на vocabulary check (слайд 20).
+  ────────────────────────────────────────────────────────────────
+  ЛАНЦЮГ CAMBRIDGE  follow → understand → edit → correct → create.
+                Teacher Guide 0860, розд. 3.4: послідовність повторюється
+                щоразу, коли вводиться новий концепт.
+                follow s13 · understand s5–s10 · edit s14 · correct s16 · create s17
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКА      Слайд 16 — ⭐ переписати словесний алгоритм псевдокодом (папір, 6 хв)
+                Слайд 17 — ⭐⭐ знайти порушення precise у чужому записі (папір, 5 хв)
+                Слайд 18 — ⭐⭐⭐ власний алгоритм «найбільше з трьох» (ноутбук, 4 хв)
+  План          office/plany-cambridge/04-cambridge-8.md, рядок 1.1
+  Конспект      репозиторій 2026-27-teacher (приватний)
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--rose);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+.dp-out h1{font-size:1.9rem;color:var(--ink);font-family:var(--f-head)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово / тег */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* атрибут / селектор */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:700}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:#9c5b00;
+               background:#fdf0d9;border:1.5px solid #f2ddb5;
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:29px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--ink)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 1.1 — англійські терміни, словник, таблиця, блок-схема ═══ */
+
+/* англійський термін рамки просто в тексті */
+.en{font-family:var(--f-mono);font-weight:700;color:var(--rose)}
+.uk{color:var(--dim)}
+
+/* пара «термін — переклад» у словникових слайдах */
+.vg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:17px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16.5px;line-height:1.45}
+
+/* проста таблиця порівняння */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--rose);background:var(--surf2);font-size:16px}
+.tb td:first-child{color:var(--dim)}
+.tb tr:last-child td{border-bottom:0}
+
+/* блок-схема на чистому CSS, без картинок */
+.fc{display:flex;flex-direction:column;align-items:center}
+.fc-n{background:var(--surface);border:2px solid var(--rose);color:var(--ink);
+      font-family:var(--f-mono);font-size:16px;line-height:1.4;padding:10px 20px;
+      text-align:center;min-width:206px}
+.fc-term{border-radius:24px;background:var(--surf2)}
+.fc-io{border-radius:4px;transform:skewX(-14deg)}
+.fc-io span{display:inline-block;transform:skewX(14deg)}
+.fc-dec{clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:var(--sky);
+        border:0;color:var(--blue);font-weight:700;padding:25px 44px;min-width:340px}
+.fc-sub{border-left:7px double var(--brand);border-right:7px double var(--brand);font-weight:700}
+.fc-a{color:var(--rose);font-size:18px;line-height:1;padding:4px 0}
+.fc-split{display:flex;gap:30px;align-items:flex-start}
+/* лінія злиття гілок: без неї схема сама порушує вимогу precise */
+.fc-merge{width:100%;height:1px;background:var(--rose);margin-top:10px;position:relative}
+.fc-merge::before,.fc-merge::after{content:'';position:absolute;bottom:0;width:1px;
+  height:14px;background:var(--rose)}
+.fc-merge::before{left:22%}
+.fc-merge::after{right:22%}
+.fc-br{display:flex;flex-direction:column;align-items:center}
+.fc-lbl{font-family:var(--f-mono);font-size:14px;color:var(--dim);padding:3px 0}
+
+/* питання діагностики */
+.qs{display:flex;flex-direction:column;gap:11px}
+.qs .q{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--rose);
+       border-radius:0 10px 10px 0;padding:12px 17px;font-size:18px;line-height:1.6}
+
+/* чотири вимоги рамки */
+.reqs{display:flex;flex-direction:column;gap:10px}
+.req{display:flex;align-items:flex-start;gap:14px;background:var(--surface);
+     border:1.5px solid var(--border);border-radius:11px;padding:11px 16px}
+.req-k{font-family:var(--f-mono);font-weight:700;color:var(--rose);font-size:16px;
+       flex-shrink:0;min-width:132px;line-height:1.5}
+.req-t{font-size:17px;line-height:1.55;color:var(--ink);flex:1}
+
+/* self-evaluation checklist */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--rose);border-radius:6px;flex-shrink:0}
+
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" aria-label="Назад"></button>
+  <button class="tapzone tr" aria-label="Вперед"></button>
+
+  <!-- ────────── СЛАЙДИ ────────── -->
+
+  <!-- ═══ 1 · ТИТУЛ ═══ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <div class="title-h1">Pseudocode: rules of the game</div>
+      <div class="title-sub">Псевдокод: правила гри<br>
+        IT-англійська · 8 клас · Урок 1 з 36 · 2 вересня 2026</div>
+      <div class="chips">
+        <span class="chip">Cambridge Stage 8</span>
+        <span class="chip">0860</span>
+        <span class="chip">Computational Thinking</span>
+        <span class="chip">8CT.03</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 2 · КАРТА РОКУ ═══ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <span class="label lr">Карта року</span>
+    <div class="sh">
+      <div class="si">🗺️</div>
+      <h2>Where we are going · Куди ми йдемо</h2>
+    </div>
+    <div class="themes">
+      <div class="th"><div class="th-n">8.1</div>
+        <div class="th-t"><span class="en">Algorithms and data</span> — псевдокод, декомпозиція, константи, лінійний пошук</div>
+        <div class="th-h">уроки 1–8</div></div>
+      <div class="th"><div class="th-n">8.3</div>
+        <div class="th-t"><span class="en">Programming</span> — розгалуження у трьох мовах, <span class="en">Boolean</span>, AND/OR/NOT, бібліотеки, тестування</div>
+        <div class="th-h">уроки 9–16</div></div>
+      <div class="th"><div class="th-n">8.4</div>
+        <div class="th-t"><span class="en">Modelling, databases and networks</span> — моделі, симуляції, бази даних, валідація, PAN/LAN/WAN</div>
+        <div class="th-h">уроки 17–26</div></div>
+      <div class="th"><div class="th-n">8.5</div>
+        <div class="th-t"><span class="en">Computer systems</span> — двійкове ↔ десяткове, <span class="en">ASCII</span>, стиснення, таблиці істинності, RAM і ROM</div>
+        <div class="th-h">уроки 27–31</div></div>
+      <div class="th"><div class="th-n">8.6</div>
+        <div class="th-t"><span class="en">End of stage projects</span> — проєкт року в трьох ітераціях і захист англійською</div>
+        <div class="th-h">уроки 32–36</div></div>
+    </div>
+    <div class="tip tr mt"><span class="tip-ico">🧭</span>
+      <div>Усе, що ми робимо сьогодні, повертається на кожному з цих уроків. Псевдокод — не окрема тема, а спосіб запису, яким користуватимемось до червня і у 9 класі.</div></div>
+  </div></section>
+
+  <!-- ═══ 3 · ПРАВИЛА КУРСУ ═══ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <span class="label lr">Правила гри</span>
+    <div class="sh">
+      <div class="si">🎯</div>
+      <h2>How this course works · Як влаштований курс</h2>
+    </div>
+    <div class="two">
+      <div class="card cr">
+        <h3>Якою мовою ти пишеш</h3>
+        <ul>
+          <li><b>Терміни, псевдокод, код — англійською.</b> Завжди. Вони не перекладаються.</li>
+          <li><b>Коротка відповідь за зразком — англійською.</b> Зразок завжди на слайді, вигадувати речення не треба.</li>
+          <li><b>Розгорнуте пояснення — українською.</b> Цього року. Я перевіряю, чи ти зрозумів, а не як ти володієш англійською.</li>
+        </ul>
+      </div>
+      <div class="card cr">
+        <h3>Слова курсу</h3>
+        <ul>
+          <li><span class="en">Key words</span> — терміни юніта. Висять на стіні, входять у <span class="en">vocabulary check</span>.</li>
+          <li><span class="en">Command words</span> — дієслова завдань: <span class="en">describe</span>, <span class="en">explain</span>, <span class="en">identify</span>, <span class="en">compare</span>. Від дієслова залежить, що саме від тебе хочуть.</li>
+          <li>Оцінки: поточна · практична · міні-проєкт. Кожна практична має рівні ⭐ / ⭐⭐ / ⭐⭐⭐ — рівень обираєш сам.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hbox hr">Помилка в <b>терміні</b> — виправляється завжди. Граматична помилка <b>поза</b> терміном не оцінюється й не знижує бал. Тому писати й говорити англійською тут безпечно.</div>
+  </div></section>
+
+  <!-- ═══ 4 · ДІАГНОСТИКА 1/2 ═══ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <span class="label lm">Діагностика · 10 хв на два слайди</span>
+    <div class="sh">
+      <div class="si">📋</div>
+      <h2>Read the flowchart · Прочитай блок-схему</h2>
+    </div>
+    <div class="two">
+      <div class="fc">
+        <div class="fc-n fc-term">START</div>
+        <div class="fc-a">▼</div>
+        <div class="fc-n fc-io"><span>INPUT mark</span></div>
+        <div class="fc-a">▼</div>
+        <div class="fc-n fc-dec">mark &gt;= 60 ?</div>
+        <div class="fc-split">
+          <div class="fc-br"><span class="fc-lbl">YES ▼</span>
+            <div class="fc-n fc-sub">CALL PrintCertificate</div></div>
+          <div class="fc-br"><span class="fc-lbl">NO ▼</span>
+            <div class="fc-n fc-io"><span>OUTPUT 'Try again'</span></div></div>
+        </div>
+        <div class="fc-merge"></div>
+        <div class="fc-a">▼</div>
+        <div class="fc-n fc-term">END</div>
+      </div>
+      <div>
+        <div class="card cr">
+          <h3>Завдання</h3>
+          <p>Візьми аркуш, підпиши його. Прочитай схему й опиши <b>українською</b>, що вона робить — так, щоб зрозумів той, хто схеми не бачив.</p>
+          <p>Слова <code class="ic">INPUT</code>, <code class="ic">OUTPUT</code>, <code class="ic">CALL</code> лишай англійською.</p>
+        </div>
+        <div class="tip tm mt"><span class="tip-ico">🧩</span>
+          <div>Схему такого вигляду ви, найпевніше, бачите <b>вперше</b> — і це нормально. Але те, що на ній намальовано, ви торік писали кодом на Dart: умова, дві гілки, виклик функції. <span class="en">Flowchart</span> — та сама думка, тільки картинкою.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 5 · ДІАГНОСТИКА 2/2 ═══ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <span class="label lm">Діагностика · пишемо на аркуші</span>
+    <div class="sh">
+      <div class="si">✍️</div>
+      <h2>Three questions · Три питання до схеми</h2>
+    </div>
+    <div class="qs">
+      <div class="q"><b>1.</b> Що робить підпрограма <span class="en">PrintCertificate</span> і в який момент її викликають? Чому її винесли окремо, а не вписали в схему?</div>
+      <div class="q"><b>2.</b> Учень увів <span class="en">mark = 60</span>. Що саме станеться крок за кроком і що буде на виході?</div>
+      <div class="q"><b>3.</b> Де на схемі розгалуження? Назви фігуру і скажи, скільки гілок із неї виходить.</div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">⏱️</span>
+      <div>10 хвилин на опис зі слайда 4 і на ці три питання. Пишемо українською, повними реченнями. Терміни зі схеми — англійською, як на ній написано</div></div>
+  </div></section>
+
+  <!-- ═══ 6 · РОЗБІР ═══ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <span class="label lm">Розбір · клікни по картці</span>
+    <div class="sh">
+      <div class="si">💡</div>
+      <h2>Check yourself · Звіряємось</h2>
+    </div>
+    <div class="two">
+      <div class="reveal"><div class="card cr">
+        <h3>1 · Підпрограма</h3>
+        <div class="rv-hint">клікни, щоб показати відповідь</div>
+        <div class="rv-body"><p>Це окремий іменований шматок алгоритму. Головна схема тільки <b>викликає</b> його (<span class="en">CALL</span>) і не повторює його кроки в собі. Викликається, коли <span class="en">mark &gt;= 60</span>.</p></div>
+      </div></div>
+      <div class="reveal"><div class="card cr">
+        <h3>2 · Вхід 60</h3>
+        <div class="rv-hint">клікни, щоб показати відповідь</div>
+        <div class="rv-body"><p>Умова <span class="en">60 &gt;= 60</span> істинна, отже гілка YES: викликається <span class="en">PrintCertificate</span>, далі <span class="en">END</span>. Пастка тут одна — знак <span class="en">&gt;=</span> включає саме число 60.</p></div>
+      </div></div>
+      <div class="reveal"><div class="card cr">
+        <h3>3 · Розгалуження</h3>
+        <div class="rv-hint">клікни, щоб показати відповідь</div>
+        <div class="rv-body"><p>Ромб — <span class="en">decision</span>. З нього виходять рівно дві гілки: YES і NO. Англійською сама конструкція зветься <span class="en">conditional statement</span>.</p></div>
+      </div></div>
+      <div class="hbox hr">Якщо ви прочитали схему — ви вже вмієте головне. Логіка вам знайома з коду, новим був тільки <b>вигляд</b>. Сьогодні додаємо ще один спосіб записати ту саму думку.</div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 7 · НОВИЙ ІНСТРУМЕНТ ═══ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <span class="label lr">Новий інструмент</span>
+    <div class="sh">
+      <div class="si">🛠️</div>
+      <h2>New tool: <span class="en">pseudocode</span> · Псевдокод</h2>
+    </div>
+    <div class="two">
+      <div class="card cr">
+        <h3>Що це</h3>
+        <p>Запис алгоритму словами, але за жорсткою структурою: один крок — один рядок, ключові слова великими літерами, вкладене — з відступом.</p>
+        <p class="mt">Мета одна: щоб <b>інша людина</b> зрозуміла алгоритм однозначно — ще до того, як обрано мову програмування.</p>
+      </div>
+      <div class="card cm">
+        <h3>Чим воно НЕ є</h3>
+        <ul>
+          <li>Не мова програмування.</li>
+          <li>Не запускається — жоден комп'ютер його не виконає.</li>
+          <li>Не має єдиного стандарту: немає «офіційно правильного» варіанта, є домовленість класу.</li>
+          <li>Не коментарі до коду: коментар пояснює готовий код, псевдокод пишеться <b>до</b> коду.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tip tr"><span class="tip-ico">🔀</span>
+      <div>Ви вже пишете у трьох мовах: Python, JavaScript, C#. Псевдокод — це те, чим ці три мови <b>домовляються між собою</b>, і те, що Cambridge просить у роботах.</div></div>
+  </div></section>
+
+  <!-- ═══ 8 · ЗАПИС 1: СЛОВАМИ ═══ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <span class="label lo">Один алгоритм, три записи · 1 з 3</span>
+    <div class="sh">
+      <div class="si">💬</div>
+      <h2>In plain words · Звичайними словами</h2>
+    </div>
+    <div class="hbox hr">Спитай в учня, скільки балів він набрав за тест. Максимум у нас 50. Порахуй, скільки це у відсотках. Якщо вийшло 60 відсотків або більше — скажи, що склав, а якщо ні — скажи, що не склав.</div>
+    <div class="card cm mt">
+      <h3>Що з цим не так</h3>
+      <ul>
+        <li>Де початок і де кінець? Текст просто починається і просто обривається.</li>
+        <li>«Порахуй, скільки це у відсотках» — <b>як саме</b>? Формули немає.</li>
+        <li>«Максимум у нас 50» — це крок алгоритму чи побічна репліка? З тексту не видно.</li>
+        <li>Кроки злиті в речення — їх навіть не порахувати.</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- ═══ 9 · ЗАПИС 2: БЛОК-СХЕМОЮ ═══ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <span class="label lo">Один алгоритм, три записи · 2 з 3</span>
+    <div class="sh">
+      <div class="si">🔷</div>
+      <h2>As a <span class="en">flowchart</span> · Блок-схемою</h2>
+    </div>
+    <div class="two">
+      <div class="fc">
+        <div class="fc-n fc-term">START</div>
+        <div class="fc-a">▼</div>
+        <div class="fc-n fc-io"><span>INPUT score</span></div>
+        <div class="fc-a">▼</div>
+        <div class="fc-n">percent = score / 50 * 100</div>
+        <div class="fc-a">▼</div>
+        <div class="fc-n fc-dec">percent &gt;= 60 ?</div>
+        <div class="fc-split">
+          <div class="fc-br"><span class="fc-lbl">YES ▼</span>
+            <div class="fc-n fc-io"><span>OUTPUT 'Passed'</span></div></div>
+          <div class="fc-br"><span class="fc-lbl">NO ▼</span>
+            <div class="fc-n fc-io"><span>OUTPUT 'Not passed'</span></div></div>
+        </div>
+        <div class="fc-merge"></div>
+        <div class="fc-a">▼</div>
+        <div class="fc-n fc-term">END</div>
+      </div>
+      <div>
+        <div class="card cr">
+          <h3>Плюс</h3>
+          <p>Структуру видно з одного погляду: де розгалуження, скільки гілок, де початок і кінець.</p>
+        </div>
+        <div class="card cm mt">
+          <h3>Мінус</h3>
+          <p>Довго малювати. А додати один крок посередині — означає перемалювати половину схеми.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 10 · ЗАПИС 3: ПСЕВДОКОДОМ ═══ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <span class="label lo">Один алгоритм, три записи · 3 з 3</span>
+    <div class="sh">
+      <div class="si">📝</div>
+      <h2>As <span class="en">pseudocode</span> · Псевдокодом</h2>
+    </div>
+    <div class="dp">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span>
+        <span class="dp-title">exam-result.txt · pseudocode</span></div>
+      <div class="dp-code"><span class="sk">BEGIN</span>
+  <span class="sk">SET</span> maximum <span class="sk">TO</span> <span class="sn">50</span>
+  <span class="sk">INPUT</span> score
+  <span class="sk">SET</span> percent <span class="sk">TO</span> score / maximum * <span class="sn">100</span>
+  <span class="sk">IF</span> percent &gt;= <span class="sn">60</span> <span class="sk">THEN</span>
+    <span class="sk">OUTPUT</span> <span class="ss">'Passed'</span>
+  <span class="sk">ELSE</span>
+    <span class="sk">OUTPUT</span> <span class="ss">'Not passed'</span>
+  <span class="sk">ENDIF</span>
+<span class="sk">END</span></div>
+    </div>
+    <div class="tip tr mt"><span class="tip-ico">👀</span>
+      <div>Нові слова сьогодні: <span class="en">BEGIN</span>, <span class="en">END</span>, <span class="en">INPUT</span>, <span class="en">OUTPUT</span>, <span class="en">SET _ TO _</span>. Конструкцію <span class="en">IF … ENDIF</span> сьогодні тільки <b>читаємо</b> — розберемо на уроці 3.</div></div>
+  </div></section>
+
+  <!-- ═══ 11 · ПОРІВНЯННЯ ═══ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <span class="label lr">Порівняння</span>
+    <div class="sh">
+      <div class="si">⚖️</div>
+      <h2>Three notations compared · Три записи поруч</h2>
+    </div>
+    <table class="tb">
+      <tr><th>Критерій</th><th>Словами</th><th>Блок-схема</th><th>Псевдокод</th></tr>
+      <tr><td>Обсяг</td><td>4 речення</td><td>8 фігур і 8 стрілок</td><td>10 рядків</td></tr>
+      <tr><td>Час на запис</td><td>1 хвилина</td><td>8 хвилин</td><td>2 хвилини</td></tr>
+      <tr><td>Однозначність</td><td>низька</td><td>висока</td><td>висока</td></tr>
+      <tr><td>Змінити один крок</td><td>легко, але ламається сенс</td><td>перемальовувати</td><td>правка одного рядка</td></tr>
+      <tr><td>Початок і кінець</td><td>не позначені</td><td>позначені</td><td>позначені</td></tr>
+    </table>
+    <div class="hbox hr">Словами — коли пояснюєш людині усно. Схемою — коли треба <b>показати структуру</b>. Псевдокодом — коли треба точно, швидко і коли далі буде код.</div>
+  </div></section>
+
+  <!-- ═══ 12 · ЧОТИРИ ВИМОГИ ═══ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <span class="label lr">Ціль 8CT.03 · головний слайд уроку</span>
+    <div class="sh">
+      <div class="si">✅</div>
+      <h2>Four requirements · Чотири вимоги</h2>
+    </div>
+    <div class="reqs">
+      <div class="req"><div class="req-k">short</div>
+        <div class="req-t">коротко: без зайвих слів, один крок — один рядок. Порушення: «Спочатку, будь ласка, обережно спитай в учня його бали».</div></div>
+      <div class="req"><div class="req-k">clear</div>
+        <div class="req-t">зрозуміло: слова, які всі читають однаково. Порушення: <span class="en">do the check</span> — яку саме перевірку?</div></div>
+      <div class="req"><div class="req-k">precise</div>
+        <div class="req-t">точно: жодного кроку, який можна виконати двома різними способами. Порушення: <span class="en">calculate the result</span> — за якою формулою?</div></div>
+      <div class="req"><div class="req-k">start and end<br>clearly shown</div>
+        <div class="req-t">початок і кінець позначені явно: <span class="en">BEGIN</span> … <span class="en">END</span>. Порушення: запис, що починається одразу з <span class="en">INPUT</span> і просто обривається.</div></div>
+    </div>
+    <div class="tip tr"><span class="tip-ico">📌</span>
+      <div>Це <b>чек-лист усього року</b>: за цими чотирма словами прийматимуться всі роботи з алгоритмів. Випиши їх у зошит англійською просто зараз.</div></div>
+  </div></section>
+
+  <!-- ═══ 13 · НАШ СТИЛЬ ЗАПИСУ ═══ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <span class="label lr">Домовленість класу</span>
+    <div class="sh">
+      <div class="si">🖊️</div>
+      <h2>Our house style · Наш стиль запису</h2>
+    </div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span>
+          <span class="dp-title">house-style.txt</span></div>
+        <div class="dp-code"><span class="sk">BEGIN</span>
+  <span class="sk">INPUT</span> name
+  <span class="sk">SET</span> greeting <span class="sk">TO</span> <span class="ss">'Hello, '</span>
+  <span class="sk">OUTPUT</span> greeting
+  <span class="sk">OUTPUT</span> name
+<span class="sk">END</span></div>
+      </div>
+      <table class="tb">
+        <tr><th>Конструкція</th><th>Що означає</th></tr>
+        <tr><td>BEGIN … END</td><td>початок і кінець, обов'язкові</td></tr>
+        <tr><td>INPUT _</td><td>узяти дані ззовні</td></tr>
+        <tr><td>OUTPUT _</td><td>показати результат</td></tr>
+        <tr><td>SET _ TO _</td><td>надати значення</td></tr>
+      </table>
+    </div>
+    <div class="tip tr"><span class="tip-ico">🧱</span>
+      <div>Єдиного стандарту немає — але <b>ми весь рік пишемо однаково</b>, і у 9 класі теж. Ключові слова великими, вкладене з відступом. Аркуш-зразок висить на стіні.</div></div>
+  </div></section>
+
+  <!-- ═══ 14 · ПРИКЛАД ЦІЛКОМ ═══ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <span class="label lr">Читаємо разом</span>
+    <div class="sh">
+      <div class="si">🎟️</div>
+      <h2>A complete algorithm · Приклад цілком</h2>
+    </div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span>
+          <span class="dp-title">tickets.txt</span></div>
+        <div class="dp-code"><span class="sk">BEGIN</span>
+  <span class="sk">SET</span> priceOfTicket <span class="sk">TO</span> <span class="sn">120</span>
+  <span class="sk">INPUT</span> numberOfTickets
+  <span class="sk">SET</span> total <span class="sk">TO</span> numberOfTickets * priceOfTicket
+  <span class="sk">OUTPUT</span> <span class="ss">'Tickets: '</span>
+  <span class="sk">OUTPUT</span> numberOfTickets
+  <span class="sk">OUTPUT</span> <span class="ss">'Total to pay: '</span>
+  <span class="sk">OUTPUT</span> total
+<span class="sk">END</span></div>
+      </div>
+      <div class="qs">
+        <div class="q"><b>1.</b> Скільки заплатить той, хто взяв 3 квитки? Пройди рядок за рядком.</div>
+        <div class="q"><b>2.</b> Який рядок доведеться змінити, якщо ціна стане 150?</div>
+        <div class="q"><b>3.</b> Чи можна тут щось видалити так, щоб алгоритм лишився зрозумілим?</div>
+      </div>
+    </div>
+    <div class="tip tr"><span class="tip-ico">🔗</span>
+      <div>Питання 2 — це вже місток до уроку 4: <span class="en">constant</span>, значення, яке живе в одному місці.</div></div>
+  </div></section>
+<section class="slide" id="s14"><div class="slide-inner">
+    <span class="label lr">Edit · крок 3 / 5</span>
+    <div class="sh">
+      <div class="si">✏️</div>
+      <h2>Change one line · Зміни один рядок</h2>
+    </div>
+    <div class="hbox hr"><b>Спершу передбач уголос, потім перевір.</b> Той самий алгоритм
+      про квитки — міняємо в ньому рівно одну річ.</div>
+    <div class="two mt">
+      <div class="card cr reveal">
+        <h3>1 · Ціна стає 150</h3>
+        <p><code class="ic">SET priceOfTicket TO 150</code></p>
+        <p>Що виведе алгоритм для <b>3 квитків</b>?</p>
+        <p class="rv-hint">клікніть, щоб перевірити</p>
+        <div class="rv-body"><p><b>450.</b> Змінився один рядок — змінився весь результат.
+          Це і є причина, чому таке число тримають в одному місці.</p></div>
+      </div>
+      <div class="card cr reveal">
+        <h3>2 · Замість <code class="ic">*</code> пишемо <code class="ic">+</code></h3>
+        <p><code class="ic">SET total TO numberOfTickets + priceOfTicket</code></p>
+        <p>Що виведе для <b>3 квитків</b> по 120?</p>
+        <p class="rv-hint">клікніть, щоб перевірити</p>
+        <div class="rv-body"><p><b>123.</b> Алгоритм не зламався й не поскаржився — він
+          слухняно порахував дурницю. Комп'ютер не знає, що ти мав на увазі.</p></div>
+      </div>
+    </div>
+    <div class="tip tr"><span class="tip-ico">🎯</span>
+      <div>Друга помилка страшніша за першу: програма <b>не падає</b>, вона просто дає неправильну
+        відповідь. Англійською це <span class="en">logic error</span> — на відміну від
+        <span class="en">syntax error</span>, який видно одразу.</div></div>
+  </div></section>
+
+  <!-- ═══ 15 · ПРАКТИКА 1 ═══ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <span class="label lo">Практика 1 · 6 хв · ПАПІР</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 1</span>
+        <span class="t">Rewrite it as pseudocode · Перепиши псевдокодом</span></div>
+      <div class="hbox hr">«Запитай у покупця суму замовлення. Доставка коштує 60 гривень. Але якщо замовлення на 500 гривень і більше — доставка безкоштовна. Порахуй, скільки платити разом, і скажи покупцеві.»</div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t">Переписав псевдокодом, є <span class="en">BEGIN</span> і <span class="en">END</span>.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Плюс кожен крок окремим рядком, без «і потім»; використані <span class="en">INPUT</span>, <span class="en">SET _ TO _</span>, <span class="en">OUTPUT</span>.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс перевірив запис за чотирма вимогами і підписав збоку, яку з них ледь не порушив і чому.</div></div>
+      </div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">✋</span>
+      <div>Ноутбук закритий. Cambridge викладає цю тему <span class="en">unplugged</span> навмисно: рука вчить структурі краще за клавіатуру.</div></div>
+    <div class="hbox hr"><b>Сьогодні ⭐ достатньо</b> — це перший урок року. ⭐⭐ і ⭐⭐⭐ — для тих, хто вже впорався.</div>
+  </div></section>
+
+  <!-- ═══ 16 · ПРАКТИКА 2 ═══ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <span class="label lo">Практика 2 · 5 хв · ПАПІР</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 2</span>
+        <span class="t">Find what breaks <span class="en">precise</span> · Знайди порушення</span></div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span>
+          <span class="dp-title">someone-elses.txt · чужий запис</span></div>
+        <div class="dp-code"><span class="sk">INPUT</span> the numbers
+calculate the result
+do the check
+<span class="sk">OUTPUT</span> the answer</div>
+      </div>
+      <div class="lvl mt">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t">Знайшов і назвав одне порушення.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Знайшов два і переписав ці рядки точно — так, щоб два різні виконавці зробили однаково.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Знайшов усі (їх більше, ніж три) і пояснив англійською за зразком <code class="ic">This step is not precise because…</code>, чому це не <span class="en">precise</span>.</div></div>
+      </div>
+    </div>
+    <div class="hbox hr"><b>Сьогодні ⭐ достатньо</b> — це перший урок року. ⭐⭐ і ⭐⭐⭐ — для тих, хто вже впорався.</div>
+  </div></section>
+
+  <!-- ═══ 17 · ПРАКТИКА 3 ═══ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <span class="label lo">Практика 3 · 4 хв · ПАПІР, ПОТІМ НОУТБУК</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 3</span>
+        <span class="t">The largest of three · Найбільше з трьох</span></div>
+      <div class="hbox hr">Напиши свій алгоритм. <b>Спершу на папері</b>, потім набери в текстовому редакторі — простому, без підсвітки. <b>Сьогодні ⭐ достатньо</b> — це перший урок.</div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t"><b>Найбільше з двох</b> чисел. Є <span class="en">BEGIN</span>, <span class="en">INPUT</span>, <span class="en">OUTPUT</span>, <span class="en">END</span> і одна умова.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Найбільше <b>з трьох</b> чисел.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс алгоритм не ламається, коли два числа однакові.</div></div>
+      </div>
+    </div>
+    <div class="tip tr mt"><span class="tip-ico">🤔</span>
+      <div>Редактор нічого не підсвічує і кнопки «запустити» немає. Це не поломка — це і є відповідь на питання, для кого написаний псевдокод. <b>Питання класу вголос:</b> <span class="en">Why does the editor not highlight pseudocode?</span></div></div>
+  </div></section>
+
+  <!-- ═══ 18 · ОБМІН РОБОТАМИ ═══ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <span class="label lr">Прийом Cambridge · 2 хв</span>
+    <div class="sh">
+      <div class="si">🔁</div>
+      <h2>Be the processor · Побудь процесором</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div>
+        <div class="step-t">Обміняйтеся аркушами з сусідом.</div></div>
+      <div class="step"><div class="step-n">2</div>
+        <div class="step-t">Виконай чужий алгоритм <b>буквально</b>: роби рівно те, що написано. Не домислюй пропущене, не здогадуйся про «очевидне».</div></div>
+      <div class="step"><div class="step-n">3</div>
+        <div class="step-t">Запиши, що вийшло на виході, і поверни аркуш власнику.</div></div>
+      <div class="step"><div class="step-n">4</div>
+        <div class="step-t">Вийшло не те, що задумав автор? <b>Винен не виконавець — винен запис.</b></div></div>
+    </div>
+    <div class="tip tr"><span class="tip-ico">⚡</span>
+      <div>Це найшвидший спосіб зрозуміти, навіщо потрібні <span class="en">precise</span> і <span class="en">clearly shown start and end</span>.</div></div>
+  </div></section>
+
+  <!-- ═══ 19 · СЛОВНИК ═══ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <span class="label lr">Unit 8.1 · Key words</span>
+    <div class="sh">
+      <div class="si">📖</div>
+      <h2>Vocabulary check · Словник юніта</h2>
+    </div>
+    <div class="vg">
+      <div class="vp"><span class="en">algorithm</span><span class="uk">алгоритм — послідовність кроків для розв'язання задачі</span></div>
+      <div class="vp"><span class="en">flowchart</span><span class="uk">блок-схема — алгоритм фігурами і стрілками</span></div>
+      <div class="vp"><span class="en">pseudocode</span><span class="uk">псевдокод — алгоритм структурованим текстом</span></div>
+      <div class="vp"><span class="en">construct</span><span class="uk">конструкція — будівельний блок алгоритму</span></div>
+      <div class="vp"><span class="en">conditional statement</span><span class="uk">умовний оператор — розгалуження</span></div>
+      <div class="vp"><span class="en">searching algorithm</span><span class="uk">алгоритм пошуку</span></div>
+      <div class="vp"><span class="en">linear search</span><span class="uk">лінійний пошук — по черзі від початку</span></div>
+      <div class="vp"><span class="en">decomposition</span><span class="uk">декомпозиція — поділ задачі на підзадачі</span></div>
+      <div class="vp"><span class="en">constant</span><span class="uk">константа — значення, що не змінюється</span></div>
+    </div>
+    <div class="tip tr mt"><span class="tip-ico">🗂️</span>
+      <div>Перші три — знати вже сьогодні. Повний <span class="en">vocabulary check</span> на десять термінів буде на уроці 3, оцінка йде в поточну.</div></div>
+  </div></section>
+
+  <!-- ═══ 20 · I CAN ═══ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <span class="label lr">Self-evaluation</span>
+    <div class="sh">
+      <div class="si">🏁</div>
+      <h2>I can… · Я вмію…</h2>
+    </div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div><div>I can explain what <span class="en">pseudocode</span> is and what it is not.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can list the four requirements: <span class="en">short, clear, precise, start and end clearly shown</span>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can read an algorithm written in pseudocode and say what it does.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can write a simple algorithm using <span class="en">BEGIN</span>, <span class="en">END</span>, <span class="en">INPUT</span>, <span class="en">OUTPUT</span> and <span class="en">SET _ TO _</span>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can explain why my classmate could not follow my algorithm.</div></div>
+    </div>
+    <div class="hbox hr">Наступний урок — <b>Follow it, then test it · Пройди і перевір</b>: беремо чужий псевдокод, проходимо його з конкретними числами і перевіряємо, чи він справді робить те, що обіцяє назва.</div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <span id="ctr">1 / 1</span>
+  <div id="dots"></div>
+  <button class="nbtn" onclick="next()">Вперед →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
