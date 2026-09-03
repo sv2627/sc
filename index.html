@@ -6,14 +6,32 @@
 <title>Навчальні матеріали · 2026/27</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!--
+  ────────────────────────────────────────────────────────────────
+  Головна сторінка матеріалів 2026/27.
+
+  Тижнева сітка Пн–Пт: одразу видно, коли який курс, і звідти —
+  прямий перехід у курс. Сторінка ПОВНІСТЮ СТАТИЧНА: жодного JS,
+  жодної генерації, нічого, що може застаріти саме по собі.
+
+  Дні тижня взято не зі стелі — вирахувано з дат уроків на сторінках
+  курсів (`*/*/index.html`):
+      вівторок — 5 курсів STEAM
+      середа   — 4 курси A+ (7, 8, 10 англ., 11)
+      четвер   — 3 курси A+ (5 англ., 9 англ., Flutter 10)
+  Понеділок і пʼятниця: серед цих матеріалів курсів немає.
+
+  Зʼявився новий курс → додати картку в потрібну колонку руками.
+  Це 4 рядки HTML і буває раз на рік.
+  ────────────────────────────────────────────────────────────────
+-->
 <style>
 :root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#f6eef0;--border:#e7d9dd;
 --brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
---pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;--green:#227354;
 --ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--brand);
 --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
 --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
---f-ser:'Merriweather',Georgia,'Times New Roman',serif;
 --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
@@ -21,83 +39,160 @@ min-height:100vh;padding:34px 26px 60px;line-height:1.6}
 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
 linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);background-size:44px 44px}
-.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+.wrap{max-width:1180px;margin:0 auto;position:relative;z-index:1}
 a{color:inherit;text-decoration:none}
-.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
-flex-wrap:wrap;align-items:center;gap:9px}
-.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
-.crumb a:hover{color:var(--accent);border-color:var(--accent)}
-.crumb .sep{color:#c2aab0}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px}
 h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
 color:var(--accent);line-height:1.12;margin-bottom:10px}
-.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:760px}
-.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
-color:var(--faint);margin-bottom:9px}
-.grid{display:grid;gap:16px}
-.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.lead{font-size:19px;color:var(--dim);margin-bottom:30px;max-width:760px}
+
+/* ═══ ТИЖНЕВА СІТКА ═══ */
+.week{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:34px}
+.col{display:flex;flex-direction:column;gap:9px}
+.dh{border-bottom:3px solid var(--border);padding-bottom:8px;margin-bottom:2px}
+.dh .dn{font-family:var(--f-head);font-weight:900;font-size:1.28rem;line-height:1.15;
+letter-spacing:-.3px;display:block}
+.dh .ds{font-family:var(--f-mono);font-size:11.5px;letter-spacing:1.3px;
+text-transform:uppercase;color:var(--faint);margin-top:3px;display:block}
+.dh.aplus{border-bottom-color:var(--brand)}
+.dh.aplus .dn,.dh.aplus .ds{color:var(--brand)}
+.dh.steam{border-bottom-color:var(--green)}
+.dh.steam .dn,.dh.steam .ds{color:var(--green)}
+
+.cc{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:12px;padding:13px 14px 14px;display:flex;flex-direction:column;gap:3px;
+box-shadow:0 1px 3px rgba(89,20,41,.05);
+transition:border-color .18s,background .18s,transform .18s,box-shadow .18s}
+a.cc:hover{background:var(--surf2);transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(89,20,41,.1)}
+.cc .kl{font-family:var(--f-mono);font-size:11.5px;font-weight:700;letter-spacing:1.3px;
+text-transform:uppercase;color:var(--faint)}
+.cc .nm{font-family:var(--f-head);font-weight:800;font-size:1.06rem;line-height:1.25;
+letter-spacing:-.2px}
+.cc .sub{font-size:14.5px;color:var(--dim);line-height:1.35}
+.free{background:var(--surf2);border:1px dashed var(--border);border-radius:12px;
+padding:15px 14px;color:var(--faint);font-size:15px;line-height:1.4;text-align:center}
+
+/* ═══ КАРТКИ ШКІЛ ═══ */
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
-padding:24px 26px;display:block;box-shadow:0 1px 3px rgba(89,20,41,.05);
+padding:22px 24px;display:block;box-shadow:0 1px 3px rgba(89,20,41,.05);
 transition:border-color .18s,background .18s,transform .18s,box-shadow .18s}
 a.card:hover{border-color:var(--accent);background:var(--surf2);transform:translateY(-2px);
 box-shadow:0 4px 12px rgba(89,20,41,.09)}
-.card.off{background:var(--surf2);box-shadow:none}
-.card.off h2{color:var(--dim)!important}
-.card.off p{color:var(--dim)}
 .card .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
 color:var(--faint);display:block;margin-bottom:9px}
 .card h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin-bottom:7px;line-height:1.2}
 .card p{font-size:16.5px;color:var(--dim)}
-.card .meta{margin-top:13px;font-size:15px;color:var(--faint)}
-.badge{display:inline-block;font-family:var(--f-mono);font-size:12px;letter-spacing:1px;
-text-transform:uppercase;padding:5px 12px;border-radius:20px}
-.b-ready{background:var(--sky);color:var(--blue)}
-.b-soon{background:#efe9ea;color:var(--dim)}
-.rows{display:flex;flex-direction:column;gap:8px}
-.row{display:flex;align-items:center;gap:16px;background:var(--surface);
-border:1px solid var(--border);border-radius:12px;padding:14px 18px;min-height:56px;
-box-shadow:0 1px 3px rgba(89,20,41,.05);transition:border-color .18s,background .18s,box-shadow .18s}
-a.row:hover{border-color:var(--accent);background:var(--surf2);
-box-shadow:0 3px 10px rgba(89,20,41,.08)}
-.row.off{background:var(--surf2);box-shadow:none}
-.row.off .rt{color:var(--dim)}
-.rn{font-family:var(--f-mono);font-size:15px;color:var(--accent);min-width:38px;font-weight:700}
-.row.off .rn{color:var(--faint)}
-.rt{flex:1;font-size:17.5px}
-.rd{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);flex-shrink:0}
-.res{font-family:var(--f-mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;
-color:var(--dim);background:var(--bg);border:1px solid var(--pink);
-padding:3px 9px;border-radius:20px;flex-shrink:0}
-.per{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.8px;text-transform:uppercase;
-color:var(--faint);margin:30px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border);
-display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
-.per:first-child{margin-top:0}
-.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
-border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:26px;
-box-shadow:0 1px 3px rgba(89,20,41,.05)}
-.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
-color:var(--accent);display:block;margin-bottom:8px}
-.hero p{font-size:17px;color:var(--dim)}
-.hero ul{margin:0;padding-left:22px;font-size:17px;color:var(--dim)}
-.hero li{margin-bottom:6px}
-.hero li:last-child{margin-bottom:0}
-.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+.card .meta{margin-top:12px;font-size:15px;color:var(--faint)}
+
+.foot{margin-top:40px;padding-top:22px;border-top:1px solid var(--border);
 font-size:15px;color:var(--dim)}
 .foot code{font-family:var(--f-mono);font-size:14px;background:var(--surf2);
 border:1px solid var(--border);padding:2px 7px;border-radius:5px}
-@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}
-.card{padding:19px 20px}.rd{display:none}.hero{padding:18px 20px}}
+
+@media (max-width:1000px){
+  .week{grid-template-columns:repeat(3,1fr);gap:16px}
+  .col.empty{display:none}          /* порожні дні не займають місце на вужчих екранах */
+}
+@media (max-width:620px){
+  body{padding:24px 15px 44px}
+  h1{font-size:2rem}
+  .week{grid-template-columns:1fr;gap:18px}
+  .card{padding:19px 20px}
+}
 </style>
 </head>
 <body><div class="wrap">
-<nav class="crumb"><span>Матеріали 2026/27</span></nav>
+<nav class="crumb">Матеріали 2026/27</nav>
 <h1>Навчальні матеріали</h1>
-<p class="lead">2026/27 навчальний рік. Оберіть школу.</p>
-<div class="grid g2">
+<p class="lead">Тиждень цілком: коли який клас і що в нього. Натисни на курс — відкриється список уроків.</p>
+
+<div class="week">
+
+  <!-- ── ПОНЕДІЛОК ── -->
+  <div class="col empty">
+    <div class="dh"><span class="dn">Понеділок</span><span class="ds">вільно</span></div>
+    <div class="free">Курсів немає</div>
+  </div>
+
+  <!-- ── ВІВТОРОК · STEAM ── -->
+  <div class="col">
+    <div class="dh steam"><span class="dn">Вівторок</span><span class="ds">Республіка СТЕМ · 5 курсів</span></div>
+    <a class="cc" href="steam/6-mobile/" style="border-left-color:#227354">
+      <span class="kl">6 клас</span>
+      <span class="nm">Розробка мобільних додатків</span>
+      <span class="sub">App Inventor · застосунок на телефон</span></a>
+    <a class="cc" href="steam/6-web/" style="border-left-color:#227354">
+      <span class="kl">6 клас</span>
+      <span class="nm">Вступ до веброзробки</span>
+      <span class="sub">HTML, CSS, перше знайомство з JS</span></a>
+    <a class="cc" href="steam/7-frontend/" style="border-left-color:#227354">
+      <span class="kl">7 клас</span>
+      <span class="nm">Front-end</span>
+      <span class="sub">HTML, CSS, Flexbox і Grid, форми</span></a>
+    <a class="cc" href="steam/8-frontend/" style="border-left-color:#227354">
+      <span class="kl">8 клас</span>
+      <span class="nm">Front-end</span>
+      <span class="sub">Адаптивна верстка за зразком дизайну</span></a>
+    <a class="cc" href="steam/8-git/" style="border-left-color:#227354">
+      <span class="kl">8 клас</span>
+      <span class="nm">Git і GitHub</span>
+      <span class="sub">Історія змін, гілки, портфоліо онлайн</span></a>
+  </div>
+
+  <!-- ── СЕРЕДА · A+ ── -->
+  <div class="col">
+    <div class="dh aplus"><span class="dn">Середа</span><span class="ds">A+ · 4 курси</span></div>
+    <a class="cc" href="aplus/7-frontend/" style="border-left-color:#0253b3">
+      <span class="kl">7 клас</span>
+      <span class="nm">Front-end II</span>
+      <span class="sub">Адаптив, Grid, робота за зразком</span></a>
+    <a class="cc" href="aplus/8-it-english/" style="border-left-color:#af3b41">
+      <span class="kl">8 клас</span>
+      <span class="nm">IT-англійська</span>
+      <span class="sub">Cambridge Stage 8 · 0860</span></a>
+    <a class="cc" href="aplus/10-it-english/" style="border-left-color:#602857">
+      <span class="kl">10 клас</span>
+      <span class="nm">IT-англійська</span>
+      <span class="sub">Cambridge IGCSE 0478</span></a>
+    <a class="cc" href="aplus/11-javascript/" style="border-left-color:#591429">
+      <span class="kl">11 клас</span>
+      <span class="nm">JavaScript II</span>
+      <span class="sub">ES6, async/await, fetch, Vue, деплой</span></a>
+  </div>
+
+  <!-- ── ЧЕТВЕР · A+ ── -->
+  <div class="col">
+    <div class="dh aplus"><span class="dn">Четвер</span><span class="ds">A+ · 3 курси</span></div>
+    <a class="cc" href="aplus/5-it-english/" style="border-left-color:#af3b41">
+      <span class="kl">5 клас</span>
+      <span class="nm">IT-англійська</span>
+      <span class="sub">Cambridge Stage 5 · 0059</span></a>
+    <a class="cc" href="aplus/9-it-english/" style="border-left-color:#af3b41">
+      <span class="kl">9 клас</span>
+      <span class="nm">IT-англійська</span>
+      <span class="sub">Cambridge Stage 9 · 0860</span></a>
+    <a class="cc" href="aplus/10-flutter/" style="border-left-color:#0253b3">
+      <span class="kl">10 клас</span>
+      <span class="nm">Мобільна розробка Flutter</span>
+      <span class="sub">Dart, ООП, віджети, три екрани</span></a>
+  </div>
+
+  <!-- ── ПʼЯТНИЦЯ ── -->
+  <div class="col empty">
+    <div class="dh"><span class="dn">Пʼятниця</span><span class="ds">вільно</span></div>
+    <div class="free">Курсів немає</div>
+  </div>
+
+</div>
+
+<div class="grid">
   <a class="card" href="aplus/" style="border-left:5px solid #591429">
-    <span class="k">Пн · Ср · Чт · Пт</span>
+    <span class="k">Середа · Четвер</span>
     <h2 style="color:#591429">A+</h2>
     <p>Архітектурно-Інженерний Колегіум · 5–11 класи</p>
-    <div class="meta">Front-end · IT-англійська · JavaScript · Flutter · Мобільна розробка</div>
+    <div class="meta">Front-end · IT-англійська · JavaScript · Flutter</div>
   </a>
   <a class="card" href="steam/" style="border-left:5px solid #227354">
     <span class="k">Вівторок</span>
@@ -106,6 +201,7 @@ border:1px solid var(--border);padding:2px 7px;border-radius:5px}
     <div class="meta">Вступ до веб · Мобільні додатки · Front-end · Git</div>
   </a>
 </div>
+
 <div class="foot">Презентації відкриваються прямо в браузері.
 Керування: <code>&#8592;</code> <code>&#8594;</code> · <code>Space</code> · свайп ·
 <code>F</code> — на весь екран · <code>Ctrl+P</code> — зберегти у PDF</div>
