@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Як влаштований сайт · Front-end I · 6 клас · Урок 1</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  Курс          Front-end I (HTML + CSS)
+  Клас          6 (11–12 років) · рік 1 з 2 (продовження — Front-end II у 7 класі)
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · п'ятниця
+  Урок          1 з 36 · 04.09.2026, п'ятниця
+  Тема          Як влаштований сайт. Тег і каркас документа
+  Акцент        blue (#0253b3) — той самий, що у Front-end II 7 класу
+  План          office/plany/01-frontend-6.md, уроки 1.1 і 1.2
+  Конспект      2026-27-teacher/aplus/6-frontend/u01/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Потрібні: VS Code (або Блокнот), Chrome, папка учня
+  ────────────────────────────────────────────────────────────────
+  ♻️ ПЕРЕНЕСЕНО З STEAM. Слайди s2–s6 — це готовий матеріал уроку 1
+     курсу «Вступ до веброзробки» в Республіці:
+     `2026-27/steam/6-web/u01/prezentatsiya.html`, слайди s2, s3, s4, s6, s7.
+     Тема в обох школах та сама, тому не переписуємо — переносимо
+     й перефарбовуємо з темної теми в світлу A+.
+     Що ДОДАНО проти STEAM (там урок 1 був без ноутбуків):
+       • 5 практик за машинами (s8, s10, s14, s16, s19)
+       • каркас документа й `charset` — це урок 1.2 плану (s11–s13)
+       • вкладеність тегів і майстерня помилок (s17–s19)
+       • DevTools, словник, посилання (s20, s22, s25)
+     Що НЕ переносимо: слайд «Аркуш для мене» (діагностика STEAM) —
+     у A+ вона проходила на уроці 1 у вересні за іншим форматом.
+  ────────────────────────────────────────────────────────────────
+  ОБСЯГ — НА ДВА УРОКИ. 28 слайдів, 5 практик.
+      Урок 1 (04.09): s0–s13  — сайт, тег, робоче місце, каркас, charset
+      Урок 2 (11.09): s14–s27 — заголовки й абзаци, вкладеність, майстерня
+                                помилок, DevTools, словник
+      Межа збігається з хронометражем у конспекті.
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКИ (усі різні)
+      s8   Практика 1 · папка й перший файл index.html          6 хв
+      s10  Практика 2 · перший тег: заголовок у браузері         6 хв
+      s14  Практика 3 · каркас документа з нуля                  8 хв
+      s16  Практика 4 · сторінка «Мій улюблений фільм»           8 хв
+      s19  Практика 5 · майстерня помилок: знайди й виправ       7 хв
+  ────────────────────────────────────────────────────────────────
+  ⚠ БЕЗ ПРИПУЩЕНЬ
+      • Досвіду верстки немає ні в кого — це рік 1 курсу.
+      • Не спираємось на Live Server, Git і CodePen: усе відкривається
+        подвійним кліком по файлу. Live Server — з уроку 2.
+      • Ноутбук може бути новий і порожній.
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: Front-end усіх класів іде на blue. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:44%}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.two.wide-l{grid-template-columns:1.4fr 1fr}
+.two.wide-r{grid-template-columns:1fr 1.4fr}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+.dp-out h1{font-size:1.9rem;color:var(--ink);font-family:var(--f-head)}
+.dp-out h2{font-size:1.4rem;color:var(--ink)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* тег */
+.ss{color:#0253b3}                  /* значення атрибута */
+.sn{color:#a34500}                  /* число */
+.st{color:#0f6b52}                  /* атрибут */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+.bad{color:#a01818;font-weight:700} /* помилка в коді */
+
+/* дерево файлів · перенесено з steam/6-web/u01 */
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:700}
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--accent);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:17px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:6px 14px;flex-shrink:0}
+.prac-lead{font-size:18px;line-height:1.65;color:var(--dim);margin-bottom:13px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:34px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--ink)}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+/* англійський термін просто в тексті */
+.en{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.uk{color:var(--dim)}
+.vg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:17px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16.5px;line-height:1.45}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mw{background:var(--surface);border:2px solid var(--pink);border-radius:14px;padding:15px 19px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.5rem;color:var(--accent);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:17px;color:var(--dim);line-height:1.5}
+
+/* «я вмію» */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--accent);border-radius:6px;flex-shrink:0}
+
+/* посилання «подивитись удома» */
+.lnks{display:flex;flex-direction:column;gap:10px}
+.lnk{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+     border:1.5px solid var(--border);border-radius:11px;padding:12px 16px}
+.lnk .li-ico{font-size:1.3rem;flex-shrink:0;line-height:1.3}
+.lnk .li-t{font-size:17.5px;line-height:1.5;color:var(--ink);font-weight:700}
+.lnk .li-u{font-family:var(--f-mono);font-size:15px;color:var(--blue);
+           line-height:1.45;word-break:break-all;margin-top:3px}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .th{padding:9px 14px} .th-t{font-size:16.5px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .mw{padding:12px 15px} .mw .w{font-size:1.3rem} .mw .t{font-size:15.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:16px} .vp .uk{font-size:15.5px}
+  .vg{gap:9px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .dp-out{padding:14px 17px}
+  .tree{font-size:15.5px;line-height:1.7;padding:14px 17px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .lnk{padding:10px 13px} .lnk .li-t{font-size:16px} .lnk .li-u{font-size:14px}
+  .title-h1{font-size:2.9rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" aria-label="Назад"></button>
+  <button class="tapzone tr" aria-label="Вперед"></button>
+
+  <!-- ═══ 1 · ТИТУЛ ═══ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <div class="title-h1">Як влаштований сайт</div>
+      <div class="title-sub">Тег і каркас документа<br>
+        Front-end I · 6 клас · Урок 1 з 36 · 4 вересня 2026</div>
+      <div class="chips">
+        <span class="chip">HTML</span>
+        <span class="chip">Тег</span>
+        <span class="chip">index.html</span>
+        <span class="chip">Chrome</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 2 · РЕЗУЛЬТАТ РОКУ ═══ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <span class="label lb">Куди ми йдемо</span>
+    <div class="sh"><div class="si">🎯</div><h2>Що буде наприкінці року</h2></div>
+    <div class="hbox">Твій власний сайт із <b>трьох сторінок</b> на тему, яку обереш сам.
+      Зі спільним меню, картинками й оформленням — і його можна буде показати
+      з будь-якого комп'ютера.</div>
+    <div class="two mt">
+      <div class="card">
+        <h3>Зробиш сам</h3>
+        <ul>
+          <li>Три сторінки, пов'язані меню</li>
+          <li>Свої кольори й шрифти</li>
+          <li>Картки, картинки, підвал</li>
+        </ul>
+      </div>
+      <div class="card cm">
+        <h3>А сьогодні</h3>
+        <ul>
+          <li>Дізнаємось, з чого зроблені всі сайти світу</li>
+          <li>Напишеш перший тег</li>
+          <li>Твоя сторінка відкриється в браузері</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 3 · САЙТ, СТОРІНКА, БРАУЗЕР · перенесено з steam/6-web s2 ═══ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <span class="label lb">Розберемось у словах</span>
+    <div class="sh"><div class="si">🌍</div><h2>Сайт, сторінка, браузер</h2></div>
+    <div class="three">
+      <div class="card">
+        <h3>Браузер</h3>
+        <p>Програма, у якій ти дивишся інтернет: Chrome, Edge, Firefox.
+          Він <b>читає</b> сторінку і показує її тобі.</p>
+      </div>
+      <div class="card cm">
+        <h3>Вебсторінка</h3>
+        <p>Один файл. Те, що ти зараз бачиш на екрані — це одна сторінка.</p>
+      </div>
+      <div class="card cr">
+        <h3>Сайт</h3>
+        <p>Кілька сторінок, пов'язаних посиланнями: головна, «Про нас», «Контакти».</p>
+      </div>
+    </div>
+    <div class="hbox ho mt">Книжка — це <b>сайт</b>. Одна сторінка книжки —
+      <b>вебсторінка</b>. А ти, коли читаєш, — <b>браузер</b>.</div>
+  </div></section>
+
+  <!-- ═══ 4 · ФАЙЛИ В ПАПЦІ · перенесено з steam/6-web s3 ═══ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <span class="label lb">Головна думка уроку</span>
+    <div class="sh"><div class="si">📁</div><h2>Сайт — це просто файли в папці</h2></div>
+    <p>Сайт не живе «в інтернеті» якимось чарівним чином. Це папка з файлами —
+      так само, як папка з твоїми фотографіями.</p>
+    <div class="two mt">
+      <div class="tree"><b>miy-sayt/</b>
+  ├── index.html
+  ├── pro-mene.html
+  ├── style.css
+  └── <b>kartynky/</b>
+        ├── kotyk.jpg
+        └── logo.png</div>
+      <div>
+        <div class="hbox">Файли <span class="ic">.html</span> — це <b>сторінки</b>.</div>
+        <div class="hbox hm">Файл <span class="ic">.css</span> — це <b>оформлення</b>:
+          кольори, розміри, шрифти.</div>
+        <div class="hbox hr">Папка з картинками — просто картинки.</div>
+      </div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">💡</span>
+      <div><span class="ic">index.html</span> — особлива назва. Це <b>головна сторінка</b>:
+        браузер відкриває саме її, коли заходиш на сайт.</div></div>
+  </div></section>
+
+  <!-- ═══ 5 · КОД СПРАВЖНЬОГО САЙТУ · перенесено з steam/6-web s4 ═══ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <span class="label lb">Дивимось разом</span>
+    <div class="sh"><div class="si">🔍</div><h2>Заглянемо всередину справжнього сайту</h2></div>
+    <p>Код будь-якого сайту в інтернеті можна побачити. Він не захований.</p>
+    <div class="two mt">
+      <div class="card">
+        <h3>Як подивитись код</h3>
+        <p style="font-size:20px;color:var(--brand);font-weight:700">
+          <span class="ic">Ctrl</span> + <span class="ic">U</span></p>
+        <p style="margin-top:8px">Відкриється сторінка з кодом. Спочатку виглядає страшно —
+          це нормально.</p>
+      </div>
+      <div class="card cp reveal">
+        <h3>Що ви там побачите?</h3>
+        <p class="rv-hint">Спробуйте вгадати. Клікніть, щоб перевірити.</p>
+        <div class="rv-body">
+          <p>Багато <b>слів у кутових дужках</b>:<br>
+            <span class="ic">&lt;div&gt;</span> <span class="ic">&lt;p&gt;</span>
+            <span class="ic">&lt;img&gt;</span> <span class="ic">&lt;a&gt;</span></p>
+          <p style="margin-top:9px">Це <b>теги</b>. Саме їх ми вчимося писати.</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">😌</span>
+      <div>Той код писали не генії. Просто люди, які знали теги. До кінця року ти
+        читатимеш такий код і розумітимеш більшу частину.</div></div>
+  </div></section>
+
+  <!-- ═══ 6 · ТЕГ · перенесено з steam/6-web s6 ═══ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <span class="label lo">Нове поняття</span>
+    <div class="sh"><div class="si">🏷️</div><h2>Тег</h2></div>
+    <p><b>Тег</b> — це команда браузеру. Слово в кутових дужках, яке каже,
+      чим є шматок тексту: заголовком, абзацом, посиланням.</p>
+    <div class="dp mt">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+      <div class="dp-code"><span class="sk">&lt;h1&gt;</span>Привіт, це моя сторінка<span class="sk">&lt;/h1&gt;</span></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox"><span class="ic">&lt;h1&gt;</span> — <b>відкривальний</b> тег.
+        «Тут починається заголовок»</div>
+      <div class="hbox hp"><span class="ic">&lt;/h1&gt;</span> — <b>закривальний</b> тег,
+        зі скісною рискою. «Тут заголовок закінчився»</div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🔑</span>
+      <div>Більшість тегів <b>парні</b>: що відкрив — те закрий.
+        Це правило №1 на весь рік.</div></div>
+  </div></section>
+
+  <!-- ═══ 7 · КОД → БРАУЗЕР · перенесено з steam/6-web s7 ═══ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <span class="label lb">Дивимось разом</span>
+    <div class="sh"><div class="si">👀</div><h2>Ліворуч пишуть — праворуч бачать</h2></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">index.html — код</span></div>
+        <div class="dp-code"><span class="sk">&lt;h1&gt;</span>Ласкаво просимо<span class="sk">&lt;/h1&gt;</span>
+<span class="sk">&lt;p&gt;</span>Мене звати Олена.<span class="sk">&lt;/p&gt;</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">браузер — результат</span></div>
+        <div class="dp-out">
+          <h1 style="margin-bottom:10px">Ласкаво просимо</h1>
+          <p style="font-size:17px">Мене звати Олена.</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🎉</span>
+      <div><span class="ic">h1</span> — великий заголовок, <span class="ic">p</span> — звичайний
+        абзац. Ніхто не налаштовував ані розмір, ані жирність — браузер зробив це сам,
+        бо <b>впізнав теги</b>.</div></div>
+  </div></section>
+
+  <!-- ═══ 8 · РОБОЧЕ МІСЦЕ ═══ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <span class="label lo">Готуємо ноутбук</span>
+    <div class="sh"><div class="si">🧰</div><h2>Робоче місце на весь рік</h2></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div>
+        <div class="step-t">На <b>робочому столі</b> — папка зі своїм прізвищем латиницею:
+          <span class="ic">kovalenko</span></div></div>
+      <div class="step"><div class="step-n">2</div>
+        <div class="step-t">Усередині — папка <span class="ic">miy-sayt</span>.
+          Це матеріал усього року, її не видаляємо</div></div>
+      <div class="step"><div class="step-n">3</div>
+        <div class="step-t">Увімкнути <b>показ розширень файлів</b>: у Проводнику
+          <span class="ic">Вид</span> → <span class="ic">Показати</span> →
+          <span class="ic">Розширення імен файлів</span></div></div>
+      <div class="step"><div class="step-n">4</div>
+        <div class="step-t">Відкрити папку у <b>VS Code</b>:
+          <span class="ic">File</span> → <span class="ic">Open Folder…</span></div></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">⚠️</span>
+      <div>Крок 3 — не формальність. Без нього файл
+        <span class="ic">index.html.txt</span> виглядає як
+        <span class="ic">index.html</span>, і сторінка не відкривається.
+        Це помилка №1 усіх, хто починає.</div></div>
+  </div></section>
+
+  <!-- ═══ 9 · ПРАКТИКА 1 ═══ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <span class="label lo">Практика 1</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 1</span>
+        <span class="t">Папка й перший файл</span><span class="ptime">6 хв</span></div>
+      <div class="prac-lead">Зроби собі робоче місце й створи порожній файл
+        <span class="ic">index.html</span>.</div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t">На робочому столі є папка з прізвищем, у ній
+            <span class="ic">miy-sayt</span>, у ній файл <span class="ic">index.html</span>.
+            Розширення видно.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Плюс папка відкрита у VS Code, і файл видно в списку ліворуч.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс усередині <span class="ic">miy-sayt</span> створена папка
+            <span class="ic">kartynky</span> — вона знадобиться на уроці 5.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 10 · ПЕРШИЙ ТЕГ У ФАЙЛІ ═══ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <span class="label lo">Робимо разом</span>
+    <div class="sh"><div class="si">⌨️</div><h2>Один рядок — і сторінка існує</h2></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+        <div class="dp-code"><span class="sk">&lt;h1&gt;</span>Привіт, я Оля<span class="sk">&lt;/h1&gt;</span></div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Далі</h3>
+          <ul>
+            <li>Зберегти: <span class="ic">Ctrl</span> + <span class="ic">S</span></li>
+            <li>Знайти файл у папці</li>
+            <li><b>Подвійний клік</b> — відкриється в браузері</li>
+          </ul>
+        </div>
+        <div class="tip mt"><span class="tip-ico">🌐</span>
+          <div>Інтернет для цього не потрібен. Сторінка лежить на твоєму ноутбуці
+            й відкривається з нього.</div></div>
+      </div>
+    </div>
+    <div class="hbox mt">Ось і все: <b>текст у дужках</b> перетворився на заголовок.
+      Уся веброзробка — це те саме, тільки тегів більше.</div>
+  </div></section>
+
+  <!-- ═══ 11 · ПРАКТИКА 2 ═══ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <span class="label lo">Практика 2</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 2</span>
+        <span class="t">Перший тег у браузері</span><span class="ptime">6 хв</span></div>
+      <div class="prac-lead">Напиши заголовок зі своїм іменем і відкрий сторінку.</div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t">У браузері видно великий заголовок «Привіт, я …» зі своїм іменем.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Плюс додано абзац <span class="ic">&lt;p&gt;</span> — одне речення
+            про себе.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс напиши <b>три</b> абзаци й перевір: чи справді браузер
+            ставить між ними відступ, хоч ти його не задавав.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 12 · КАРКАС ═══ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <span class="label lb">Як має бути насправді</span>
+    <div class="sh"><div class="si">🏗️</div><h2>Каркас документа</h2></div>
+    <p>Одного <span class="ic">h1</span> достатньо, щоб побачити результат. Але справжня
+      сторінка починається з каркаса — п'яти тегів, які є <b>на кожному сайті світу</b>.</p>
+    <div class="dp mt">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+      <div class="dp-code"><span class="cm">&lt;!DOCTYPE html&gt;</span>
+<span class="sk">&lt;html</span> <span class="st">lang</span>=<span class="ss">"uk"</span><span class="sk">&gt;</span>
+<span class="sk">&lt;head&gt;</span>
+  <span class="sk">&lt;meta</span> <span class="st">charset</span>=<span class="ss">"utf-8"</span><span class="sk">&gt;</span>
+  <span class="sk">&lt;title&gt;</span>Моя сторінка<span class="sk">&lt;/title&gt;</span>
+<span class="sk">&lt;/head&gt;</span>
+<span class="sk">&lt;body&gt;</span>
+  <span class="sk">&lt;h1&gt;</span>Привіт, я Оля<span class="sk">&lt;/h1&gt;</span>
+<span class="sk">&lt;/body&gt;</span>
+<span class="sk">&lt;/html&gt;</span></div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 13 · ЩО РОБИТЬ КОЖЕН ТЕГ ═══ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <span class="label lb">Розбір каркаса</span>
+    <div class="sh"><div class="si">🧱</div><h2>Що робить кожен рядок</h2></div>
+    <table class="tb">
+      <tr><th style="width:230px">Рядок</th><th>Для чого</th></tr>
+      <tr><td class="mono">&lt;!DOCTYPE html&gt;</td>
+          <td>«це сучасний HTML». Пишеться першим рядком, без пари</td></tr>
+      <tr><td class="mono">&lt;html lang="uk"&gt;</td>
+          <td>уся сторінка всередині. <span class="ic">lang="uk"</span> — мова українська</td></tr>
+      <tr><td class="mono">&lt;head&gt;</td>
+          <td><b>службова частина</b>: те, чого на сторінці не видно</td></tr>
+      <tr><td class="mono">&lt;title&gt;</td>
+          <td>назва <b>вкладки</b> браузера — не заголовок на сторінці</td></tr>
+      <tr><td class="mono">&lt;body&gt;</td>
+          <td><b>тіло</b>: усе, що людина бачить на екрані</td></tr>
+    </table>
+    <div class="tip mt"><span class="tip-ico">🎯</span>
+      <div>Головне, що варто запам'ятати сьогодні: <b><span class="ic">head</span> — не видно,
+        <span class="ic">body</span> — видно.</b> Половина помилок року — це текст,
+        випадково написаний у <span class="ic">head</span>.</div></div>
+  </div></section>
+
+  <!-- ═══ 14 · CHARSET ═══ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <span class="label lr">Показую поломку</span>
+    <div class="sh"><div class="si">💥</div><h2>Що буде без charset</h2></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">рядок прибрали</span></div>
+        <div class="dp-code"><span class="cm">&lt;!-- &lt;meta charset="utf-8"&gt; --&gt;</span>
+<span class="sk">&lt;h1&gt;</span>Привіт, я Оля<span class="sk">&lt;/h1&gt;</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">браузер</span></div>
+        <div class="dp-out">
+          <h1 style="margin-bottom:6px">ÐÑÐ¸Ð²ÑÑ, Ñ ÐÐ»Ñ</h1>
+        </div>
+      </div>
+    </div>
+    <div class="hbox hr mt">Букви лишились ті самі — браузер просто не знав, <b>як їх читати</b>.
+      <span class="ic">charset="utf-8"</span> — це «читай як українську».</div>
+    <div class="tip to mt"><span class="tip-ico">🔤</span>
+      <div>Побачив на сайті «кракозябри» замість українського тексту — тепер знаєш причину.
+        Це не зламаний комп'ютер і не вірус.</div></div>
+  </div></section>
+
+  <!-- ═══ 15 · ПРАКТИКА 3 ═══ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <span class="label lo">Практика 3</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 3</span>
+        <span class="t">Каркас з нуля</span><span class="ptime">8 хв</span></div>
+      <div class="prac-lead">Перепиши свій <span class="ic">index.html</span> як належить —
+        із повним каркасом. <b>Дивись на слайд, не копіюй з інтернету.</b></div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t">Усі п'ять частин каркаса на місці, українські літери видно
+            правильно, заголовок у <span class="ic">body</span>.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Плюс у <span class="ic">title</span> — своя назва, і ти показуєш
+            на <b>вкладці</b> браузера, де вона з'явилась.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс прибери <span class="ic">charset</span>, онови сторінку,
+            подивись на «кракозябри» — і поверни назад.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 16 · ЗАГОЛОВКИ Й АБЗАЦИ ═══ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <span class="label lb">Наповнюємо сторінку</span>
+    <div class="sh"><div class="si">📝</div><h2>Заголовки й абзаци</h2></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">у body</span></div>
+        <div class="dp-code"><span class="sk">&lt;h1&gt;</span>Мій улюблений фільм<span class="sk">&lt;/h1&gt;</span>
+<span class="sk">&lt;h2&gt;</span>Про що він<span class="sk">&lt;/h2&gt;</span>
+<span class="sk">&lt;p&gt;</span>Історія про хлопця, який…<span class="sk">&lt;/p&gt;</span>
+<span class="sk">&lt;h2&gt;</span>Чому мені сподобався<span class="sk">&lt;/h2&gt;</span>
+<span class="sk">&lt;p&gt;</span>Бо там…<span class="sk">&lt;/p&gt;</span></div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Шість рівнів заголовка</h3>
+          <p><span class="ic">h1</span> найголовніший, <span class="ic">h6</span> найдрібніший.
+            Реально користуються трьома: <span class="ic">h1</span>,
+            <span class="ic">h2</span>, <span class="ic">h3</span>.</p>
+        </div>
+        <div class="tip to mt"><span class="tip-ico">1️⃣</span>
+          <div><span class="ic">h1</span> на сторінці <b>один</b>. Це її назва.
+            Розділів може бути багато — вони <span class="ic">h2</span>.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 17 · ПРАКТИКА 4 ═══ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <span class="label lo">Практика 4</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 4</span>
+        <span class="t">Сторінка «Мій улюблений фільм»</span><span class="ptime">8 хв</span></div>
+      <div class="prac-lead">Наповни свою сторінку по-справжньому. Тема — улюблений фільм,
+        гра або книжка.</div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t">Один <span class="ic">h1</span>, два <span class="ic">h2</span>
+            і два абзаци <span class="ic">p</span>.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Плюс третій розділ і <span class="ic">h3</span> усередині одного
+            з розділів — покажи, що вийшло дрібнішим.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс постав <span class="ic">h1</span> у
+            <span class="ic">head</span> замість <span class="ic">body</span>.
+            Що показав браузер? Поверни назад і скажи чому.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 18 · ВКЛАДЕНІСТЬ ═══ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <span class="label lb">Правило, яке працює весь рік</span>
+    <div class="sh"><div class="si">🪆</div><h2>Хто відкрився останнім — закривається першим</h2></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">правильно</span></div>
+        <div class="dp-code"><span class="sk">&lt;p&gt;</span>Це <span class="sk">&lt;b&gt;</span>дуже<span class="sk">&lt;/b&gt;</span> цікаво<span class="sk">&lt;/p&gt;</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">неправильно</span></div>
+        <div class="dp-code"><span class="sk">&lt;p&gt;</span>Це <span class="bad">&lt;b&gt;</span>дуже<span class="bad">&lt;/p&gt;</span> цікаво<span class="bad">&lt;/b&gt;</span></div>
+      </div>
+    </div>
+    <div class="hbox mt">Теги вкладаються, як матрьошки: <b>що всередині — те й закривається
+      раніше</b>. Схрестити їх не можна.</div>
+    <div class="tip mt"><span class="tip-ico">🧷</span>
+      <div>У VS Code це видно очима: наведи курсор на тег — і його <b>пара</b>
+        підсвітиться. Немає підсвітки — немає пари.</div></div>
+  </div></section>
+
+  <!-- ═══ 19 · НЕЗАКРИТИЙ ТЕГ ═══ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <span class="label lr">Показую поломку</span>
+    <div class="sh"><div class="si">🩹</div><h2>Що буде, якщо не закрити тег</h2></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">забули &lt;/h1&gt;</span></div>
+        <div class="dp-code"><span class="sk">&lt;h1&gt;</span>Мій улюблений фільм
+<span class="sk">&lt;p&gt;</span>Історія про хлопця<span class="sk">&lt;/p&gt;</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">браузер</span></div>
+        <div class="dp-out">
+          <h1 style="margin-bottom:8px">Мій улюблений фільм</h1>
+          <h1 style="margin-bottom:0">Історія про хлопця</h1>
+        </div>
+      </div>
+    </div>
+    <div class="hbox hr mt">Браузер <b>не показує помилку</b>. Він вирішує сам — і абзац
+      теж став заголовком, бо <span class="ic">h1</span> так і не закінчився.</div>
+    <div class="tip to mt"><span class="tip-ico">🔎</span>
+      <div>Це найважливіша річ уроку: у HTML <b>немає повідомлень про помилку</b>.
+        Сторінка не «падає» — вона просто виглядає не так, як ти хотів.
+        Тому шукати доводиться очима.</div></div>
+  </div></section>
+
+  <!-- ═══ 20 · ПРАКТИКА 5 ═══ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <span class="label lo">Практика 5</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 5</span>
+        <span class="t">Майстерня помилок</span><span class="ptime">7 хв</span></div>
+      <div class="prac-lead">Обміняйтеся з сусідом ноутбуками. Зіпсуй у <b>чужому</b> файлі
+        рівно одну річ — і поверни ноутбук. Знайди, що зіпсували в тебе.</div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t">Знайшов і виправив свою поломку. Сторінка знову виглядає як була.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Плюс скажи <b>вголос</b>, що саме було зламано —
+            назви тег і що з ним зробили.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс зламай так, щоб сторінка виглядала <b>майже</b> нормально
+            і поломку було важко знайти. Найкраща поломка класу — на дошку.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 21 · DEVTOOLS ═══ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <span class="label lb">Інструмент</span>
+    <div class="sh"><div class="si">🔧</div><h2>Chrome показує, що зрозумів</h2></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div>
+        <div class="step-t">Відкрити свою сторінку в <b>Chrome</b> і натиснути
+          <span class="ic">F12</span></div></div>
+      <div class="step"><div class="step-n">2</div>
+        <div class="step-t">Вкладка <span class="ic">Elements</span> — там уся сторінка
+          у вигляді тегів</div></div>
+      <div class="step"><div class="step-n">3</div>
+        <div class="step-t">Навести на рядок — на сторінці <b>підсвітиться</b> саме цей шматок</div></div>
+      <div class="step"><div class="step-n">4</div>
+        <div class="step-t">Незакритий тег видно одразу: усе, що після нього, «заїхало»
+          всередину</div></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">✍️</span>
+      <div>Тут можна навіть <b>міняти текст</b> прямо в браузері й одразу бачити результат.
+        Файл при цьому не змінюється — онови сторінку, і все повернеться.</div></div>
+  </div></section>
+
+  <!-- ═══ 22 · HTML — НЕ МОВА ПРОГРАМУВАННЯ ═══ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <span class="label lb">Чесно про назви</span>
+    <div class="sh"><div class="si">📐</div><h2>HTML — це не мова програмування</h2></div>
+    <div class="two">
+      <div class="card">
+        <h3>HTML — розмітка</h3>
+        <p>Каже, <b>чим є</b> шматок тексту: заголовок, абзац, картинка.
+          Нічого не обчислює й не вирішує.</p>
+        <p style="margin-top:8px"><span class="en">HTML</span> =
+          HyperText <b>Markup</b> Language — мова <b>розмітки</b>.</p>
+      </div>
+      <div class="card cm">
+        <h3>Програма — правила</h3>
+        <p>Рахує, порівнює, вирішує, повторює. Цього в HTML немає зовсім.</p>
+        <p style="margin-top:8px">У нас це буде <b>JavaScript</b> — уроки 27–31.</p>
+      </div>
+    </div>
+    <div class="hbox ho mt">Це не «легше» й не «несерйозно». Без розмітки не існує
+      жодного сайту в світі — просто робота в неї інша.</div>
+  </div></section>
+
+  <!-- ═══ 23 · СЛОВНИК ═══ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <span class="label lo">Слова, які будуть весь рік</span>
+    <div class="sh"><div class="si">📖</div><h2>Англійські слова, які не перекладають</h2></div>
+    <div class="vg">
+      <div class="vp"><span class="en">tag</span><span class="uk">тег</span></div>
+      <div class="vp"><span class="en">html</span><span class="uk">уся сторінка</span></div>
+      <div class="vp"><span class="en">head</span><span class="uk">службова частина</span></div>
+      <div class="vp"><span class="en">body</span><span class="uk">те, що видно</span></div>
+      <div class="vp"><span class="en">title</span><span class="uk">назва вкладки</span></div>
+      <div class="vp"><span class="en">h1 … h6</span><span class="uk">заголовки</span></div>
+      <div class="vp"><span class="en">p</span><span class="uk">абзац (paragraph)</span></div>
+      <div class="vp"><span class="en">charset</span><span class="uk">набір символів</span></div>
+      <div class="vp"><span class="en">index.html</span><span class="uk">головна сторінка</span></div>
+    </div>
+    <div class="hbox mt">Теги — це <b>скорочення англійських слів</b>.
+      <span class="ic">p</span> від <span class="en">paragraph</span>,
+      <span class="ic">h</span> від <span class="en">heading</span>.
+      Знаєш слово — не треба зазубрювати тег.</div>
+  </div></section>
+
+  <!-- ═══ 24 · ТИПОВІ ПОМИЛКИ ═══ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <span class="label lr">Що ламається найчастіше</span>
+    <div class="sh"><div class="si">🧯</div><h2>П'ять пасток першого уроку</h2></div>
+    <table class="tb">
+      <tr><th style="width:44%">Симптом</th><th>Причина</th></tr>
+      <tr><td>Файл відкривається в Блокноті, а не в браузері</td>
+          <td>він насправді <span class="ic">index.html.txt</span> — не увімкнено показ розширень</td></tr>
+      <tr><td>Замість українських літер «кракозябри»</td>
+          <td>немає <span class="ic">&lt;meta charset="utf-8"&gt;</span></td></tr>
+      <tr><td>Тексту на сторінці не видно взагалі</td>
+          <td>він написаний у <span class="ic">head</span>, а не в <span class="ic">body</span></td></tr>
+      <tr><td>Усе стало великим заголовком</td>
+          <td>не закритий <span class="ic">&lt;/h1&gt;</span></td></tr>
+      <tr><td>Змінив файл — у браузері старе</td>
+          <td>не збережено (<span class="ic">Ctrl+S</span>) або не оновлено
+            (<span class="ic">F5</span>)</td></tr>
+    </table>
+    <div class="tip tm mt"><span class="tip-ico">🔁</span>
+      <div>Порядок дій, який економить половину уроку:
+        <b>зберіг → оновив → подивився</b>. Кожного разу.</div></div>
+  </div></section>
+
+  <!-- ═══ 25 · ПОСИЛАННЯ ═══ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <span class="label lb">Подивитись удома</span>
+    <div class="sh"><div class="si">🔗</div><h2>Де можна писати HTML без ноутбука</h2></div>
+    <div class="lnks">
+      <div class="lnk"><span class="li-ico">✏️</span><div class="li-b">
+        <div class="li-t">CodePen — пишеш ліворуч, результат праворуч. Працює і з телефона</div>
+        <div class="li-u">codepen.io/pen</div></div></div>
+      <div class="lnk"><span class="li-ico">📚</span><div class="li-b">
+        <div class="li-t">MDN — головна довідка з HTML, українською</div>
+        <div class="li-u">developer.mozilla.org/uk/docs/Learn/HTML</div></div></div>
+      <div class="lnk"><span class="li-ico">✅</span><div class="li-b">
+        <div class="li-t">Перевірка сторінки на помилки — вставляєш код, показує, де не закрито</div>
+        <div class="li-u">validator.w3.org/nu</div></div></div>
+      <div class="lnk"><span class="li-ico">▶️</span><div class="li-b">
+        <div class="li-t">freeCodeCamp — відеокурси з HTML і CSS з нуля, англійською з субтитрами</div>
+        <div class="li-u">youtube.com/@freecodecamp</div></div></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🚫</span>
+      <div>У школі YouTube закритий — відео дивимо <b>вдома</b>. Перші три посилання
+        працюють і тут.</div></div>
+  </div></section>
+
+  <!-- ═══ 26 · ПЕРЕВІРКА РОЗУМІННЯ ═══ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <span class="label lm">Перевіримо разом</span>
+    <div class="sh"><div class="si">🙋</div><h2>Три питання</h2></div>
+    <div class="two">
+      <div class="card reveal">
+        <h3>1 · Де писати текст, який має бути видно?</h3>
+        <p class="rv-hint">Клікни, щоб перевірити.</p>
+        <div class="rv-body"><p>У <span class="ic">body</span>. У
+          <span class="ic">head</span> — тільки службове.</p></div>
+      </div>
+      <div class="card reveal cm">
+        <h3>2 · Скільком тегам потрібна пара?</h3>
+        <p class="rv-hint">Клікни, щоб перевірити.</p>
+        <div class="rv-body"><p>Майже всім. З того, що ми бачили, без пари тільки
+          <span class="ic">&lt;!DOCTYPE&gt;</span> і <span class="ic">&lt;meta&gt;</span>.</p></div>
+      </div>
+      <div class="card reveal cr" style="margin-top:0">
+        <h3>3 · Сторінка виглядає не так. Де шукати?</h3>
+        <p class="rv-hint">Клікни, щоб перевірити.</p>
+        <div class="rv-body"><p>У власному коді. Браузер не помиляється —
+          він робить рівно те, що написано.</p></div>
+      </div>
+      <div class="card reveal cp" style="margin-top:0">
+        <h3>4 · Чому <span class="ic">index.html</span>, а не <span class="ic">main.html</span>?</h3>
+        <p class="rv-hint">Клікни, щоб перевірити.</p>
+        <div class="rv-body"><p>Домовленість усього інтернету: браузер відкриває
+          <span class="ic">index.html</span> сам.</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 27 · ЩО ДАЛІ ═══ -->
+  <section class="slide" id="s26"><div class="slide-inner">
+    <span class="label lb">Далі</span>
+    <div class="sh"><div class="si">➡️</div><h2>Наступні уроки</h2></div>
+    <div class="themes">
+      <div class="th"><div class="th-n">2</div>
+        <div class="th-t">Каркас документа й оформлення тексту:
+          <span class="ic">strong</span>, <span class="ic">em</span>, коментарі</div></div>
+      <div class="th"><div class="th-n">3</div>
+        <div class="th-t">Списки: <span class="ic">ul</span>,
+          <span class="ic">ol</span>, <span class="ic">li</span></div></div>
+      <div class="th"><div class="th-n">4</div>
+        <div class="th-t">Зображення й атрибути: <span class="ic">img</span>,
+          <span class="ic">src</span>, <span class="ic">alt</span></div></div>
+      <div class="th"><div class="th-n">5</div>
+        <div class="th-t">Посилання <span class="ic">a</span> — і друга сторінка сайту</div></div>
+    </div>
+    <div class="hbox mt">Папку <span class="ic">miy-sayt</span> не видаляй.
+      Усе, що ми будемо робити далі, живе в ній — до самого захисту в червні.</div>
+  </div></section>
+
+  <!-- ═══ 28 · ПІДСУМОК ═══ -->
+  <section class="slide" id="s27"><div class="slide-inner">
+    <span class="label lm">Підсумок</span>
+    <div class="sh"><div class="si">✅</div><h2>Після цього уроку я вмію</h2></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div>
+        <div>Пояснити, чим відрізняються сайт, сторінка й браузер</div></div>
+      <div class="can-i"><div class="can-b"></div>
+        <div>Створити папку проєкту й файл <span class="ic">index.html</span></div></div>
+      <div class="can-i"><div class="can-b"></div>
+        <div>Написати парний тег і відкрити свою сторінку в браузері</div></div>
+      <div class="can-i"><div class="can-b"></div>
+        <div>Написати каркас документа з пам'яті: <span class="ic">DOCTYPE</span>,
+          <span class="ic">html</span>, <span class="ic">head</span>,
+          <span class="ic">title</span>, <span class="ic">body</span></div></div>
+      <div class="can-i"><div class="can-b"></div>
+        <div>Сказати, що робить <span class="ic">charset="utf-8"</span></div></div>
+      <div class="can-i"><div class="can-b"></div>
+        <div>Знайти незакритий тег — очима або через <span class="ic">F12</span></div></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <span id="ctr">1 / 1</span>
+  <div id="dots"></div>
+  <button class="nbtn" onclick="next()">Вперед →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Перший застосунок · Розробка мобільних додатків · 6 клас · Урок 1</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  Курс          Розробка мобільних додатків (MIT App Inventor)
+  Клас          6 (11–12 років) · рік 1 з 1
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · п'ятниця
+  Урок          1 з 36 · 04.09.2026, п'ятниця
+  Тема          Перший застосунок. Компоненти і властивості
+  Акцент        brand (#591429) — бордовий A+
+  План          office/plany/02-mobilna-6.md, уроки 1.1 і 1.2
+  Конспект      2026-27-teacher/aplus/6-mobile/u01/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Потрібні: браузер, Google-акаунт, ai2.appinventor.mit.edu
+  ────────────────────────────────────────────────────────────────
+  ОБСЯГ — НА ДВА УРОКИ. 30 слайдів, 5 практик. За 45 хв не проходиться
+  і не має проходитись.
+      Урок 1 (04.09): s0–s18  — Designer, компонент, властивість,
+                                практики 1–3
+      Урок 2 (11.09): s19–s29 — фото, Arrangement, Companion,
+                                практики 4–5
+  Межа рухома: якщо клас швидкий — беремо s19–s20 сьогодні.
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКИ (усі різні, не варіації однієї)
+      s12  Практика 1 · проєкт HelloApp і перший Label            6 хв
+      s15  Практика 2 · оформити напис (Text, FontSize, TextColor) 5 хв
+      s18  Практика 3 · екран-візитівка: Screen + Label + 2 Button 8 хв
+      s20  Практика 4 · своє фото через Media → Upload File        6 хв
+      s22  Практика 5 · ряд кнопок у HorizontalArrangement         7 хв
+  ────────────────────────────────────────────────────────────────
+  ⚠ БЕЗ ПРИПУЩЕНЬ
+      • Досвіду програмування немає ні в кого — це рік 1 курсу.
+      • Телефон з Android може бути не в кожного. Тому Companion — НЕ
+        єдиний шлях: усе, що робимо сьогодні, видно прямо у Viewer
+        у браузері (s24). Практики 1–5 проходяться без телефона.
+      • Назви компонентів і властивостей лишаються англійськими, як в
+        App Inventor: `Button`, `Label`, `Text`, `FontSize`. Не перекладаємо —
+        дитина шукатиме їх очима на екрані саме такими.
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:44%}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.two.wide-l{grid-template-columns:1.4fr 1fr}
+.two.wide-r{grid-template-columns:1fr 1.4fr}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cb h3{color:var(--blue)} .card.cr h3{color:var(--rose)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hb{border-color:var(--blue)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--accent);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:17px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:6px 14px;flex-shrink:0}
+.prac-lead{font-size:18px;line-height:1.65;color:var(--dim);margin-bottom:13px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:34px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--ink)}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+/* англійська назва компонента просто в тексті */
+.en{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.uk{color:var(--dim)}
+.vg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:17px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16.5px;line-height:1.45}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mw{background:var(--surface);border:2px solid var(--pink);border-radius:14px;padding:15px 19px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.5rem;color:var(--accent);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:17px;color:var(--dim);line-height:1.5}
+
+/* «я вмію» */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--accent);border-radius:6px;flex-shrink:0}
+
+/* посилання «подивитись удома» */
+.lnks{display:flex;flex-direction:column;gap:10px}
+.lnk{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+     border:1.5px solid var(--border);border-radius:11px;padding:12px 16px}
+.lnk .li-ico{font-size:1.3rem;flex-shrink:0;line-height:1.3}
+.lnk .li-t{font-size:17.5px;line-height:1.5;color:var(--ink);font-weight:700}
+.lnk .li-u{font-family:var(--f-mono);font-size:15px;color:var(--blue);
+           line-height:1.45;word-break:break-all;margin-top:3px}
+
+/* SVG-схеми */
+.fig{background:var(--surface);border:1.5px solid var(--border);border-radius:13px;
+     padding:14px;box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.fig svg{display:block;width:100%;height:auto}
+.fig-cap{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);text-align:center;margin-top:8px}
+
+/* ─── візуальні блоки App Inventor · перенесено з steam/6-mobile/u01 ───
+   Кольори блоків — справжні кольори App Inventor, не з палітри A+:
+   дитина має впізнати їх на екрані. Текст на них темний, контраст ≥7:1. */
+.blk{font-family:var(--f-body);font-size:16px;color:#2b2b2b;border-radius:7px;
+     padding:9px 14px;display:inline-block;font-weight:600;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.blk-event{background:#d5a04b;border:1px solid #b7863a}
+.blk-set{background:#6fbf5f;border:1px solid #5aa04c}
+.blk-text{background:#e57a72;border:1px solid #c9645d}
+.blk-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:11px}
+.blk-row:last-child{margin-bottom:0}
+.blk-indent{margin-left:34px}
+
+/* ─── макет робочої області Blocks · перенесено з steam/6-mobile/u01 ─── */
+.bl-ide{display:flex;gap:0;border:1.5px solid var(--border);border-radius:13px;overflow:hidden;
+        box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.bl-rail{width:168px;background:var(--surf2);border-right:1.5px solid var(--border);
+         padding:13px 12px;flex-shrink:0}
+.bl-rail-t{font-family:var(--f-mono);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;
+           color:var(--faint);margin-bottom:11px}
+.bl-item{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);
+         padding:7px 10px;border-radius:6px;margin-bottom:5px}
+.bl-item.on{background:#f3e3e7;color:var(--accent);font-weight:700}
+.bl-canvas{flex:1;background:var(--surface);padding:16px 20px;
+           background-image:radial-gradient(rgba(89,20,41,.07) 1px,transparent 1px);
+           background-size:17px 17px}
+.bl-cap{margin-top:12px;font-size:14.5px;color:var(--faint);font-style:italic}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .th{padding:9px 14px} .th-t{font-size:16.5px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .mw{padding:12px 15px} .mw .w{font-size:1.3rem} .mw .t{font-size:15.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:16px} .vp .uk{font-size:15.5px}
+  .vg{gap:9px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .lnk{padding:10px 13px} .lnk .li-t{font-size:16px} .lnk .li-u{font-size:14px}
+  .fig{padding:10px}
+  .title-h1{font-size:2.9rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" aria-label="Назад"></button>
+  <button class="tapzone tr" aria-label="Вперед"></button>
+
+  <!-- ═══ 1 · ТИТУЛ ═══ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <div class="title-h1">Перший застосунок</div>
+      <div class="title-sub">Компоненти і властивості в MIT App Inventor<br>
+        Розробка мобільних додатків · 6 клас · Урок 1 з 36 · 4 вересня 2026</div>
+      <div class="chips">
+        <span class="chip">App Inventor</span>
+        <span class="chip">Designer</span>
+        <span class="chip">Компонент</span>
+        <span class="chip">Властивість</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 2 · РЕЗУЛЬТАТ РОКУ ═══ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <span class="label lm">Куди ми йдемо</span>
+    <div class="sh"><div class="si">📱</div><h2>Що буде наприкінці року</h2></div>
+    <div class="hbox">Твій власний застосунок на телефоні. Не «схожий на застосунок» —
+      справжній: із власною іконкою, який запускається без браузера й працює,
+      коли інтернету немає.</div>
+    <div class="three mt">
+      <div class="card">
+        <h3>Вікторина</h3>
+        <p>Питання, варіанти, бали, екран результату.</p>
+      </div>
+      <div class="card cb">
+        <h3>Гра</h3>
+        <p>Персонаж бігає екраном, рахунок росте, таймер тікає.</p>
+      </div>
+      <div class="card cr">
+        <h3>Тренажер слів</h3>
+        <p>Слово — переклад, перевірка відповіді, рекорд.</p>
+      </div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🎯</span>
+      <div>Обираєш сам. Сьогодні до цього перший крок: екран, який видно на телефоні.</div></div>
+  </div></section>
+
+  <!-- ═══ 3 · ЩО ТАКЕ ЗАСТОСУНОК ═══ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <span class="label lm">Розберемось у словах</span>
+    <div class="sh"><div class="si">🤔</div><h2>Застосунок і сайт — не те саме</h2></div>
+    <div class="two">
+      <div class="card cb">
+        <h3>Сайт</h3>
+        <ul>
+          <li>Живе в інтернеті</li>
+          <li>Відкривається в браузері за адресою</li>
+          <li>Немає інтернету — немає сайту</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Застосунок</h3>
+        <ul>
+          <li>Живе <b>в телефоні</b></li>
+          <li>Має власну іконку на екрані</li>
+          <li>Багато чого працює й без інтернету</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hbox mt">Англійською застосунок — <span class="en">application</span>,
+      скорочено <span class="en">app</span>. Звідси «апка».</div>
+  </div></section>
+
+  <!-- ═══ 4 · З ЧОГО СКЛАДАЄТЬСЯ ═══ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <span class="label lm">Дві половини</span>
+    <div class="sh"><div class="si">🧩</div><h2>З чого складається застосунок</h2></div>
+    <div class="two">
+      <div class="card">
+        <h3>1 · Те, що видно</h3>
+        <p>Написи, кнопки, картинки, поля для введення. Це <b>інтерфейс</b>.</p>
+        <p class="mt" style="margin-top:9px"><b>Сьогодні ми робимо саме це.</b></p>
+      </div>
+      <div class="card cb">
+        <h3>2 · Те, що відбувається</h3>
+        <p>Натиснув кнопку — щось сталося. Це <b>логіка</b>.</p>
+        <p class="mt" style="margin-top:9px">Це урок 4 — «Перша подія».</p>
+      </div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🏠</span>
+      <div>Як із будинком: спочатку стіни й вікна, потім електрика.
+        Порядок не міняється — електрику не проведеш у повітрі.</div></div>
+  </div></section>
+
+  <!-- ═══ 5 · APP INVENTOR ═══ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <span class="label lb">Інструмент року</span>
+    <div class="sh"><div class="si">🛠️</div><h2>MIT App Inventor</h2></div>
+    <div class="hbox">Це майстерня застосунків, яка працює <b>прямо в браузері</b>.
+      Нічого не треба встановлювати на ноутбук.</div>
+    <div class="two mt">
+      <div class="card">
+        <h3>Адреса</h3>
+        <p style="font-family:var(--f-mono);font-size:19px;color:var(--brand);font-weight:700;
+                  line-height:1.4;word-break:break-all">ai2.appinventor.mit.edu</p>
+        <p style="margin-top:8px">Запиши. Вона знадобиться щоуроку весь рік.</p>
+      </div>
+      <div class="card cb">
+        <h3>Хто його зробив</h3>
+        <p><b>MIT</b> — Массачусетський технологічний інститут, США. Одна з найсильніших
+          інженерних шкіл світу. App Inventor вони віддали безкоштовно всім школам.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 6 · ВХІД ═══ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <span class="label lb">Заходимо</span>
+    <div class="sh"><div class="si">🔑</div><h2>Вхід у майстерню</h2></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div>
+        <div class="step-t">У браузері набрати <span class="ic">ai2.appinventor.mit.edu</span></div></div>
+      <div class="step"><div class="step-n">2</div>
+        <div class="step-t">Натиснути велику кнопку <span class="ic">Create Apps!</span></div></div>
+      <div class="step"><div class="step-n">3</div>
+        <div class="step-t">Увійти своїм <b>Google-акаунтом</b> (або тим, який видали на клас)</div></div>
+      <div class="step"><div class="step-n">4</div>
+        <div class="step-t"><span class="ic">Projects</span> → <span class="ic">Start new project</span>
+          → назва латиницею без пробілів: <span class="ic">HelloApp</span></div></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">⚠️</span>
+      <div>Назва проєкту — <b>тільки латиниця, цифри й підкреслення</b>.
+        «Мій застосунок» App Inventor не приймає. Пробіл теж.</div></div>
+  </div></section>
+
+  <!-- ═══ 7 · ДВА ВІКНА ═══
+       Макет Blocks і блоки-пазли перенесено з steam/6-mobile/u01 (той самий урок 1
+       у Республіці), перефарбовано під світлу тему A+. -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <span class="label lb">Головне про інтерфейс</span>
+    <div class="sh"><div class="si">🪟</div><h2>Дві кімнати: Designer і Blocks</h2></div>
+    <div class="two">
+      <div class="card">
+        <h3><span class="en">Designer</span> · що видно</h3>
+        <p>Витягуєш написи, кнопки, картинки й розставляєш їх. <b>Сьогодні — тільки тут.</b></p>
+      </div>
+      <div class="card cb">
+        <h3><span class="en">Blocks</span> · що відбувається</h3>
+        <p>Складаєш блоки-пазли в правила. Ось так це виглядає — заглянемо на уроці 4.</p>
+      </div>
+    </div>
+    <div class="bl-ide mt">
+      <div class="bl-rail">
+        <div class="bl-rail-t">Blocks</div>
+        <div class="bl-item">Screen1</div>
+        <div class="bl-item on">Button1</div>
+        <div class="bl-item">Label1</div>
+      </div>
+      <div class="bl-canvas">
+        <div class="blk-row"><span class="blk blk-event">коли Button1 · Click</span></div>
+        <div class="blk-row blk-indent">
+          <span class="blk blk-set">встановити Label1 · Text до</span>
+          <span class="blk blk-text">"Ура, працює!"</span>
+        </div>
+        <div class="bl-cap">два блоки — і кнопка вже щось робить</div>
+      </div>
+    </div>
+    <div class="hbox mt">Перемикач — <b>угорі праворуч</b>. Це один і той самий проєкт,
+      просто два різні вигляди.</div>
+  </div></section>
+
+  <!-- ═══ 8 · СХЕМА DESIGNER ═══ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <span class="label lb">Карта екрана</span>
+    <div class="sh"><div class="si">🗺️</div><h2>Designer: чотири панелі</h2></div>
+    <div class="fig">
+      <svg viewBox="0 0 900 396" role="img" aria-label="Схема вікна Designer: панелі Palette, Viewer, Components, Properties">
+        <rect x="8" y="8" width="884" height="380" rx="10" fill="#ffffff" stroke="#e7d9dd" stroke-width="2"/>
+        <!-- top bar -->
+        <rect x="8" y="8" width="884" height="42" rx="10" fill="#f6eef0"/>
+        <rect x="8" y="40" width="884" height="10" fill="#f6eef0"/>
+        <line x1="8" y1="50" x2="892" y2="50" stroke="#e7d9dd" stroke-width="2"/>
+        <text x="26" y="35" font-family="JetBrains Mono, monospace" font-size="15" fill="#591429" font-weight="700">MIT App Inventor</text>
+        <text x="196" y="35" font-family="JetBrains Mono, monospace" font-size="14" fill="#55564f">HelloApp</text>
+        <rect x="672" y="17" width="98" height="25" rx="6" fill="#591429"/>
+        <text x="721" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#ffffff" font-weight="700">Designer</text>
+        <rect x="778" y="17" width="90" height="25" rx="6" fill="#ffffff" stroke="#e7d9dd" stroke-width="2"/>
+        <text x="823" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#55564f" font-weight="700">Blocks</text>
+
+        <!-- 1 Palette -->
+        <rect x="22" y="66" width="156" height="306" rx="8" fill="#ffffff" stroke="#591429" stroke-width="2"/>
+        <text x="34" y="88" font-family="JetBrains Mono, monospace" font-size="14" fill="#591429" font-weight="700">Palette</text>
+        <rect x="34" y="98" width="132" height="24" rx="5" fill="#f4a6b3"/>
+        <text x="42" y="115" font-family="Montserrat, sans-serif" font-size="12" fill="#2e2f2b" font-weight="700">User Interface</text>
+        <rect x="34" y="128" width="132" height="24" rx="5" fill="#f6eef0"/>
+        <text x="42" y="145" font-family="Montserrat, sans-serif" font-size="12" fill="#2e2f2b">Layout</text>
+        <rect x="34" y="158" width="132" height="24" rx="5" fill="#f6eef0"/>
+        <text x="42" y="175" font-family="Montserrat, sans-serif" font-size="12" fill="#2e2f2b">Media</text>
+        <rect x="34" y="188" width="132" height="24" rx="5" fill="#f6eef0"/>
+        <text x="42" y="205" font-family="Montserrat, sans-serif" font-size="12" fill="#2e2f2b">Drawing, Animation</text>
+        <rect x="34" y="218" width="132" height="24" rx="5" fill="#f6eef0"/>
+        <text x="42" y="235" font-family="Montserrat, sans-serif" font-size="12" fill="#2e2f2b">Sensors</text>
+        <circle cx="36" cy="72" r="13" fill="#591429"/>
+        <text x="36" y="77" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#ffffff" font-weight="700">1</text>
+
+        <!-- 2 Viewer -->
+        <rect x="190" y="66" width="238" height="306" rx="8" fill="#ffffff" stroke="#0253b3" stroke-width="2"/>
+        <text x="202" y="88" font-family="JetBrains Mono, monospace" font-size="14" fill="#0253b3" font-weight="700">Viewer</text>
+        <rect x="248" y="100" width="122" height="256" rx="12" fill="#fbf7f7" stroke="#2e2f2b" stroke-width="2.5"/>
+        <rect x="252" y="104" width="114" height="22" rx="4" fill="#591429"/>
+        <text x="309" y="120" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="11" fill="#ffffff" font-weight="700">Screen1</text>
+        <text x="309" y="156" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="14" fill="#2e2f2b" font-weight="700">Привіт, я Оля</text>
+        <rect x="266" y="178" width="86" height="28" rx="6" fill="#e2e7f6" stroke="#0253b3" stroke-width="1.5"/>
+        <text x="309" y="197" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="12" fill="#0253b3" font-weight="700">Натисни</text>
+        <circle cx="204" cy="72" r="13" fill="#0253b3"/>
+        <text x="204" y="77" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#ffffff" font-weight="700">2</text>
+
+        <!-- 3 Components -->
+        <rect x="440" y="66" width="196" height="306" rx="8" fill="#ffffff" stroke="#af3b41" stroke-width="2"/>
+        <text x="452" y="88" font-family="JetBrains Mono, monospace" font-size="14" fill="#af3b41" font-weight="700">Components</text>
+        <text x="456" y="118" font-family="JetBrains Mono, monospace" font-size="13.5" fill="#2e2f2b" font-weight="700">Screen1</text>
+        <line x1="464" y1="124" x2="464" y2="176" stroke="#e7d9dd" stroke-width="2"/>
+        <line x1="464" y1="142" x2="476" y2="142" stroke="#e7d9dd" stroke-width="2"/>
+        <text x="482" y="147" font-family="JetBrains Mono, monospace" font-size="13.5" fill="#2e2f2b">Label1</text>
+        <line x1="464" y1="172" x2="476" y2="172" stroke="#e7d9dd" stroke-width="2"/>
+        <text x="482" y="177" font-family="JetBrains Mono, monospace" font-size="13.5" fill="#2e2f2b">Button1</text>
+        <rect x="452" y="206" width="172" height="26" rx="5" fill="#f6eef0"/>
+        <text x="460" y="224" font-family="Montserrat, sans-serif" font-size="12" fill="#2e2f2b">Rename &#160; Delete</text>
+        <circle cx="454" cy="72" r="13" fill="#af3b41"/>
+        <text x="454" y="77" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#ffffff" font-weight="700">3</text>
+
+        <!-- 4 Properties -->
+        <rect x="648" y="66" width="230" height="306" rx="8" fill="#ffffff" stroke="#602857" stroke-width="2"/>
+        <text x="660" y="88" font-family="JetBrains Mono, monospace" font-size="14" fill="#602857" font-weight="700">Properties</text>
+        <text x="660" y="110" font-family="JetBrains Mono, monospace" font-size="13" fill="#55564f">Label1</text>
+        <text x="660" y="140" font-family="Montserrat, sans-serif" font-size="12.5" fill="#2e2f2b" font-weight="700">Text</text>
+        <rect x="660" y="146" width="206" height="24" rx="5" fill="#fbf7f7" stroke="#e7d9dd" stroke-width="1.5"/>
+        <text x="668" y="163" font-family="Montserrat, sans-serif" font-size="12" fill="#2e2f2b">Привіт, я Оля</text>
+        <text x="660" y="192" font-family="Montserrat, sans-serif" font-size="12.5" fill="#2e2f2b" font-weight="700">FontSize</text>
+        <rect x="660" y="198" width="206" height="24" rx="5" fill="#fbf7f7" stroke="#e7d9dd" stroke-width="1.5"/>
+        <text x="668" y="215" font-family="JetBrains Mono, monospace" font-size="12" fill="#2e2f2b">24</text>
+        <text x="660" y="244" font-family="Montserrat, sans-serif" font-size="12.5" fill="#2e2f2b" font-weight="700">TextColor</text>
+        <rect x="660" y="250" width="206" height="24" rx="5" fill="#fbf7f7" stroke="#e7d9dd" stroke-width="1.5"/>
+        <rect x="666" y="255" width="14" height="14" rx="3" fill="#591429"/>
+        <text x="688" y="267" font-family="Montserrat, sans-serif" font-size="12" fill="#2e2f2b">Dark red</text>
+        <text x="660" y="296" font-family="Montserrat, sans-serif" font-size="12.5" fill="#2e2f2b" font-weight="700">FontBold</text>
+        <rect x="660" y="302" width="18" height="18" rx="4" fill="#591429"/>
+        <circle cx="662" cy="72" r="13" fill="#602857"/>
+        <text x="662" y="77" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#ffffff" font-weight="700">4</text>
+      </svg>
+      <div class="fig-cap">Так виглядає Designer, коли проєкт уже почато</div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 9 · ЧОТИРИ ПАНЕЛІ СЛОВАМИ ═══ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <span class="label lb">Що робить кожна панель</span>
+    <div class="sh"><div class="si">🔢</div><h2>Ліворуч беру, праворуч налаштовую</h2></div>
+    <table class="tb">
+      <tr><th style="width:52px">№</th><th style="width:200px">Панель</th><th>Для чого</th></tr>
+      <tr><td class="mono">1</td><td class="mono">Palette</td>
+        <td>Склад деталей. Звідси <b>тягнеш</b> напис, кнопку, картинку на екран</td></tr>
+      <tr><td class="mono">2</td><td class="mono">Viewer</td>
+        <td>Макет екрана телефона. Тут видно, що вийшло — <b>одразу, без телефона</b></td></tr>
+      <tr><td class="mono">3</td><td class="mono">Components</td>
+        <td>Список усього, що ти поставив. Тут <b>обираєш</b>, що налаштовувати</td></tr>
+      <tr><td class="mono">4</td><td class="mono">Properties</td>
+        <td>Налаштування обраної деталі: текст, розмір, колір</td></tr>
+    </table>
+    <div class="tip mt"><span class="tip-ico">🔁</span>
+      <div>Порядок роботи завжди один: <b>1</b> витягнув → <b>3</b> обрав у списку →
+        <b>4</b> налаштував → <b>2</b> подивився, що вийшло.</div></div>
+  </div></section>
+
+  <!-- ═══ 10 · PALETTE ═══ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <span class="label lb">Панель 1</span>
+    <div class="sh"><div class="si">🎨</div><h2>Palette · склад деталей</h2></div>
+    <p>Деталі складені по шухлядах. Сьогодні нам потрібні дві.</p>
+    <div class="two mt">
+      <div class="card">
+        <h3><span class="en">User Interface</span></h3>
+        <ul>
+          <li><span class="ic">Label</span> — напис</li>
+          <li><span class="ic">Button</span> — кнопка</li>
+          <li><span class="ic">Image</span> — картинка</li>
+          <li><span class="ic">TextBox</span> — поле для введення</li>
+        </ul>
+      </div>
+      <div class="card cb">
+        <h3><span class="en">Layout</span></h3>
+        <ul>
+          <li><span class="ic">HorizontalArrangement</span> — рядок</li>
+          <li><span class="ic">VerticalArrangement</span> — стовпчик</li>
+        </ul>
+        <p style="margin-top:8px">Це коробки, у які кладуть інші деталі.</p>
+      </div>
+    </div>
+    <div class="hbox ho mt">Деталь називається <b>компонент</b>, англійською
+      <span class="en">component</span>. Це слово ти чутимеш весь рік.</div>
+  </div></section>
+
+  <!-- ═══ 11 · ЯК ПОСТАВИТИ КОМПОНЕНТ ═══ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <span class="label lo">Робимо разом</span>
+    <div class="sh"><div class="si">🖱️</div><h2>Поставити перший напис</h2></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div>
+        <div class="step-t">У <span class="ic">Palette</span> розкрити шухляду
+          <span class="ic">User Interface</span></div></div>
+      <div class="step"><div class="step-n">2</div>
+        <div class="step-t">Затиснути мишею <span class="ic">Label</span> і <b>перетягнути</b>
+          на екран телефона у <span class="ic">Viewer</span></div></div>
+      <div class="step"><div class="step-n">3</div>
+        <div class="step-t">На екрані з'явився напис <span class="ic">Text for Label1</span>,
+          а в <span class="ic">Components</span> — рядок <span class="ic">Label1</span></div></div>
+      <div class="step"><div class="step-n">4</div>
+        <div class="step-t">У <span class="ic">Properties</span> знайти поле
+          <span class="ic">Text</span> і написати туди своє</div></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">💡</span>
+      <div>Ім'я <span class="ic">Label1</span> App Inventor дав сам: перший напис у проєкті.
+        Другий стане <span class="ic">Label2</span>. Ці імена ще знадобляться в Blocks.</div></div>
+  </div></section>
+
+  <!-- ═══ 12 · КОМПОНЕНТ І ВЛАСТИВІСТЬ ═══ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <span class="label lo">Два головні слова</span>
+    <div class="sh"><div class="si">🔑</div><h2>Компонент і властивість</h2></div>
+    <div class="mini">
+      <div class="mw"><div class="w">component</div>
+        <div class="t"><b>компонент</b> — деталь застосунку: напис, кнопка, картинка</div></div>
+      <div class="mw"><div class="w">property</div>
+        <div class="t"><b>властивість</b> — одне налаштування компонента: текст, розмір, колір</div></div>
+    </div>
+    <div class="hbox mt">Компонент — це <b>річ</b>. Властивість — <b>яка вона</b>.<br>
+      Кнопка — компонент. Її колір, її напис, її розмір — три властивості.</div>
+    <div class="tip mt"><span class="tip-ico">🎒</span>
+      <div>Твій рюкзак — компонент. Його колір, розмір і кількість кишень — властивості.
+        Рюкзак один, властивостей багато.</div></div>
+  </div></section>
+
+  <!-- ═══ 13 · ПРАКТИКА 1 ═══ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <span class="label lo">Практика 1</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 1</span>
+        <span class="t">Проєкт і перший напис</span><span class="ptime">6 хв</span></div>
+      <div class="prac-lead">Створи проєкт <span class="ic">HelloApp</span> і постав на екран
+        напис зі своїм іменем.</div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t">Проєкт створено, на екрані стоїть <span class="ic">Label1</span>,
+            у полі <span class="ic">Text</span> написано «Привіт, я …» зі своїм іменем.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Плюс поставив другий напис <span class="ic">Label2</span> —
+            назву свого міста.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс знайшов у <span class="ic">Components</span> кнопку
+            <span class="ic">Rename</span> і перейменував <span class="ic">Label1</span>
+            на <span class="ic">LabelName</span>. Скажи вголос, чому так зручніше.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 14 · ВЛАСТИВОСТІ LABEL ═══ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <span class="label lb">Властивості напису</span>
+    <div class="sh"><div class="si">🔤</div><h2>Label: чим можна керувати</h2></div>
+    <table class="tb">
+      <tr><th style="width:210px">Властивість</th><th>Що міняє</th></tr>
+      <tr><td class="mono">Text</td><td>сам напис — те, що читає людина</td></tr>
+      <tr><td class="mono">FontSize</td><td>розмір букв. За замовчуванням <b>14</b>, для заголовка беруть <b>24–32</b></td></tr>
+      <tr><td class="mono">TextColor</td><td>колір букв</td></tr>
+      <tr><td class="mono">FontBold</td><td>галочка — букви стають жирними</td></tr>
+      <tr><td class="mono">FontItalic</td><td>галочка — букви нахиляються</td></tr>
+      <tr><td class="mono">TextAlignment</td><td>ліворуч · по центру · праворуч</td></tr>
+    </table>
+    <div class="tip mt"><span class="tip-ico">👀</span>
+      <div>Міняєш властивість — <b>Viewer одразу показує результат</b>. Нічого зберігати
+        й запускати не треба.</div></div>
+  </div></section>
+
+  <!-- ═══ 15 · КОЛІР ═══ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <span class="label lb">Про колір окремо</span>
+    <div class="sh"><div class="si">🌈</div><h2>Колір вибирають зі списку</h2></div>
+    <div class="two">
+      <div class="card">
+        <h3>Як це працює</h3>
+        <ul>
+          <li>Клік по властивості <span class="ic">TextColor</span></li>
+          <li>Випадає список готових кольорів</li>
+          <li><span class="ic">Custom…</span> — свій відтінок із палітри</li>
+        </ul>
+      </div>
+      <div class="card cb">
+        <h3>Пастка</h3>
+        <p>Колір <span class="ic">None</span> — це «немає кольору», тобто <b>прозоро</b>.
+          Поставиш його напису — напис зникне, хоча він на місці.</p>
+      </div>
+    </div>
+    <div class="hbox ho mt">Правило, яке працює завжди: <b>темні букви на світлому тлі</b>
+      або навпаки. Жовтий напис на білому екрані не прочитає ніхто — і це не «стиль»,
+      це помилка.</div>
+  </div></section>
+
+  <!-- ═══ 16 · ПРАКТИКА 2 ═══ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <span class="label lo">Практика 2</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 2</span>
+        <span class="t">Оформи напис</span><span class="ptime">5 хв</span></div>
+      <div class="prac-lead">Зроби зі свого напису <b>заголовок</b> — щоб його було видно
+        з іншого кінця класу.</div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t"><span class="ic">FontSize</span> = 28, <span class="ic">FontBold</span>
+            увімкнено, <span class="ic">TextColor</span> змінено.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Плюс <span class="ic">TextAlignment</span> = center, а другий напис
+            (місто) зроблено меншим за перший.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс поставив <span class="ic">TextColor</span> = <span class="ic">None</span>,
+            подивився, що сталося, і повернув назад. Розкажи класу, що ти побачив.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 17 · BUTTON ═══ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <span class="label lb">Другий компонент</span>
+    <div class="sh"><div class="si">🔘</div><h2>Button · кнопка</h2></div>
+    <div class="two wide-l">
+      <div>
+        <table class="tb">
+          <tr><th style="width:190px">Властивість</th><th>Що міняє</th></tr>
+          <tr><td class="mono">Text</td><td>напис на кнопці</td></tr>
+          <tr><td class="mono">BackgroundColor</td><td>колір самої кнопки</td></tr>
+          <tr><td class="mono">Shape</td><td>форма: <span class="ic">rounded</span>,
+            <span class="ic">rectangular</span>, <span class="ic">oval</span></td></tr>
+          <tr><td class="mono">Width</td><td>ширина кнопки</td></tr>
+          <tr><td class="mono">Enabled</td><td>галочка знята — кнопка не натискається</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Три способи задати Width</h3>
+          <ul>
+            <li><span class="ic">Automatic</span> — по тексту</li>
+            <li><span class="ic">Fill parent</span> — на всю ширину</li>
+            <li><span class="ic">pixels</span> — своє число</li>
+          </ul>
+        </div>
+        <div class="tip to mt"><span class="tip-ico">📌</span>
+          <div>Кнопка вже виглядає як кнопка, але поки що <b>нічого не робить</b>.
+            Натискання оживе в <span class="ic">Blocks</span> на уроці 4.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 18 · SCREEN ═══ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <span class="label lb">Третій компонент — той, що вже стоїть</span>
+    <div class="sh"><div class="si">📲</div><h2>Screen1 · сам екран</h2></div>
+    <div class="hbox">Екран — теж компонент. Він з'явився разом із проєктом, і в нього теж
+      є властивості. Щоб їх побачити, натисни <span class="ic">Screen1</span> у
+      <span class="ic">Components</span>.</div>
+    <table class="tb mt">
+      <tr><th style="width:220px">Властивість</th><th>Що міняє</th></tr>
+      <tr><td class="mono">Title</td><td>напис у смужці згори — назва екрана</td></tr>
+      <tr><td class="mono">BackgroundColor</td><td>колір тла всього екрана</td></tr>
+      <tr><td class="mono">AlignHorizontal</td><td>усе вміст ліворуч · по центру · праворуч</td></tr>
+      <tr><td class="mono">AlignVertical</td><td>угорі · посередині · внизу</td></tr>
+      <tr><td class="mono">AppName</td><td>як застосунок називатиметься <b>в телефоні</b></td></tr>
+    </table>
+    <div class="tip mt"><span class="tip-ico">🎯</span>
+      <div><span class="ic">AlignHorizontal</span> = <span class="ic">Center</span> —
+        одна властивість, яка одразу робить екран охайним. Найкорисніша сьогодні.</div></div>
+  </div></section>
+
+  <!-- ═══ 19 · ПРАКТИКА 3 ═══ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <span class="label lo">Практика 3</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 3</span>
+        <span class="t">Екран-візитівка</span><span class="ptime">8 хв</span></div>
+      <div class="prac-lead">Збери екран, який розповідає про тебе: заголовок, один факт
+        і дві кнопки.</div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t">На екрані: напис-заголовок, напис-факт і <b>дві</b> кнопки
+            з осмисленими написами (не <span class="ic">Text for Button1</span>).</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Плюс <span class="ic">Screen1.Title</span> — своє,
+            <span class="ic">AlignHorizontal</span> = center, у кнопок задано
+            <span class="ic">Shape</span> і <span class="ic">BackgroundColor</span>.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс обидві кнопки <span class="ic">Width</span> =
+            <span class="ic">Fill parent</span>, і екран не «розсипається», якщо змінити
+            <span class="ic">Screen1.BackgroundColor</span> на темний — усе лишається читабельним.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 20 · MEDIA / IMAGE ═══ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <span class="label lb">Свої файли</span>
+    <div class="sh"><div class="si">🖼️</div><h2>Картинка на екрані</h2></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div>
+        <div class="step-t">Панель <span class="ic">Media</span> (під <span class="ic">Components</span>)
+          → <span class="ic">Upload File …</span></div></div>
+      <div class="step"><div class="step-n">2</div>
+        <div class="step-t">Обрати файл на ноутбуці. Формат <span class="ic">.jpg</span> або
+          <span class="ic">.png</span></div></div>
+      <div class="step"><div class="step-n">3</div>
+        <div class="step-t">З <span class="ic">Palette</span> витягнути компонент
+          <span class="ic">Image</span> на екран</div></div>
+      <div class="step"><div class="step-n">4</div>
+        <div class="step-t">У <span class="ic">Properties</span> властивість
+          <span class="ic">Picture</span> → вибрати завантажений файл</div></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">⚠️</span>
+      <div>Файл спершу <b>завантажують у проєкт</b>, і тільки потім показують.
+        Картинка з робочого столу сама в застосунок не потрапить — у телефоні твого
+        робочого стола немає.</div></div>
+  </div></section>
+
+  <!-- ═══ 21 · ПРАКТИКА 4 ═══ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <span class="label lo">Практика 4</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 4</span>
+        <span class="t">Своє зображення</span><span class="ptime">6 хв</span></div>
+      <div class="prac-lead">Додай на візитівку картинку. Немає своєї — візьми будь-яку
+        з папки <span class="ic">Зображення</span>.</div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t">Файл завантажено в <span class="ic">Media</span>, компонент
+            <span class="ic">Image</span> стоїть на екрані й картинку видно у Viewer.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Плюс <span class="ic">Width</span> = <span class="ic">Fill parent</span>,
+            <span class="ic">Height</span> = <span class="ic">Automatic</span> — картинка
+            не розтягнута й не обрізана.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс друга картинка як <span class="ic">Screen1.BackgroundImage</span>,
+            і напис на ній усе одно читається. Якщо ні — поміняй картинку або колір тексту.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 22 · ARRANGEMENT ═══ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <span class="label lb">Компонування</span>
+    <div class="sh"><div class="si">📦</div><h2>Як поставити дві кнопки в рядок</h2></div>
+    <div class="two">
+      <div>
+        <div class="hbox">Сам собою App Inventor складає все <b>стовпчиком</b>, один під одним.
+          Щоб поставити поруч — потрібна коробка.</div>
+        <div class="fig mt">
+          <svg viewBox="0 0 420 190" role="img" aria-label="Порівняння: без Arrangement кнопки стовпчиком, у HorizontalArrangement — рядком">
+            <text x="8" y="18" font-family="JetBrains Mono, monospace" font-size="13" fill="#55564f">без коробки</text>
+            <rect x="8" y="26" width="180" height="150" rx="8" fill="#ffffff" stroke="#e7d9dd" stroke-width="2"/>
+            <rect x="26" y="44" width="144" height="30" rx="6" fill="#e2e7f6" stroke="#0253b3" stroke-width="1.5"/>
+            <text x="98" y="64" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="12" fill="#0253b3" font-weight="700">Кнопка A</text>
+            <rect x="26" y="84" width="144" height="30" rx="6" fill="#e2e7f6" stroke="#0253b3" stroke-width="1.5"/>
+            <text x="98" y="104" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="12" fill="#0253b3" font-weight="700">Кнопка B</text>
+            <text x="232" y="18" font-family="JetBrains Mono, monospace" font-size="13" fill="#55564f">HorizontalArrangement</text>
+            <rect x="232" y="26" width="180" height="150" rx="8" fill="#ffffff" stroke="#e7d9dd" stroke-width="2"/>
+            <rect x="244" y="44" width="156" height="46" rx="6" fill="none" stroke="#591429" stroke-width="2.5" stroke-dasharray="6 4"/>
+            <rect x="252" y="52" width="66" height="30" rx="6" fill="#e2e7f6" stroke="#0253b3" stroke-width="1.5"/>
+            <text x="285" y="72" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="12" fill="#0253b3" font-weight="700">A</text>
+            <rect x="326" y="52" width="66" height="30" rx="6" fill="#e2e7f6" stroke="#0253b3" stroke-width="1.5"/>
+            <text x="359" y="72" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="12" fill="#0253b3" font-weight="700">B</text>
+            <text x="322" y="112" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#591429" font-weight="700">коробка-рядок</text>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Порядок дій</h3>
+          <ul>
+            <li><span class="ic">Palette</span> → <span class="ic">Layout</span></li>
+            <li>Витягнути <span class="ic">HorizontalArrangement</span> на екран</li>
+            <li><b>Усередину коробки</b> перетягнути дві кнопки</li>
+            <li>Коробці задати <span class="ic">Width</span> = <span class="ic">Fill parent</span></li>
+          </ul>
+        </div>
+        <div class="tip tm mt"><span class="tip-ico">🔍</span>
+          <div>Кнопка потрапила <b>поруч</b> із коробкою, а не в неї — найчастіша помилка.
+            Перевірити просто: у <span class="ic">Components</span> кнопка має бути
+            <b>зі зсувом праворуч</b> під коробкою.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 23 · ПРАКТИКА 5 ═══ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <span class="label lo">Практика 5</span>
+    <div class="prac">
+      <div class="prac-h"><span class="badge">практика 5</span>
+        <span class="t">Ряд кнопок</span><span class="ptime">7 хв</span></div>
+      <div class="prac-lead">Постав дві кнопки <b>в один рядок</b> — через
+        <span class="ic">HorizontalArrangement</span>.</div>
+      <div class="lvl">
+        <div class="lv"><div class="lv-s">⭐</div>
+          <div class="lv-t">Дві кнопки стоять поруч, і в <span class="ic">Components</span>
+            вони обидві <b>всередині</b> коробки.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐</div>
+          <div class="lv-t">Плюс коробка <span class="ic">Width</span> =
+            <span class="ic">Fill parent</span>, обидві кнопки однакової ширини,
+            між ними видно зазор.</div></div>
+        <div class="lv"><div class="lv-s">⭐⭐⭐</div>
+          <div class="lv-t">Плюс сітка <b>2×2</b>: <span class="ic">VerticalArrangement</span>,
+            а в ньому два <span class="ic">HorizontalArrangement</span> по дві кнопки.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ═══ 24 · ТЕЛЕФОН ═══ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <span class="label lb">Найцікавіше</span>
+    <div class="sh"><div class="si">📶</div><h2>Побачити своє на справжньому телефоні</h2></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div>
+        <div class="step-t">На телефоні встановити застосунок <b>MIT AI2 Companion</b>
+          (Google Play, безкоштовно)</div></div>
+      <div class="step"><div class="step-n">2</div>
+        <div class="step-t">Телефон і ноутбук — <b>в одній мережі Wi-Fi</b></div></div>
+      <div class="step"><div class="step-n">3</div>
+        <div class="step-t">У браузері: <span class="ic">Connect</span> →
+          <span class="ic">AI Companion</span> — з'явиться QR-код і код із шести символів</div></div>
+      <div class="step"><div class="step-n">4</div>
+        <div class="step-t">У Companion натиснути <span class="ic">scan QR code</span>
+          і навести камеру на екран ноутбука</div></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">⚡</span>
+      <div>Далі найкраще: міняєш властивість у браузері — <b>телефон змінюється сам</b>,
+        через секунду. Нічого не треба перезапускати.</div></div>
+  </div></section>
+
+  <!-- ═══ 25 · ЯКЩО ТЕЛЕФОНА НЕМАЄ ═══ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <span class="label lb">План Б</span>
+    <div class="sh"><div class="si">💻</div><h2>Якщо телефона під рукою немає</h2></div>
+    <div class="hbox">Нічого не змінюється. Усе, що ми робили сьогодні, видно
+      <b>прямо у Viewer</b> — це і є макет екрана телефона.</div>
+    <div class="three mt">
+      <div class="card">
+        <h3>Viewer</h3>
+        <p>Завжди доступний. Показує екран одразу, поки ти налаштовуєш властивості.</p>
+      </div>
+      <div class="card cb">
+        <h3>Емулятор</h3>
+        <p><span class="ic">Connect</span> → <span class="ic">Emulator</span> —
+          телефон на екрані ноутбука. Запускається довго, але працює.</p>
+      </div>
+      <div class="card cr">
+        <h3>Телефон учителя</h3>
+        <p>Показуємо на одному телефоні по черзі.</p>
+      </div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">☁️</span>
+      <div>Проєкт зберігається <b>сам</b>, на серверах MIT. Закрив браузер, прийшов
+        наступного тижня, відкрив <span class="ic">Projects</span> — усе на місці.</div></div>
+  </div></section>
+
+  <!-- ═══ 26 · СЛОВНИК ═══ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <span class="label lo">Слова, які будуть весь рік</span>
+    <div class="sh"><div class="si">📖</div><h2>Англійські назви, які не перекладають</h2></div>
+    <div class="vg">
+      <div class="vp"><span class="en">component</span><span class="uk">компонент, деталь</span></div>
+      <div class="vp"><span class="en">property</span><span class="uk">властивість</span></div>
+      <div class="vp"><span class="en">Screen</span><span class="uk">екран</span></div>
+      <div class="vp"><span class="en">Label</span><span class="uk">напис</span></div>
+      <div class="vp"><span class="en">Button</span><span class="uk">кнопка</span></div>
+      <div class="vp"><span class="en">Image</span><span class="uk">зображення</span></div>
+      <div class="vp"><span class="en">Text</span><span class="uk">текст напису</span></div>
+      <div class="vp"><span class="en">Width / Height</span><span class="uk">ширина / висота</span></div>
+      <div class="vp"><span class="en">Fill parent</span><span class="uk">на всю ширину</span></div>
+      <div class="vp"><span class="en">Palette</span><span class="uk">склад деталей</span></div>
+      <div class="vp"><span class="en">Viewer</span><span class="uk">макет екрана</span></div>
+      <div class="vp"><span class="en">Upload File</span><span class="uk">завантажити файл</span></div>
+    </div>
+    <div class="hbox ho mt">Ці слова написані на екрані App Inventor. Перекладати їх немає
+      сенсу: шукати очима ти будеш саме <span class="en">FontSize</span>,
+      а не «розмір шрифту».</div>
+  </div></section>
+
+  <!-- ═══ 27 · ТИПОВІ ПОМИЛКИ ═══ -->
+  <section class="slide" id="s26"><div class="slide-inner">
+    <span class="label lr">Що ламається найчастіше</span>
+    <div class="sh"><div class="si">🔧</div><h2>П'ять пасток першого уроку</h2></div>
+    <table class="tb">
+      <tr><th style="width:44%">Симптом</th><th>Причина</th></tr>
+      <tr><td>Проєкт не створюється</td><td>у назві пробіл або українські літери</td></tr>
+      <tr><td>Змінюю <span class="ic">Text</span>, а нічого не міняється</td>
+          <td>у <span class="ic">Components</span> обраний <b>інший</b> компонент</td></tr>
+      <tr><td>Напис зник</td><td><span class="ic">TextColor</span> = <span class="ic">None</span>,
+          або колір збігся з тлом</td></tr>
+      <tr><td>Картинка не показується</td><td>файл не завантажений у
+          <span class="ic">Media</span></td></tr>
+      <tr><td>Кнопки не стають у рядок</td><td>вони <b>поруч</b> із коробкою, а не в ній</td></tr>
+    </table>
+    <div class="tip tm mt"><span class="tip-ico">🧭</span>
+      <div>Перше, що робиш, коли «не працює»: дивишся в <span class="ic">Components</span> —
+        <b>що саме зараз обрано</b>. Це половина всіх поломок.</div></div>
+  </div></section>
+
+  <!-- ═══ 28 · ПОСИЛАННЯ ═══ -->
+  <section class="slide" id="s27"><div class="slide-inner">
+    <span class="label lb">Подивитись удома</span>
+    <div class="sh"><div class="si">🔗</div><h2>Де є ще</h2></div>
+    <div class="lnks">
+      <div class="lnk"><span class="li-ico">🛠️</span><div class="li-b">
+        <div class="li-t">Сама майстерня — з дому теж</div>
+        <div class="li-u">ai2.appinventor.mit.edu</div></div></div>
+      <div class="lnk"><span class="li-ico">📘</span><div class="li-b">
+        <div class="li-t">Офіційні покрокові підручники MIT (англійською, з картинками)</div>
+        <div class="li-u">appinventor.mit.edu/explore/ai2/tutorials</div></div></div>
+      <div class="lnk"><span class="li-ico">🐱</span><div class="li-b">
+        <div class="li-t">HelloPurr — найвідоміший перший застосунок: кіт, який нявкає</div>
+        <div class="li-u">appinventor.mit.edu/explore/ai2/hellopurr</div></div></div>
+      <div class="lnk"><span class="li-ico">▶️</span><div class="li-b">
+        <div class="li-t">Відеоканал MIT App Inventor — відео до кожної теми курсу</div>
+        <div class="li-u">youtube.com/@MITAppInventor</div></div></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🚫</span>
+      <div>У школі YouTube закритий — відео дивимо <b>вдома</b>. Перші три посилання
+        працюють і тут.</div></div>
+  </div></section>
+
+  <!-- ═══ 29 · ЩО ДАЛІ ═══ -->
+  <section class="slide" id="s28"><div class="slide-inner">
+    <span class="label lb">Далі</span>
+    <div class="sh"><div class="si">➡️</div><h2>Наступні уроки</h2></div>
+    <div class="themes">
+      <div class="th"><div class="th-n">2</div>
+        <div class="th-t">Властивості глибше: оформлюємо екран-візитівку до кінця</div></div>
+      <div class="th"><div class="th-n">3</div>
+        <div class="th-t">Компонування: фото, ряди й стовпчики, екран за ескізом з дошки</div></div>
+      <div class="th"><div class="th-n">4</div>
+        <div class="th-t">Перша подія: <span class="ic">Blocks</span> — кнопка нарешті щось робить</div></div>
+      <div class="th"><div class="th-n">5</div>
+        <div class="th-t">Звук і вібрація: звукова дошка з кількох кнопок</div></div>
+    </div>
+    <div class="hbox mt">Порядок не випадковий: спочатку екран, потім дії на екрані.
+      Кнопці нема чого робити, поки нема чого міняти.</div>
+  </div></section>
+
+  <!-- ═══ 30 · ПІДСУМОК ═══ -->
+  <section class="slide" id="s29"><div class="slide-inner">
+    <span class="label lm">Підсумок</span>
+    <div class="sh"><div class="si">✅</div><h2>Після цього уроку я вмію</h2></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div>
+        <div>Зайти в App Inventor і створити новий проєкт</div></div>
+      <div class="can-i"><div class="can-b"></div>
+        <div>Назвати всі чотири панелі <span class="ic">Designer</span> і сказати, для чого кожна</div></div>
+      <div class="can-i"><div class="can-b"></div>
+        <div>Витягнути <span class="ic">Label</span>, <span class="ic">Button</span>,
+          <span class="ic">Image</span> на екран</div></div>
+      <div class="can-i"><div class="can-b"></div>
+        <div>Пояснити різницю між <b>компонентом</b> і <b>властивістю</b></div></div>
+      <div class="can-i"><div class="can-b"></div>
+        <div>Змінити <span class="ic">Text</span>, <span class="ic">FontSize</span>,
+          <span class="ic">TextColor</span>, <span class="ic">BackgroundColor</span></div></div>
+      <div class="can-i"><div class="can-b"></div>
+        <div>Поставити дві кнопки в рядок через <span class="ic">HorizontalArrangement</span></div></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <span id="ctr">1 / 1</span>
+  <div id="dots"></div>
+  <button class="nbtn" onclick="next()">Вперед →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
