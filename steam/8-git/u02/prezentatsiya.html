@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Перший репозиторій · Git · 8 клас · Урок 2</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Git, GitHub та публікація проєктів
+  Клас          8
+  Школа         STEAM (Республіка) · вівторок
+  Урок          2 з 35 · 08.09.2026
+  Тема          Перший репозиторій
+  Тривалість    45 хв — показ ~24 хв + три практики 19 хв
+  Акцент        yellow (#591429) — --accent:var(--brand)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Це ПЕРШИЙ урок за машинами. Урок 1 був без них,
+     тому 6–8 хвилин піде на те, чого на уроці 1 не робили:
+     розпакувати стартовий комплект і відкрити ПАПКУ у VS Code.
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКИ      s8 (7 хв) створити репозиторій
+                s13 (4 хв) ім'я та пошта автора
+                s19 (8 хв) стани файлів у панелі
+  ПЕРЕДБАЧ      s17 — відповідь відкривається на ТОМУ Ж слайді (клац)
+  ────────────────────────────────────────────────────────────────
+  ⚠️ КОМІТІВ СЬОГОДНІ НЕ РОБИМО. `git commit` — це урок 3 за планом.
+     Сьогодні тільки репозиторій, автор змін і читання станів.
+     Якщо клас іде швидко — не «зробімо вже коміт», а s20 (типові збої)
+     і s21 (як виглядає .git зсередини).
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • git add / git commit / git push — уроки 3 і 8
+     • GitHub і будь-яка реєстрація — тема 2, урок 8
+     • Оцінювання й правила курсу — за правилом «слайди без голосу
+       вчителя» це в конспекті, не на екрані
+  ────────────────────────────────────────────────────────────────
+  ДІАГРАМИ      Слайд 6  — папка до і після створення репозиторію
+                Слайд 11 — звідки береться підпис автора в записі
+                Обидві не різати: на них тримається весь урок
+  ────────────────────────────────────────────────────────────────
+  План          office/republic/Git, GitHub та публікація проєктів — 8 клас.docx
+                Урок 2, 08.09.2026
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/steam/8-git/u02/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --surf2:#f1f3f7; --border:#e0e3e9;
+  --brand:#591429; --green:#227354; --forest:#154734; --gold:#f2c75c;
+  --goldink:#8a5a10; --brick:#a8392f; --steel:#3c5a72;
+  --teal:#227354; --blue:#3c5a72; --pink:#a8392f; --yellow:#8a5a10;
+  --purple:#8a5a10; --green2:#154734;
+  --text:#282a29; --ink:#282a29; --dim:#5c605e; --faint:#84888a;
+  --accent:var(--brand);
+  --f-head:'Source Serif 4','Meta Serif Pro',Georgia,'Times New Roman',serif;
+  --f-body:'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,217,122,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,217,122,.022) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--pink));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(40,42,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.3rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:18px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:#f7eeda}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:#e3efe9;color:var(--teal)}
+.lb{background:#e4eaf0;color:var(--blue)}
+.ly{background:#f7eeda;color:var(--yellow)}
+.lp{background:#f6e5e3;color:var(--pink)}
+.lg{background:#e2ebe6;color:var(--green)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cb h3{color:var(--blue)}
+.card.cp h3{color:var(--pink)} .card.cg h3{color:var(--green)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:13px 18px;margin:10px 0;font-size:18px;color:var(--text);line-height:1.65}
+.hbox.ht{border-color:var(--teal)} .hbox.hb{border-color:var(--blue)}
+.hbox.hp{border-color:var(--pink)} .hbox.hg{border-color:var(--green)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:#fbf6ea;
+     border:1px solid rgba(255,217,122,.25);border-radius:11px;padding:13px 17px;
+     margin:11px 0;font-size:18px;line-height:1.65}
+.tip.tb{background:#eef2f6;border-color:rgba(99,197,255,.28)}
+.tip.tp{background:#fbf1f0;border-color:#e6c6c2}
+.tip.tg{background:#eef3f0;border-color:#c3d6cc}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+.dp{border-radius:13px;overflow:hidden;border:1px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(40,42,41,.08);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdfcfa;padding:15px 19px;font-size:16px;line-height:1.65;white-space:pre-wrap;color:#e8f2ff}
+.cm{color:#6b6f6d;font-style:italic}
+.sg{color:#154734}.sy{color:#591429}
+
+/* ─── ДІАГРАМИ ─── */
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+
+/* ─── «папка жаху» ─── */
+.mess{font-family:var(--f-mono);font-size:16px;line-height:2;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:16px 20px;color:var(--dim)}
+.mess .bad{color:#ff9db5}
+
+/* ─── історія комітів як ланцюг ─── */
+.hist{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:16px 20px;position:relative}
+.hist::before{content:'';position:absolute;left:25px;top:32px;bottom:32px;width:2px;background:var(--border)}
+.hrow{display:flex;align-items:center;gap:13px;padding:7px 0;position:relative;z-index:1}
+.hdot{width:12px;height:12px;border-radius:50%;background:var(--accent);flex-shrink:0;
+      box-shadow:0 0 0 4px #f7eeda,0 0 0 7px var(--surface)}
+.hmsg{font-size:17px;color:var(--text)}
+.hwhen{margin-left:auto;font-family:var(--f-mono);font-size:15px;color:var(--faint);flex-shrink:0}
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:400}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:#f9f2e2;border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+/* ─── теми курсу ─── */
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:29px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--text)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:14px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+  .hist::before{background:#253348 !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.dp-code{color:var(--text)}
+.prac{background:var(--surf2);border:2px solid var(--accent);border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.pbadge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+  background:var(--accent);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--accent)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:var(--goldink);background:#f9f2e2;
+  border:1px solid var(--gold);border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16px;flex-shrink:0;letter-spacing:1px;min-width:54px}
+.lv-t{font-size:17px;line-height:1.6;color:var(--text)}
+.steps{display:flex;flex-direction:column;gap:9px}
+.step{display:flex;align-items:flex-start;gap:14px;background:var(--surface);
+  border:1px solid var(--border);border-radius:12px;padding:12px 16px}
+.step-n{width:32px;height:32px;border-radius:9px;background:var(--surf2);color:var(--accent);
+  font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:17.5px;line-height:1.6;color:var(--text)}
+.stat{display:flex;flex-direction:column;gap:7px;font-family:var(--f-mono)}
+.sfile{display:flex;align-items:center;gap:12px;background:var(--surface);
+  border:1px solid var(--border);border-radius:9px;padding:9px 14px;font-size:16.5px}
+.sfile .fl{flex:1;color:var(--text)}
+.sl-u{color:var(--forest);font-weight:700;font-size:17px}
+.sl-m{color:var(--brick);font-weight:700;font-size:17px}
+.sl-n{color:var(--faint);font-weight:700;font-size:17px}
+.vs{font-family:var(--f-mono);font-size:14px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:7px}
+
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1">Перший репозиторій</div>
+    <div class="title-sub">Git, GitHub та публікація проєктів · 8 клас · Урок 2 · 8 вересня 2026</div>
+    <div class="chips">
+      <span class="chip">Репозиторій</span>
+      <span class="chip">Папка .git</span>
+      <span class="chip">Автор змін</span>
+      <span class="chip">Стан файлу</span>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label ly">Минулого разу</span>
+      <h2>З чого ми виходимо</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Три стани файлу</h3>
+        <p>Робоча папка <span class="ic">→</span> Підготовлено <span class="ic">→</span> Історія.
+           Між ними дві команди: <span class="ic">add</span> і <span class="ic">commit</span>.</p></div>
+      <div class="card cb"><h3>Git ≠ GitHub</h3>
+        <p>Git — програма на цьому комп'ютері, працює без інтернету.
+           GitHub — сайт, куди історію можна відправити. Сьогодні інтернет не потрібен.</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">📍</span>
+      <div>Сьогодні ми стоїмо <strong>лівіше за всі три стани</strong>. Спершу треба, щоб у папки
+      взагалі з'явилось місце, де історія зберігатиметься.</div></div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label ly">Сьогодні</span>
+      <h2>Чотири кроки за 45 хвилин</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t">Відкрити стартовий комплект у редакторі — <b>папкою</b>, а не файлом</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t">Створити <b>репозиторій</b> у цій папці. Одна кнопка</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t">Назвати себе: <b>ім'я та пошта автора</b> змін. Робиться раз і назавжди</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t">Навчитися читати <b>стан файлів</b> — Git весь час його показує</span></div>
+    </div>
+    <div class="tip tg mt"><span class="tip-ico">🚫</span>
+      <div>Комітів сьогодні <strong>не робимо</strong>. Це наступний урок. Сьогодні —
+      підготувати місце й навчитися бачити, що Git про нас думає.</div></div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">📂</div><div>
+      <span class="label lp">Перше за комп'ютерами</span>
+      <h2>Відкривати папку, а не файл</h2>
+    </div></div>
+    <p>Це найчастіша помилка першого уроку за машинами. Git працює
+       <strong>з папкою цілком</strong>. Якщо відкрити один файл — редактор не побачить проєкту
+       й кнопки Git будуть неактивні.</p>
+    <div class="two mt">
+      <div class="card cp"><h3>✗ Так не треба</h3>
+        <p>Двічі клацнути по <span class="ic">index.html</span> — відкриється один файл,
+           решти проєкту редактор не бачить</p></div>
+      <div class="card cg"><h3>✓ Так треба</h3>
+        <p><b>File → Open Folder…</b> і вибрати папку <span class="ic">portfolio</span> цілком.
+           Зліва з'явиться список усіх файлів</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🔎</span>
+      <div>Перевірка: у лівій колонці зверху написана <strong>назва папки великими літерами</strong>.
+      Немає назви — відкрито файл, а не папку.</div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lt">Матеріал уроку</span>
+      <h2>Стартовий комплект</h2>
+    </div></div>
+    <p>Однаковий у всіх. Це звичайний сайт із трьох сторінок — рівно те, що весь рік
+       будемо змінювати й зберігати в історію.</p>
+    <div class="two mt">
+      <div class="tree">
+        <b>portfolio/</b><br>
+        &nbsp;&nbsp;├── index.html<span class="cm">     головна</span><br>
+        &nbsp;&nbsp;├── about.html<span class="cm">     про мене</span><br>
+        &nbsp;&nbsp;├── works.html<span class="cm">     роботи</span><br>
+        &nbsp;&nbsp;├── style.css<span class="cm">      оформлення</span><br>
+        &nbsp;&nbsp;└── <b>img/</b><span class="cm">           картинки</span>
+      </div>
+      <div>
+        <div class="hbox ht">Розпакувати архів <strong>у свою папку</strong>, не залишати
+          його в «Завантаженнях»</div>
+        <div class="hbox hg">Хто вже має власний сайт із 6 класу — можна взяти його.
+          Комплект однаково збережи</div>
+        <div class="hbox hp">Назва папки — <strong>латиницею, без пробілів</strong>.
+          Git це переживе й з пробілами, а термінал на уроці 5 — ні</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🗄️</div><div>
+      <span class="label ly">Головне поняття</span>
+      <h2>Репозиторій — це папка з пам'яттю</h2>
+    </div></div>
+    <p><strong>Репозиторій</strong> — папка проєкту, у якій Git веде історію. Ніякої окремої
+       програми, хмари чи реєстрації: це та сама папка, у якій лежать твої файли.</p>
+    <div class="two mt">
+      <div class="card"><h3>Було</h3>
+        <p>Папка з файлами. Зберіг — старе зникло назавжди. Історії немає</p></div>
+      <div class="card cg"><h3>Стало</h3>
+        <p>Та сама папка з тими самими файлами <b>плюс пам'ять</b>: кожен збережений стан
+           можна знайти й повернути</p></div>
+    </div>
+    <div class="tip tg mt"><span class="tip-ico">💡</span>
+      <div>Слово «репозиторій» скорочують до <strong>repo</strong> — так його називають скрізь
+      у меню, статтях і відео.</div></div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ДІАГРАМА ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">⚙️</div><div>
+      <span class="label ly">Як це працює</span>
+      <h2>Що змінює одна кнопка</h2>
+    </div></div>
+
+    <svg class="diagram" viewBox="0 0 940 250" role="img"
+         aria-label="Схема: папка до створення репозиторію і після — додається службова папка крапка git"
+         font-family="'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,sans-serif">
+      <defs>
+        <marker id="gah" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+          <path d="M0,0 L11,4.5 L0,9 Z" fill="#591429"/>
+        </marker>
+      </defs>
+
+      <text x="150" y="22" text-anchor="middle" fill="#a8392f" font-size="15" font-weight="700" letter-spacing="1.2">ДО</text>
+      <rect x="18" y="34" width="264" height="196" rx="15" fill="#ffffff" stroke="#a8392f" stroke-width="2"/>
+      <text x="42" y="66" fill="#282a29" font-size="17" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">portfolio/</text>
+      <text x="60" y="96" fill="#5c605e" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">index.html</text>
+      <text x="60" y="122" fill="#5c605e" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">about.html</text>
+      <text x="60" y="148" fill="#5c605e" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">works.html</text>
+      <text x="60" y="174" fill="#5c605e" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">style.css</text>
+      <text x="150" y="211" text-anchor="middle" fill="#a8392f" font-size="14.5">історії немає</text>
+
+      <line x1="296" y1="130" x2="384" y2="130" stroke="#591429" stroke-width="2.5" marker-end="url(#gah)"/>
+      <text x="340" y="112" text-anchor="middle" fill="#591429" font-size="15" font-weight="700">Initialize</text>
+      <text x="340" y="130" text-anchor="middle" fill="#591429" font-size="15" font-weight="700">Repository</text>
+      <text x="340" y="156" text-anchor="middle" fill="#5c605e" font-size="13.5">одна кнопка</text>
+
+      <text x="790" y="22" text-anchor="middle" fill="#154734" font-size="15" font-weight="700" letter-spacing="1.2">ПІСЛЯ</text>
+      <rect x="398" y="34" width="524" height="196" rx="15" fill="#ffffff" stroke="#154734" stroke-width="2"/>
+      <text x="422" y="66" fill="#282a29" font-size="17" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">portfolio/</text>
+      <text x="440" y="96" fill="#5c605e" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">index.html</text>
+      <text x="440" y="122" fill="#5c605e" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">about.html</text>
+      <text x="440" y="148" fill="#5c605e" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">works.html</text>
+      <text x="440" y="174" fill="#5c605e" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">style.css</text>
+
+      <rect x="620" y="78" width="284" height="112" rx="12" fill="#f1f3f7" stroke="#154734" stroke-width="2"/>
+      <text x="762" y="108" text-anchor="middle" fill="#154734" font-size="19" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">.git/</text>
+      <text x="762" y="134" text-anchor="middle" fill="#5c605e" font-size="15">тут житиме вся історія</text>
+      <text x="762" y="158" text-anchor="middle" fill="#5c605e" font-size="15">створюється порожньою</text>
+      <text x="762" y="180" text-anchor="middle" fill="#a8392f" font-size="14.5" font-weight="700">не відкривати · не видаляти</text>
+
+      <text x="660" y="211" text-anchor="middle" fill="#154734" font-size="14.5">твої файли не змінились ані на символ</text>
+    </svg>
+
+    <div class="tip mt"><span class="tip-ico">🧷</span>
+      <div>Створення репозиторію <strong>нічого не робить із твоїми файлами</strong>.
+      Воно тільки додає порожню службову папку.</div></div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🔒</div><div>
+      <span class="label lp">Не чіпати</span>
+      <h2>Службова папка .git</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox">Назва починається з <strong>крапки</strong>. У більшості систем це
+          означає «прихований» — тому в провіднику її зазвичай не видно</div>
+        <div class="hbox hg">Уся історія проєкту — <strong>усередині неї</strong>.
+          Скопіював папку проєкту разом із <span class="ic">.git</span> — скопіював історію</div>
+        <div class="hbox hp">Видалив <span class="ic">.git</span> — <strong>історія зникла</strong>,
+          файли лишились. Це єдиний спосіб «розгітити» папку</div>
+      </div>
+      <div class="card cp"><h3>Правило на весь рік</h3>
+        <p>Усередину <span class="ic">.git</span> <b>не заходимо руками й нічого там не правимо</b>.
+           Усе, що там треба, робиться командами Git.</p>
+        <p class="mt">Це не таємниця й не захист — просто там службовий формат, який
+           легко зіпсувати випадковим збереженням.</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 1</span>
+        <span class="t">Створюємо репозиторій</span><span class="tmr">7 хвилин</span></div>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t">Розпакувати комплект у свою папку. Відкрити редактор →
+            <b>File → Open Folder…</b> → вибрати <span class="ic">portfolio</span></span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t">Ліворуч знайти третю іконку згори — <b>Source Control</b>
+            (гілочка). Або <span class="ic">Ctrl + Shift + G</span></span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t">Натиснути синю кнопку <b>Initialize Repository</b></span></div>
+        <div class="step"><span class="step-n">4</span>
+          <span class="step-t">Готово. Список файлів на панелі має змінитися — саме це
+            й розбиратимемо далі</span></div>
+      </div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🙋</span>
+      <div>Кнопки <b>Initialize Repository</b> немає, а замість неї пропонують
+      «Open Folder» — значить відкрито файл, а не папку. Поверніться до кроку 1.</div></div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lg">Перевірка</span>
+      <h2>Як переконатися, що вийшло</h2>
+    </div></div>
+    <p>Три ознаки. Достатньо будь-якої, але надійніше подивитись на всі три.</p>
+    <div class="three mt">
+      <div class="card cg"><h3>1 · Панель</h3>
+        <p>Кнопка <b>Initialize Repository</b> зникла, замість неї — поле для повідомлення
+           й список файлів</p></div>
+      <div class="card cb"><h3>2 · Рядок унизу</h3>
+        <p>У нижньому рядку редактора зліва з'явилась назва гілки —
+           <span class="ic">main</span></p></div>
+      <div class="card ct"><h3>3 · Сама папка</h3>
+        <p>Увімкнути показ прихованих файлів — у папці видно
+           <span class="ic">.git</span></p></div>
+    </div>
+    <div class="tip tb mt"><span class="tip-ico">⌨️</span>
+      <div>Показати приховане: <strong>Windows</strong> — у провіднику вкладка «Вигляд» →
+      «Приховані елементи». <strong>macOS</strong> — <span class="ic">Cmd + Shift + .</span></div></div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label ly">Наступний крок</span>
+      <h2>Кожен запис в історії підписаний</h2>
+    </div></div>
+    <p>Історія — це не просто список змін. Біля кожного запису стоїть, <strong>хто</strong> його
+       зробив і <strong>коли</strong>. Git бере ці дані не з системи й не з облікового запису —
+       їх треба назвати самому.</p>
+    <div class="hist mt">
+      <div class="hrow"><span class="hdot"></span>
+        <span class="hmsg">Додав сторінку контактів <b>· Олена К.</b></span><span class="hwhen">сьогодні 14:20</span></div>
+      <div class="hrow"><span class="hdot"></span>
+        <span class="hmsg">Виправив меню <b>· Олена К.</b></span><span class="hwhen">вчора 16:05</span></div>
+      <div class="hrow"><span class="hdot"></span>
+        <span class="hmsg">Перша робоча версія <b>· Олена К.</b></span><span class="hwhen">8 вересня</span></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🧑‍🤝‍🧑</span>
+      <div>Поки проєкт твій, підпис здається зайвим. У третій темі ви працюватимете
+      <strong>в парах в одному репозиторії</strong> — і без підпису буде не розібрати, хто що зробив.</div></div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ДІАГРАМА ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">⚙️</div><div>
+      <span class="label ly">Як це працює</span>
+      <h2>Звідки береться підпис</h2>
+    </div></div>
+
+    <svg class="diagram" viewBox="0 0 940 236" role="img"
+         aria-label="Схема: налаштування імені та пошти один раз потрапляє в кожен майбутній запис історії"
+         font-family="'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,sans-serif">
+      <defs>
+        <marker id="gah2" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+          <path d="M0,0 L11,4.5 L0,9 Z" fill="#227354"/>
+        </marker>
+      </defs>
+
+      <rect x="14" y="52" width="290" height="132" rx="15" fill="#ffffff" stroke="#591429" stroke-width="2"/>
+      <text x="159" y="38" text-anchor="middle" fill="#591429" font-size="14.5" font-weight="700" letter-spacing="1.2">РАЗ У ЖИТТІ</text>
+      <text x="159" y="92" text-anchor="middle" font-size="30">⚙️</text>
+      <text x="159" y="126" text-anchor="middle" fill="#591429" font-size="18" font-weight="700">Налаштування Git</text>
+      <text x="159" y="150" text-anchor="middle" fill="#5c605e" font-size="15">ім'я · пошта</text>
+      <text x="159" y="171" text-anchor="middle" fill="#5c605e" font-size="14">на цьому комп'ютері</text>
+
+      <line x1="318" y1="118" x2="404" y2="118" stroke="#227354" stroke-width="2.5" marker-end="url(#gah2)"/>
+      <text x="361" y="104" text-anchor="middle" fill="#227354" font-size="14.5" font-weight="700">підставляється</text>
+      <text x="361" y="140" text-anchor="middle" fill="#5c605e" font-size="13.5">автоматично</text>
+
+      <rect x="418" y="30" width="504" height="176" rx="15" fill="#ffffff" stroke="#227354" stroke-width="2"/>
+      <text x="670" y="18" text-anchor="middle" fill="#227354" font-size="14.5" font-weight="700" letter-spacing="1.2">У КОЖЕН МАЙБУТНІЙ ЗАПИС</text>
+
+      <rect x="440" y="50" width="460" height="66" rx="10" fill="#f1f3f7" stroke="#227354" stroke-width="1.5"/>
+      <text x="458" y="76" fill="#282a29" font-size="16" font-weight="700">Перша робоча версія сайту</text>
+      <text x="458" y="100" fill="#5c605e" font-size="14.5" font-family="'JetBrains Mono', Menlo, monospace">Олена К. &lt;olena@school.ua&gt; · 8 вересня 14:20</text>
+
+      <rect x="440" y="126" width="460" height="66" rx="10" fill="#f1f3f7" stroke="#227354" stroke-width="1.5"/>
+      <text x="458" y="152" fill="#282a29" font-size="16" font-weight="700">Поміняв кольори на темні</text>
+      <text x="458" y="176" fill="#5c605e" font-size="14.5" font-family="'JetBrains Mono', Menlo, monospace">Олена К. &lt;olena@school.ua&gt; · 15 вересня 14:35</text>
+
+      <text x="470" y="228" text-anchor="middle" fill="#5c605e" font-size="14.5">Не налаштував — Git відмовиться зберігати перший же запис.</text>
+    </svg>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">⌨️</div><div>
+      <span class="label lg">Дві команди</span>
+      <h2>Пишуться один раз і назавжди</h2>
+    </div></div>
+    <p>Кнопки для цього немає — тільки термінал. У редакторі він відкривається
+       <span class="ic">Ctrl + `</span> або <b>Terminal → New Terminal</b>.</p>
+    <div class="dp mt">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">Термінал</span></div>
+      <div class="dp-code"><span class="cm"># хто я</span>
+<span class="sy">$</span> git config --global user.name <span class="sg">"Олена Коваленко"</span>
+
+<span class="cm"># моя пошта</span>
+<span class="sy">$</span> git config --global user.email <span class="sg">"olena@school.ua"</span>
+
+<span class="cm"># перевірити, що записалось</span>
+<span class="sy">$</span> git config --global --list</div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hg"><span class="ic">--global</span> — «для всіх моїх проєктів
+        на цьому комп'ютері», а не тільки для цієї папки</div>
+      <div class="hbox hp">Лапки <strong>обов'язкові</strong>, якщо в імені є пробіл.
+        Це найчастіша помилка в цих двох рядках</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 2</span>
+        <span class="t">Називаємо себе</span><span class="tmr">4 хвилини</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Відкрити термінал і виконати обидві команди зі своїм іменем
+            та поштою. Ім'я — <b>справжнє</b>, латиницею або кирилицею, як зручно</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Виконати <span class="ic">git config --global --list</span>
+            і знайти в списку свої два рядки</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Спробувати виконати команду без лапок — подивитись,
+            що саме запише Git, і виправити</span></div>
+      </div>
+    </div>
+    <div class="tip tp mt"><span class="tip-ico">📮</span>
+      <div>Пошта може бути будь-яка робоча — але <strong>запам'ятайте, яку вписали</strong>.
+      У грудні на цю саму адресу реєструватимемо GitHub.</div></div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">📊</div><div>
+      <span class="label ly">Панель</span>
+      <h2>Що показує Source Control</h2>
+    </div></div>
+    <p>Після створення репозиторію панель перестала бути порожньою. Тепер це
+       <strong>постійний звіт Git про твої файли</strong> — він оновлюється сам,
+       щойно ти щось зберігаєш.</p>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">▸</span>
+        <span class="step-t"><b>Поле зверху</b> — сюди пишуть повідомлення до збереження.
+          Сьогодні не чіпаємо</span></div>
+      <div class="step"><span class="step-n">▸</span>
+        <span class="step-t"><b>Changes</b> — список файлів, у яких є щось незбережене в історію</span></div>
+      <div class="step"><span class="step-n">▸</span>
+        <span class="step-t"><b>Буква праворуч від файлу</b> — його стан. Ось це найважливіше</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label ly">Головне на сьогодні</span>
+      <h2>Дві букви, які треба впізнавати</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="stat">
+          <div class="sfile"><span class="fl">index.html</span><span class="sl-u">U</span></div>
+          <div class="sfile"><span class="fl">about.html</span><span class="sl-u">U</span></div>
+          <div class="sfile"><span class="fl">style.css</span><span class="sl-m">M</span></div>
+        </div>
+        <p class="mt" style="font-size:16px;color:var(--faint)">Так це виглядає на панелі</p>
+      </div>
+      <div>
+        <div class="card cg"><h3>U — untracked</h3>
+          <p><b>Поза наглядом.</b> Git бачить файл, але жодного його стану ще немає в історії.
+             Так виглядають усі файли одразу після створення репозиторію</p></div>
+        <div class="card cp" style="margin-top:12px"><h3>M — modified</h3>
+          <p><b>Змінений.</b> Файл уже є в історії, але з того часу його правили.
+             Ця буква з'явиться в нас тільки на наступному уроці</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lp">Передбач</span>
+      <h2>Скільки файлів буде в списку?</h2>
+    </div></div>
+    <p>Стартовий комплект: <span class="ic">index.html</span>, <span class="ic">about.html</span>,
+       <span class="ic">works.html</span>, <span class="ic">style.css</span> і папка
+       <span class="ic">img/</span> з двома картинками. Щойно створили репозиторій, більше
+       нічого не робили.</p>
+    <div class="card cp reveal mt" onclick="this.classList.toggle('open')">
+      <h3>Скільки рядків покаже Changes і з якою буквою?</h3>
+      <p class="rv-hint">Порахуйте самі. Клацніть, щоб перевірити.</p>
+      <div class="rv-body">
+        <p><strong>Шість. Усі з буквою U.</strong></p>
+        <p>Чотири файли в корені плюс дві картинки всередині
+           <span class="ic">img/</span>: Git рахує <b>файли</b>, а не папки.
+           Порожня папка в списку не з'явиться взагалі — Git її просто не помічає.</p>
+        <p class="mt">І жодного <span class="ic">M</span>: щоб файл став «зміненим»,
+           він спершу має потрапити в історію.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">👁️</div><div>
+      <span class="label lb">Не плутати</span>
+      <h2>«Бачить» — це ще не «зберігає»</h2>
+    </div></div>
+    <p>Найпоширеніше непорозуміння першого тижня: здається, що після
+       <b>Initialize Repository</b> файли вже в безпеці. Це не так.</p>
+    <div class="two mt">
+      <div class="card"><h3>Що Git уже робить</h3>
+        <p>Стежить за папкою й показує, що в ній змінилося. Це відбувається саме,
+           без жодних команд</p></div>
+      <div class="card cp"><h3>Чого Git ще не зробив</h3>
+        <p><b>Не зберіг нічого.</b> В історії порожньо. Видалиш файл зараз —
+           повертати нема звідки</p></div>
+    </div>
+    <div class="tip tg mt"><span class="tip-ico">📅</span>
+      <div>Саме тому наступний урок називається «Збереження змін». Буква
+      <span class="ic">U</span> у всіх файлів — це список того, що ще
+      <strong>жодного разу не потрапило в історію</strong>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 19 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 3</span>
+        <span class="t">Читаємо стан файлів</span><span class="tmr">8 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Порахувати, скільки рядків у <b>Changes</b>, і звірити з тим,
+            скільки файлів у папці</span></div>
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Відкрити <span class="ic">index.html</span>, змінити текст
+            заголовка, <b>зберегти</b>. Подивитись, що сталося зі списком</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Створити новий файл <span class="ic">contacts.html</span>
+            і знайти його на панелі. Потім видалити — і знайти, що змінилось</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Створити <b>порожню папку</b> в проєкті. Пояснити сусідові,
+            чому Git її не показує</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🛠️</div><div>
+      <span class="label lp">Якщо щось пішло не так</span>
+      <h2>Три збої, які трапляються сьогодні</h2>
+    </div></div>
+    <div class="three">
+      <div class="card cp"><h3>Кнопки немає</h3>
+        <p>Відкрито файл, а не папку. <b>File → Open Folder…</b> і вибрати папку проєкту</p></div>
+      <div class="card cb"><h3>Репозиторій не там</h3>
+        <p>Створили не в <span class="ic">portfolio</span>, а в «Завантаженнях» чи на робочому
+           столі. Видалити <span class="ic">.git</span> і зробити наново <b>у правильній папці</b></p></div>
+      <div class="card ct"><h3>Репозиторій у репозиторії</h3>
+        <p>Папка проєкту лежить усередині іншої, де вже є <span class="ic">.git</span>.
+           Винести проєкт назовні</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🧯</span>
+      <div>Усі три лікуються однаково: <strong>видалити папку <span class="ic">.git</span>
+      і почати спочатку</strong>. Твої файли від цього не постраждають — сьогодні в історії
+      ще нічого немає.</div></div>
+  </div></section>
+
+  <!-- ══════════ 21 ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lt">Словник</span>
+      <h2>Слова, які лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="ic">repository</span> — сховище. Папка проєкту
+          з історією. Скорочено <b>repo</b></div>
+        <div class="hbox ht"><span class="ic">initialize</span> — «створити з нуля».
+          Те, що робить кнопка</div>
+        <div class="hbox hb"><span class="ic">source control</span> — керування вихідним кодом.
+          Назва панелі</div>
+      </div>
+      <div>
+        <div class="hbox hg"><span class="ic">untracked</span> — поза наглядом.
+          Буква <b>U</b></div>
+        <div class="hbox hp"><span class="ic">modified</span> — змінений.
+          Буква <b>M</b></div>
+        <div class="hbox"><span class="ic">config</span> — налаштування.
+          Команда, якою назвали себе</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label ly">Підсумок</span>
+      <h2>Що є після другого уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Зроблено</h3><ul>
+        <li>проєкт відкрито <b>папкою</b> в редакторі</li>
+        <li>у папці є репозиторій і <span class="ic">.git</span></li>
+        <li>ім'я та пошта автора налаштовані</li>
+        <li>панель Source Control читається</li>
+      </ul></div>
+      <div class="card cb"><h3>Наступного разу</h3><ul>
+        <li>перший запис в історії</li>
+        <li>що таке «підготувати зміну»</li>
+        <li>як писати повідомлення, щоб через місяць зрозуміти</li>
+        <li>кілька змін — кілька окремих записів</li>
+      </ul></div>
+    </div>
+    <div class="hbox hb mt"><strong>Домашнього завдання немає.</strong> Але папку
+      <span class="ic">portfolio</span> не видаляйте — з нею працюємо весь рік.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 3 · 15 вересня · Збереження змін: одна зміна — один запис</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
