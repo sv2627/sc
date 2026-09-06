@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1.2 Binary manipulation and negative numbers · IT-англійська · 10 клас · Урок 2</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge IGCSE Computer Science 0478 / 0984 / 2210)
+  Клас          10
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · середа
+  Урок          2 з 36 · 09.09.2026
+  Тема          1.2 Binary manipulation and negative numbers
+  Тривалість    45 хв — показ ~22 хв + три практики 19 хв
+  Акцент        plum (#602857)
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — ТІЛЬКИ ПІДРУЧНИК. Нічого не вигадано.
+     Cambridge IGCSE™ & O Level Computer Science: Coursebook
+     (Sarah Lawrey, Victoria Ellis), підрозділ 1.2, СТОРІНКИ 16–20.
+     Скани: office/igcse-0478/rozdil-01-data-representation/s16…s21.jpeg
+     Звідти взято дослівно:
+       • чотири правила додавання (с. 16–17)
+       • розібраний приклад 10010100 + 00011110 = 10110010 (с. 16–18)
+       • Questions 3 і 4 (с. 18)
+       • overflow error: 306 > 255, KEY WORD-означення (с. 18)
+       • питання про 16-бітовий регістр (с. 18)
+       • логічні зсуви 00101100: ліворуч 44→88, праворуч 44→22 (с. 19)
+       • втрата цілісності: 11101100 = 236 → 216, а не 472 (с. 20)
+       • Questions 5 і 6 (с. 20)
+       • two's complement для −35: 00100011 → 11011100 → 11011101 (с. 20)
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • 1.3 Text, images and sound — наступний урок, с. 21–25
+     • Арифметичний зсув і знаковий біт як окрема тема: у підрозділі 1.2
+       їх немає, є тільки logical shift
+     • Віднімання у двійковій: у книжці в 1.2 його немає
+     • Оцінювання — за правилом «слайди без голосу вчителя» це в конспекті
+  ⚠️ ПЕРЕВІРКА two's complement додаванням (s15) — це не з книжки,
+     а стандартна перевірка. Вона позначена як «перевірка», не як
+     матеріал підрозділу, і не вводить нового змісту.
+  ────────────────────────────────────────────────────────────────
+  МОВА          I період — англійською терміни, key words і формулювання
+                з книжки. Пояснення українською.
+  СЛОВНИК       двічі за урок: s3 (вхід) і s18 (вихід)
+  ПРАКТИКИ      s6 (6 хв) Q3–Q4 · s12 (6 хв) Q5–Q6 · s16 (7 хв) two's complement
+  ПЕРЕДБАЧ      s8 (16-бітовий регістр) · s15 (перевірка нулем)
+  ────────────────────────────────────────────────────────────────
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/10-it-english/u02/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--plum);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+.dp-out h1{font-size:1.9rem;color:var(--ink);font-family:var(--f-head)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово / тег */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* атрибут / селектор */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:18px 22px;white-space:pre}
+.tree b{color:var(--accent);font-weight:700}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:#9c5b00;
+               background:#fdf0d9;border:1.5px solid #f2ddb5;
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:29px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--ink)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 1 · 1.1 Binary and hexadecimal ═══
+   Усі таблиці — справжні HTML-таблиці, щоб чисто друкувались на A4 у ч/б. */
+
+/* таблиця розрядів 128 64 32 16 8 4 2 1 та таблиця 0–15 → 0–F */
+.btab{width:100%;border-collapse:collapse;margin:10px 0;background:var(--surface);
+      font-family:var(--f-mono);table-layout:fixed}
+.btab th,.btab td{border:1.5px solid var(--border);padding:8px 3px;text-align:center;
+                  font-size:18px;color:var(--ink)}
+.btab th{background:var(--surf2);font-weight:700;color:var(--plum);font-size:16px}
+.btab td.on{background:var(--sky);font-weight:700}
+.btab td.off{color:var(--faint)}
+.btab .rl{font-family:var(--f-body);font-size:15px;color:var(--dim);background:var(--surf2);
+          text-align:right;padding-right:9px;white-space:nowrap;width:132px}
+.btab.sm th,.btab.sm td{padding:6px 2px;font-size:16px}
+.btab .gap{border-left-width:4px;border-left-color:var(--plum)}
+.btab caption{caption-side:bottom;font-size:15px;color:var(--faint);padding-top:7px;text-align:left}
+
+/* таблиця-список: карта року, command words, чек-лист I can… */
+.ptab{width:100%;border-collapse:collapse;margin:8px 0;background:var(--surface)}
+.ptab th,.ptab td{border:1.5px solid var(--border);padding:8px 12px;text-align:left;
+                  font-size:17px;line-height:1.5;color:var(--ink);vertical-align:top}
+.ptab th{background:var(--surf2);font-family:var(--f-head);font-weight:700;color:var(--plum);
+         font-size:14px;letter-spacing:.7px;text-transform:uppercase}
+.ptab td.num{font-family:var(--f-mono);color:var(--dim);text-align:center;white-space:nowrap}
+.ptab td.bx{text-align:center;font-size:20px;color:var(--faint);width:112px}
+.ptab td.en{font-family:var(--f-mono);font-size:16px;color:var(--plum);white-space:nowrap}
+
+/* чек-лист I can… (підсумок) */
+.chk{display:flex;flex-direction:column;gap:7px}
+.ck{display:flex;align-items:flex-start;gap:12px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:9px 15px}
+.ck-b{width:21px;height:21px;border:2px solid var(--plum);border-radius:5px;flex-shrink:0;margin-top:3px}
+.ck-t{font-size:17px;line-height:1.5;color:var(--ink)}
+
+/* KEY WORDS підручника */
+.kw{display:flex;flex-direction:column;gap:7px}
+.kwi{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+     border-radius:0 10px 10px 0;padding:8px 14px;font-size:16px;line-height:1.5;color:var(--dim)}
+.kwi b{font-family:var(--f-mono);color:var(--plum);font-weight:700}
+.kwi i{font-style:normal;color:var(--faint)}
+
+/* зразок кольору для гачка #ff7fa0 */
+.sw{display:flex;align-items:center;justify-content:center;gap:20px;margin:14px 0}
+.sw-box{width:96px;height:96px;border-radius:15px;border:1.5px solid var(--border);background:#ff7fa0}
+.sw-t{font-family:var(--f-mono);font-size:2.3rem;font-weight:700;color:var(--plum)}
+.sw-n{font-size:16px;color:var(--dim);margin-top:5px;font-family:var(--f-body)}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+.tri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:stretch}
+.pc{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:12px 15px;font-family:var(--f-mono);font-size:16px;line-height:1.65;white-space:pre-wrap}
+.pc b{color:var(--brand)}
+.pc .lbl{font-family:var(--f-body);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--faint);display:block;margin-bottom:7px}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 13px;font-size:17px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+.bits{display:flex;gap:0;font-family:var(--f-mono);margin:6px 0}
+.bits span{flex:1;text-align:center;border:1.5px solid var(--border);border-right:0;
+  padding:7px 0;font-size:18px;font-weight:700;background:var(--surface);color:var(--ink)}
+.bits span:last-child{border-right:1.5px solid var(--border)}
+.bits span.on{background:var(--surf2);color:var(--brand)}
+.bits span.out{background:#fbeaea;color:var(--rose);text-decoration:line-through}
+.bits span.new{background:#eaf3ee;color:#1c6b4e}
+.bits.sm span{font-size:15px;padding:5px 0}
+.blab{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin-top:8px;display:block}
+.rules{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.rule{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:13px 10px;text-align:center;font-family:var(--f-mono)}
+.rule .n{display:block;font-size:12px;letter-spacing:1.2px;color:var(--faint);
+  text-transform:uppercase;margin-bottom:6px;font-weight:700}
+.rule .e{display:block;font-size:19px;font-weight:700;color:var(--brand)}
+
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Binary manipulation<br>and negative numbers</h1>
+      <p class="title-sub">Coursebook 1.2 · с. 16–20<br>
+        IT-англійська · 10 клас · Урок 2 з 36 · 9 вересня</p>
+      <div class="chips">
+        <span class="chip">binary addition</span>
+        <span class="chip">overflow error</span>
+        <span class="chip">logical shift</span>
+        <span class="chip">two's complement</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lm">Last time · today</span>
+      <h2>Від «як записати» до «як порахувати»</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>1.1 — уже вміємо</h3>
+        <p><span class="en">denary &#8596; binary &#8596; hexadecimal</span>.
+           8 біт = 1 байт. Найбільше 8-бітове число — <b>255</b></p></div>
+      <div class="card cp"><h3>1.2 — сьогодні</h3>
+        <p>Додавання у двійковій · <span class="en">overflow error</span> ·
+           логічні зсуви · відʼємні числа через
+           <span class="en">two's complement</span></p></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">📕</span>
+      <div>Усе сьогоднішнє — <strong>Coursebook, підрозділ 1.2, сторінки 16–20</strong>.
+      Правила, приклади й питання беремо звідти.</div></div>
+  </div></section>
+
+  <!-- ══════════ 3 ── СЛОВНИК 1 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key words · вхід</span>
+      <h2>Слова цього підрозділу</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">binary addition</span><span class="uk">додавання двійкових чисел</span></div>
+      <div class="vp"><span class="en">carry</span><span class="uk">перенесення в наступний розряд</span></div>
+      <div class="vp"><span class="en">register</span><span class="uk">регістр — комірка фіксованої довжини</span></div>
+      <div class="vp"><span class="en">overflow error</span><span class="uk">переповнення: число більше, ніж регістр може вмістити</span></div>
+      <div class="vp"><span class="en">logical binary shift</span><span class="uk">логічний зсув</span></div>
+      <div class="vp"><span class="en">to shift left / right</span><span class="uk">зсунути ліворуч / праворуч</span></div>
+      <div class="vp"><span class="en">data integrity</span><span class="uk">цілісність даних</span></div>
+      <div class="vp"><span class="en">to invert</span><span class="uk">інвертувати — замінити 0 на 1 і навпаки</span></div>
+      <div class="vp"><span class="en">two's complement</span><span class="uk">доповняльний код — спосіб записати мінус</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">➕</div><div>
+      <span class="label lm">Binary addition · с. 16</span>
+      <h2>Four rules. That is all.</h2>
+    </div></div>
+    <div class="rules">
+      <div class="rule"><span class="n">Rule 1</span><span class="e">0 + 0 = 0</span></div>
+      <div class="rule"><span class="n">Rule 2</span><span class="e">1 + 0 = 1</span></div>
+      <div class="rule"><span class="n">Rule 3</span><span class="e">1 + 1 = 10</span></div>
+      <div class="rule"><span class="n">Rule 4</span><span class="e">1 + 1 + 1 = 11</span></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm">Правило 3 — бо <b>10 у двійковій це 2</b>.
+        Пишемо 0, одиницю переносимо</div>
+      <div class="hbox ho">Правило 4 — бо <b>11 у двійковій це 3</b>.
+        Пишемо 1, одиницю переносимо</div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">⬅️</span>
+      <div>Рахуємо <strong>справа наліво</strong> — так само, як у десятковій.
+      Четверте правило спрацьовує тоді, коли до двох одиниць додалося
+      <span class="en">carry</span>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🧮</div><div>
+      <span class="label lm">Worked example · с. 16–18</span>
+      <h2>10010100 + 00011110</h2>
+    </div></div>
+    <div class="bits"><span class="on">1</span><span>0</span><span>0</span><span class="on">1</span><span>0</span><span class="on">1</span><span>0</span><span>0</span></div>
+    <div class="bits"><span>0</span><span>0</span><span>0</span><span class="on">1</span><span class="on">1</span><span class="on">1</span><span class="on">1</span><span>0</span></div>
+    <span class="blab">результат</span>
+    <div class="bits"><span class="new">1</span><span class="new">0</span><span class="new">1</span><span class="new">1</span><span class="new">0</span><span class="new">0</span><span class="new">1</span><span class="new">0</span></div>
+    <div class="two mt">
+      <div class="hbox hm">Книжка проходить це <b>розряд за розрядом</b>, с. 16–18.
+        Перше обчислення — <span class="en">0 + 0</span>, Rule 1</div>
+      <div class="hbox">Перевірка в десятковій:
+        <b>148 + 30 = 178</b>, і <span class="en">10110010</span> — це 178</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 1</span>
+        <span class="t">Questions 3 and 4 · с. 18</span><span class="tmr">6 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t"><b>Q3.</b> Add the 8-bit binary values
+            <span class="en">00011001</span> and <span class="en">01000011</span></span></div>
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t"><b>Q4.</b> Add the 8-bit binary values
+            <span class="en">00100110</span> and <span class="en">01010111</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Перевірити обидві відповіді <b>через десяткову</b>:
+            перевести доданки, додати, перевести суму</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Записати, у якому саме розряді спрацювало
+            <b>Rule 4</b> (<span class="en">1 + 1 + 1</span>)</span></div>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">✍️</span>
+      <div>Пишемо <strong>з перенесеннями зверху</strong>, як у книжці.
+      Перенесення в голові — головна причина помилок.</div></div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">💥</div><div>
+      <span class="label lr">Overflow · с. 18</span>
+      <h2>What if the answer is bigger than 255?</h2>
+    </div></div>
+    <p>Той самий приклад, тільки друге число трохи інше:
+       <span class="en">10010100 + 10011110</span>.</p>
+    <div class="two mt">
+      <div>
+        <div class="hbox">148 + 158 = <b>306</b></div>
+        <div class="hbox hm">Найбільше, що вміщає 8-бітовий
+          <span class="en">register</span>, — <b>255</b></div>
+        <div class="hbox ho">На останньому кроці виходить
+          <span class="en">1 + 1 = 10</span>, і <b>переносити нікуди</b></div>
+      </div>
+      <div class="card cp"><h3>KEY WORD · с. 18</h3>
+        <p><span class="en">overflow error</span>: a type of error that occurs when
+           a number larger than a register can store is generated.</p>
+        <p class="mt">Це <b>не поломка</b>. Це передбачувана межа: число просто
+           не вміщається в задану кількість бітів</p></div>
+    </div>
+    <div class="hbox hm mt">Книжка додає: у кожного компʼютера є свої межі,
+      наприклад <b>16-бітові регістри</b>. Питання з тексту:
+      <span class="en">what is the largest number that could be stored
+      in a 16-bit register?</span></div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Predict</span>
+      <h2>16-bit register</h2>
+    </div></div>
+    <p>Питання прямо з тексту на с. 18. Порахуйте, не гуглячи.</p>
+    <div class="card cp reveal mt">
+      <h3>What is the largest number a 16-bit register can store?</h3>
+      <p class="rv-hint">Спершу відповідь, потім клац.</p>
+      <div class="rv-body">
+        <p><strong>65535</strong></p>
+        <p class="mt">Логіка та сама, що для 8 бітів: 8 одиниць дають 255,
+           бо <span class="en">2<sup>8</sup> &#8722; 1</span>.
+           Для 16 бітів — <span class="en">2<sup>16</sup> &#8722; 1 = 65535</span>.</p>
+        <p class="mt" style="color:var(--accent)">Звідси й проста перевірка на іспиті:
+           найбільше число завжди на одиницю менше за степінь двійки.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">⬅️</div><div>
+      <span class="label lm">Logical shift left · с. 19</span>
+      <h2>Зсув ліворуч множить на 2</h2>
+    </div></div>
+    <span class="blab">було · 00101100 = 44</span>
+    <div class="bits"><span class="out">0</span><span>0</span><span class="on">1</span><span>0</span><span class="on">1</span><span class="on">1</span><span>0</span><span>0</span></div>
+    <span class="blab">після зсуву ліворуч · 01011000 = 88</span>
+    <div class="bits"><span>0</span><span class="on">1</span><span>0</span><span class="on">1</span><span class="on">1</span><span>0</span><span>0</span><span class="new">0</span></div>
+    <div class="two mt">
+      <div class="hbox hm">Крайній лівий біт <b>виходить із регістру й зникає</b> —
+        місця, куди його посунути, немає</div>
+      <div class="hbox">Порожня комірка праворуч заповнюється
+        <b>нулем</b>. Завжди</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">➡️</div><div>
+      <span class="label lm">Logical shift right · с. 19</span>
+      <h2>Зсув праворуч ділить на 2</h2>
+    </div></div>
+    <span class="blab">було · 00101100 = 44</span>
+    <div class="bits"><span>0</span><span>0</span><span class="on">1</span><span>0</span><span class="on">1</span><span class="on">1</span><span>0</span><span class="out">0</span></div>
+    <span class="blab">після зсуву праворуч · 00010110 = 22</span>
+    <div class="bits"><span class="new">0</span><span>0</span><span>0</span><span class="on">1</span><span>0</span><span class="on">1</span><span class="on">1</span><span>0</span></div>
+    <div class="hbox hm mt">Дзеркально: крайній правий біт зникає, порожня комірка
+      ліворуч заповнюється нулем. <strong>44 &#8594; 22</strong>.</div>
+    <div class="tip to mt"><span class="tip-ico">🔁</span>
+      <div>Два зсуви — множення або ділення на 4. Три — на 8.
+      Кожен зсув це <span class="en">&#215; 2</span> або
+      <span class="en">&#247; 2</span>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">⚠️</div><div>
+      <span class="label lr">Data integrity · с. 20</span>
+      <h2>Коли множення на 2 не працює</h2>
+    </div></div>
+    <span class="blab">11101100 = 236</span>
+    <div class="bits"><span class="out">1</span><span class="on">1</span><span class="on">1</span><span>0</span><span class="on">1</span><span class="on">1</span><span>0</span><span>0</span></div>
+    <span class="blab">після зсуву ліворуч · 11011000 = 216</span>
+    <div class="bits"><span class="on">1</span><span class="on">1</span><span>0</span><span class="on">1</span><span class="on">1</span><span>0</span><span>0</span><span class="new">0</span></div>
+    <div class="two mt">
+      <div class="hbox hr"><b>236 &#215; 2 = 472</b>, а вийшло <b>216</b>.
+        Тому що загублена одиниця була <b>найстаршим бітом</b></div>
+      <div class="hbox hm">Книжка називає це прямо: одна з проблем логічного зсуву
+        в тому, що <span class="en">data can lose its integrity</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 2</span>
+        <span class="t">Questions 5 and 6 · с. 20</span><span class="tmr">6 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t"><b>Q5.</b> <span class="en">Describe what happens
+            in a logical binary shift.</span> Три речення: що зникає,
+            що зʼявляється, що стається зі значенням</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t"><b>Q6.</b> <span class="en">Perform two logical shifts
+            to the right on the binary number 11101100.</span>
+            Записати обидва кроки окремо</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Перевести всі три значення в десяткову.
+            Чи справді кожен крок поділив на 2?</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Придумати 8-бітове число, у якого <b>два зсуви праворуч</b>
+            НЕ дадуть точного ділення на 4. Пояснити чому</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">➖</div><div>
+      <span class="label lm">Negative binary numbers · с. 20</span>
+      <h2>Мінуса у двійковій немає</h2>
+    </div></div>
+    <p>Книжка формулює задачу так: числа бувають відʼємними, наприклад
+       <span class="en">&#8722;150</span>. Але у двійковій є лише
+       <strong>0 і 1</strong> — символа &#171;мінус&#187; там просто не існує.</p>
+    <div class="two mt">
+      <div class="card cp"><h3>Отже потрібен метод</h3>
+        <p>Спосіб записати відʼємне число тими самими нулями й одиницями.
+           Він називається <span class="en">two's complement</span></p></div>
+      <div class="card cm"><h3>Два кроки</h3>
+        <p><b>1.</b> <span class="en">Invert</span> усі біти:
+           0 &#8594; 1, 1 &#8594; 0<br>
+           <b>2.</b> Додати <b>1</b> до результату</p></div>
+    </div>
+    <div class="hbox hm mt">Книжка каже: <span class="en">most modern computers
+      use this method</span>. Це не навчальна вигадка, це те, як воно працює насправді.</div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🔢</div><div>
+      <span class="label lm">Worked example · с. 20</span>
+      <h2>Як записати &#8722;35</h2>
+    </div></div>
+    <span class="blab">крок 0 · 35 у двійковій</span>
+    <div class="bits sm"><span>0</span><span>0</span><span class="on">1</span><span>0</span><span>0</span><span>0</span><span class="on">1</span><span class="on">1</span></div>
+    <span class="blab">крок 1 · invert — кожен біт навпаки</span>
+    <div class="bits sm"><span class="on">1</span><span class="on">1</span><span>0</span><span class="on">1</span><span class="on">1</span><span class="on">1</span><span>0</span><span>0</span></div>
+    <span class="blab">крок 2 · додати 1</span>
+    <div class="bits sm"><span class="new">1</span><span class="new">1</span><span class="new">0</span><span class="new">1</span><span class="new">1</span><span class="new">1</span><span class="new">0</span><span class="new">1</span></div>
+    <div class="hbox hm mt"><span class="en">11011101 is the binary representation
+      of &#8722;35 using the two's complement method</span> — с. 20, дослівно.</div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Check</span>
+      <h2>Як перевірити, що це справді мінус 35?</h2>
+    </div></div>
+    <p>Є проста перевірка, яку варто знати: додайте
+       <span class="en">00100011</span> і <span class="en">11011101</span>
+       за чотирма правилами.</p>
+    <div class="card cp reveal mt">
+      <h3>Що вийде?</h3>
+      <p class="rv-hint">Порахуйте, потім клац.</p>
+      <div class="rv-body">
+        <p><strong>100000000</strong> — девʼять бітів.</p>
+        <p class="mt">У 8-бітовому регістрі старша одиниця <b>не вміщається</b>
+           й зникає. Лишається <span class="en">00000000</span>.</p>
+        <p class="mt" style="color:var(--accent)">А це саме те, чого ми й хотіли:
+           <b>35 + (&#8722;35) = 0</b>. Метод працює.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 3</span>
+        <span class="t">Two's complement</span><span class="tmr">7 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Записати <b>&#8722;20</b> у 8 бітах: перевести 20,
+            інвертувати, додати 1. Усі три кроки на папері</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Те саме для <b>&#8722;100</b>. Перевірити додаванням:
+            має вийти нуль у восьми бітах</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Подивитися на старший біт у всіх відповідях.
+            Що в них спільного?</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Записати <b>&#8722;150</b> у 8 бітах — те число,
+            з якого книжка починає розділ. Що пішло не так і чому?</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🧭</div><div>
+      <span class="label lm">Що звʼязує весь підрозділ</span>
+      <h2>Регістр має межу</h2>
+    </div></div>
+    <div class="three">
+      <div class="card cm"><h3>Addition</h3>
+        <p>Результат більший за 255 — <span class="en">overflow error</span></p></div>
+      <div class="card cp"><h3>Shift</h3>
+        <p>Біт вийшов за межу — <b>зник назавжди</b>,
+           значення зіпсоване</p></div>
+      <div class="card"><h3>Two's complement</h3>
+        <p>Дев'ятий біт при перевірці <b>теж зникає</b> —
+           і саме тому сума дає нуль</p></div>
+    </div>
+    <div class="hbox hm mt">Три різні теми, одна причина: <strong>регістр має фіксовану
+      довжину, і все, що за неї виходить, губиться</strong>. Це і є головна думка
+      підрозділу 1.2.</div>
+  </div></section>
+
+  <!-- ══════════ 18 ── СЛОВНИК 2 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key words · вихід</span>
+      <h2>Ті самі слова — у реченні</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="en">An <b>overflow error</b> occurs when
+          a number larger than a register can store is generated.</span></div>
+        <div class="hbox hm"><span class="en">A logical shift to the left
+          <b>multiplies</b> the binary number by 2.</span></div>
+        <div class="hbox ho"><span class="en">A logical shift to the right
+          <b>divides</b> the binary number by 2.</span></div>
+      </div>
+      <div>
+        <div class="hbox"><span class="en">Data can lose its
+          <b>integrity</b> when vital bits are removed.</span></div>
+        <div class="hbox hm"><span class="en">First <b>invert</b> all the values,
+          then add 1.</span></div>
+        <div class="hbox ho"><span class="en">This is called
+          <b>two's complement</b>.</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lr">I can…</span>
+      <h2>Чек-лист підрозділу 1.2</h2>
+    </div></div>
+    <div class="chk">
+      <div class="ck"><div class="ck-b"></div><div class="ck-t">add two 8-bit binary numbers</div></div>
+      <div class="ck"><div class="ck-b"></div><div class="ck-t">state the four rules</div></div>
+      <div class="ck"><div class="ck-b"></div><div class="ck-t">explain an overflow error</div></div>
+      <div class="ck"><div class="ck-b"></div><div class="ck-t">perform a logical shift left</div></div>
+      <div class="ck"><div class="ck-b"></div><div class="ck-t">perform a logical shift right</div></div>
+      <div class="ck"><div class="ck-b"></div><div class="ck-t">explain loss of data integrity</div></div>
+      <div class="ck"><div class="ck-b"></div><div class="ck-t">convert a number using two's complement</div></div>
+      <div class="ck"><div class="ck-b"></div><div class="ck-t">check my answer by adding it back</div></div>
+      <div class="ck"><div class="ck-b"></div><div class="ck-t">say why a register has a limit</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Next</span>
+      <h2>Що далі</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cm"><h3>Закрили</h3><ul>
+        <li>1.1 Binary and hexadecimal</li>
+        <li><b>1.2 Binary manipulation and negative numbers</b></li>
+      </ul></div>
+      <div class="card cp"><h3>Наступного разу · 1.3</h3><ul>
+        <li><span class="en">How do computers represent text, images and sound?</span></li>
+        <li><span class="en">character set</span>: ASCII і Unicode</li>
+        <li>чому <span class="en">A</span> це <span class="en">01000001</span></li>
+        <li><span class="en">pixel</span> — і звідки береться картинка</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнього завдання немає.</strong>
+      Роздатку зберегти: чотири правила додавання й два кроки
+      <span class="en">two's complement</span> знадобляться до кінця розділу.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 3 · 16 вересня · 1.3 Text, images and sound · с. 21–25</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

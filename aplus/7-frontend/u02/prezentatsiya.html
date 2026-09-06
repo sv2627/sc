@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Семантичний каркас · Front-end II · 7 клас · Урок 2</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Front-end II (адаптив, робота за зразком) — 2-й рік
+  Клас          7
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · середа
+  Урок          2 з 36 · 09.09.2026
+  Тема          Семантичний каркас
+  Тривалість    45 хв — показ ~23 хв + три практики 21 хв
+  Акцент        blue (#0253b3)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Працюємо зі сторінкою, яка вже є з уроку 1.
+  ────────────────────────────────────────────────────────────────
+  ПЛАН          office/plany/03-frontend-7.md, тема 1.2
+                «Замінюємо div class="header" та інші на header, nav, main,
+                section, footer. Вигляд не змінився — змінилась структура:
+                показуємо це в DevTools. article, aside, один h1 на сторінку»
+                Артефакт: сторінка на семантичних тегах, вигляд той самий.
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКИ      s7  (6 хв) заміна div на семантику
+                s14 (7 хв) article та aside
+                s19 (8 хв) перевірка структури і один h1
+  ПЕРЕДБАЧ      s10, s17 — відповідь відкривається на ТОМУ Ж слайді
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ГОЛОВНЕ, ЩО МАЄ ЗАЛИШИТИСЬ: вигляд сторінки НЕ змінився.
+     Змінилась структура. Якщо після заміни щось «поїхало» — це не семантика,
+     це загублений клас у CSS. Показати різницю на очах у DevTools.
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • Одиниці вимірювання (%, rem, vw) — урок 3
+     • Flexbox і Grid — II період
+     • ARIA-атрибути: занадто рано, семантика сама по собі вже дає доступність
+     • Оцінювання — за правилом «слайди без голосу вчителя» це в конспекті
+  ────────────────────────────────────────────────────────────────
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/7-frontend/u02/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+.dp-out h1{font-size:1.9rem;color:var(--ink);font-family:var(--f-head)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово / тег */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* атрибут / селектор */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:18px 22px;white-space:pre}
+.tree b{color:var(--accent);font-weight:700}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:#9c5b00;
+               background:#fdf0d9;border:1.5px solid #f2ddb5;
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:29px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--ink)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 1: макет «два екрани» (слайд 6) і лічильники ═══ */
+.scrs{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
+.scr-cap{font-family:var(--f-mono);font-size:16px;color:var(--dim);text-align:center;margin-bottom:8px}
+.scr-win{border:2px solid var(--border);border-radius:10px;background:var(--surface);
+         padding:11px;overflow:hidden;box-shadow:0 1px 3px rgba(89,20,41,.06)}
+.scr-win.bad{border-color:var(--rose)}
+.scr-bar{height:15px;border-radius:5px;background:var(--sky);margin-bottom:10px}
+.scr-cards{display:flex;gap:8px}
+.scr-cards .blk{height:60px;border-radius:7px;background:var(--pink);flex:1 0 90px}
+.scr-line{height:9px;border-radius:5px;background:var(--border);margin-top:10px}
+.scr-line.s{width:58%}
+.scr-win.bad .scr-cards{width:235%}
+.scr-tag{font-family:var(--f-mono);font-size:16px;text-align:center;margin-top:10px;color:var(--dim)}
+.scr-tag.bad{color:var(--rose);font-weight:700}
+.nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center}
+.num{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:18px 12px;
+     box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.num b{display:block;font-family:var(--f-mono);font-size:2.3rem;color:var(--accent);line-height:1.2}
+.num span{display:block;font-size:17px;color:var(--dim);margin-top:6px}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:17px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:6px 14px;flex-shrink:0}
+.prac-lead{font-size:18px;line-height:1.65;color:var(--dim);margin-bottom:13px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+.tri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:stretch}
+.pc{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:12px 15px;font-family:var(--f-mono);font-size:16px;line-height:1.65;white-space:pre-wrap}
+.pc b{color:var(--brand)}
+.pc .lbl{font-family:var(--f-body);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--faint);display:block;margin-bottom:7px}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 13px;font-size:17px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Семантичний каркас</h1>
+      <p class="title-sub">Той самий вигляд — інша структура<br>
+        Front-end II · 7 клас · Урок 2 з 36 · 9 вересня</p>
+      <div class="chips">
+        <span class="chip">header · nav · main</span>
+        <span class="chip">section · article</span>
+        <span class="chip">aside · footer</span>
+        <span class="chip">один h1</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lm">Минулого разу · сьогодні</span>
+      <h2>Сторінка є. Робимо її зрозумілою</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Уже маємо</h3>
+        <p>Сторінка з уроку 1: шапка, меню, вміст, підвал. Усе на
+           <span class="ic">&lt;div&gt;</span> з класами
+           <span class="ic">header</span>, <span class="ic">content</span>,
+           <span class="ic">footer</span></p></div>
+      <div class="card cp"><h3>Сьогодні</h3>
+        <p>Ті самі частини, але тегами, у яких <b>уже є значення</b>.
+           Вигляд не зміниться <b>ні на піксель</b>. Зміниться те,
+           як сторінку розуміє машина</p></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🎯</span>
+      <div>Правило, з якого виріс увесь урок: <strong>тег каже, що це таке,
+      а не як це виглядає</strong>. Вигляд — робота CSS.</div></div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🍲</div><div>
+      <span class="label lo">Задача</span>
+      <h2>Проблема «супу з div-ів»</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">так було</span></div>
+        <div class="dp-code"><span class="sk">&lt;div</span> <span class="st">class</span>=<span class="ss">"header"</span><span class="sk">&gt;</span>
+  <span class="sk">&lt;div</span> <span class="st">class</span>=<span class="ss">"nav"</span><span class="sk">&gt;</span>…<span class="sk">&lt;/div&gt;</span>
+<span class="sk">&lt;/div&gt;</span>
+<span class="sk">&lt;div</span> <span class="st">class</span>=<span class="ss">"content"</span><span class="sk">&gt;</span>…<span class="sk">&lt;/div&gt;</span>
+<span class="sk">&lt;div</span> <span class="st">class</span>=<span class="ss">"footer"</span><span class="sk">&gt;</span>…<span class="sk">&lt;/div&gt;</span></div>
+      </div>
+      <div>
+        <div class="hbox">Для браузера <span class="ic">&lt;div&gt;</span> —
+          <b>порожня коробка без значення</b>. Клас <span class="ic">"header"</span>
+          придумав ти, і машині він нічого не каже</div>
+        <div class="hbox hm">Назвав би <span class="ic">class="shapka"</span> —
+          працювало б так само. Це і є проблема</div>
+        <div class="hbox ho">У великому файлі з 200 рядків
+          <span class="ic">&lt;/div&gt;</span> у кінці — <b>чий саме?</b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🏷️</div><div>
+      <span class="label lm">Рішення</span>
+      <h2>Сім тегів замість класів</h2>
+    </div></div>
+    <table class="tbl">
+      <tr><th>Тег</th><th>Що це за частина</th><th>Скільки на сторінці</th></tr>
+      <tr><td class="c">&lt;header&gt;</td><td>шапка: логотип, назва, меню</td><td>одна вгорі</td></tr>
+      <tr><td class="c">&lt;nav&gt;</td><td>навігація — блок посилань по сайту</td><td>зазвичай одна</td></tr>
+      <tr><td class="c">&lt;main&gt;</td><td>головний вміст саме цієї сторінки</td><td><b>рівно один</b></td></tr>
+      <tr><td class="c">&lt;section&gt;</td><td>смисловий розділ зі своїм заголовком</td><td>скільки треба</td></tr>
+      <tr><td class="c">&lt;article&gt;</td><td>самостійний шматок: пост, картка, новина</td><td>скільки треба</td></tr>
+      <tr><td class="c">&lt;aside&gt;</td><td>збоку від головного: реклама, «схоже»</td><td>скільки треба</td></tr>
+      <tr><td class="c">&lt;footer&gt;</td><td>підвал: контакти, копірайт</td><td>одна внизу</td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🔄</div><div>
+      <span class="label lm">Заміна</span>
+      <h2>Було → стало</h2>
+    </div></div>
+    <div class="pair">
+      <div class="pc"><span class="lbl">було</span>&lt;div class="header"&gt;
+  &lt;div class="nav"&gt;…&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="content"&gt;
+  &lt;div class="post"&gt;…&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="footer"&gt;…&lt;/div&gt;</div>
+      <div class="pc"><span class="lbl">стало</span>&lt;<b>header</b>&gt;
+  &lt;<b>nav</b>&gt;…&lt;/<b>nav</b>&gt;
+&lt;/<b>header</b>&gt;
+&lt;<b>main</b>&gt;
+  &lt;<b>article</b>&gt;…&lt;/<b>article</b>&gt;
+&lt;/<b>main</b>&gt;
+&lt;<b>footer</b>&gt;…&lt;/<b>footer</b>&gt;</div>
+    </div>
+    <div class="hbox hm mt">Клас можна прибрати не завжди. Якщо на нього
+      є правило в CSS — <strong>клас лишається, міняється тільки тег</strong>:
+      <span class="ic">&lt;header class="header"&gt;</span>. Прибирати клас будемо,
+      коли перепишемо CSS.</div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">👁️</div><div>
+      <span class="label lo">Головне</span>
+      <h2>Вигляд не змінився. Взагалі</h2>
+    </div></div>
+    <p>Семантичні теги <strong>не мають власного оформлення</strong>. Браузер малює
+       <span class="ic">&lt;header&gt;</span> точно так само, як
+       <span class="ic">&lt;div&gt;</span> — це звичайний блок.</p>
+    <div class="two mt">
+      <div class="card cm"><h3>Що змінилось</h3>
+        <p>Структура. Тепер машина знає, де шапка, де головне, а де підвал —
+           <b>не здогадуючись за назвою класу</b></p></div>
+      <div class="card cp"><h3>Що НЕ змінилось</h3>
+        <p>Жоден піксель. Ті самі шрифти, кольори, відступи —
+           бо все це задає CSS, а він не чіпався</p></div>
+    </div>
+    <div class="tip tr mt"><span class="tip-ico">⚠️</span>
+      <div>Якщо після заміни щось <strong>поїхало</strong> — семантика тут ні до чого.
+      Це <strong>загублений клас</strong>: правило в CSS написане на
+      <span class="ic">.header</span>, а класу вже немає.</div></div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🛠️</div><div>
+      <span class="label lb">DevTools</span>
+      <h2>Де побачити, що структура змінилась</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>F12 → Elements.</b> Дерево тепер читається словами:
+          <span class="ic">header</span>, <span class="ic">main</span>,
+          <span class="ic">footer</span> — а не сімома однаковими
+          <span class="ic">div</span></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Згорніть усі гілки.</b> На екрані лишиться
+          <b>каркас сторінки на 5–6 рядків</b>. З div-ами так не вийде</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Ctrl+F у Elements</b> і пошук <span class="ic">main</span> —
+          знаходить одразу. Пошук <span class="ic">div</span> знайде 40 штук</span></div>
+    </div>
+    <div class="hbox hb mt">Це не «зручність для програміста». Так само сторінку читає
+      <strong>програма для незрячих</strong> і <strong>пошукова система</strong>:
+      вони шукають <span class="ic">main</span>, щоб пропустити меню.</div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Замінюємо div на семантику</span><span class="tmr">6 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Відкрити свою сторінку з уроку 1. Замінити чотири
+            <span class="ic">&lt;div&gt;</span> на <span class="ic">header</span>,
+            <span class="ic">nav</span>, <span class="ic">main</span>,
+            <span class="ic">footer</span>. <b>Класи поки не чіпати</b></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Зберегти, оновити. Переконатися, що
+            <b>вигляд не змінився ні на піксель</b>. Змінився — шукати загублений тег</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">У DevTools згорнути всі гілки й <b>сфотографувати очима</b>
+            каркас сторінки. Порахувати, скільки рядків вийшло</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lm">Найтонше місце</span>
+      <h2>&lt;section&gt; чи &lt;article&gt;?</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cm"><h3>&lt;section&gt;</h3>
+        <p><b>Розділ цієї сторінки.</b> Окремо від сторінки не має сенсу.</p>
+        <p class="mt">«Наші послуги», «Контакти», «Про школу» — це секції.
+           У кожної <b>свій заголовок</b></p></div>
+      <div class="card cp"><h3>&lt;article&gt;</h3>
+        <p><b>Самостійний шматок.</b> Вирізав, поклав деінде — усе одно зрозуміло.</p>
+        <p class="mt">Пост у стрічці, картка товару, новина, коментар —
+           це <span class="ic">article</span></p></div>
+    </div>
+    <div class="hbox hm mt"><strong>Перевірка одним питанням:</strong> якщо цей шматок
+      надіслати другові окремим посиланням — він буде зрозумілий сам по собі?
+      Так → <span class="ic">article</span>. Ні → <span class="ic">section</span>.</div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🧩</div><div>
+      <span class="label lm">Вони вкладаються</span>
+      <h2>article усередині section — це нормально</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">новини на сторінці</span></div>
+        <div class="dp-code"><span class="sk">&lt;main&gt;</span>
+  <span class="sk">&lt;section&gt;</span>
+    <span class="sk">&lt;h2&gt;</span>Новини<span class="sk">&lt;/h2&gt;</span>
+    <span class="sk">&lt;article&gt;</span>…<span class="sk">&lt;/article&gt;</span>
+    <span class="sk">&lt;article&gt;</span>…<span class="sk">&lt;/article&gt;</span>
+  <span class="sk">&lt;/section&gt;</span>
+<span class="sk">&lt;/main&gt;</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Секція «Новини» — розділ сторінки.
+          Кожна новина всередині — самостійна</div>
+        <div class="hbox ho">У <span class="ic">&lt;article&gt;</span> теж
+          може бути свій <span class="ic">&lt;header&gt;</span> і
+          <span class="ic">&lt;footer&gt;</span> — це <b>шапка й підвал статті</b>,
+          а не сторінки</div>
+        <div class="hbox">Правило вкладеності те саме, що торік:
+          хто відкрився останнім — закривається першим</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Обери тег</span>
+      <h2>Що тут має бути?</h2>
+    </div></div>
+    <div class="two">
+      <div class="qs">
+        <div class="hbox"><b>1.</b> Блок «Реклама курсів» збоку від тексту</div>
+        <div class="hbox hm"><b>2.</b> Одна картка товару в каталозі</div>
+        <div class="hbox ho"><b>3.</b> Розділ «Часті питання» з заголовком</div>
+        <div class="hbox"><b>4.</b> Рядок «© 2026, школа A+» унизу</div>
+      </div>
+      <div class="card cp reveal">
+        <h3>Відповіді</h3>
+        <p class="rv-hint">Обери всі чотири, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">&lt;aside&gt;</span> — збоку від головного</p>
+          <p><b>2.</b> <span class="ic">&lt;article&gt;</span> — самостійна,
+             зрозуміла окремо</p>
+          <p><b>3.</b> <span class="ic">&lt;section&gt;</span> — розділ сторінки
+             зі своїм заголовком</p>
+          <p><b>4.</b> <span class="ic">&lt;footer&gt;</span></p>
+          <p class="mt" style="color:var(--accent)">Найчастіша помилка — 2:
+             картку хочеться назвати секцією. Але вона самостійна.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">1️⃣</div><div>
+      <span class="label lr">Правило</span>
+      <h2>Один &lt;h1&gt; на сторінку</h2>
+    </div></div>
+    <p>Торік це було «бажано». Тепер це <strong>вимога</strong>:
+       <span class="ic">&lt;h1&gt;</span> — назва <strong>всієї</strong> сторінки,
+       і вона одна.</p>
+    <div class="pair mt">
+      <div class="pc"><span class="lbl">не так</span>&lt;header&gt;
+  &lt;h1&gt;Школа A+&lt;/h1&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;h1&gt;Наші курси&lt;/h1&gt;
+&lt;/main&gt;</div>
+      <div class="pc"><span class="lbl">так</span>&lt;header&gt;
+  &lt;p class="logo"&gt;Школа A+&lt;/p&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;h1&gt;Наші курси&lt;/h1&gt;
+&lt;/main&gt;</div>
+    </div>
+    <div class="hbox hm mt">Логотип у шапці — <strong>не заголовок сторінки</strong>.
+      Він на кожній сторінці однаковий, а <span class="ic">h1</span> має описувати
+      саме цю.</div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lb">Навіщо це насправді</span>
+      <h2>Три читачі твоєї сторінки</h2>
+    </div></div>
+    <div class="three">
+      <div class="card"><h3>Людина</h3>
+        <p>Бачить оформлення. Їй усе одно, які теги —
+           вона орієнтується очима</p></div>
+      <div class="card cm"><h3>Програма читання вголос</h3>
+        <p>Очей не має. Каже: «навігація, 5 посилань», «головний вміст» —
+           і дає <b>пропустити меню однією командою</b></p></div>
+      <div class="card cp"><h3>Пошукова система</h3>
+        <p>Шукає <span class="ic">main</span>, щоб зрозуміти, про що сторінка,
+           і не рахувати меню за вміст</p></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🎧</span>
+      <div>Двоє з трьох читачів <strong>не бачать сторінку</strong>.
+      Для них єдине джерело структури — теги.</div></div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">article і aside</span><span class="tmr">7 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Усередині <span class="ic">&lt;main&gt;</span> зробити
+            <span class="ic">&lt;section&gt;</span> зі своїм
+            <span class="ic">&lt;h2&gt;</span> і <b>двома</b>
+            <span class="ic">&lt;article&gt;</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Додати <span class="ic">&lt;aside&gt;</span> —
+            блок «цікаве поруч». Перевірити, що він <b>поза</b>
+            <span class="ic">&lt;article&gt;</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Одній зі статей дати власний
+            <span class="ic">&lt;footer&gt;</span> з датою</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Пояснити сусідові, <b>чому</b> кожен блок отримав
+            саме цей тег. Не «бо так на слайді»</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🚫</div><div>
+      <span class="label lr">Не перестарайся</span>
+      <h2>&lt;div&gt; нікуди не зник</h2>
+    </div></div>
+    <p>Семантика — не «замінити всі div-и». Половина блоків на сторінці
+       існує <strong>тільки заради оформлення</strong>, і для них
+       <span class="ic">&lt;div&gt;</span> — правильний вибір.</p>
+    <div class="two mt">
+      <div class="card cm"><h3>Семантичний тег</h3>
+        <p>Блок має <b>смисл</b>: це шапка, це стаття, це навігація</p></div>
+      <div class="card cp"><h3>&lt;div&gt;</h3>
+        <p>Блок потрібен, <b>щоб щось обгорнути</b> для CSS: центрувати,
+           задати ширину, зробити колонку</p></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🧪</span>
+      <div>Перевірка: <strong>прибери оформлення повністю</strong>.
+      Блок, який після цього втратив сенс, — це був
+      <span class="ic">&lt;div&gt;</span>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🐞</div><div>
+      <span class="label lo">Три помилки цього уроку</span>
+      <h2>Що ламається найчастіше</h2>
+    </div></div>
+    <div class="three">
+      <div class="card cp"><h3>1 · Поїхало оформлення</h3>
+        <p>Прибрали клас разом із <span class="ic">div</span>,
+           а в CSS правило на <span class="ic">.header</span></p>
+        <p class="mt"><b>Ліки:</b> повернути клас на семантичний тег</p></div>
+      <div class="card cm"><h3>2 · Два &lt;main&gt;</h3>
+        <p>Обгорнули кожну секцію в <span class="ic">main</span></p>
+        <p class="mt"><b>Ліки:</b> <span class="ic">main</span> рівно один,
+           секції всередині нього</p></div>
+      <div class="card"><h3>3 · Неспарені теги</h3>
+        <p>Замінили <span class="ic">&lt;div&gt;</span>, а
+           <span class="ic">&lt;/div&gt;</span> унизу лишили</p>
+        <p class="mt"><b>Ліки:</b> F12 → Elements покаже, що куди заїхало</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🔎</div><div>
+      <span class="label lo">Знайди помилку</span>
+      <h2>Тут дві. Обидві мовчазні</h2>
+    </div></div>
+    <div class="two">
+      <div class="pc">&lt;header&gt;
+  &lt;h1&gt;Мій блог&lt;/h1&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;h1&gt;Останні записи&lt;/h1&gt;
+  &lt;article&gt;…&lt;/div&gt;
+&lt;/main&gt;</div>
+      <div class="card cp reveal">
+        <h3>Назви обидві</h3>
+        <p class="rv-hint">Клацни, щоб перевірити.</p>
+        <div class="rv-body">
+          <p><b>1.</b> Два <span class="ic">&lt;h1&gt;</span> на сторінці.
+             Логотип «Мій блог» має бути звичайним текстом</p>
+          <p><b>2.</b> <span class="ic">&lt;article&gt;</span> закритий
+             як <span class="ic">&lt;/div&gt;</span></p>
+          <p class="mt" style="color:var(--accent)">І знову: <b>жодної помилки
+             в браузері</b>. Сторінка відкриється й виглядатиме нормально.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">📐</div><div>
+      <span class="label lm">Як має виглядати результат</span>
+      <h2>Каркас на шість рядків</h2>
+    </div></div>
+    <div class="dp">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">згорнуте дерево в DevTools</span></div>
+      <div class="dp-code"><span class="sk">&lt;body&gt;</span>
+  <span class="sk">&lt;header&gt;</span> … <span class="sk">&lt;/header&gt;</span>
+  <span class="sk">&lt;main&gt;</span> … <span class="sk">&lt;/main&gt;</span>
+  <span class="sk">&lt;aside&gt;</span> … <span class="sk">&lt;/aside&gt;</span>
+  <span class="sk">&lt;footer&gt;</span> … <span class="sk">&lt;/footer&gt;</span>
+<span class="sk">&lt;/body&gt;</span></div>
+    </div>
+    <div class="hbox hm mt">Ось за цим і перевіряємо роботу: <strong>згорнув дерево —
+      і за пʼять секунд видно, з чого складається сторінка</strong>.
+      Не видно — семантика ще не зроблена.</div>
+  </div></section>
+
+  <!-- ══════════ 19 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">Перевірка структури</span><span class="tmr">8 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Перевірити, що <span class="ic">&lt;h1&gt;</span>
+            <b>рівно один</b> і що він у <span class="ic">&lt;main&gt;</span>,
+            а не в шапці</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Згорнути дерево в DevTools. Каркас має читатися
+            за пʼять секунд. Ні — розібратися чому</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Знайти на своїй сторінці <b>хоча б один
+            чесний <span class="ic">&lt;div&gt;</span></b> — той, що потрібен
+            тільки для CSS. Пояснити, чому він не семантичний</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Помінятися з сусідом і <b>перевірити його сторінку</b>
+            за трьома пунктами вище</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Словник</span>
+      <h2>Слова, які лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="ic">semantic</span> — смисловий,
+          той, що має значення</div>
+        <div class="hbox hm"><span class="ic">header</span> / <span class="ic">footer</span>
+          — шапка / підвал</div>
+        <div class="hbox ho"><span class="ic">navigation</span> — навігація.
+          Звідси <b>nav</b></div>
+      </div>
+      <div>
+        <div class="hbox"><span class="ic">main</span> — головний вміст</div>
+        <div class="hbox hm"><span class="ic">article</span> — самостійний матеріал</div>
+        <div class="hbox ho"><span class="ic">aside</span> — «убік», збоку від головного</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Що є після другого уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cm"><h3>Уміємо</h3><ul>
+        <li>сім семантичних тегів і що кожен означає</li>
+        <li>відрізняти <span class="ic">section</span> від
+          <span class="ic">article</span></li>
+        <li>тримати один <span class="ic">h1</span> на сторінку</li>
+        <li>читати каркас у згорнутому дереві DevTools</li>
+      </ul></div>
+      <div class="card cp"><h3>Наступного разу</h3><ul>
+        <li>розминка: семантичний каркас з памʼяті за 5 хв</li>
+        <li><span class="ic">px</span> проти <span class="ic">%</span>,
+          <span class="ic">rem</span>, <span class="ic">vw</span>,
+          <span class="ic">vh</span></li>
+        <li>тягнемо вікно й дивимось, що рухається</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнього завдання немає.</strong>
+      Але каркас треба знати напамʼять — наступний урок починається з нього.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 3 · 16 вересня · Одиниці вимірювання</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

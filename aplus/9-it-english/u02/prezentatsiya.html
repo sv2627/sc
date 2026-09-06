@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Count-controlled loops · IT-англійська · 9 клас · Урок 2</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge Lower Secondary Computing 0860)
+  Клас          9
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · четвер
+  Урок          2 з 36 · 10.09.2026
+  Тема          Count-controlled loops · Цикл із лічильником і передбачення
+  Цілі          9CT.02 Follow flowchart or pseudocode algorithms that use loops
+                9CT.07 Predict the outcome of algorithms that use iteration
+  Тривалість    45 хв — показ ~24 хв + три практики 21 хв
+  Акцент        rose (#af3b41)
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — ТІЛЬКИ СХЕМА CAMBRIDGE. Нічого не вигадано.
+     `0860 Computing Stage 9 Scheme of Work.docx`, блок 9CT.02 + 9CT.07.
+     Звідти дослівно:
+       • цитата про межу стадії (слайд 5) — слово в слово з Additional notes
+       • формат `for variable in range (start, end):`
+       • приклад `for count in range(0, 10): print(count)`
+       • питання «What is the output if 0 is changed to 1 / 10 to 20?»
+       • варіант `for count in range(0, 20): print(count + 1)`
+       • варіант `for x in range(1, 11): print(count - 1)`
+       • чотири елементи циклу в блок-схемі проти одного рядка псевдокоду
+       • три приклади алгоритмів: 10 чисел і сума · таблиця множення на 5 ·
+         скільки чисел → середнє арифметичне
+       • порядок парної роботи: обговорити результат → пройти окремо →
+         звірити з іншою парою
+       • чотири питання mind map із відповідями
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ПРО СЛАЙД 11 (Correct). Варіант `for x in range(1, 11): print(count - 1)`
+     узятий зі схеми ДОСЛІВНО. У ньому лічильник називається `x`, а виводять
+     `count` — тобто змінної з такою назвою немає. Схема не позначає це
+     як навмисну помилку, тому НЕ кажемо учням «книжка заклала помилку».
+     Подаємо як крок `correct` ланцюга: знайти невідповідність і виправити.
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • Condition-controlled loops (WHILE, REPEAT). Схема: «not required
+       at this stage» — цитата на слайді 5
+     • Вкладені цикли — наступний урок
+     • Стиль BEGIN / END / SET _ TO _: у Stage 9 псевдокод
+       Python-подібний, і тільки такий
+     • Оцінювання — за правилом «слайди без голосу вчителя» це в конспекті
+  ────────────────────────────────────────────────────────────────
+  МОВА          I період — англійською терміни й код. Пояснення українською.
+  СЛОВНИК       двічі за урок: s3 (вхід) і s18 (вихід)
+  ПРАКТИКИ      s10 (7 хв) · s14 (8 хв) · s16 (6 хв)
+  ПЕРЕДБАЧ      s8, s9, s11, s17 — відповідь на ТОМУ Ж слайді
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ПОТРІБНА ЗАГОТОВКА: аркуші з трьома алгоритмами (практика 2) —
+     у псевдокоді й блок-схемах, як вимагає розділ Resources схеми.
+  ────────────────────────────────────────────────────────────────
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/9-it-english/u02/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: IT-англійська всіх класів іде на rose. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--rose);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--rose);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* питання діагностики */
+.qs{display:flex;flex-direction:column;gap:11px}
+.qs .q{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--rose);
+       border-radius:0 10px 10px 0;padding:12px 17px;font-size:18px;line-height:1.6}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:34px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--ink)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+/* англійський термін рамки просто в тексті */
+.en{font-family:var(--f-mono);font-weight:700;color:var(--rose)}
+.uk{color:var(--dim)}
+
+/* ═══ СЛОВНИК ═══ */
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mw{background:var(--surface);border:2px solid var(--pink);border-radius:14px;padding:15px 19px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.5rem;color:var(--rose);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:17px;color:var(--dim);line-height:1.5}
+.vg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:17px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16.5px;line-height:1.45}
+
+/* self-evaluation checklist */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--rose);border-radius:6px;flex-shrink:0}
+
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ───
+   Спрацьовує тільки там, де вміст інакше не вміщується у вікно.
+   На 1080p і вище нічого не міняється. */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .th{padding:9px 14px} .th-t{font-size:16.5px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .mw{padding:12px 15px} .mw .w{font-size:1.3rem} .mw .t{font-size:15.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:16px} .vp .uk{font-size:15.5px}
+  .vg{gap:9px}
+  .title-h1{font-size:2.9rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+}
+@media (max-height:800px){
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .qs .q{font-size:16.5px;padding:10px 14px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+.tri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:stretch}
+.pc{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:12px 15px;font-family:var(--f-mono);font-size:16px;line-height:1.65;white-space:pre-wrap}
+.pc b{color:var(--brand)}
+.pc .lbl{font-family:var(--f-body);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--faint);display:block;margin-bottom:7px}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 13px;font-size:17px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Count-controlled<br>loops</h1>
+      <p class="title-sub">Цикл із лічильником · передбачення результату<br>
+        IT-англійська · 9 клас · Урок 2 з 36 · 10 вересня</p>
+      <div class="chips">
+        <span class="chip">repetition</span>
+        <span class="chip">FOR loop</span>
+        <span class="chip">counter</span>
+        <span class="chip">9CT.02 · 9CT.07</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lm">Last time · today</span>
+      <h2>Від «прочитай і виправ» до «повтори»</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Last time</h3>
+        <p><span class="en">Read, edit, correct</span> — читали псевдокод,
+           міняли одну деталь, знаходили закладену помилку</p></div>
+      <div class="card cm"><h3>Today</h3>
+        <p><span class="en">Repetition</span>: код, який виконується
+           більше одного разу. Як його <b>прочитати</b> й
+           <b>передбачити результат</b></p></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🎯</span>
+      <div>Той самий порядок, що й торік: <strong>спершу передбач, потім
+      пройди, потім порівняй</strong>. Сьогодні це працює на циклах.</div></div>
+  </div></section>
+
+  <!-- ══════════ 3 ── СЛОВНИК 1 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Vocabulary · вхід</span>
+      <h2>Слова цього уроку</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">repetition</span><span class="uk">повторення</span></div>
+      <div class="vp"><span class="en">iteration</span><span class="uk">ітерація — один прохід циклу</span></div>
+      <div class="vp"><span class="en">loop</span><span class="uk">цикл</span></div>
+      <div class="vp"><span class="en">count-controlled loop</span><span class="uk">цикл із лічильником</span></div>
+      <div class="vp"><span class="en">counter</span><span class="uk">лічильник</span></div>
+      <div class="vp"><span class="en">start value</span><span class="uk">початкове значення</span></div>
+      <div class="vp"><span class="en">end value</span><span class="uk">кінцеве значення</span></div>
+      <div class="vp"><span class="en">to increment</span><span class="uk">збільшувати на одиницю</span></div>
+      <div class="vp"><span class="en">to predict the outcome</span><span class="uk">передбачити результат</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">💬</div><div>
+      <span class="label lo">Understand</span>
+      <h2>What is repetition?</h2>
+    </div></div>
+    <div class="qs">
+      <div class="hbox"><span class="en">What is repetition?</span> &#8212;
+        щось, що стається <b>більше одного разу</b></div>
+      <div class="hbox hm"><span class="en">What does repetition mean
+        in a computer program?</span> &#8212; шматок коду, який
+        <b>виконується більше одного разу</b></div>
+      <div class="hbox ho"><span class="en">What programs have you written,
+        or seen, that use repetition?</span></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🧠</span>
+      <div>Третє питання — до класу. Малювання квадрата в Scratch, таблиця
+      множення, гра, де щось повторюється щокадру — усе це
+      <span class="en">repetition</span>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lr">Межа цього року</span>
+      <h2>Тільки count-controlled</h2>
+    </div></div>
+    <p>Циклів буває кілька видів. Схема Cambridge для Stage 9 каже прямо:</p>
+    <div class="dp mt">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">Stage 9 Scheme of Work</span></div>
+      <div class="dp-code">Learners are only required to understand
+count-controlled loops at this stage.
+These can be limited to the use of 'FOR Loops'.
+
+Although condition-controlled loops can be used
+for counting, they are not required at this stage.</div>
+    </div>
+    <div class="hbox hm mt">Тому сьогодні — <strong>тільки цикл, який знає
+      наперед, скільки разів виконатись</strong>. Циклів «поки умова
+      істинна» цього року не буде.</div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🔢</div><div>
+      <span class="label lm">Формат</span>
+      <h2>Як записується FOR loop</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">pseudocode suitable for Python</span></div>
+        <div class="dp-code">for variable in range (start, end):
+  code</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">count-controlled</span> означає
+          «керований лічильником»: цикл <b>рахує</b>, скільки разів виконався</div>
+        <div class="hbox">Змінна має <b>початкове значення</b> й рахує
+          від нього до кінцевого</div>
+        <div class="hbox ho">Усе, що <b>з відступом</b> під рядком
+          <span class="en">for</span>, — це тіло циклу</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">▶️</div><div>
+      <span class="label lm">Follow</span>
+      <h2>Приклад зі схеми</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">algorithm</span></div>
+        <div class="dp-code">for count in range(0, 10):
+  print(count)</div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">output</span></div>
+        <div class="dp-code">0
+1
+2
+3
+4
+5
+6
+7
+8
+9</div>
+      </div>
+    </div>
+    <div class="hbox hm mt">Десять чисел: від <b>0</b> до <b>9</b>.
+      Кінцеве значення <span class="en">10</span> саме
+      <strong>не виводиться</strong> — цикл зупиняється перед ним.</div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Predict</span>
+      <h2>Дві зміни в тому самому рядку</h2>
+    </div></div>
+    <div class="two">
+      <div class="qs">
+        <div class="hbox"><span class="en">What is the output if number 0
+          is changed to 1?</span></div>
+        <div class="hbox hm"><span class="en">What is the output if number 10
+          is changed to 20?</span></div>
+        <div class="hbox ho">І одразу третє: скільки <b>рядків</b> буде
+          в кожному випадку?</div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Outcomes</h3>
+        <p class="rv-hint">Відповіді спершу свої, потім клац.</p>
+        <div class="rv-body">
+          <p><b>range(1, 10)</b> &#8594; 1, 2, 3 … 9. <b>Девʼять</b> рядків</p>
+          <p><b>range(0, 20)</b> &#8594; 0, 1, 2 … 19. <b>Двадцять</b> рядків</p>
+          <p class="mt" style="color:var(--accent)">Правило, яке з цього виходить:
+             кількість повторів = <b>end &#8722; start</b>.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">✏️</div><div>
+      <span class="label lo">Edit</span>
+      <h2>Змінили тіло циклу</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">algorithm</span></div>
+        <div class="dp-code">for count in range(0, 20):
+  print(count + 1)</div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Що змінилось і що це дало?</h3>
+        <p class="rv-hint">Назви обидві зміни, потім клац.</p>
+        <div class="rv-body">
+          <p><b>Дві зміни:</b> кінцеве значення 10 &#8594; 20 і
+             <span class="en">print(count)</span> &#8594;
+             <span class="en">print(count + 1)</span></p>
+          <p><b>Вихід:</b> 1, 2, 3 … 20</p>
+          <p class="mt" style="color:var(--accent)">Кількість повторів
+             лишилась «end &#8722; start» = 20, але <b>що саме виводиться</b>
+             змінилось. Лічильник і те, що з ним роблять, — різні речі.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 1</span>
+        <span class="t">Predict, then follow</span><span class="tmr">7 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Для <span class="en">for count in range(5, 9)</span> —
+            <b>записати передбачення</b>: які числа й скільки рядків.
+            Потім пройти</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Скласти цикл, який виводить числа
+            <b>від 1 до 100</b>. Записати рядок <span class="en">for</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Скласти цикл, який виводить
+            <b>таблицю множення на 5</b></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Записати правило для кількості повторів
+            англійською за зразком:
+            <span class="en">The loop repeats &#8230; times.</span></span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── CORRECT ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🔎</div><div>
+      <span class="label lr">Correct</span>
+      <h2>Тут щось не так</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">algorithm</span></div>
+        <div class="dp-code">for x in range(1, 11):
+  print(count - 1)</div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Знайди причину</h3>
+        <p class="rv-hint">Порівняй із попередніми прикладами.</p>
+        <div class="rv-body">
+          <p>Лічильник називається <span class="en">x</span>,
+             а всередині виводять <span class="en">count</span> —
+             <b>змінної з такою назвою тут немає</b>.</p>
+          <p class="mt"><b>Два способи виправити:</b>
+             <span class="en">print(x - 1)</span> —
+             або перейменувати лічильник на <span class="en">count</span>.</p>
+          <p class="mt" style="color:var(--accent)">Урок звідси:
+             ім'я в рядку <span class="en">for</span> і ім'я в тілі циклу
+             <b>мають збігатися</b>.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lm">Той самий цикл — блок-схемою</span>
+      <h2>Один рядок розкладається на чотири частини</h2>
+    </div></div>
+    <p>У псевдокоді <span class="en">for count in range(0, 10)</span> — це
+       <strong>один рядок</strong>. У блок-схемі ті самі елементи стоять
+       у різних місцях.</p>
+    <table class="tbl mt">
+      <tr><th>Елемент</th><th>У псевдокоді</th><th>У блок-схемі</th></tr>
+      <tr><td>змінна</td><td class="c">count</td><td>оголошується <b>до</b> циклу</td></tr>
+      <tr><td>початкове значення</td><td class="c">0</td><td>задається <b>до</b> циклу</td></tr>
+      <tr><td>кінцеве значення</td><td class="c">10</td><td>перевіряється <b>розгалуженням</b></td></tr>
+      <tr><td>крок</td><td class="c">for</td><td>збільшення <b>всередині</b> циклу</td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🔑</div><div>
+      <span class="label lm">Key features</span>
+      <h2>За чим упізнати цикл із лічильником</h2>
+    </div></div>
+    <div class="three">
+      <div class="card cm"><h3>Counter</h3>
+        <p>Змінна, яка рахує. У прикладах —
+           <span class="en">count</span> або <span class="en">x</span></p></div>
+      <div class="card"><h3>Start and end</h3>
+        <p><span class="en">start value</span> і
+           <span class="en">end value</span> — відомі <b>наперед</b></p></div>
+      <div class="card"><h3>Increment</h3>
+        <p>Лічильник <b>збільшується</b> щоразу. Саме тому цикл
+           колись зупиниться</p></div>
+    </div>
+    <div class="hbox hm mt">Усі три ознаки є в будь-якому
+      <span class="en">count-controlled loop</span> — байдуже, псевдокод це
+      чи блок-схема. Немає хоча б однієї — це <strong>не той цикл</strong>.</div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 2</span>
+        <span class="t">Three algorithms</span><span class="tmr">8 хвилин</span></div>
+      <div class="prac-lead">У парі: спершу <b>обговорити, яким буде результат</b>,
+        потім пройти <b>кожен окремо</b>, потім звірити з іншою парою.</div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Алгоритм, що бере <b>10 чисел</b> від користувача
+            й додає їх</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Алгоритм, що виводить <b>таблицю множення на 5</b></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Алгоритм, що питає, <b>скільки чисел</b> вводитиме
+            користувач, повторюється стільки разів, і рахує
+            <b>середнє арифметичне</b></span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🧮</div><div>
+      <span class="label lo">Найважчий із трьох</span>
+      <h2>Скільки разів повториться цикл?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">середнє арифметичне</span></div>
+        <div class="dp-code">total = 0
+howMany = input("How many numbers?")
+
+for count in range(0, howMany):
+  number = input("Enter a number")
+  total = total + number
+
+print(total / howMany)</div>
+      </div>
+      <div>
+        <div class="hbox hm">Кінцеве значення — <b>не число, а змінна</b>.
+          Скільки разів повториться цикл, вирішує <b>користувач</b></div>
+        <div class="hbox">Але це все одно
+          <span class="en">count-controlled</span>: у момент старту циклу
+          кількість <b>уже відома</b></div>
+        <div class="hbox ho"><span class="en">total</span> оголошено
+          <b>до</b> циклу. Якби всередині — воно обнулялося б щоразу</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 3</span>
+        <span class="t">Predict and check in pairs</span><span class="tmr">6 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Для алгоритму середнього: передбачити вихід,
+            якщо ввести <b>3</b>, а потім числа <b>4, 5, 6</b></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Що станеться, якщо на перше питання ввести
+            <b>0</b>? Пройти алгоритм і записати</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Перенести <span class="en">total = 0</span>
+            <b>усередину</b> циклу. Передбачити вихід і пояснити,
+            чому він саме такий</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🧭</div><div>
+      <span class="label lm">Mind map · чотири питання</span>
+      <h2>Що має залишитися в голові</h2>
+    </div></div>
+    <div class="two">
+      <div class="qs">
+        <div class="hbox"><span class="en">What is repetition in an algorithm?</span></div>
+        <div class="hbox hm"><span class="en">What is a count-controlled loop?</span></div>
+        <div class="hbox ho"><span class="en">When can it be useful?</span></div>
+        <div class="hbox"><span class="en">What are its key features?</span></div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Answers</h3>
+        <p class="rv-hint">Спершу свої, потім клац.</p>
+        <div class="rv-body">
+          <p><b>1.</b> A piece of code run more than once</p>
+          <p><b>2.</b> Code that runs a set number of times</p>
+          <p><b>3.</b> When something has to happen a set number of times</p>
+          <p><b>4.</b> A counter with a starting value, an end value
+             and an increment</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── СЛОВНИК 2 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Vocabulary · вихід</span>
+      <h2>Ті самі слова — у реченні</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="en">The <b>counter</b> starts
+          at the <b>start value</b>.</span></div>
+        <div class="hbox hm"><span class="en">The loop <b>increments</b>
+          the counter each time.</span></div>
+        <div class="hbox ho"><span class="en">The loop repeats
+          <b>end &#8722; start</b> times.</span></div>
+      </div>
+      <div>
+        <div class="hbox"><span class="en">A <b>count-controlled loop</b>
+          runs a set number of times.</span></div>
+        <div class="hbox hm"><span class="en">I can <b>predict the outcome</b>
+          before I follow the algorithm.</span></div>
+        <div class="hbox ho"><span class="en">One <b>iteration</b> is
+          one pass through the loop.</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lr">I can…</span>
+      <h2>Чек-лист уроку</h2>
+    </div></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div><div>I can explain what
+        <span class="en">repetition</span> means in a program.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can read a
+        <span class="en">FOR loop</span> and say how many times it repeats.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can
+        <span class="en">predict the outcome</span> before following the algorithm.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can name the three
+        <span class="en">key features</span>: counter, start and end, increment.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can find the four elements
+        of a loop in a <span class="en">flowchart</span>.</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Next</span>
+      <h2>Що далі</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cm"><h3>Сьогодні</h3><ul>
+        <li><span class="en">count-controlled loop</span> і його три ознаки</li>
+        <li>кількість повторів = <span class="en">end &#8722; start</span></li>
+        <li>ім'я лічильника має збігатися в обох місцях</li>
+        <li>той самий цикл у псевдокоді й блок-схемі</li>
+      </ul></div>
+      <div class="card"><h3>Наступного разу</h3><ul>
+        <li>цикл усередині циклу</li>
+        <li>що станеться з кількістю повторів</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнього завдання немає.</strong>
+      Роздатку зберегти: три ознаки циклу знадобляться до кінця юніта.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 3 · 17 вересня</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

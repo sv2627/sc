@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bits, bytes and pictures · IT-англійська · 5 клас · Урок 2</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge Primary Computing 0059)
+  Клас          5
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · четвер
+  Урок          2 з 36 · 10.09.2026
+  Тема          Bits, bytes and pictures · Біти, байти і картинки
+  Цілі          5CS.04 Identify bits, bytes, kilobytes and megabytes,
+                       making links to memory size and storage
+                5CS.03 Know that computers represent data in binary (0,1)
+                5MD.05 Know that cells can be restricted to accept only
+                       certain data types
+                5CS.02 Know that there are a range of storage devices
+  Тривалість    45 хв — показ ~21 хв + три практики 24 хв
+  Акцент        rose (#af3b41)
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — ТІЛЬКИ СХЕМА CAMBRIDGE. Нічого не вигадано.
+     `0059 Computing Stage 5 Scheme of Work.docx`, блоки 5CS.03/5MD.05/5CS.04
+     і 5CS.02/5CS.04. Звідти дослівно:
+       • 2-бітовий код і чотири кольори: 00 green, 01 yellow, 10 red, 11 blue
+       • сітка 8 × 9 «smiley face» — код узято ДОСЛІВНО зі схеми
+       • питання «How many bytes of data are needed to produce this
+         colour image?» і відповідь: 2 байти на рядок × 9 = 18 байтів
+       • таблиця з обмеженням клітинок і демонстрація помилки на «123»
+       • власний sprite 8 × 9 і обмін кодами з партнером
+       • сенсор камери, шлях файлу SD → hard drive → flash → network storage
+       • перелік носіїв: SD, micro SD, flash drive, HDD, SSD
+       • ключові слова з розділу Resources: binary digits, binary, pixel,
+         bit, bitmap, byte, kilobyte, megabyte
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • Розрядність і переведення чисел: у ВСЬОМУ Stage 5 їх немає.
+       Двійкове тут — це кодування (1 біт = 1 піксель), а не рахунок
+     • Точні значення 1024: схема каже «близько тисячі», так і подаємо
+     • Scratch: у юніті 5.1 він зʼявляється лише в останньому блоці
+     • Оцінювання — за правилом «слайди без голосу вчителя» це в конспекті
+  ⚠️ ВІДЖЕТ УРОКУ 1 (інтерактивна сітка 1 біт) сюди НЕ переноситься:
+     сьогодні код 2-бітовий, і чорно-біла сітка суперечила б темі.
+     Скрипт віджета вирізано, лишилась тільки навігація.
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКИ      s8 (8 хв) малюємо за кодом у таблиці
+                s9 (10 хв) свій sprite і обмін кодами
+                s14 (6 хв) порівнюємо розміри файлів
+  ПЕРЕДБАЧ      s7 — «How many bytes?», відповідь на тому ж слайді
+  СЛОВНИК       s13 (носії) і s15 (вісім ключових слів)
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ПОТРІБНА ЗАГОТОВКА: таблиця 8 × 9, у якій клітинки приймають лише
+     00 / 01 / 10 / 11 і фарбуються у відповідний колір (умовне форматування
+     + перевірка даних). Плюс три фотографії різного розміру для практики 3.
+  ────────────────────────────────────────────────────────────────
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/5-it-english/u02/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: IT-англійська всіх класів іде на rose. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--rose);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+/* 5 клас — базовий кегль на 1px більший: діти читають з парти */
+body{font-family:var(--f-body);font-size:19px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.15rem}
+h3{font-weight:700;font-size:1.32rem}
+p{font-size:20px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:20px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:18px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:19px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:19px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:19px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:18.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:34px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18.5px;color:var(--ink)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.big{text-align:center}
+.big .big-ico{font-size:3.6rem;margin-bottom:14px}
+.big h2{font-size:2.3rem;margin-bottom:10px;color:var(--accent);line-height:1.25}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+/* англійський термін рамки просто в тексті */
+.en{font-family:var(--f-mono);font-weight:700;color:var(--rose)}
+.uk{color:var(--dim)}
+
+/* ═══ СЛОВНИК ═══ */
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mw{background:var(--surface);border:2px solid var(--pink);border-radius:14px;padding:16px 20px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.7rem;color:var(--rose);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:18px;color:var(--dim);line-height:1.5}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 15px}
+.vp .en{display:block;font-size:18px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:17px;line-height:1.45}
+
+/* ═══ КОД СПРАЙТА, показ на слайді 9 ═══ */
+.codebox{font-family:var(--f-mono);font-size:2rem;line-height:1.5;letter-spacing:7px;
+  color:var(--faint);background:var(--surface);border:1.5px solid var(--border);
+  border-radius:13px;padding:18px 22px;text-align:center;
+  font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.codebox b{color:var(--brand);font-weight:700}
+
+/* ═══ ІНТЕРАКТИВНА СІТКА 8×6 ═══ */
+.pix{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start}
+.pix-code{font-family:var(--f-mono);font-size:1.25rem;line-height:1.85;letter-spacing:4px;
+  color:var(--ink);background:var(--surface);border:1.5px solid var(--border);
+  border-radius:12px;padding:14px 16px;white-space:pre;
+  font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.pix-code .rw{display:block}
+.pix-code .rw.done{color:var(--faint)}
+.pix-main{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.pix-grid{display:grid;grid-template-columns:repeat(8,52px);grid-auto-rows:52px;gap:3px;
+  background:var(--border);border:3px solid var(--brand);border-radius:6px;padding:3px;
+  touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none}
+.pc{background:#fff;cursor:pointer;transition:background .08s}
+.pc.on{background:var(--ink)}
+.pc.wrong{box-shadow:inset 0 0 0 4px var(--rose)}
+.pix-bar{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.pbtn{font-family:var(--f-body);font-size:16px;font-weight:700;padding:11px 20px;
+  min-height:46px;border-radius:10px;cursor:pointer;background:var(--surface);
+  border:1.5px solid var(--border);color:var(--ink);-webkit-tap-highlight-color:transparent}
+.pbtn:hover{background:var(--surf2);border-color:var(--accent)}
+.pbtn-go{background:var(--brand);border-color:var(--brand);color:#fff}
+.pbtn-go:hover{background:var(--rose);border-color:var(--rose)}
+.pix-msg{font-size:17px;color:var(--dim);line-height:1.5}
+.pix-msg.ok{color:var(--brand);font-weight:700}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:18.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--rose);border-radius:6px;flex-shrink:0}
+
+
+/* ═══ СХЕМА МАТЕРИНСЬКОЇ ПЛАТИ, слайд 5 ═══
+   Inline SVG: працює без мережі, масштабується, друкується зі слайдом. */
+.two-fig{grid-template-columns:1.05fr .95fr;align-items:center}
+.fig{margin:0}
+.fig svg{width:100%;height:auto;display:block}
+.fig figcaption{margin-top:9px;font-size:16px;color:var(--dim);line-height:1.5;text-align:center}
+.fig figcaption .en{white-space:nowrap}   /* щоб «cooling fan» не ламався навпіл */
+.fig .board{fill:var(--surf2);stroke:var(--brand);stroke-width:2.5}
+.fig .chip{fill:var(--surface);stroke:var(--brand);stroke-width:1.8}
+.fig .trace{fill:none;stroke:var(--rose);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fig .cpu{fill:var(--surface);stroke:var(--rose);stroke-width:3.5}
+.fig .pins path{fill:none;stroke:var(--brand);stroke-width:2.4;stroke-linecap:round}
+.fig .fan circle{fill:var(--surface);stroke:var(--brand);stroke-width:2.5}
+.fig .fan ellipse{fill:var(--sky);stroke:var(--brand);stroke-width:1.8}
+.fig .fan .hub{fill:var(--brand);stroke:none}
+.fig .pw{fill:var(--surface);stroke:var(--brand);stroke-width:2.5}
+.fig .prong path{fill:none;stroke:var(--brand);stroke-width:2.8;stroke-linecap:round}
+.fig .lead path{fill:none;stroke:var(--faint);stroke-width:1.6}
+.fig .t-cpu{font-family:var(--f-mono);font-weight:700;font-size:30px;fill:var(--rose)}
+.fig .t-lbl{font-family:var(--f-mono);font-weight:700;font-size:17px;fill:var(--brand)}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ───
+   Спрацьовує тільки там, де вміст інакше не вміщується у вікно.
+   На 1080p і вище нічого не міняється. */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .th{padding:9px 14px} .th-t{font-size:16.5px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .mw{padding:12px 15px} .mw .w{font-size:1.3rem} .mw .t{font-size:15.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:16px} .vp .uk{font-size:15.5px}
+  .vg{gap:9px}
+  .title-h1{font-size:2.9rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .big .big-ico{font-size:2.8rem;margin-bottom:10px} .big h2{font-size:1.9rem}
+  .fig figcaption{font-size:14.5px;margin-top:7px}
+  .codebox{font-size:1.5rem;line-height:1.4;letter-spacing:5px;padding:13px 16px}
+  .pix{gap:18px}
+  .pix-code{font-size:1.05rem;line-height:1.7;letter-spacing:3px;padding:11px 13px}
+  .pix-grid{grid-template-columns:repeat(8,40px);grid-auto-rows:40px}
+  .pbtn{font-size:15px;padding:9px 16px;min-height:42px}
+  .pix-msg{font-size:15.5px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone,.pix-bar{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.g4{display:grid;grid-template-columns:repeat(8,34px);grid-auto-rows:34px;gap:2px;
+  border:2px solid var(--border);border-radius:8px;padding:6px;background:var(--surface)}
+.g4 i{display:block;border-radius:3px}
+.c00{background:#2e7d4f} .c01{background:#f2c94c} .c10{background:#c0392b} .c11{background:#2c5fa8}
+.leg4{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+.leg4 span{display:flex;align-items:center;gap:7px;font-family:var(--f-mono);
+  font-size:15px;font-weight:700;color:var(--ink)}
+.leg4 i{width:19px;height:19px;border-radius:4px;display:block}
+.codeg{font-family:var(--f-mono);font-size:16px;line-height:1.75;letter-spacing:2px;
+  background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+  padding:11px 14px;white-space:pre;color:var(--ink)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 13px;font-size:17px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Bits, bytes<br>and pictures</h1>
+      <p class="title-sub">Один піксель · два біти · чотири кольори<br>
+        IT-англійська · 5 клас · Урок 2 з 36 · 10 вересня</p>
+      <div class="chips">
+        <span class="chip">bit</span>
+        <span class="chip">byte</span>
+        <span class="chip">pixel</span>
+        <span class="chip">bitmap</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lm">Last time</span>
+      <h2>Що ми вже вміємо</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Комп'ютер знає тільки 0 і 1</h3>
+        <p>Батарейка, лампочка, вимикач: увімкнено — <span class="en">1</span>,
+           вимкнено — <span class="en">0</span></p></div>
+      <div class="card cm"><h3>Ми малювали кодом</h3>
+        <p>Сітка 8 &#215; 6. Один <span class="en">bit</span> на клітинку:
+           <span class="en">1</span> — чорна, <span class="en">0</span> — біла</p></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🎨</span>
+      <div>Сьогодні питання одне: <strong>а як зробити картинку кольоровою,
+      якщо є тільки нулі й одиниці?</strong></div></div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">💡</div><div>
+      <span class="label lo">Ідея</span>
+      <h2>Що, якщо взяти два біти?</h2>
+    </div></div>
+    <p>Один <span class="en">bit</span> дає <strong>два</strong> варіанти: 0 або 1.
+       А два біти поруч?</p>
+    <div class="two mt">
+      <div class="codeg">1 біт  &#8594;  0   1
+                  2 варіанти
+
+2 біти &#8594;  00  01
+          10  11
+                  4 варіанти</div>
+      <div>
+        <div class="hbox hm">Два біти — це <b>чотири різні комбінації</b></div>
+        <div class="hbox">Чотири комбінації = <b>чотири кольори</b></div>
+        <div class="hbox ho">Тепер кожна клітинка сітки описується
+          не однією цифрою, а <b>двома</b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🌈</div><div>
+      <span class="label lm">Домовленість</span>
+      <h2>Чотири коди — чотири кольори</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="codeg">00  &#8594;  green
+01  &#8594;  yellow
+10  &#8594;  red
+11  &#8594;  blue</div>
+        <div class="leg4">
+          <span><i class="c00"></i>00</span>
+          <span><i class="c01"></i>01</span>
+          <span><i class="c10"></i>10</span>
+          <span><i class="c11"></i>11</span>
+        </div>
+      </div>
+      <div>
+        <div class="hbox hm">Це <b>домовленість</b>, а не закон природи.
+          Могли б домовитись інакше</div>
+        <div class="hbox">Але поки ми не домовились — картинку
+          <b>неможливо прочитати</b></div>
+        <div class="hbox ho">Той, хто малює, і той, хто дивиться,
+          мають знати <b>одну й ту саму таблицю</b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🔒</div><div>
+      <span class="label lo">У таблиці</span>
+      <h2>Клітинка приймає не будь-що</h2>
+    </div></div>
+    <p>У нашій таблиці клітинки <strong>обмежені</strong>: туди можна вписати
+       тільки <span class="en">00</span>, <span class="en">01</span>,
+       <span class="en">10</span> або <span class="en">11</span>.</p>
+    <div class="two mt">
+      <div class="card cm"><h3>Що приймається</h3>
+        <p><span class="en">00</span> · <span class="en">01</span> ·
+           <span class="en">10</span> · <span class="en">11</span> —
+           і клітинка одразу фарбується</p></div>
+      <div class="card"><h3>Що не приймається</h3>
+        <p>Твоє ім'я · сьогоднішня дата · число <span class="en">123</span> —
+           таблиця покаже помилку</p></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🛡️</span>
+      <div>Навіщо так роблять: <strong>щоб у таблицю не потрапило зайве</strong>.
+      Тоді дані можна рахувати й аналізувати, і ніщо не зіпсує результат.</div></div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">😀</div><div>
+      <span class="label lm">Приклад зі схеми</span>
+      <h2>8 &#215; 9 · чотири кольори</h2>
+    </div></div>
+    <div class="pix" style="grid-template-columns:auto auto;gap:26px;justify-content:center">
+      <div class="codeg" style="font-size:14px;letter-spacing:1px">00 00 00 00 00 00 00 00
+00 00 01 01 01 01 00 00
+00 01 01 01 01 01 01 00
+00 01 11 01 01 11 01 00
+00 01 01 01 01 01 01 00
+00 01 10 01 01 10 01 00
+00 01 01 10 10 01 01 00
+00 00 01 01 01 01 00 00
+00 00 00 00 00 00 00 00</div>
+      <div>
+        <div class="g4"><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c00"></i><i class="c00"></i><i class="c01"></i><i class="c11"></i><i class="c01"></i><i class="c01"></i><i class="c11"></i><i class="c01"></i><i class="c00"></i><i class="c00"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c00"></i><i class="c00"></i><i class="c01"></i><i class="c10"></i><i class="c01"></i><i class="c01"></i><i class="c10"></i><i class="c01"></i><i class="c00"></i><i class="c00"></i><i class="c01"></i><i class="c01"></i><i class="c10"></i><i class="c10"></i><i class="c01"></i><i class="c01"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c01"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i><i class="c00"></i></div>
+      </div>
+    </div>
+    <div class="hbox hm mt">Ліворуч — <strong>код</strong>. Праворуч — <strong>картинка</strong>.
+      Це одне й те саме, просто записане по-різному.</div>
+  </div></section>
+
+  <!-- ══════════ EDIT ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">✏️</div><div>
+      <span class="label lo">Edit</span>
+      <h2>Зміни одну цифру — що станеться?</h2>
+    </div></div>
+    <p>У четвертому рядку картинки стоїть <span class="en">11</span> — синє око.
+       Уяви, що ми змінили його на <span class="en">10</span>.</p>
+    <div class="two mt">
+      <div class="codeg">було:  00 01 <b>11</b> 01 01 <b>11</b> 01 00
+стало: 00 01 <b>10</b> 01 01 <b>10</b> 01 00</div>
+      <div>
+        <div class="hbox hm">Око стане <b>червоним</b> замість синього</div>
+        <div class="hbox">Розмір картинки <b>не зміниться</b>:
+          там так само 2 біти на клітинку</div>
+        <div class="hbox ho">Змінився <b>колір</b>, а не кількість даних.
+          Це різні речі</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ CORRECT ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🔎</div><div>
+      <span class="label lo">Correct</span>
+      <h2>Тут помилка. Знайди її</h2>
+    </div></div>
+    <p>Учень записав один рядок своєї картинки ось так. Таблиця його
+       <strong>не прийме</strong>. Чому?</p>
+    <div class="two mt">
+      <div class="codeg">00 01 <b>2</b> 01 01 11 01 00</div>
+      <div class="card cm reveal">
+        <h3>Дві причини</h3>
+        <p class="rv-hint">Знайди помилку, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="en">2</span> — це не двійкова цифра.
+             Є тільки <b>0</b> і <b>1</b></p>
+          <p><b>2.</b> Код кольору має бути <b>з двох цифр</b>,
+             а тут одна</p>
+          <p class="mt" style="color:var(--accent)">Тому в рядку виходить
+             не 8 клітинок, а 7 з половиною — так не буває.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Порахуй</span>
+      <h2>How many bytes?</h2>
+    </div></div>
+    <p>Нагадування: <strong>1 <span class="en">byte</span> = 8
+       <span class="en">bits</span></strong>. У нашій картинці 8 клітинок
+       у рядку, і кожна — <strong>2 біти</strong>.</p>
+    <div class="card cm reveal mt">
+      <h3>Скільки байтів потрібно на цю картинку?</h3>
+      <p class="rv-hint">Порахуй спочатку один рядок. Потім клацни.</p>
+      <div class="rv-body">
+        <p><b>Один рядок:</b> 8 клітинок &#215; 2 біти = <b>16 бітів</b> =
+           <b>2 <span class="en">bytes</span></b></p>
+        <p><b>Уся картинка:</b> 9 рядків &#215; 2 байти = <b>18
+           <span class="en">bytes</span></b></p>
+        <p class="mt" style="color:var(--accent)">Вісімнадцять байтів —
+           це вся ця мордочка. Одна фотографія з телефона —
+           у мільйони разів більша.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 1</span>
+        <span class="t">Малюємо за кодом</span><span class="tmr">8 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Відкрити готову таблицю. Вписати код мордочки
+            <b>рядок за рядком</b>. Після кожного рядка — перевірити себе</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Спробувати вписати щось не з чотирьох кодів —
+            наприклад <span class="en">123</span>. Подивитись, що скаже таблиця</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Порахувати, скільки <span class="en">bytes</span>
+            у твоїй картинці, і записати число</span></div>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🔍</span>
+      <div>Перевіряти <strong>після кожного рядка</strong>, а не в кінці.
+      Помилку в одному рядку знайти легко, у девʼяти — важко.</div></div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 2</span>
+        <span class="t">Свій sprite і обмін кодами</span><span class="tmr">10 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Придумати свою картинку 8 &#215; 9 і намалювати її
+            в таблиці <b>чотирма кольорами</b></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Записати її <b>кодом</b> — самими нулями й одиницями,
+            на папері</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Обмінятися <b>тільки кодом</b> із сусідом.
+            Картинку не показувати</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Відтворити картинку сусіда за кодом. Потім порівняти:
+            чи збіглося? Де саме розійшлося?</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">📷</div><div>
+      <span class="label lm">А справжні фото?</span>
+      <h2>Чому фотографія важча</h2>
+    </div></div>
+    <div class="three">
+      <div class="card"><h3>Більше пікселів</h3>
+        <p>У нашій картинці 72 клітинки. У фото — мільйони</p></div>
+      <div class="card cm"><h3>Більше кольорів</h3>
+        <p>Двома бітами можна лише <b>чотири</b>. Для справжніх відтінків
+           потрібно значно більше бітів на піксель</p></div>
+      <div class="card"><h3>Більше місця</h3>
+        <p>Більше бітів &#8594; більше <span class="en">bytes</span> &#8594;
+           більше місця в памʼяті</p></div>
+    </div>
+    <div class="hbox hm mt">Фотографію робить <strong>сенсор</strong> усередині камери:
+      коли натискаєш кнопку, він ловить світло з обʼєктива й записує його
+      <strong>нулями й одиницями</strong> — так само, як ми зараз.</div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">📏</div><div>
+      <span class="label lo">Одиниці</span>
+      <h2>bit &#8594; byte &#8594; kilobyte &#8594; megabyte</h2>
+    </div></div>
+    <table class="tbl">
+      <tr><th>Одиниця</th><th>Це скільки</th><th>Приклад</th></tr>
+      <tr><td class="c">bit</td><td>один 0 або одна 1</td><td>половина клітинки нашої картинки</td></tr>
+      <tr><td class="c">byte</td><td>8 бітів</td><td>пів рядка картинки</td></tr>
+      <tr><td class="c">kilobyte</td><td>близько тисячі байтів</td><td>сторінка тексту</td></tr>
+      <tr><td class="c">megabyte</td><td>близько мільйона байтів</td><td>одна фотографія</td></tr>
+    </table>
+    <div class="tip tm mt"><span class="tip-ico">🧮</span>
+      <div>Наша мордочка — <strong>18 <span class="en">bytes</span></strong>.
+      Щоб набрати один <span class="en">megabyte</span>, таких мордочок
+      треба близько <strong>пʼятдесяти тисяч</strong>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">💾</div><div>
+      <span class="label lm">Де це зберігається</span>
+      <h2>Storage media</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">SD card</span><span class="uk">картка памʼяті — у фотоапараті</span></div>
+      <div class="vp"><span class="en">micro SD card</span><span class="uk">маленька картка — у телефоні</span></div>
+      <div class="vp"><span class="en">flash drive</span><span class="uk">флешка</span></div>
+      <div class="vp"><span class="en">hard disk drive (HDD)</span><span class="uk">жорсткий диск у комп'ютері</span></div>
+      <div class="vp"><span class="en">solid state disk (SSD)</span><span class="uk">швидкий диск без рухомих частин</span></div>
+      <div class="vp"><span class="en">network storage</span><span class="uk">сховище в мережі — місця найбільше</span></div>
+    </div>
+    <div class="hbox hm mt">У кожного своя <strong>ємність</strong> — скільки даних
+      вміщає. Навіть дві однакові з вигляду картки можуть відрізнятися
+      <strong>в тисячі разів</strong>.</div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🚗</div><div>
+      <span class="label lo">Подорож одного фото</span>
+      <h2>Як фотографія доїхала до школи</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t">Камера записала фото на <span class="en">SD card</span></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t">Удома його скопіювали на <span class="en">hard drive</span></span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t">Потім перекинули на <span class="en">flash drive</span></span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t">А в школі поклали в <span class="en">network storage</span></span></div>
+    </div>
+    <div class="hbox hm mt">Чотири різні пристрої — і на кожному це були
+      <strong>ті самі нулі й одиниці</strong>. Файл не змінився ані на біт.</div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 3</span>
+        <span class="t">Порівнюємо файли</span><span class="tmr">6 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Відкрити три фотографії. Подивитись
+            <b>розмір кожного файлу</b> й записати</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Відкрити всі три на 100 % і порівняти.
+            <b>Більший файл — більша картинка?</b></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Знайти в класі <b>найбільший</b> і <b>найменший</b>
+            файл. У скільки разів вони відрізняються?</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key vocabulary</span>
+      <h2>Вісім слів цього юніта</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">binary digits</span><span class="uk">двійкові цифри — 0 і 1</span></div>
+      <div class="vp"><span class="en">binary</span><span class="uk">двійковий запис</span></div>
+      <div class="vp"><span class="en">bit</span><span class="uk">біт — один 0 або одна 1</span></div>
+      <div class="vp"><span class="en">byte</span><span class="uk">байт — 8 бітів</span></div>
+      <div class="vp"><span class="en">pixel</span><span class="uk">піксель — одна клітинка картинки</span></div>
+      <div class="vp"><span class="en">bitmap</span><span class="uk">картинка з пікселів</span></div>
+      <div class="vp"><span class="en">kilobyte</span><span class="uk">кілобайт — близько тисячі байтів</span></div>
+      <div class="vp"><span class="en">megabyte</span><span class="uk">мегабайт — близько мільйона байтів</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lr">I can…</span>
+      <h2>Чек-лист уроку</h2>
+    </div></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div><div>I can say how many colours
+        <span class="en">2 bits</span> can make.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can draw a picture
+        from a <span class="en">binary</span> code.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can write my own picture
+        as a code.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can say how many
+        <span class="en">bits</span> are in one <span class="en">byte</span>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can name three
+        <span class="en">storage media</span>.</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Next</span>
+      <h2>Що далі</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cm"><h3>Сьогодні дізналися</h3><ul>
+        <li>два біти дають чотири кольори</li>
+        <li>1 <span class="en">byte</span> = 8 <span class="en">bits</span></li>
+        <li>наша картинка — 18 байтів</li>
+        <li>де зберігаються файли й чому розміри різні</li>
+      </ul></div>
+      <div class="card"><h3>Наступного разу</h3><ul>
+        <li>більше про пристрої зберігання</li>
+        <li>чому вибирають різні: швидкість, ціна, розмір</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнього завдання немає.</strong>
+      Роздатку зберегти — таблиця чотирьох кольорів знадобиться ще.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 3 · 17 вересня</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп — але не тоді, коли палець почав рух усередині сітки */
+let tx = 0, ty = 0, swipeOff = false;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  swipeOff = !!(e.target.closest && e.target.closest('.pix'));
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  if (swipeOff) { swipeOff = false; return; }
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+/* ═════════ ІНТЕРАКТИВНА СІТКА 8×6 ═════════
+   Слайд 10. Код → зафарбовані клітинки → «Перевірити».
+   Перший код — приклад із Scheme of Work Stage 5, юніт 5.1. */
+const COLS = 8, ROWS = 6;
+goTo(0);
+</script>
+</body>
+</html>

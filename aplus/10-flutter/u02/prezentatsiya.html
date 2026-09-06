@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Змінні й типи · Мобільна розробка Flutter · 10 клас · Урок 2</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Мобільна розробка Flutter I
+  Клас          10
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · четвер
+  Урок          2 з 36 · 10.09.2026
+  Тема          Змінні й типи
+  Тривалість    45 хв — показ ~24 хв + три практики 21 хв
+  Акцент        blue (#0253b3)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. DartPad у браузері, як і на уроці 1.
+  ────────────────────────────────────────────────────────────────
+  ПЛАН          office/plany/06-flutter-10.md, тема 1.2
+                «int, double, String, bool, var/final/const, інтерполяція
+                $name і ${a+b}. Поруч показуємо те саме в JS: що однакове,
+                що інакше.»
+                Артефакт: програма «Візитка» — виводить дані про себе
+                з обчисленнями (вік через 10 років, зріст у см).
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКИ      s6  (5 хв) чотири змінні, по одній кожного типу
+                s12 (6 хв) інтерполяція
+                s14 (10 хв) програма «Візитка» — артефакт уроку
+  ПЕРЕДБАЧ      s8 — «який рядок не запуститься», відповідь на тому ж слайді
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ГОЛОВНА ДУМКА: у Dart тип обирається ОДИН РАЗ. Це головна
+     відмінність від JavaScript, і саме вона ловить помилки до запуску.
+     Слайд 5 (пара JS/Dart) і слайд 11 (таблиця) не різати.
+  ⚠️ ЩО ПЛУТАЮТЬ ТІ, ХТО ЙДЕ З JS
+     • зворотні лапки: у Dart інтерполяція у ЗВИЧАЙНИХ лапках
+     • var ≠ «будь-який тип». Тип вгадується один раз і фіксується
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • Умови й цикли — урок 3
+     • null-safety, знак ? — пізніше в I періоді
+     • Списки й колекції — II період
+     • Оцінювання — за правилом «слайди без голосу вчителя» це в конспекті
+  ────────────────────────────────────────────────────────────────
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/10-flutter/u02/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: акцент курсу — синій із палітри. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#eef1f8; --border:#dcdfe9;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(2,83,179,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lo{background:#fdf0d9;color:#9c5b00}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(2,83,179,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#f9fbfd;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:14px 19px;font-family:var(--f-mono);
+        font-size:16px;border-top:1.5px solid var(--border);white-space:pre-wrap}
+.dp-out .lbl{font-family:var(--f-body);font-size:13px;color:var(--faint);
+             text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:6px}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #f9fbfd */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#6b6a72;font-style:italic}/* коментар */
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--blue);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid #b9c8e6;border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--blue);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--blue)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:34px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--ink)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+.uk{color:var(--dim)}
+
+/* ═══ СЛОВНИК ═══ */
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mw{background:var(--surface);border:2px solid #b9c8e6;border-radius:14px;padding:15px 19px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.5rem;color:var(--blue);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:17px;color:var(--dim);line-height:1.5}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:17px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16.5px;line-height:1.45}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--blue);border-radius:6px;flex-shrink:0}
+
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ───
+   Спрацьовує тільки там, де вміст інакше не вміщується у вікно.
+   На 1080p і вище нічого не міняється. */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .th{padding:9px 14px} .th-t{font-size:16.5px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .mw{padding:12px 15px} .mw .w{font-size:1.3rem} .mw .t{font-size:15.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:16px} .vp .uk{font-size:15.5px}
+  .vg{gap:9px}
+  .title-h1{font-size:2.9rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+}
+@media (max-height:800px){
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .dp-out{font-size:14.5px;padding:11px 15px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+.tri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:stretch}
+.pc{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:12px 15px;font-family:var(--f-mono);font-size:16px;line-height:1.65;white-space:pre-wrap}
+.pc b{color:var(--brand)}
+.pc .lbl{font-family:var(--f-body);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--faint);display:block;margin-bottom:7px}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 13px;font-size:17px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Змінні й типи</h1>
+      <p class="title-sub">int · double · String · bool · var / final / const<br>
+        Мобільна розробка Flutter · 10 клас · Урок 2 з 36 · 10 вересня</p>
+      <div class="chips">
+        <span class="chip">типи Dart</span>
+        <span class="chip">final і const</span>
+        <span class="chip">$name</span>
+        <span class="chip">Візитка</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lm">Минулого разу · сьогодні</span>
+      <h2>Програма вміє говорити. Навчимо її памʼятати</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Уже вміємо</h3>
+        <p><span class="ic">void main()</span>, <span class="ic">print()</span>,
+           крапка з комою, лапки, коментарі. DartPad і кнопка
+           <span class="ic">Run</span></p></div>
+      <div class="card cm"><h3>Сьогодні</h3>
+        <p><b>Змінна</b> — місце, де програма зберігає значення.
+           Чотири типи, три способи оголосити, і як вставити значення
+           прямо в текст</p></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🎯</span>
+      <div>Результат уроку — програма <strong>«Візитка»</strong>: виводить дані
+      про себе й <strong>рахує</strong> на їх основі.</div></div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lm">Головне поняття</span>
+      <h2>Змінна — це підписана коробка</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">String</span> name = <span class="ss">'Марія'</span>;
+  <span class="sk">int</span> age = <span class="sn">16</span>;
+
+  <span class="sf">print</span>(name);
+  <span class="sf">print</span>(age);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm">Спочатку <b>тип</b>, потім <b>імʼя</b>,
+          потім <b>значення</b></div>
+        <div class="hbox">Крапка з комою в кінці — <b>обовʼязково</b>,
+          як і на минулому уроці</div>
+        <div class="hbox ho">Імена — латиницею, з малої літери,
+          без пробілів: <span class="ic">name</span>,
+          <span class="ic">myAge</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ІМЕНА ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Культура коду</span>
+      <h2>Як називати змінні</h2>
+    </div></div>
+    <div class="pair">
+      <div class="pc"><span class="lbl">так не варто</span>int a = 16;
+String s = 'Рівне';
+double x1 = 1.72;
+bool f = true;</div>
+      <div class="pc"><span class="lbl">так</span>int age = 16;
+String city = 'Рівне';
+double height = 1.72;
+bool likesTea = true;</div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm">Імʼя має відповідати на питання
+        <b>«що тут лежить?»</b> — без заглядання вище</div>
+      <div class="hbox ho">Два слова — <b>друге з великої</b>:
+        <span class="ic">myAge</span>, <span class="ic">likesTea</span>.
+        Це стиль Dart, і його дотримуються всі</div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">📅</span>
+      <div>Перевірка проста: <strong>чи зрозумієш ти цей код через місяць?</strong>
+      Через місяць у нас буде проєкт на три екрани, і це вже не жарт.</div></div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🏷️</div><div>
+      <span class="label lm">Чотири типи</span>
+      <h2>Цього вистачить до листопада</h2>
+    </div></div>
+    <table class="tbl">
+      <tr><th>Тип</th><th>Що зберігає</th><th>Приклад</th></tr>
+      <tr><td class="c">int</td><td>ціле число</td><td><span class="ic">int age = 16;</span></td></tr>
+      <tr><td class="c">double</td><td>число з дробовою частиною</td><td><span class="ic">double height = 1.72;</span></td></tr>
+      <tr><td class="c">String</td><td>текст у лапках</td><td><span class="ic">String city = 'Рівне';</span></td></tr>
+      <tr><td class="c">bool</td><td>тільки true або false</td><td><span class="ic">bool likesTea = true;</span></td></tr>
+    </table>
+    <div class="tip to mt"><span class="tip-ico">🔠</span>
+      <div><span class="ic">String</span> — <strong>з великої літери</strong>,
+      решта з малої. Це не примха: <span class="ic">string</span> з малої
+      Dart не зрозуміє.</div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🚫</div><div>
+      <span class="label lo">Головна відмінність від JavaScript</span>
+      <h2>Тип не міняється</h2>
+    </div></div>
+    <div class="pair">
+      <div class="pc"><span class="lbl">JavaScript — можна</span>let x = 16;
+x = 'шістнадцять';
+// працює</div>
+      <div class="pc"><span class="lbl">Dart — не можна</span>int x = 16;
+x = 'шістнадцять';
+// помилка ще до запуску</div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm">У Dart тип обирається <b>один раз</b> і лишається
+        назавжди</div>
+      <div class="hbox ho">Помилку видно <b>до запуску</b> — редактор підкреслює
+        червоним одразу</div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🛡️</span>
+      <div>Це не незручність, а <strong>страховка</strong>: більшість
+      помилок ловиться в редакторі, а не в застосунку на телефоні користувача.</div></div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Чотири змінні</span><span class="tmr">5 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">У DartPad оголосити <b>чотири змінні</b> про себе —
+            по одній кожного типу — і вивести кожну окремим
+            <span class="ic">print</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Спробувати записати в <span class="ic">int</span>
+            текст. Прочитати, <b>що саме</b> написав редактор</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Записати <span class="ic">int</span> у змінну
+            типу <span class="ic">double</span>. Чи спрацює? А навпаки?</span></div>
+      </div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">📖</span>
+      <div>Помилки Dart читаються англійською й доволі зрозуміло.
+      <span class="ic">A value of type 'String' can't be assigned to
+      a variable of type 'int'</span> — тут сказано все.</div></div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🔀</div><div>
+      <span class="label lm">Три способи оголосити</span>
+      <h2>var · final · const</h2>
+    </div></div>
+    <div class="three">
+      <div class="card"><h3>var</h3>
+        <p>Тип <b>вгадується</b> зі значення. Змінювати можна</p>
+        <p class="mt"><span class="ic">var age = 16;</span> — це той самий
+           <span class="ic">int</span></p></div>
+      <div class="card cm"><h3>final</h3>
+        <p>Значення задається <b>один раз</b> і більше не міняється</p>
+        <p class="mt"><span class="ic">final name = 'Марія';</span></p></div>
+      <div class="card"><h3>const</h3>
+        <p>Те саме, але значення відоме <b>ще до запуску</b> програми</p>
+        <p class="mt"><span class="ic">const pi = 3.14;</span></p></div>
+    </div>
+    <div class="hbox hm mt">Правило на весь курс: <strong>починай із
+      <span class="ic">final</span></strong>. Міняй на
+      <span class="ic">var</span>, тільки коли значення справді має мінятися.</div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Який рядок не запуститься?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> score = <span class="sn">10</span>;
+score = <span class="sn">20</span>;
+
+<span class="sk">final</span> city = <span class="ss">'Рівне'</span>;
+city = <span class="ss">'Київ'</span>;
+
+<span class="sk">var</span> mark = <span class="sn">5</span>;
+mark = <span class="ss">'пʼять'</span>;</div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Два рядки з трьох груп</h3>
+        <p class="rv-hint">Знайди обидва, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">city = 'Київ';</span> —
+             <span class="ic">final</span> міняти не можна</p>
+          <p><b>2.</b> <span class="ic">mark = 'пʼять';</span> —
+             <span class="ic">var mark = 5</span> зробило його
+             <span class="ic">int</span> назавжди</p>
+          <p class="mt" style="color:var(--accent)">Головне з другого:
+             <span class="ic">var</span> <b>не означає «будь-який тип»</b>.
+             Він означає «тип вгадай сам» — і вгадується він <b>один раз</b>.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🧵</div><div>
+      <span class="label lm">Нове в коді</span>
+      <h2>Вставити значення прямо в текст</h2>
+    </div></div>
+    <div class="pair">
+      <div class="pc"><span class="lbl">незручно</span>print('Мене звати ' + name +
+      ', мені ' + age.toString());</div>
+      <div class="pc"><span class="lbl">по-дартівськи</span>print('Мене звати $name,
+       мені $age');</div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm">Знак <span class="ic">$</span> перед імʼям змінної —
+        і Dart сам підставить значення</div>
+      <div class="hbox">Ніяких плюсів і ніякого
+        <span class="ic">toString()</span></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🔤</span>
+      <div>Це називається <span class="en">string interpolation</span> —
+      інтерполяція рядка. Слово знадобиться, коли шукатимеш відповідь
+      англійською.</div></div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🧮</div><div>
+      <span class="label lm">Нове в коді</span>
+      <h2>А якщо треба порахувати?</h2>
+    </div></div>
+    <div class="dp">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+      <div class="dp-code"><span class="sk">final</span> age = <span class="sn">16</span>;
+<span class="sk">final</span> height = <span class="sn">1.72</span>;
+
+<span class="sf">print</span>(<span class="ss">'Через 10 років мені буде </span>${age + 10}<span class="ss">'</span>);
+<span class="sf">print</span>(<span class="ss">'Мій зріст — </span>${height * 100}<span class="ss"> см'</span>);</div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><span class="ic">$name</span> — просто змінна</div>
+      <div class="hbox ho"><span class="ic">${...}</span> — <b>вираз</b>:
+        усередині фігурних дужок можна рахувати</div>
+    </div>
+    <div class="hbox hm mt">Правило просте: <strong>сама змінна —
+      <span class="ic">$</span>, будь-що складніше —
+      <span class="ic">${ }</span></strong>.</div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🔗</div><div>
+      <span class="label lo">Міст із JavaScript</span>
+      <h2>Що однакове, що інакше</h2>
+    </div></div>
+    <table class="tbl">
+      <tr><th></th><th>JavaScript</th><th>Dart</th></tr>
+      <tr><td>оголошення</td><td class="c">let / const</td><td class="c">var / final / const</td></tr>
+      <tr><td>тип</td><td>вгадується, <b>може змінитись</b></td><td>обирається <b>один раз</b></td></tr>
+      <tr><td>вставка в текст</td><td class="c">`${name}`</td><td class="c">'$name'</td></tr>
+      <tr><td>лапки для вставки</td><td>тільки <b>зворотні</b></td><td><b>звичайні</b> — будь-які</td></tr>
+      <tr><td>крапка з комою</td><td>часто необовʼязкова</td><td><b>обовʼязкова</b></td></tr>
+    </table>
+    <div class="tip tm mt"><span class="tip-ico">⚠️</span>
+      <div>Найчастіша плутанина в тих, хто прийшов із JS: у Dart
+      <strong>зворотні лапки не працюють</strong>. Інтерполяція тут —
+      у звичайних.</div></div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">Інтерполяція</span><span class="tmr">6 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Переписати свої чотири
+            <span class="ic">print</span> з практики 1 в <b>один</b> —
+            через <span class="ic">$</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Додати рядок із обчисленням через
+            <span class="ic">${ }</span> — наприклад, вік через 10 років</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Спробувати написати <span class="ic">$age + 10</span>
+            <b>без фігурних дужок</b>. Що виведе Dart і чому?</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Порахувати зріст у сантиметрах і вивести
+            <b>без дробової частини</b>. Підказка:
+            <span class="ic">.toInt()</span></span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🐞</div><div>
+      <span class="label lo">Чотири помилки цього уроку</span>
+      <h2>Що ламається найчастіше</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox hm"><span class="ic">string</span> з малої літери —
+          Dart знає тільки <span class="ic">String</span></div>
+        <div class="hbox"><b>Забули крапку з комою.</b> Помилка вкаже
+          на <b>наступний</b> рядок</div>
+      </div>
+      <div>
+        <div class="hbox ho"><span class="ic">$age + 10</span> без дужок —
+          виведе <b>число, а потім текст «+ 10»</b></div>
+        <div class="hbox hm">Присвоїли значення в <span class="ic">final</span> —
+          редактор підкреслить одразу</div>
+      </div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🔍</span>
+      <div>Спільне у всіх чотирьох: <strong>DartPad каже про них
+      до запуску</strong>. Червоне підкреслення — це не пізніше, ніж ти
+      натиснув Run.</div></div>
+  </div></section>
+
+  <!-- ══════════ ЗНАЙДИ ПОМИЛКИ ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🔎</div><div>
+      <span class="label lo">Знайди помилки</span>
+      <h2>Тут їх три</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">string</span> name = <span class="ss">'Марія'</span>;
+  <span class="sk">final</span> age = <span class="sn">16</span>
+  age = <span class="sn">17</span>;
+
+  <span class="sf">print</span>(<span class="ss">'Мені $age'</span>);
+}</div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Назви всі три</h3>
+        <p class="rv-hint">Знайди, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">string</span> з малої літери —
+             треба <span class="ic">String</span></p>
+          <p><b>2.</b> Немає крапки з комою після
+             <span class="ic">= 16</span></p>
+          <p><b>3.</b> <span class="ic">final</span> не можна змінювати —
+             рядок <span class="ic">age = 17;</span> зайвий</p>
+          <p class="mt" style="color:var(--accent)">Прикмета: помилка про крапку
+             з комою вкаже на <b>наступний</b> рядок. Дивитись треба вище.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ЗРАЗОК ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🪪</div><div>
+      <span class="label lm">Зразок</span>
+      <h2>Як виглядає готова «Візитка»</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">final</span> name = <span class="ss">'Марія'</span>;
+  <span class="sk">final</span> age = <span class="sn">16</span>;
+  <span class="sk">final</span> height = <span class="sn">1.72</span>;
+
+  <span class="sf">print</span>(<span class="ss">'$name, $age роки'</span>);
+  <span class="sf">print</span>(<span class="ss">'Через 10 — </span>${age + 10}<span class="ss">'</span>);
+  <span class="sf">print</span>(<span class="ss">'Зріст </span>${height * 100}<span class="ss"> см'</span>);
+}</div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">Console</span></div>
+        <div class="dp-code">Марія, 16 роки
+Через 10 — 26
+Зріст 172.0 см</div>
+      </div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🔢</span>
+      <div>Помітили <span class="ic">172.0</span>? <span class="ic">double</span>
+      завжди виводиться з дробовою частиною. Прибрати її —
+      рівень ⭐⭐⭐ у практиці.</div></div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">Програма «Візитка»</span><span class="tmr">10 хвилин</span></div>
+      <div class="prac-lead">Результат уроку. Програма виводить дані про себе
+        <b>й рахує</b> на їх основі.</div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Пʼять змінних: імʼя, вік, зріст, місто,
+            <span class="ic">bool</span> на власний смак. Вивести
+            <b>одним</b> <span class="ic">print</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Додати два обчислені рядки: <b>вік через 10 років</b>
+            і <b>зріст у сантиметрах</b></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Усе, що не міняється, оголосити через
+            <span class="ic">final</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Вивести візитку <b>кількома рядками</b>
+            одним <span class="ic">print</span>. Підказка: три одинарні
+            лапки <span class="ic">'''</span></span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lm">Словник</span>
+      <h2>Терміни — лишаються англійською</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">variable</span><span class="uk">змінна</span></div>
+      <div class="vp"><span class="en">type</span><span class="uk">тип значення</span></div>
+      <div class="vp"><span class="en">integer</span><span class="uk">ціле число — звідси int</span></div>
+      <div class="vp"><span class="en">double</span><span class="uk">число з дробовою частиною</span></div>
+      <div class="vp"><span class="en">string</span><span class="uk">рядок, текст</span></div>
+      <div class="vp"><span class="en">boolean</span><span class="uk">true або false — звідси bool</span></div>
+      <div class="vp"><span class="en">string interpolation</span><span class="uk">вставка значення в текст</span></div>
+      <div class="vp"><span class="en">immutable</span><span class="uk">незмінний — про final і const</span></div>
+      <div class="vp"><span class="en">assignment</span><span class="uk">присвоєння значення</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Що є після другого уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cm"><h3>Уміємо</h3><ul>
+        <li>чотири типи: <span class="ic">int</span>,
+          <span class="ic">double</span>, <span class="ic">String</span>,
+          <span class="ic">bool</span></li>
+        <li><span class="ic">var</span>, <span class="ic">final</span>,
+          <span class="ic">const</span> — і коли який</li>
+        <li><span class="ic">$name</span> і <span class="ic">${a + b}</span></li>
+        <li>читати помилку типів у DartPad</li>
+      </ul></div>
+      <div class="card"><h3>Наступного разу</h3><ul>
+        <li><span class="ic">if</span> / <span class="ic">else</span>,
+          <span class="ic">switch</span></li>
+        <li><span class="ic">for</span>, <span class="ic">while</span>,
+          <span class="ic">for-in</span></li>
+        <li>міні-гра «вгадай число»</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнього завдання немає.</strong>
+      Але код «Візитки» <b>скопіюйте у файл</b> — DartPad нічого не зберігає.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 3 · 17 вересня · Умови й цикли по-дартівськи</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
