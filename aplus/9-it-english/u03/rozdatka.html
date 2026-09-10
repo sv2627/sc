@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · IT-англійська · 9 клас · Урок 3</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          IT-англійська (Cambridge Lower Secondary Computing 0860)
+  Клас          9
+  Урок          3 / 36 · 17.09.2026
+  Тема          Storage units and five data types
+  Оновлено      10.09.2026 — словник розширено до 8 слів; конверсії
+                лишились ТУТ, зі слайдів їх знято на користь термінів
+  Цілі          9CS.06 · 9P.02
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — `0860 Computing Stage 9 Scheme of Work.docx`, блоки
+     9CS.06 і 9P.02. Завдання 2 — «series of conversion questions
+     for learners to convert between» з розділу Resources.
+     Завдання 3 — «set of computer specifications that give the amount
+     of RAM and secondary storage», звідти ж.
+     Завдання 4 — набір даних зі схеми дослівно.
+  ────────────────────────────────────────────────────────────────
+  ПРІОРИТЕТ ВМІСТУ для IT-англійської: словник → робочий матеріал
+  зі схеми → правила й пастки. Мета-блоків про курс тут не буває.
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок —
+                на ксероксі вони зникають. Тільки чорне на білому.
+  ОБСЯГ         Рівно одна сторінка A4. Перевірено вимірюванням.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+/* ─── довідка: єдиний стиснутий блок ─── */
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+/* ─── завдання ─── */
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b > h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b > h2 .tag{float:right; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.4fr 1fr}
+.two.k46{grid-template-columns:1fr 1.4fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+/* лінійки для письма */
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:10.5pt; font-weight:700; padding-bottom:.4mm}
+
+/* сходинка одиниць із пропусками */
+.hier{display:grid; grid-template-columns:repeat(7,1fr); gap:1.4mm}
+.hi-c{border:var(--line); min-height:12mm; padding:1mm; font-family:var(--fm);
+  font-size:9pt; font-weight:700; text-align:center; line-height:1.15}
+
+/* таблиці */
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.5mm 1.8mm; font-size:10.5pt; text-align:left}
+table.t th{font-size:9.5pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:26mm; text-align:center}
+table.t td.m{font-family:var(--fm); font-weight:700}
+
+/* словник із порожньою колонкою */
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.4mm 0; font-size:11pt; vertical-align:bottom}
+table.voc td.en{width:46%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+pre.c{font-family:var(--fm); font-size:10pt; line-height:1.3; border:var(--line);
+  padding:1.4mm 2mm; white-space:pre-wrap; font-weight:700}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>IT-англійська &#183; 9 клас &#183; Урок 3 / 36 &#183; 17 вересня</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Storage units and five data types</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Storage units</p>
+        <p><code>bit &#183; nibble &#183; byte</code></p>
+        <p><code>KB &#183; MB &#183; GB &#183; TB</code></p>
+        <p>1 nibble = 4 bits, 1 byte = 8 bits</p>
+        <p>далі кожен &#215; <b>1000</b></p>
+      </div>
+      <div>
+        <p class="rh">Data types</p>
+        <p><code>Integer</code> &#8212; ціле число</p>
+        <p><code>Real</code> &#8212; з дробовою частиною</p>
+        <p><code>String</code> &#8212; один і більше символів</p>
+        <p><code>Character</code> &#8212; рівно один</p>
+        <p><code>Boolean</code> &#8212; true / false</p>
+      </div>
+      <div>
+        <p class="rh">Пастки</p>
+        <p><code>"2026"</code> у лапках &#8212; String</p>
+        <p><code>kibibyte</code> = 1024, інша одиниця</p>
+        <p>Python не має <code>character</code></p>
+        <p>порівнювати одиниці можна лише звівши до однієї</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b">
+    <h2>1 &#183; Допиши сходинку одиниць<span class="tag">від найменшої</span></h2>
+    <div class="hier">
+      <div class="hi-c">bit<br>0 або 1</div>
+      <div class="hi-c"></div>
+      <div class="hi-c">byte<br>&#8230; bits</div>
+      <div class="hi-c"></div>
+      <div class="hi-c">megabyte<br>&#8230; KB</div>
+      <div class="hi-c"></div>
+      <div class="hi-c"></div>
+    </div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>2 &#183; Convert<span class="tag">&#215; або &#247; 1000</span></h2>
+      <div class="sl"><span>3 KB =</span></div>
+      <div class="sl" style="margin-top:1.2mm"><span>7 MB = &#8230; KB</span></div>
+      <div class="sl" style="margin-top:1.2mm"><span>2 GB = &#8230; KB</span></div>
+      <div class="sl" style="margin-top:1.2mm"><span>4 bytes = &#8230; bits</span></div>
+    </div>
+    <div>
+      <h2>3 &#183; Хто потужніший<span class="tag">RAM</span></h2>
+      <table class="t">
+        <tr><th>Комп&#39;ютер</th><th class="a">RAM</th><th class="a">Місце</th></tr>
+        <tr><td class="m">A</td><td class="a m">8 MB</td><td class="a"></td></tr>
+        <tr><td class="m">B</td><td class="a m">4000 KB</td><td class="a"></td></tr>
+        <tr><td class="m">C</td><td class="a m">0.02 GB</td><td class="a"></td></tr>
+      </table>
+      <p class="q" style="margin-top:1mm">Постав <b>1, 2, 3</b> &#8212; від найбільшої RAM.</p>
+    </div>
+  </div>
+
+  <div class="b two k64">
+    <div>
+      <h2>4 &#183; Який тип даних<span class="tag">5 типів</span></h2>
+      <table class="t">
+        <tr><th>Data</th><th class="a">Type</th></tr>
+        <tr><td class="m">50</td><td class="a"></td></tr>
+        <tr><td class="m">11.738</td><td class="a"></td></tr>
+        <tr><td class="m">"bob!"</td><td class="a"></td></tr>
+        <tr><td class="m">"a"</td><td class="a"></td></tr>
+        <tr><td class="m">TRUE</td><td class="a"></td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>5 &#183; Словник</h2>
+      <table class="voc">
+        <tr><td class="en">storage unit</td><td></td></tr>
+        <tr><td class="en">hierarchy</td><td></td></tr>
+        <tr><td class="en">convert</td><td></td></tr>
+        <tr><td class="en">nibble</td><td></td></tr>
+        <tr><td class="en">secondary storage</td><td></td></tr>
+        <tr><td class="en">data type</td><td></td></tr>
+        <tr><td class="en">character</td><td></td></tr>
+        <tr><td class="en">invalid data</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>6 &#183; Своїми словами<span class="tag">&#9733;&#9733;&#9733; англійською або українською</span></h2>
+    <p class="q">Однокласник каже: «<code>character</code> не потрібен &#8212; можна всюди
+    брати <code>string</code>». Наведи <b>дві причини</b>, чому окремий тип усе-таки є.</p>
+    <div class="ln"></div><div class="ln"></div><div class="ln"></div>
+  </div>
+
+  <div class="ft">
+    <span>IT-англійська &#183; 9 клас</span>
+    <span>Урок 3 &#183; 17.09.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1.3 Text, images and sound · IT-англійська · 10 клас · Урок 3</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge IGCSE Computer Science 0478)
+  Клас          10 (15–16 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · середа
+  Урок          3 з 36 · 16.09.2026
+  Тема          1.3 How do computers represent text, images and sound?
+  Акцент        plum (#602857) — той самий, що в IGCSE 11 класу
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ДЖЕРЕЛО УРОКУ — ПАПЕРОВИЙ ПІДРУЧНИК:
+     Cambridge IGCSE™ & O Level Computer Science: Coursebook
+     (Lawrey, Ellis), розділ 1 Data representation,
+     ПІДРОЗДІЛ 1.3, с. 21–25 (хвіст 1.3 — перший абзац с. 25).
+     Скани: office/igcse-0478/rozdil-01-data-representation/
+            s21.jpeg · s22.jpeg · s23.jpeg · s24.jpeg · s25.jpeg
+     Прочитано зі сканів 16.09.2026. Кожен приклад і означення
+     на слайдах МАЄ НОМЕР СТОРІНКИ у підписі.
+  ────────────────────────────────────────────────────────────────
+  ЩО ЗВІДКИ, дослівно:
+    с. 21  character set: «it contains all the characters that are
+           in that character set and the binary value that is
+           assigned to each character»                          → s3
+           ASCII 8-bit → «up to 256 characters (0 to 255)»       → s4
+           Unicode 16-bit → «approximately 65 000»               → s5
+           «the letter A is 01000001»                            → s6
+           ACTIVITY 1.2 — три двійкові рядки для декодування     → s7
+           pixel: «a very small dot of colour that is displayed
+           with many others to create an image»                  → s8
+           «The binary value 1 could be used to represent the
+           colour black and the binary value 0 … white»          → s9
+    с. 22  Figure 1.2 — зображення 9 пікселів завширшки і 10
+           заввишки, з чорно-білих пікселів                      → s9
+           resolution: «the dimensions of an image»              → s10
+           metadata: «additional data that is stored with an
+           image that can provide information such as the
+           dimensions of the image and the time and date the
+           image was taken»                                      → s10
+           ACTIVITY 1.3 — RGB і шістнадцяткова шкала             → s11
+    с. 23  colour depth: «the number of bits that are used to
+           create each colour in an image»                       → s12
+           Figure 1.3 — 8-bit / 16-bit / 32-bit colour
+           «If the colour depth of an image is reduced, the
+           quality of the image is often reduced.»               → s12
+           вплив на розмір файлу                                 → s13
+           COMPUTER SCIENCE IN CONTEXT — якість проти швидкості
+           завантаження                                          → s14
+           sound sampling: «a little piece of sound that is
+           recorded at regular time intervals»                   → s15
+    с. 24  Figure 1.4 / 1.5 — звукова хвиля і відтворена хвиля
+           таблиця Time sample 1–12 / Sound value                → s16
+           «the number of samples taken is too far apart, so
+           vital data in between time samples has been lost»     → s17
+           sample rate: «the number of samples recorded each
+           second», у герцах; 44.1 kHz → 44 100 samples/second   → s18
+           sample resolution: «the number of bits that are used
+           to record each sound sample»                          → s19
+    с. 25  «A common sample resolution is 16-bit. The higher the
+           sample resolution, the greater the variations in
+           amplitude that can be stored for each sample… This
+           increases the size of the file that stores the sound.» → s19
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • 1.4 Measuring data storage (біт, байт, KiB…, таблиця 1.2)
+       і SKILLS FOCUS 1.3 «Calculating the size of a file» —
+       це с. 25 і далі, НАСТУПНИЙ УРОК. Сьогодні тільки кажемо,
+       ЩО впливає на розмір, але НЕ рахуємо його
+     • 1.5 Data compression — урок 5
+     • переведення двійкового в шістнадцяткове — було в 1.1
+       (урок 1), сьогодні тільки згадується в ACTIVITY 1.3
+  ⚠️ РОЗРАХУНКИ ТУТ ДОЗВОЛЕНІ — це 10 клас, IGCSE. Обмеження
+     «жодних конверсій» стосується 5–9 класів, не цього курсу.
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКА      s7  ACTIVITY 1.2 — декодувати ASCII (з підручника)
+                s11 ACTIVITY 1.3 — RGB і hex (з підручника)
+                s17 передбач: чому відтворена хвиля інша
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ПРАВИЛА КУРСУ (пам'ять користувача)
+     • тільки по книзі — нічого не вигадувати
+     • кожен приклад має номер сторінки
+     • акцент на англійську: терміни й означення EN, пояснення UA
+     • KEY WORDS підручника подаємо дослівно, у рамці
+
+  ⚙️ ОНОВЛЕНО 10.09.2026 НА ВИМОГУ КОРИСТУВАЧА:
+     «більше термінів, можна трішки зменшити опис деталей».
+     ➕ Слайд 20 — VOCABULARY на 18 слів із перекладами.
+        Усі 18 узяті З ТЕКСТУ 1.3, не вигадані: вісім KEY WORDS
+        книжки плюс десять слів, які звучать у цитатах на слайдах
+        (assigned · represent · dimensions · quality · reduce ·
+         file size · sound wave · time interval · playback · binary value).
+     ➖ Скорочено описові блоки на слайдах 2 і 15.
+     ⚠️ Правило на наступні уроки курсу: словник виходу з перекладами —
+        обовʼязковий слайд, як в інших класах IT-англійської.
+  ────────────────────────────────────────────────────────────────
+  Зміст курсу   office/igcse-0478/zmist-coursebook.md
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/10-it-english/u03/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--plum);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+.dp-out h1{font-size:1.9rem;color:var(--ink);font-family:var(--f-head)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово / тег */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* атрибут / селектор */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:18px 22px;white-space:pre}
+.tree b{color:var(--accent);font-weight:700}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:#9c5b00;
+               background:#fdf0d9;border:1.5px solid #f2ddb5;
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:29px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--ink)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 1 · 1.1 Binary and hexadecimal ═══
+   Усі таблиці — справжні HTML-таблиці, щоб чисто друкувались на A4 у ч/б. */
+
+/* таблиця розрядів 128 64 32 16 8 4 2 1 та таблиця 0–15 → 0–F */
+.btab{width:100%;border-collapse:collapse;margin:10px 0;background:var(--surface);
+      font-family:var(--f-mono);table-layout:fixed}
+.btab th,.btab td{border:1.5px solid var(--border);padding:8px 3px;text-align:center;
+                  font-size:18px;color:var(--ink)}
+.btab th{background:var(--surf2);font-weight:700;color:var(--plum);font-size:16px}
+.btab td.on{background:var(--sky);font-weight:700}
+.btab td.off{color:var(--faint)}
+.btab .rl{font-family:var(--f-body);font-size:15px;color:var(--dim);background:var(--surf2);
+          text-align:right;padding-right:9px;white-space:nowrap;width:132px}
+.btab.sm th,.btab.sm td{padding:6px 2px;font-size:16px}
+.btab .gap{border-left-width:4px;border-left-color:var(--plum)}
+.btab caption{caption-side:bottom;font-size:15px;color:var(--faint);padding-top:7px;text-align:left}
+
+/* таблиця-список: карта року, command words, чек-лист I can… */
+.ptab{width:100%;border-collapse:collapse;margin:8px 0;background:var(--surface)}
+.ptab th,.ptab td{border:1.5px solid var(--border);padding:8px 12px;text-align:left;
+                  font-size:17px;line-height:1.5;color:var(--ink);vertical-align:top}
+.ptab th{background:var(--surf2);font-family:var(--f-head);font-weight:700;color:var(--plum);
+         font-size:14px;letter-spacing:.7px;text-transform:uppercase}
+.ptab td.num{font-family:var(--f-mono);color:var(--dim);text-align:center;white-space:nowrap}
+.ptab td.bx{text-align:center;font-size:20px;color:var(--faint);width:112px}
+.ptab td.en{font-family:var(--f-mono);font-size:16px;color:var(--plum);white-space:nowrap}
+
+/* чек-лист I can… (підсумок) */
+.chk{display:flex;flex-direction:column;gap:7px}
+.ck{display:flex;align-items:flex-start;gap:12px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:9px 15px}
+.ck-b{width:21px;height:21px;border:2px solid var(--plum);border-radius:5px;flex-shrink:0;margin-top:3px}
+.ck-t{font-size:17px;line-height:1.5;color:var(--ink)}
+
+/* KEY WORDS підручника */
+.kw{display:flex;flex-direction:column;gap:7px}
+.vg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:9px 12px}
+.vp .ven{display:block;font-family:var(--f-mono);font-weight:700;font-size:15.5px;
+  color:var(--accent);line-height:1.25;margin-bottom:2px}
+.vp .vuk{display:block;font-size:15px;color:var(--dim);line-height:1.35}
+.kwi{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+     border-radius:0 10px 10px 0;padding:8px 14px;font-size:16px;line-height:1.5;color:var(--dim)}
+.kwi b{font-family:var(--f-mono);color:var(--plum);font-weight:700}
+.kwi i{font-style:normal;color:var(--faint)}
+
+/* зразок кольору для гачка #ff7fa0 */
+.sw{display:flex;align-items:center;justify-content:center;gap:20px;margin:14px 0}
+.sw-box{width:96px;height:96px;border-radius:15px;border:1.5px solid var(--border);background:#ff7fa0}
+.sw-t{font-family:var(--f-mono);font-size:2.3rem;font-weight:700;color:var(--plum)}
+.sw-n{font-size:16px;color:var(--dim);margin-top:5px;font-family:var(--f-body)}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+.tri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:stretch}
+.pc{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:12px 15px;font-family:var(--f-mono);font-size:16px;line-height:1.65;white-space:pre-wrap}
+.pc b{color:var(--brand)}
+.pc .lbl{font-family:var(--f-body);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--faint);display:block;margin-bottom:7px}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 13px;font-size:17px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+.bits{display:flex;gap:0;font-family:var(--f-mono);margin:6px 0}
+.bits span{flex:1;text-align:center;border:1.5px solid var(--border);border-right:0;
+  padding:7px 0;font-size:18px;font-weight:700;background:var(--surface);color:var(--ink)}
+.bits span:last-child{border-right:1.5px solid var(--border)}
+.bits span.on{background:var(--surf2);color:var(--brand)}
+.bits span.out{background:#fbeaea;color:var(--rose);text-decoration:line-through}
+.bits span.new{background:#eaf3ee;color:#1c6b4e}
+.bits.sm span{font-size:15px;padding:5px 0}
+.blab{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin-top:8px;display:block}
+.rules{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.rule{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:13px 10px;text-align:center;font-family:var(--f-mono)}
+.rule .n{display:block;font-size:12px;letter-spacing:1.2px;color:var(--faint);
+  text-transform:uppercase;margin-bottom:6px;font-weight:700}
+.rule .e{display:block;font-size:19px;font-weight:700;color:var(--brand)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">1.3 Text, images and sound</h1>
+      <p class="title-sub">How do computers represent them?<br>
+        IT-англійська · 10 клас · Урок 3 з 36 · 16 вересня · Coursebook с. 21–25</p>
+      <div class="chips">
+        <span class="chip">character set</span>
+        <span class="chip">pixel</span>
+        <span class="chip">colour depth</span>
+        <span class="chip">sound sampling</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lp">Where we are</span>
+      <h2>Числа вміємо. А все інше?</h2>
+    </div></div>
+    <p>Підручник ставить питання прямо, с. 21: <em>«text, images and sound
+       all have to be converted to binary too, so they can be processed
+       by a computer. <b>How is this done?</b>»</em></p>
+    <div class="tri mt">
+      <div class="card cp"><h3>Text</h3>
+        <p>кожен символ має свій двійковий код</p></div>
+      <div class="card cm"><h3>Images</h3>
+        <p>картинка — це сітка з крапок</p></div>
+      <div class="card cr"><h3>Sound</h3>
+        <p>звук вимірюють через рівні проміжки</p></div>
+    </div>
+    <div class="hbox mt">Три різні речі — <strong>три різні способи</strong>,
+      але результат один: <span class="ic">binary</span>.</div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lo">KEY WORDS · с. 21–24</span>
+      <h2>Слова цього підрозділу</h2>
+    </div></div>
+    <div class="two">
+      <div class="kw">
+        <div class="kwi"><b>character set</b> — it contains all the characters
+          that are in that character set and the binary value that is
+          assigned to each character <i>· с. 21</i></div>
+        <div class="kwi"><b>pixel</b> — a very small dot of colour that is
+          displayed with many others to create an image <i>· с. 21</i></div>
+        <div class="kwi"><b>resolution</b> — the dimensions of an image
+          <i>· с. 22</i></div>
+        <div class="kwi"><b>metadata</b> — additional data that is stored with
+          an image that can provide information such as the dimensions of the
+          image and the time and date the image was taken <i>· с. 22</i></div>
+      </div>
+      <div class="kw">
+        <div class="kwi"><b>colour depth</b> — the number of bits that are used
+          to create each colour in an image <i>· с. 23</i></div>
+        <div class="kwi"><b>sound sampling</b> — a little piece of sound that is
+          recorded at regular time intervals <i>· с. 23</i></div>
+        <div class="kwi"><b>sample rate</b> — the number of samples recorded
+          each second <i>· с. 24</i></div>
+        <div class="kwi"><b>sample resolution</b> — the number of bits that are
+          used to record each sound sample <i>· с. 24</i></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lp">Converting text to binary · с. 21</span>
+      <h2>The tool is called a <span class="ic">character set</span></h2>
+    </div></div>
+    <p>Комп'ютер не «здогадується», яка буква перед ним. Він користується
+       <strong>таблицею відповідностей</strong>: кожному символу заздалегідь
+       призначено двійкове число.</p>
+    <div class="two mt">
+      <div class="card cp"><h3>Two main types</h3>
+        <p><b>ASCII</b> та <b>Unicode</b>. Так дослівно в книзі:
+           <em>«There are two main types of character set that a computer
+           can use, ASCII and Unicode»</em></p></div>
+      <div class="card cm"><h3>Що в таблиці</h3>
+        <p>Усі символи набору — <b>і двійкове значення кожного</b>.
+           Нічого більше</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🅰️</div><div>
+      <span class="label lp">ASCII · с. 21</span>
+      <h2>8 bits — 256 characters</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox">ASCII кодує символи <b>8-бітними</b> двійковими
+          числами</div>
+        <div class="hbox hm">Отже, різних символів може бути
+          <strong>256</strong> — книга уточнює діапазон:
+          <b>0 to 255</b></div>
+        <div class="hbox hp"><em>«This is fine for certain languages,
+          but some languages have an alphabet that requires more than
+          256 characters»</em></div>
+      </div>
+      <div>
+        <div class="bits"><span>0</span><span>1</span><span>0</span><span>0</span>
+          <span>0</span><span>0</span><span>0</span><span>1</span></div>
+        <p class="center" style="color:var(--dim);font-size:16px;margin-top:8px">
+          8 bits = 1 character in ASCII</p>
+        <div class="hbox ho mt">Чому саме 256: <b>2<sup>8</sup> = 256</b>.
+          Це те саме, що ви рахували в підрозділі 1.1</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🌍</div><div>
+      <span class="label lp">Unicode · с. 21</span>
+      <h2>16 bits — approximately 65 000</h2>
+    </div></div>
+    <p>Саме тому <strong>Unicode was invented</strong>: 256 символів
+       не вистачає світові.</p>
+    <table class="tbl mt">
+      <tr><th>Character set</th><th>Bits per character</th><th>How many characters</th></tr>
+      <tr><td><b>ASCII</b></td><td>8</td><td>256 · <span class="ic">0 to 255</span></td></tr>
+      <tr><td><b>Unicode</b></td><td>16</td><td>approximately <b>65 000</b></td></tr>
+    </table>
+    <div class="hbox hm mt">Книга, с. 21: <em>«This means that many more characters
+      can be developed in different alphabets and also symbols such as
+      <b>emojis</b> can also be used.»</em></div>
+    <div class="tip mt"><span class="tip-ico">🇺🇦</span>
+      <div>Українська абетка, китайські ієрогліфи й емодзі існують
+      у тексті <strong>саме завдяки Unicode</strong>. В ASCII для них
+      просто немає місця.</div></div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🔡</div><div>
+      <span class="label lp">с. 21</span>
+      <h2>Each character has a set binary value</h2>
+    </div></div>
+    <div class="sw">
+      <div>
+        <div class="sw-t">A</div>
+        <div class="sw-n">the letter</div>
+      </div>
+      <div class="sw-t" style="font-size:1.6rem;color:var(--dim)">=</div>
+      <div>
+        <div class="sw-t">01000001</div>
+        <div class="sw-n">its binary value</div>
+      </div>
+    </div>
+    <div class="two mt">
+      <div class="hbox">Приклад із книги, дослівно:
+        <em>«for example, the letter A is <b>01000001</b>»</em></div>
+      <div class="hbox hp"><b>Set</b> тут означає «встановлений заздалегідь,
+        закріплений». Не «набір» — тут це прикметник</div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🔢</span>
+      <div>Переведіть <span class="ic">01000001</span> у десяткове —
+      вийде <strong>65</strong>. Це і є номер літери
+      <span class="ic">A</span> в таблиці ASCII.</div></div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">ACTIVITY 1.2</span>
+        <span class="t">Decode the message · с. 21</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">1</span>
+          <span class="lv-t">Use the internet to find an example of an
+            <b>ASCII</b> character set and a <b>Unicode</b> character set.
+            What kind of different characters are represented?
+            <b>Are upper and lowercase letters the same?</b></span></div>
+        <div class="lv"><span class="lv-s">2</span>
+          <span class="lv-t">Using the ASCII table, decode the three messages
+            <b>на роздатці</b>. Remember: each letter is an
+            <b>8-bit</b> binary number</span></div>
+        <div class="lv"><span class="lv-s">3</span>
+          <span class="lv-t">Try writing a message for your friend to decode</span></div>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">✂️</span>
+      <div>Порада до пункту 2: <strong>спершу розбийте рядок на групи по вісім</strong>,
+      і аж потім перекладайте. Половина помилок — від того,
+      що з'їхали на один біт.</div></div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🔲</div><div>
+      <span class="label lp">Converting images to binary · с. 21</span>
+      <h2>An image is made up of tiny dots called <span class="ic">pixels</span></h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox">Якщо в картинці <b>тільки чорний і білий</b>,
+          то кожен піксель — або чорний, або білий</div>
+        <div class="hbox hm">Книга, с. 21: <em>«The binary value <b>1</b> could
+          be used to represent the colour <b>black</b> and the binary value
+          <b>0</b> could be used to represent the colour <b>white</b>»</em></div>
+        <div class="hbox hp">Один піксель = <b>один біт</b>. Уся картинка —
+          довгий рядок нулів і одиниць</div>
+      </div>
+      <div>
+        <div class="bits"><span>0</span><span>0</span><span>1</span><span>1</span>
+          <span>1</span><span>1</span><span>0</span><span>0</span></div>
+        <div class="bits"><span>0</span><span>1</span><span>0</span><span>0</span>
+          <span>0</span><span>0</span><span>1</span><span>0</span></div>
+        <p class="center" style="color:var(--dim);font-size:16px;margin-top:8px">
+          два перші рядки картинки з Figure 1.2</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">📐</div><div>
+      <span class="label lp">с. 22</span>
+      <h2>Двох слів мало: потрібні <span class="ic">resolution</span> і <span class="ic">metadata</span></h2>
+    </div></div>
+    <p>Самого рядка бітів <strong>не досить</strong>. Комп'ютер має знати,
+       де розривати рядок на рядки картинки.</p>
+    <div class="two mt">
+      <div class="card cp"><h3>resolution</h3>
+        <p><b>the dimensions of an image</b> — розміри в пікселях.</p>
+        <p class="mt">Книга, с. 22: <em>«the computer is informed that the image
+           … is <b>9 pixels wide and 10 pixels high</b>»</em> — і тільки тоді
+           картинка збереться правильно</p></div>
+      <div class="card cm"><h3>metadata</h3>
+        <p><b>Additional data stored with an image.</b></p>
+        <p class="mt">Що там буває, за книгою: <b>розміри картинки</b>
+           та <b>дата й час</b>, коли її зроблено</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🧩</span>
+      <div>Дослівно, с. 22: <em>«The type of data that is used to provide
+      information, such as the dimensions and resolution of an image,
+      is called <b>metadata</b>.»</em></div></div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">ACTIVITY 1.3</span>
+        <span class="t">RGB and hexadecimal · с. 22</span></div>
+      <p class="note" style="margin-bottom:13px">Книга, с. 22: <em>«Most images use
+        a lot more colours than black and white. Each colour has its own binary
+        values. Colours are created by computer screens using the
+        <b>Red Green Blue (RGB)</b> colour system.»</em></p>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">1</span>
+          <span class="lv-t">Use the internet to find an <b>RGB colour scale</b></span></div>
+        <div class="lv"><span class="lv-s">2</span>
+          <span class="lv-t">You should notice that each colour is first presented
+            as <b>hexadecimal</b>. The first two hexadecimal values are the amount
+            of <b>red</b>, the second two the amount of <b>blue</b> and the last two
+            the amount of <b>green</b></span></div>
+        <div class="lv"><span class="lv-s">3</span>
+          <span class="lv-t">Practise your <b>hexadecimal to binary</b> conversion
+            by converting your favourite colour to its binary value</span></div>
+      </div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🔗</span>
+      <div>Переведення шістнадцяткового у двійкове ви робили
+      <strong>в підрозділі 1.1</strong>. Тут воно нарешті
+      пояснює щось видиме.</div></div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🎨</div><div>
+      <span class="label lp">с. 23</span>
+      <h2><span class="ic">colour depth</span> — скільки бітів на один колір</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="kwi" style="margin-bottom:12px"><b>colour depth</b> —
+          the number of bits that are used to create each colour in an image</div>
+        <div class="hbox hm">Книга, с. 23: <em>«each colour could be represented
+          using <b>8-bit, 16-bit or 32-bit</b> binary numbers»</em></div>
+        <div class="hbox hp"><em>«The greater the number of bits, the greater
+          the range of colours that can be represented.»</em></div>
+      </div>
+      <div>
+        <table class="tbl">
+          <tr><th>Colour depth</th><th>Figure 1.3</th></tr>
+          <tr><td><b>8-bit</b></td><td>найгірша якість</td></tr>
+          <tr><td><b>16-bit</b></td><td>краще</td></tr>
+          <tr><td><b>32-bit</b></td><td>найкраще</td></tr>
+        </table>
+        <div class="hbox hr mt"><em>«If the colour depth of an image is reduced,
+          <b>the quality of the image is often reduced</b>.»</em></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">⚖️</div><div>
+      <span class="label lo">с. 23</span>
+      <h2>Дві величини керують розміром файлу</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cp"><h3>Resolution ↑</h3>
+        <p><em>«If the resolution is increased, the image will be created using
+           more pixels, so <b>more data will need to be stored</b>»</em></p></div>
+      <div class="card cm"><h3>Colour depth ↑</h3>
+        <p><em>«each pixel will need more data to display a greater range
+           of colours so <b>more data will need to be stored</b>»</em></p></div>
+    </div>
+    <div class="hbox hm mt"><em>«Both will result in a <b>larger file size</b>
+      for the image.»</em> — с. 23</div>
+    <div class="tip to mt"><span class="tip-ico">🧮</span>
+      <div><strong>Рахувати</strong> розмір файлу навчимося
+      <strong>наступного уроку</strong> — це SKILLS FOCUS 1.3 на с. 25.
+      Сьогодні тільки розуміємо, <b>від чого</b> він залежить.</div></div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🌐</div><div>
+      <span class="label lr">COMPUTER SCIENCE IN CONTEXT · с. 23</span>
+      <h2>Чому картинки в інтернеті гірші, ніж могли б бути</h2>
+    </div></div>
+    <div class="hbox" style="border-left-color:var(--plum);font-size:19px">
+      <em>«People often have to sacrifice the quality of their images when
+      displaying them online. This is because having files that are very large
+      in size can take more time to download. This may frustrate users as it may
+      mean that they have to wait for a website to load, due to the number of
+      large files it contains.»</em>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><b>sacrifice</b> — пожертвувати. Свідомо погіршують
+        якість, щоб сторінка відкривалась швидше</div>
+      <div class="hbox hp"><b>frustrate</b> — дратувати. Людина не чекатиме —
+        вона закриє вкладку</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🔊</div><div>
+      <span class="label lp">Converting sound to binary · с. 23</span>
+      <h2><span class="ic">sound sampling</span></h2>
+    </div></div>
+    <p>Книга, с. 23: <em>«Sound is made up of sound waves. When sound is recorded,
+       this is done at <b>set time intervals</b>. This process is known as
+       <b>sound sampling</b>.»</em></p>
+    <div class="kwi mt" style="font-size:18px"><b>sound sampling</b> — a little
+      piece of sound that is recorded at regular time intervals</div>
+    <div class="tip mt"><span class="tip-ico">📏</span>
+      <div>Звук <strong>неперервний</strong> — записати його весь неможливо.
+      Тому комп'ютер <strong>вимірює значення через рівні проміжки</strong>
+      (<span class="ic">time intervals</span>) і запам'ятовує лише ці виміри.</div></div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">📈</div><div>
+      <span class="label lp">Figure 1.4 · с. 24</span>
+      <h2>Дванадцять вимірів однієї хвилі</h2>
+    </div></div>
+    <p>Книга бере звукову хвилю й записує її значення в дванадцяти точках:</p>
+    <table class="btab mt">
+      <tr><th>Time sample</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
+        <th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th></tr>
+      <tr><td><b>Sound value</b></td><td>9</td><td>13</td><td>9</td><td>3.5</td><td>4</td>
+        <td>9</td><td>1.5</td><td>9</td><td>8</td><td>5</td><td>8</td><td>5.5</td></tr>
+    </table>
+    <div class="hbox hm mt"><em>«Each sound value is converted to binary to be
+      processed by the computer. Each sound value is then used to playback
+      the sound, when the recording is played.»</em> — с. 24</div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide reveal" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Figure 1.5 · с. 24</span>
+      <h2>Відтворена хвиля виглядає інакше. Чому?</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox">Книга показує дві картинки: <b>Figure 1.4</b> —
+          справжня хвиля, плавна. <b>Figure 1.5</b> — та сама хвиля,
+          відтворена з дванадцяти вимірів</div>
+        <div class="hbox hp">Друга — <b>ламана</b>, з гострими кутами.
+          Плавності немає</div>
+      </div>
+      <div class="card cp">
+        <h3>What has been lost — and why?</h3>
+        <p class="rv-hint">Спробуй сформулювати, потім клацни.</p>
+        <div class="rv-body">
+          <p>Дослівно, с. 24: <em>«This is because the number of samples taken
+             is <b>too far apart</b>, so <b>vital data in between time samples
+             has been lost</b>.»</em></p>
+          <p class="mt">Між сусідніми вимірами хвиля рухалась — але цього
+             ніхто не записав. Комп'ютер просто <b>з'єднує виміри
+             прямими лініями</b>.</p>
+          <p class="mt" style="color:var(--plum)">Висновок книги:
+             <em>«more samples need to be taken each second to improve
+             the accuracy of the recorded sound»</em>.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">⏱️</div><div>
+      <span class="label lp">с. 24</span>
+      <h2><span class="ic">sample rate</span> — скільки вимірів за секунду</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="kwi" style="margin-bottom:12px"><b>sample rate</b> —
+          the number of samples recorded each second</div>
+        <div class="hbox">Вимірюється в <b>герцах</b>.
+          <em>«1 hertz is equal to 1 sample per second»</em></div>
+        <div class="hbox hm"><b>44.1 kHz</b> (kilohertz) —
+          <em>«this would require <b>44 100 samples</b> to be taken each
+          second»</em>. Це поширена частота</div>
+      </div>
+      <div class="card cr"><h3>Ціна точності</h3>
+        <p>Книга, с. 24: <em>«That is a lot of data!»</em></p>
+        <p class="mt"><em>«If the sample rate is increased, the amount of data
+           required for the recording is increased. This increases the size of
+           the file that stores the sound.»</em></p>
+        <p class="mt"><b>Той самий обмін, що з картинками:</b>
+           більше якості — більший файл</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🎚️</div><div>
+      <span class="label lp">с. 24–25</span>
+      <h2><span class="ic">sample resolution</span> — скільки бітів на один вимір</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="kwi" style="margin-bottom:12px"><b>sample resolution</b> —
+          the number of bits that are used to record each sound sample</div>
+        <div class="hbox hm"><em>«A common sample resolution is
+          <b>16-bit</b>.»</em> — с. 24–25</div>
+      </div>
+      <div>
+        <div class="hbox hp"><em>«The higher the sample resolution, the greater
+          the <b>variations in amplitude</b> that can be stored for each
+          sample.»</em></div>
+        <div class="hbox"><em>«This means that aspects such as the
+          <b>loudness</b> of the sound can be recorded more accurately.»</em></div>
+        <div class="hbox hr"><em>«This will also increase the amount of data …
+          This <b>increases the size of the file</b> that stores the sound.»</em></div>
+      </div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🔀</span>
+      <div><strong>Не плутати два поняття.</strong>
+      <span class="ic">sample rate</span> — <b>як часто</b> вимірюємо.
+      <span class="ic">sample resolution</span> — <b>наскільки точно</b>
+      записуємо кожен вимір. Обидва збільшують файл, але по-різному.</div></div>
+  </div></section>
+
+  <!-- ══════════ 20 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lo">Vocabulary · усе з тексту 1.3</span>
+      <h2>Вісімнадцять слів підрозділу</h2>
+    </div></div>
+    <div class="vg3">
+      <div class="vp"><span class="ven">character set</span><span class="vuk">набір символів</span></div>
+      <div class="vp"><span class="ven">binary value</span><span class="vuk">двійкове значення</span></div>
+      <div class="vp"><span class="ven">assigned</span><span class="vuk">призначений, закріплений за</span></div>
+      <div class="vp"><span class="ven">represent</span><span class="vuk">подавати, зображати</span></div>
+      <div class="vp"><span class="ven">pixel</span><span class="vuk">піксель — крапка кольору</span></div>
+      <div class="vp"><span class="ven">dimensions</span><span class="vuk">розміри — ширина й висота</span></div>
+      <div class="vp"><span class="ven">resolution</span><span class="vuk">роздільність зображення</span></div>
+      <div class="vp"><span class="ven">metadata</span><span class="vuk">дані про самі дані</span></div>
+      <div class="vp"><span class="ven">colour depth</span><span class="vuk">глибина кольору</span></div>
+      <div class="vp"><span class="ven">quality</span><span class="vuk">якість</span></div>
+      <div class="vp"><span class="ven">reduce</span><span class="vuk">зменшити</span></div>
+      <div class="vp"><span class="ven">file size</span><span class="vuk">розмір файлу</span></div>
+      <div class="vp"><span class="ven">sound wave</span><span class="vuk">звукова хвиля</span></div>
+      <div class="vp"><span class="ven">time interval</span><span class="vuk">проміжок часу</span></div>
+      <div class="vp"><span class="ven">sound sampling</span><span class="vuk">дискретизація звуку</span></div>
+      <div class="vp"><span class="ven">sample rate</span><span class="vuk">як часто вимірюємо</span></div>
+      <div class="vp"><span class="ven">sample resolution</span><span class="vuk">скільки бітів на вимір</span></div>
+      <div class="vp"><span class="ven">playback</span><span class="vuk">відтворення запису</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lp">Чек-лист</span>
+      <h2>Підрозділ 1.3 — що маю вміти</h2>
+    </div></div>
+    <div class="chk">
+      <div class="ck"><span class="ck-b"></span><span class="ck-t">explain what a
+        <b>character set</b> is, and name the two main types</span></div>
+      <div class="ck"><span class="ck-b"></span><span class="ck-t">say how many
+        characters <b>ASCII</b> (8-bit) and <b>Unicode</b> (16-bit) can represent</span></div>
+      <div class="ck"><span class="ck-b"></span><span class="ck-t">explain how a
+        black-and-white image is stored, and what <b>resolution</b> and
+        <b>metadata</b> add</span></div>
+      <div class="ck"><span class="ck-b"></span><span class="ck-t">define
+        <b>colour depth</b> and say what happens to quality when it is reduced</span></div>
+      <div class="ck"><span class="ck-b"></span><span class="ck-t">explain
+        <b>sound sampling</b>, and why a played-back wave differs from the original</span></div>
+      <div class="ck"><span class="ck-b"></span><span class="ck-t">tell
+        <b>sample rate</b> from <b>sample resolution</b>, and say how each
+        affects file size</span></div>
+    </div>
+    <div class="hbox hm mt"><strong>Наступного разу — 1.4 Measuring data storage</strong>
+      (с. 25): біт, байт, KiB, MiB… і <b>SKILLS FOCUS 1.3: як порахувати
+      розмір файлу</b>. Сьогоднішні <span class="ic">resolution</span>
+      і <span class="ic">colour depth</span> знадобляться там одразу.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 4 · 23 вересня · 1.4 Measuring data storage</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

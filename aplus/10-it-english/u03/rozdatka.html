@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · IT-англійська · 10 клас · Урок 3</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          IT-англійська (Cambridge IGCSE Computer Science 0478)
+  Клас          10
+  Урок          3 / 36 · 16.09.2026
+  Тема          1.3 How do computers represent text, images and sound?
+  Джерело       Coursebook, розділ 1, с. 21-25 (скани s21-s25.jpeg)
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЗАВДАННЯ 2 — ЦЕ ACTIVITY 1.2 З ПІДРУЧНИКА, с. 21. Три двійкові
+     рядки взято ЗІ СКАНУ ДОСЛІВНО. Учень декодує їх за таблицею ASCII.
+     Таблиця ASCII на аркуші НЕ друкується: за умовою активності учні
+     шукають її самі («Use the internet to find an example of an ASCII
+     character set»).
+  ⚠️ РОЗРАХУНКИ ТУТ ДОЗВОЛЕНІ — це 10 клас, IGCSE.
+  ⚠️ РОЗМІР ФАЙЛУ НЕ РАХУЄМО — це SKILLS FOCUS 1.3, с. 25, урок 4.
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок —
+                на ксероксі вони зникають. Тільки чорне на білому.
+  ОБСЯГ         Рівно одна сторінка A4.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 10mm 12mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12pt; line-height:1.2}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:10mm 12mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.4mm; margin-bottom:1.8mm}
+.hd .meta{font-family:var(--fm); font-size:9pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:.8mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:15.5pt; line-height:1.06; font-weight:800; letter-spacing:-.2px}
+
+.ref{border:3px solid #000; padding:1.2mm 2mm; margin-bottom:1.6mm}
+.ref h2{font-size:9pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.6mm}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1.15fr; gap:3mm}
+.ref p{font-size:8.8pt; line-height:1.14; margin-bottom:.3mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.4pt}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:8.8pt}
+
+.b{margin-bottom:1.2mm; break-inside:avoid}
+.b > h2{font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.3mm; margin-bottom:1mm}
+.b > h2 .tag{float:right; font-family:var(--fm); font-size:9pt; letter-spacing:0; font-weight:700}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:10.2pt; line-height:1.2; margin-bottom:.6mm}
+.ln{border-bottom:var(--thin); height:6mm}
+.ln.s{height:5.2mm}
+
+/* ─── СХЕМИ ─── */
+.fcs{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm}
+.fcbox{border:var(--thin); padding:1.4mm 1.6mm}
+.fcbox .t{font-family:var(--fm); font-size:8.6pt; font-weight:800;
+  text-transform:uppercase; letter-spacing:.5px; margin-bottom:.8mm; text-align:center}
+.fc{display:flex; flex-direction:column; align-items:center; font-family:var(--fm);
+  font-size:8.6pt; line-height:1.2}
+.fc .n{border:var(--thin); padding:.9mm 1.4mm; text-align:center; min-width:30mm}
+.fc .n.io{transform:skewX(-12deg)}
+.fc .n.io span{display:inline-block; transform:skewX(12deg)}
+.fc .n.dec{border:2px solid #000; font-weight:800; padding:1.4mm 1.4mm}
+.fc .a{padding:.5mm 0; font-size:9pt}
+.fc .sp{display:flex; gap:2mm; align-items:flex-start; width:100%; justify-content:center}
+.fc .br{display:flex; flex-direction:column; align-items:center}
+.fc .lb{font-size:7.6pt; font-weight:800; padding:.3mm 0}
+.fcans{margin-top:1mm}
+.fcans .r{display:flex; align-items:flex-end; gap:1.5mm; font-size:9pt; margin-bottom:.6mm}
+.fcans .r b{font-family:var(--fm); flex-shrink:0; font-size:8.6pt}
+.fcans .r u{text-decoration:none; border-bottom:var(--thin); flex:1; height:4.4mm}
+
+/* ─── ПСЕВДОКОД ─── */
+.pcs{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm}
+pre.pc{font-family:var(--fm); font-size:8.8pt; line-height:1.3; border:var(--thin);
+  padding:1.2mm 1.6mm; white-space:pre-wrap; font-weight:700; min-height:26mm}
+
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.2mm 1.4mm; font-size:9.6pt; text-align:left}
+table.t th{font-size:8.8pt; text-transform:uppercase; letter-spacing:.5px; font-weight:800}
+table.t td.a{width:24mm}
+table.t td.m{font-family:var(--fm); font-weight:700}
+table.t td.w{height:8mm}
+
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.2mm 0; font-size:10pt; vertical-align:bottom}
+table.voc td.en{width:54%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+.two{display:grid; grid-template-columns:1fr 1fr; gap:4mm; align-items:start}
+.two.k46{grid-template-columns:1fr 1.3fr}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.4mm; font-family:var(--fm);
+  font-size:9pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:.9mm 2.5mm; margin-bottom:1.6mm;
+  font-size:10pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>IT-English &#183; 10 клас &#183; Lesson 3 / 36 &#183; Coursebook с. 21&#8211;25</span>
+      <span>Name</span><i></i></div>
+    <h1>1.3 How do computers represent text, images and sound?</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Key words &#183; from the coursebook</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Text &#183; с. 21</p>
+        <p><b>character set</b> &#8212; all characters</p>
+        <p>+ the binary value of each</p>
+        <p><b>ASCII</b> 8-bit &#8594; 256 (0&#8211;255)</p>
+        <p><b>Unicode</b> 16-bit &#8594; ~65 000</p>
+      </div>
+      <div>
+        <p class="rh">Images &#183; с. 21&#8211;23</p>
+        <p><b>pixel</b> &#8212; a very small dot of colour</p>
+        <p><b>resolution</b> &#8212; the dimensions</p>
+        <p><b>metadata</b> &#8212; data stored with</p>
+        <p><b>colour depth</b> &#8212; bits per colour</p>
+      </div>
+      <div>
+        <p class="rh">Sound &#183; с. 23&#8211;25</p>
+        <p><b>sound sampling</b> &#8212; recorded at</p>
+        <p>regular time intervals</p>
+        <p><b>sample rate</b> &#8212; samples / second</p>
+        <p><b>sample resolution</b> &#8212; bits / sample</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер потрібен тільки для ASCII-таблиці</div>
+
+  <div class="b">
+    <h2>Task 1 &#183; Fill the gaps<span class="tag">from memory</span></h2>
+    <table class="t">
+      <tr><th>Character set</th><th class="a">Bits per character</th><th class="a">How many characters</th><th>Why it was needed</th></tr>
+      <tr><td class="m">ASCII</td><td class="a"></td><td class="a"></td><td class="w"></td></tr>
+      <tr><td class="m">Unicode</td><td class="a"></td><td class="a"></td><td class="w"></td></tr>
+    </table>
+    <p class="q" style="margin-top:.8mm">The letter <b>A</b> is <code>01000001</code>.
+      What is that in decimal? <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>
+      &nbsp;&nbsp;Why is it useful to know? 
+      <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></p>
+  </div>
+
+  <div class="b">
+    <h2>Task 2 &#183; ACTIVITY 1.2 &#183; decode the message<span class="tag">Coursebook с. 21</span></h2>
+    <p class="q" style="font-size:9.6pt">Each letter is an <b>8-bit</b> binary number.
+      Split each line into groups of eight first. Use an ASCII table you find yourself.</p>
+    <pre class="pc" style="min-height:auto; font-size:8.4pt">1)  01000011011011110110110101110000011101010111010001100101011100100
+    100100001101
+
+2)  10001101101010010100010101011100110001101101001010101010101110011
+    011001100111
+
+3)  01010110101110001000100001</pre>
+    <div class="two" style="margin-top:1mm">
+      <div>
+        <p class="q"><b>1)</b></p><div class="ln s"></div>
+        <p class="q" style="margin-top:.5mm"><b>2)</b></p><div class="ln s"></div>
+      </div>
+      <div>
+        <p class="q"><b>3)</b></p><div class="ln s"></div>
+        <p class="q" style="margin-top:.5mm">Are upper and lowercase letters the same?</p>
+        <div class="ln s"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>Task 3 &#183; Bigger or smaller file?<span class="tag">&#8593; / &#8595;</span></h2>
+      <table class="t">
+        <tr><th>What changes</th><th class="a">File size</th></tr>
+        <tr><td>Resolution is increased</td><td class="a"></td></tr>
+        <tr><td>Colour depth is reduced</td><td class="a"></td></tr>
+        <tr><td>Sample rate is increased</td><td class="a"></td></tr>
+        <tr><td>Sample resolution is increased</td><td class="a"></td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>Task 4 &#183; Rate or resolution?<span class="tag">sound</span></h2>
+      <table class="t">
+        <tr><th>Description</th><th class="a">Which one?</th></tr>
+        <tr><td>How <b>often</b> we measure the wave</td><td class="a"></td></tr>
+        <tr><td>How <b>precisely</b> each measurement is stored</td><td class="a"></td></tr>
+        <tr><td>Measured in <b>hertz</b></td><td class="a"></td></tr>
+        <tr><td>44.1 kHz = <b>44 100</b> per second</td><td class="a"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b two k46">
+    <div>
+      <h2>Task 5 &#183; Vocabulary</h2>
+      <table class="voc">
+        <tr><td class="en">character set</td><td></td></tr>
+        <tr><td class="en">pixel</td><td></td></tr>
+        <tr><td class="en">resolution</td><td></td></tr>
+        <tr><td class="en">metadata</td><td></td></tr>
+        <tr><td class="en">colour depth</td><td></td></tr>
+        <tr><td class="en">sound sampling</td><td></td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>Task 6 &#183; Write in English<span class="tag">&#9733;&#9733;&#9733;</span></h2>
+      <p class="q">Figure 1.5 (p. 24) shows a wave <b>played back</b> from 12 samples.
+      It is not the same shape as the original. Explain <b>why</b>, and say what
+      would make it closer to the original.</p>
+      <div class="ln"></div><div class="ln"></div>
+      <p class="q" style="margin-top:.5mm">Why do people <b>sacrifice</b> image
+      quality online? (p. 23)</p>
+      <div class="ln s"></div><div class="ln s"></div>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>IT-English &#183; 10 клас &#183; 0478 &#183; 1.3</span>
+    <span>Lesson 3 &#183; 16.09.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

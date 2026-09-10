@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Компонування екрана · Розробка мобільних додатків · 6 клас · Урок 3</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Розробка мобільних додатків (MIT App Inventor)
+  Клас          6
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · пʼятниця
+  Урок          3 з 36 · 18.09.2026
+  Тема          Компонування екрана
+  Тривалість    45 хв — показ 18 · практика 27
+  Акцент        brand (#591429)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Три практичні блоки в Designer.
+  ────────────────────────────────────────────────────────────────
+  ПЛАН          office/plany/02-mobilna-6.md, тема 1.3:
+                «Image, HorizontalArrangement, VerticalArrangement,
+                Width = Fill parent. Завантажуємо фото (Media → Upload).
+                Збираємо екран за ескізом з дошки.»
+                Артефакт: екран із фото, текстом і рядом кнопок,
+                як на ескізі.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ГОЛОВНЕ ПРО ЦЕЙ УРОК. Колода уроку 2 (друга половина колоди
+     уроку 1) ВЖЕ дала: Image, завантаження свого файлу,
+     HorizontalArrangement, Width = Fill parent, Height = Automatic.
+     Тому урок 3 НЕ повторює їх як нову тему, а бере те, чого не було:
+       • VerticalArrangement                                   → s6
+       • ВКЛАДЕНІ компонувальники (Horizontal усередині Vertical) → s7
+       • Width/Height по-справжньому: три режими й що обирати   → s9–s11
+       • складання екрана ЗА ЕСКІЗОМ — артефакт теми 1.3        → s13–s15
+     Horizontal на s5 — це повторення на одному слайді, не нова тема.
+  ♻️ ЗІ STEAM (`steam/6-mobile/u03`, тема та сама) узято образ
+     «компонувальник — це коробка» і схему «той самий набір
+     компонентів без компонувальника і з ним».
+     Перефарбовано у світлу тему A+.
+     ⚠️ Кольори блоків і плашок App Inventor лишаються справжніми —
+        дитина має впізнати їх на екрані.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ФОРМАТ «ПРИКЛАД → ТЕПЕР САМОСТІЙНО». Практика 27 хв із 45.
+     ПРИ БРАКУ ЧАСУ РІЖЕТЬСЯ ПОКАЗ, НЕ ПРАКТИКА.
+     Знімати можна: s3 (проблема), s12 (Media → Upload — було
+     на уроці 2), s18 (англійські назви).
+     ⛔ НЕ РІЗАТИ s7 (вкладеність) і s14 (розбір ескізу) —
+        на них тримається практика.
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • Blocks і будь-які події — це УРОК 4 «Перша подія».
+       Сьогодні тільки Designer, жодного блока
+     • TableArrangement і Scrollable — не в плані
+     • Оцінювання — за правилом «слайди без голосу вчителя» це в конспекті
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ПОТРІБНА ЗАГОТОВКА: ескіз екрана на дошці або роздрукований —
+     план каже «за ескізом з дошки». Ескіз є на s13 презентації
+     і в роздатці (завдання 4), тож окремо малювати не обовʼязково.
+  ────────────────────────────────────────────────────────────────
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/6-mobile/u03/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:44%}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.two.wide-l{grid-template-columns:1.4fr 1fr}
+.two.wide-r{grid-template-columns:1fr 1.4fr}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cb h3{color:var(--blue)} .card.cr h3{color:var(--rose)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hb{border-color:var(--blue)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--accent);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:17px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:6px 14px;flex-shrink:0}
+.prac-lead{font-size:18px;line-height:1.65;color:var(--dim);margin-bottom:13px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.uk{color:var(--dim)}
+.vg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:17px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16.5px;line-height:1.45}
+
+/* «я вмію» */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--accent);border-radius:6px;flex-shrink:0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.demo p{font-size:17px;line-height:1.6;color:var(--ink)}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── макет екрана телефона ─────────────────────────────────────
+   Прості плашки замість справжніх компонентів: на дошці має бути
+   видно СТРУКТУРУ, а не красу. Кольори — з палітри A+. */
+.scr{width:210px;border:3px solid var(--ink);border-radius:16px;padding:8px;
+     background:var(--surface);flex-shrink:0}
+.scr .bar{height:14px;border-radius:5px;background:var(--surf2);margin-bottom:7px}
+.el{border-radius:6px;padding:7px 9px;font-family:var(--f-mono);font-size:13px;
+    font-weight:700;text-align:center;margin-bottom:6px;color:#2b2b2b}
+.el:last-child{margin-bottom:0}
+.el-img{background:#e2e7f6;border:1.5px solid #b9c8e6;padding:18px 9px}
+.el-lbl{background:#f6eef0;border:1.5px solid #e3c9d1}
+.el-btn{background:#f4d9a0;border:1.5px solid #d5a04b}
+/* компонувальник — пунктирна рамка навколо групи */
+.box{border:2px dashed var(--brand);border-radius:9px;padding:6px;margin-bottom:6px}
+.box:last-child{margin-bottom:0}
+.box.bh{display:flex;gap:6px;align-items:stretch}
+.box.bh .el{flex:1;margin-bottom:0}
+.box .btag{font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.8px;
+  color:var(--brand);display:block;margin-bottom:4px;text-transform:uppercase}
+.scr-row{display:flex;gap:26px;align-items:flex-start;justify-content:center}
+.scr-cap{font-family:var(--f-mono);font-size:14px;color:var(--dim);
+  text-align:center;margin-top:9px}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .prac-lead{font-size:16px;margin-bottom:10px}
+  .ptime{font-size:15px;padding:5px 11px}
+  .vp{padding:9px 12px} .vp .en{font-size:16px} .vp .uk{font-size:15.5px}
+  .vg{gap:9px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .title-h1{font-size:2.9rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .demo,.solo{padding:10px 13px} .demo p{font-size:15.5px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .bank{gap:8px} .bk{padding:9px 12px;font-size:15px}
+  .scr{width:172px;padding:6px} .el{font-size:12px;padding:5px 7px;margin-bottom:5px}
+  .el-img{padding:13px 7px} .box{padding:5px} .scr-row{gap:18px}
+  .scr-cap{font-size:13px;margin-top:7px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Компонування<br>екрана</h1>
+      <p class="title-sub">Коробки в коробках · ширина й висота · екран за ескізом<br>
+        Розробка мобільних додатків · 6 клас · Урок 3 з 36 · 18 вересня</p>
+      <div class="chips">
+        <span class="chip">VerticalArrangement</span>
+        <span class="chip">вкладеність</span>
+        <span class="chip">Fill parent</span>
+        <span class="chip">ескіз</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lm">Минулого разу</span>
+      <h2>Що ви вже вмієте</h2>
+    </div></div>
+    <div class="three">
+      <div class="card"><h3>Компоненти</h3>
+        <p><span class="ic">Label</span>, <span class="ic">Button</span>,
+           <span class="ic">Image</span> — і свій файл у проєкті</p></div>
+      <div class="card cb"><h3>Дві кнопки в рядок</h3>
+        <p><span class="ic">HorizontalArrangement</span> — уже пробували</p></div>
+      <div class="card cr"><h3>Ширина</h3>
+        <p><span class="ic">Fill parent</span> і
+           <span class="ic">Automatic</span></p></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🧩</span>
+      <div>Сьогодні беремо це <strong>всерйоз</strong>: коробки всередині коробок,
+      три режими ширини — і збираємо цілий екран <strong>за ескізом</strong>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📉</div><div>
+      <span class="label lo">Проблема</span>
+      <h2>Без коробки все падає в стовпчик</h2>
+    </div></div>
+    <div class="two">
+      <div class="scr">
+        <div class="bar"></div>
+        <div class="el el-img">Image</div>
+        <div class="el el-lbl">Label</div>
+        <div class="el el-btn">Button 1</div>
+        <div class="el el-btn">Button 2</div>
+        <div class="el el-btn">Button 3</div>
+      </div>
+      <div>
+        <div class="hbox hr">Кинув компонент на екран — він стає
+          <b>під попереднім</b>. Завжди</div>
+        <div class="hbox">Три кнопки займають три поверхи,
+          екран закінчився</div>
+        <div class="hbox ho">Питання уроку: <b>як поставити їх поруч?</b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lm">Головна ідея</span>
+      <h2>Компонувальник — це коробка</h2>
+    </div></div>
+    <p>У палітрі є розділ <span class="ic">Layout</span>. Те, що там лежить, —
+       <strong>не видно на екрані</strong>. Це <strong>порожні коробки</strong>,
+       у які кладуть інші компоненти.</p>
+    <div class="two mt">
+      <div class="card"><h3>Коробка сама нічого не показує</h3>
+        <p>Ані тексту, ані картинки. Її роботa — <b>тримати те, що всередині,
+           у певному порядку</b></p></div>
+      <div class="card cb"><h3>Порядок задає вид коробки</h3>
+        <p><span class="ic">Horizontal</span> — усе всередині стає
+           <b>в рядок</b><br>
+           <span class="ic">Vertical</span> — усе всередині стає
+           <b>у стовпчик</b></p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">📦</span>
+      <div>Ви вже клали кнопки в горизонтальну коробку минулого разу.
+      Сьогодні розберемо, <strong>що ще з нею можна робити</strong>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">↔️</div><div>
+      <span class="label lb">Нагадування</span>
+      <h2>HorizontalArrangement — у рядок</h2>
+    </div></div>
+    <div class="scr-row">
+      <div>
+        <div class="scr">
+          <div class="bar"></div>
+          <div class="el el-btn">Button 1</div>
+          <div class="el el-btn">Button 2</div>
+          <div class="el el-btn">Button 3</div>
+        </div>
+        <p class="scr-cap">без коробки</p>
+      </div>
+      <div>
+        <div class="scr">
+          <div class="bar"></div>
+          <div class="box bh"><div class="el el-btn">1</div>
+            <div class="el el-btn">2</div><div class="el el-btn">3</div></div>
+        </div>
+        <p class="scr-cap">у <span class="en">HorizontalArrangement</span></p>
+      </div>
+    </div>
+    <div class="hbox mt">Той самий набір кнопок. Різниця тільки в тому,
+      що <strong>вони лежать усередині коробки</strong>.</div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">↕️</div><div>
+      <span class="label lm">Нове</span>
+      <h2>VerticalArrangement — у стовпчик</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="scr" style="margin:0 auto">
+          <div class="bar"></div>
+          <div class="box"><span class="btag">Vertical</span>
+            <div class="el el-lbl">Назва</div>
+            <div class="el el-lbl">Автор</div>
+            <div class="el el-lbl">Рік</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="hbox">«Але ж воно й так стає в стовпчик!» — так.
+          <b>Навіщо тоді коробка?</b></div>
+        <div class="hbox hb">Щоб цю <b>групу</b> можна було рухати,
+          вирівнювати й фарбувати <b>цілком</b></div>
+        <div class="hbox ho">І — найважливіше — щоб покласти її
+          <b>всередину іншої коробки</b>. Про це наступний слайд</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🪆</div><div>
+      <span class="label lr">Ядро уроку</span>
+      <h2>Коробка всередині коробки</h2>
+    </div></div>
+    <div class="two wide-r">
+      <div class="scr" style="margin:0 auto">
+        <div class="bar"></div>
+        <div class="box bh"><div class="el el-img" style="flex:0 0 62px">фото</div>
+          <div class="box" style="flex:1;margin-bottom:0">
+            <div class="el el-lbl">Назва</div>
+            <div class="el el-lbl">Рік</div></div></div>
+      </div>
+      <div>
+        <div class="hbox hr">Зовнішня коробка — <b>горизонтальна</b>.
+          У ній два «місця»: ліворуч і праворуч</div>
+        <div class="hbox">Ліворуч лежить <b>фото</b></div>
+        <div class="hbox hb">Праворуч лежить <b>ще одна коробка</b> —
+          вертикальна, а в ній два написи один під одним</div>
+        <div class="hbox ho">Саме так роблять <b>усі</b> застосунки, які ви
+          бачили: картка з картинкою ліворуч і текстом праворуч</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПРИКЛАД → САМОСТІЙНО 1 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Practice · 8 хв</span>
+      <h2>Приклад — і самостійно</h2>
+    </div></div>
+    <div class="demo">
+      <span class="lbl">Приклад · робимо разом</span>
+      <p><b>Layout → HorizontalArrangement</b> перетягуємо на екран.
+        Усередину кидаємо <b>три Button</b>. Дивимось: стали в рядок.</p>
+    </div>
+    <div class="solo">
+      <span class="lbl">Тепер самостійно</span>
+      <ul>
+        <li>Зроби <b>другий</b> ряд із двох кнопок — ще один
+          <span class="ic">HorizontalArrangement</span></li>
+        <li>Постав <span class="ic">VerticalArrangement</span> і поклади
+          в нього <b>три Label</b></li>
+        <li>Дай кнопкам різні написи через <span class="ic">Text</span></li>
+        <li>Спробуй <b>витягнути</b> одну кнопку з коробки й покласти назад</li>
+        <li>⭐⭐ Поклади <span class="ic">HorizontalArrangement</span>
+          <b>усередину</b> <span class="ic">VerticalArrangement</span></li>
+        <li>⭐⭐⭐ Зроби <b>картку</b>: фото ліворуч, два написи праворуч —
+          як на слайді 7</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">📏</div><div>
+      <span class="label lb">Розміри</span>
+      <h2>Три відповіді на питання «яка ширина?»</h2>
+    </div></div>
+    <table class="tb">
+      <tr><th>Значення</th><th>Що означає</th><th>Коли брати</th></tr>
+      <tr><td class="mono">Automatic</td><td>рівно стільки, скільки треба вмісту</td>
+          <td>кнопка з коротким написом</td></tr>
+      <tr><td class="mono">Fill parent</td><td>уся ширина коробки, у якій лежиш</td>
+          <td>коробка на весь екран, ряд кнопок</td></tr>
+      <tr><td class="mono">… pixels</td><td>точне число, яке ти назвав</td>
+          <td>фото, якому треба фіксований розмір</td></tr>
+    </table>
+    <div class="hbox hb mt"><span class="en">parent</span> означає
+      <strong>«батько»</strong> — та коробка, всередині якої лежить компонент.
+      Тому <span class="en">Fill parent</span> — «займи всю коробку,
+      а не весь екран».</div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що станеться?</h2>
+    </div></div>
+    <p>У горизонтальній коробці три кнопки. Кожній поставили
+       <span class="ic">Width = Fill parent</span>.</p>
+    <div class="card cb reveal mt">
+      <h3>Як вони поділять місце?</h3>
+      <p class="rv-hint">Скажи спочатку сам, потім клацни.</p>
+      <div class="rv-body">
+        <p>Вони поділять ширину <b>порівну</b> — по третині кожна.</p>
+        <p class="mt">Бо кожна просить «усю ширину коробки», а коробка одна.
+          Виходить чесний поділ.</p>
+        <p class="mt" style="color:var(--accent)">Це найшвидший спосіб зробити
+          <b>рівний ряд кнопок</b> — і саме так роблять панелі в застосунках.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПРИКЛАД → САМОСТІЙНО 2 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Practice · 7 хв</span>
+      <h2>Приклад — і самостійно</h2>
+    </div></div>
+    <div class="demo">
+      <span class="lbl">Приклад · робимо разом</span>
+      <p>Виділяємо <b>HorizontalArrangement</b> → у Properties ставимо
+        <b>Width = Fill parent</b>. Потім кожній кнопці всередині —
+        теж <b>Fill parent</b>.</p>
+    </div>
+    <div class="solo">
+      <span class="lbl">Тепер самостійно</span>
+      <ul>
+        <li>Зроби ряд, де кнопки <b>однакової</b> ширини</li>
+        <li>Зроби другий ряд, де одна кнопка <b>широка</b>, а дві —
+          <span class="ic">Automatic</span></li>
+        <li>Постав фото <span class="ic">Width = 150 pixels</span>
+          і подивись, що змінилось</li>
+        <li>Поверни фото на <span class="ic">Automatic</span> — порівняй</li>
+        <li>⭐⭐ Зроби так, щоб коробка займала <b>всю ширину екрана</b>,
+          а кнопка в ній — <b>ні</b></li>
+        <li>⭐⭐⭐ Постав <span class="ic">Height = Fill parent</span>
+          вертикальній коробці. Що сталося з рештою екрана?</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🖼️</div><div>
+      <span class="label lm">Нагадування</span>
+      <h2>Свій файл у проєкті</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t">Панель <span class="ic">Media</span> праворуч
+          унизу &#8594; <span class="ic">Upload File …</span></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t">Обираємо файл на комп'ютері. Він <b>копіюється
+          в проєкт</b> — далі комп'ютер не потрібен</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t">Виділяємо <span class="ic">Image</span> &#8594;
+          властивість <span class="ic">Picture</span> &#8594; обираємо
+          завантажений файл</span></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">⚠️</span>
+      <div>Файл має бути <strong>невеликий</strong>. Фото з телефона на 5 МБ
+      завантажиться довго, а застосунок стане важким.</div></div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">📐</div><div>
+      <span class="label lr">Завдання уроку</span>
+      <h2>Ось ескіз. Зроби такий екран</h2>
+    </div></div>
+    <div class="two wide-r">
+      <div class="scr" style="margin:0 auto">
+        <div class="bar"></div>
+        <div class="el el-lbl">Мій улюблений герой</div>
+        <div class="el el-img">фото</div>
+        <div class="box bh"><div class="el el-btn">Далі</div>
+          <div class="el el-btn">Назад</div></div>
+        <div class="el el-lbl">Короткий опис</div>
+      </div>
+      <div>
+        <div class="hbox hr">Заголовок угорі — на <b>всю ширину</b></div>
+        <div class="hbox">Під ним <b>фото</b></div>
+        <div class="hbox hb">Далі <b>дві кнопки в один рядок</b>,
+          однакові за шириною</div>
+        <div class="hbox ho">Унизу — <b>опис</b> у кілька рядків</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🧭</div><div>
+      <span class="label lm">Розбір</span>
+      <h2>Скільки тут коробок?</h2>
+    </div></div>
+    <div class="card cb reveal">
+      <h3>Порахуй по ескізу, перш ніж відкривати</h3>
+      <p class="rv-hint">Свою відповідь — вголос, потім клацни.</p>
+      <div class="rv-body">
+        <p><b>Одна.</b> Тільки для двох кнопок потрібен
+          <span class="ic">HorizontalArrangement</span>.</p>
+        <p class="mt">Заголовок, фото й опис і так стають один під одним —
+          для них коробка <b>не потрібна</b>.</p>
+        <p class="mt" style="color:var(--accent)">Правило: <b>коробку ставимо
+          тільки там, де без неї не вийде</b>. Зайві коробки роблять екран
+          важким для розуміння.</p>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🔍</span>
+      <div>Дивись на ескіз і питай себе: <strong>де щось стоїть поруч,
+      а не під?</strong> Ось там і коробка.</div></div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ПРАКТИКА ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 3</span>
+        <span class="t">Екран за ескізом</span><span class="ptime">12 хвилин</span></div>
+      <p class="prac-lead">Ескіз — на слайді 13 і в роздатці (завдання 4).
+        Збираємо <b>точно так</b>, потім робимо своє.</p>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Заголовок, фото й опис — три компоненти
+            один під одним</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Дві кнопки <b>в один рядок</b>,
+            обидві <span class="ic">Fill parent</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Своє фото через <span class="ic">Media → Upload</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Перероби ескіз <b>по-своєму</b>: фото ліворуч,
+            текст праворуч — коробка в коробці</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🗃️</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>1.</b> Зроби ряд із <b>чотирьох</b> кнопок однакової
+        ширини</div>
+      <div class="bk"><b>2.</b> Зроби «шапку» екрана: коробка на всю ширину
+        з написом посередині</div>
+      <div class="bk"><b>3.</b> Постав два фото <b>поруч</b>, кожне
+        по половині ширини</div>
+      <div class="bk"><b>4.</b> Пофарбуй коробку через
+        <span class="ic">BackgroundColor</span> — щоб було видно її межі</div>
+      <div class="bk"><b>5.</b> ⭐⭐ Зроби екран із <b>двох карток</b>:
+        у кожній фото ліворуч і текст праворуч</div>
+      <div class="bk"><b>6.</b> ⭐⭐⭐ Намалюй свій ескіз на папері
+        й <b>віддай сусідові</b> зібрати</div>
+    </div>
+    <div class="hbox hb mt">Усі шість робляться <strong>тільки в Designer</strong>.
+      Blocks сьогодні не відкриваємо — це наступний урок.</div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🐞</div><div>
+      <span class="label lo">Пастки</span>
+      <h2>Що ламається найчастіше</h2>
+    </div></div>
+    <table class="tb">
+      <tr><th>Симптом</th><th>Причина</th></tr>
+      <tr><td>Кнопка не лягає в коробку</td>
+          <td>кинули <b>поруч</b>, а не всередину — дивись дерево
+            <span class="mono">Components</span></td></tr>
+      <tr><td>Коробки не видно взагалі</td>
+          <td>вона <b>порожня</b>. Порожній компонувальник не займає місця</td></tr>
+      <tr><td>Кнопки притиснуті ліворуч</td>
+          <td><span class="mono">AlignHorizontal</span> коробки —
+            постав <b>Center</b></td></tr>
+      <tr><td>Фото розтягнуте</td>
+          <td>обидва розміри задані вручну — лиши один
+            <span class="mono">Automatic</span></td></tr>
+    </table>
+    <div class="tip mt"><span class="tip-ico">🌳</span>
+      <div>Дерево <strong>Components</strong> праворуч показує, <strong>хто
+      всередині кого</strong>. Це найшвидший спосіб перевірити себе.</div></div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Words</span>
+      <h2>Назви, які не перекладають</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">Layout</span><span class="uk">розкладка, розділ палітри</span></div>
+      <div class="vp"><span class="en">Arrangement</span><span class="uk">компонувальник, коробка</span></div>
+      <div class="vp"><span class="en">Horizontal</span><span class="uk">горизонтальний, у рядок</span></div>
+      <div class="vp"><span class="en">Vertical</span><span class="uk">вертикальний, у стовпчик</span></div>
+      <div class="vp"><span class="en">Fill parent</span><span class="uk">зайняти всю коробку</span></div>
+      <div class="vp"><span class="en">Automatic</span><span class="uk">скільки треба вмісту</span></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">💡</span>
+      <div>Ці слова написані в самому App Inventor. Перекладати їх не треба —
+      треба <strong>впізнавати на екрані</strong>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lb">I can…</span>
+      <h2>Що є після третього уроку</h2>
+    </div></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div><div>Я вмію поставити елементи
+        <b>в рядок</b> і <b>у стовпчик</b>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>Я вмію покласти
+        <b>коробку в коробку</b>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>Я знаю різницю між
+        <span class="ic">Automatic</span>, <span class="ic">Fill parent</span>
+        і числом.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>Я вмію зібрати екран
+        <b>за ескізом</b>.</div></div>
+    </div>
+    <div class="hbox hb mt">Екран є, і він гарний. Але <strong>поки що
+      нічого не робить</strong>. Наступного разу натиснемо кнопку —
+      і щось станеться.</div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 4 · 25 вересня · Перша подія</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

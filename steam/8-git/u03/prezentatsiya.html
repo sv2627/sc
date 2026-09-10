@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Збереження змін: одна зміна — один запис · Git · 8 клас · Урок 3</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Git, GitHub та публікація проєктів
+  Клас          8
+  Школа         STEAM (Республіка) · вівторок
+  Урок          3 з 35 · 15.09.2026
+  Тема          Збереження змін: одна зміна — один запис
+  Тривалість    45 хв — показ 20 · практика 25
+  Акцент        yellow (#591429) — --accent:var(--brand)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Три практичні блоки за машинами.
+  ────────────────────────────────────────────────────────────────
+  ЗМІСТ УРОКУ ЗА ПЛАНОМ, дослівно з
+  office/republic/«Git, GitHub та публікація проєктів — 8 клас.docx»,
+  урок 3:
+    • Поняття підготовленої зміни та збереження змін в історії
+    • Життєвий шлях файлу: змінений, підготовлений, збережений
+    • Повідомлення до збереження: шаблон і приклади вдалих
+      та невдалих формулювань
+    • Внесення кількох змін до проєкту, кожна з яких зберігається
+      окремим записом
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЦЕ УРОК, ЯКОГО ЧЕКАЛИ. На уроці 2 було сказано прямо:
+     «комітів сьогодні не робимо, це наступний урок». Тому s2
+     починається з того, що обіцянку виконано.
+     Клас уже має: репозиторій, .git, git config, панель Source
+     Control, букви U і M. Це НЕ повторюємо, тільки згадуємо на s1.
+  ⚠️ БІЛЬШЕ САМОСТІЙНОЇ РОБОТИ В КЛАСІ (вимога користувача
+     10.09.2026). Практика — 25 хвилин із 45.
+     Кожен блок: «ПРИКЛАД → ТЕПЕР САМОСТІЙНО».
+     Плюс s20 — банк додаткових завдань.
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКА      s9  (7 хв)  перший коміт
+                s14 (8 хв)  пишемо повідомлення
+                s18 (10 хв) три зміни — три окремі коміти
+  ПЕРЕДБАЧ      s8, s13 — відповідь на ТОМУ Ж слайді (клац)
+  ДІАГРАМА      s5 — три стани файлу й дві команди між ними.
+                Ядро всього курсу, не різати НІКОЛИ
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • git log і порівняння версій — це УРОК 4 «Історія змін
+       і порівняння версій». Сьогодні історію тільки СТВОРЮЄМО,
+       читати її будемо наступного разу
+     • термінал: git add / git commit командами — УРОК 5
+       «Ті самі дії в терміналі». Сьогодні тільки кнопки VS Code
+     • .gitignore — урок 6 · GitHub — урок 8
+     • Оцінювання й правила курсу — за правилом «слайди без голосу
+       вчителя» це в конспекті, не на екрані
+  ⚠️ ЩО ЛЕГКО ЗЛАМАТИ НА УРОЦІ
+     • Commit без повідомлення — VS Code відкриє файл COMMIT_EDITMSG
+       і клас злякається. Це s16, показати ДО практики 3
+     • «Зберегти файл» (Ctrl+S) і «зберегти в історію» — різні речі.
+       Це s3, головне непорозуміння уроку
+  ────────────────────────────────────────────────────────────────
+  План          office/republic/Git, GitHub та публікація проєктів — 8 клас.docx
+                Урок 3, 15.09.2026
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/steam/8-git/u03/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --surf2:#f1f3f7; --border:#e0e3e9;
+  --brand:#591429; --green:#227354; --forest:#154734; --gold:#f2c75c;
+  --goldink:#8a5a10; --brick:#a8392f; --steel:#3c5a72;
+  --teal:#227354; --blue:#3c5a72; --pink:#a8392f; --yellow:#8a5a10;
+  --purple:#8a5a10; --green2:#154734;
+  --text:#282a29; --ink:#282a29; --dim:#5c605e; --faint:#84888a;
+  --accent:var(--brand);
+  --f-head:'Source Serif 4','Meta Serif Pro',Georgia,'Times New Roman',serif;
+  --f-body:'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,217,122,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,217,122,.022) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--pink));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(40,42,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.3rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:18px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:#f7eeda}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:#e3efe9;color:var(--teal)}
+.lb{background:#e4eaf0;color:var(--blue)}
+.ly{background:#f7eeda;color:var(--yellow)}
+.lp{background:#f6e5e3;color:var(--pink)}
+.lg{background:#e2ebe6;color:var(--green)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cb h3{color:var(--blue)}
+.card.cp h3{color:var(--pink)} .card.cg h3{color:var(--green)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:13px 18px;margin:10px 0;font-size:18px;color:var(--text);line-height:1.65}
+.hbox.ht{border-color:var(--teal)} .hbox.hb{border-color:var(--blue)}
+.hbox.hp{border-color:var(--pink)} .hbox.hg{border-color:var(--green)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:#fbf6ea;
+     border:1px solid rgba(255,217,122,.25);border-radius:11px;padding:13px 17px;
+     margin:11px 0;font-size:18px;line-height:1.65}
+.tip.tb{background:#eef2f6;border-color:rgba(99,197,255,.28)}
+.tip.tp{background:#fbf1f0;border-color:#e6c6c2}
+.tip.tg{background:#eef3f0;border-color:#c3d6cc}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+.dp{border-radius:13px;overflow:hidden;border:1px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(40,42,41,.08);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdfcfa;padding:15px 19px;font-size:16px;line-height:1.65;white-space:pre-wrap;color:#e8f2ff}
+.cm{color:#6b6f6d;font-style:italic}
+.sg{color:#154734}.sy{color:#591429}
+
+/* ─── ДІАГРАМИ ─── */
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+
+/* ─── «папка жаху» ─── */
+.mess{font-family:var(--f-mono);font-size:16px;line-height:2;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:16px 20px;color:var(--dim)}
+.mess .bad{color:#ff9db5}
+
+/* ─── історія комітів як ланцюг ─── */
+.hist{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:16px 20px;position:relative}
+.hist::before{content:'';position:absolute;left:25px;top:32px;bottom:32px;width:2px;background:var(--border)}
+.hrow{display:flex;align-items:center;gap:13px;padding:7px 0;position:relative;z-index:1}
+.hdot{width:12px;height:12px;border-radius:50%;background:var(--accent);flex-shrink:0;
+      box-shadow:0 0 0 4px #f7eeda,0 0 0 7px var(--surface)}
+.hmsg{font-size:17px;color:var(--text)}
+.hwhen{margin-left:auto;font-family:var(--f-mono);font-size:15px;color:var(--faint);flex-shrink:0}
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:400}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:#f9f2e2;border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+/* ─── теми курсу ─── */
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:29px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--text)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:14px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+  .hist::before{background:#253348 !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.dp-code{color:var(--text)}
+.prac{background:var(--surf2);border:2px solid var(--accent);border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.pbadge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+  background:var(--accent);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--accent)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:var(--goldink);background:#f9f2e2;
+  border:1px solid var(--gold);border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16px;flex-shrink:0;letter-spacing:1px;min-width:54px}
+.lv-t{font-size:17px;line-height:1.6;color:var(--text)}
+.steps{display:flex;flex-direction:column;gap:9px}
+.step{display:flex;align-items:flex-start;gap:14px;background:var(--surface);
+  border:1px solid var(--border);border-radius:12px;padding:12px 16px}
+.step-n{width:32px;height:32px;border-radius:9px;background:var(--surf2);color:var(--accent);
+  font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:17.5px;line-height:1.6;color:var(--text)}
+.stat{display:flex;flex-direction:column;gap:7px;font-family:var(--f-mono)}
+.sfile{display:flex;align-items:center;gap:12px;background:var(--surface);
+  border:1px solid var(--border);border-radius:9px;padding:9px 14px;font-size:16.5px}
+.sfile .fl{flex:1;color:var(--text)}
+.sl-u{color:var(--forest);font-weight:700;font-size:17px}
+.sl-m{color:var(--brick);font-weight:700;font-size:17px}
+.sl-n{color:var(--faint);font-weight:700;font-size:17px}
+.vs{font-family:var(--f-mono);font-size:14px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:7px}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3: «приклад → тепер самостійно» ─── */
+.demo{border:2px solid var(--steel);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--steel);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--accent);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--text,var(--ink))}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--brick)} .right{border-color:var(--forest)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6}
+.bk b{color:var(--accent)}
+
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1">Одна зміна — один запис</div>
+    <div class="title-sub">Збереження змін · Git, GitHub та публікація проєктів · 8 клас · Урок 3 · 15 вересня 2026</div>
+    <div class="chips">
+      <span class="chip">три стани файлу</span>
+      <span class="chip">add</span>
+      <span class="chip">commit</span>
+      <span class="chip">повідомлення</span>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label ly">Минулого разу</span>
+      <h2>Місце для історії готове</h2>
+    </div></div>
+    <div class="three">
+      <div class="card"><h3>Репозиторій</h3>
+        <p>Папка проєкту з <span class="ic">.git</span> усередині.
+           Історія житиме там</p></div>
+      <div class="card cb"><h3>Автор змін</h3>
+        <p><span class="ic">git config</span> — ім'я й пошта.
+           Зроблено раз і назавжди</p></div>
+      <div class="card cg"><h3>Буква U</h3>
+        <p><b>Untracked.</b> Жоден файл ще <b>жодного разу</b>
+           не потрапив в історію</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">📭</span>
+      <div>Тобто зараз у вас <strong>репозиторій із порожньою історією</strong>.
+      Git усе бачить — і нічого не зберіг.</div></div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label ly">Сьогодні</span>
+      <h2>Обіцяне минулого уроку</h2>
+    </div></div>
+    <p>На минулому уроці я сказав: <em>«комітів сьогодні не робимо, це наступний
+       урок»</em>. Наступний урок — сьогодні.</p>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Три стани файлу</b> — і чому їх саме три</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Перший запис в історії.</b> Дві дії:
+          підготувати й зберегти</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Повідомлення</b> — як написати так,
+          щоб через місяць зрозуміти</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><b>Кілька змін — кілька окремих записів.</b>
+          Це і є назва уроку</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">💾</div><div>
+      <span class="label lp">Головне непорозуміння</span>
+      <h2>«Зберегти» — це два різні збереження</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cp"><h3><span class="ic">Ctrl + S</span></h3>
+        <p><b>Зберегти файл на диску.</b> Те, що ви робите весь час
+           у редакторі.</p>
+        <p class="mt">Старий вміст при цьому <b>зникає назавжди</b>.
+           Ніякої історії тут немає</p></div>
+      <div class="card cg"><h3><span class="ic">commit</span></h3>
+        <p><b>Зберегти стан в історію.</b> Окрема дія, окремою кнопкою.</p>
+        <p class="mt">Створює <b>запис</b>, до якого можна повернутись
+           через місяць і через рік</p></div>
+    </div>
+    <div class="tip tp mt"><span class="tip-ico">⚠️</span>
+      <div>Одне <strong>не замінює</strong> інше. Спершу <span class="ic">Ctrl + S</span> —
+      інакше Git не побачить змін узагалі. Потім
+      <span class="ic">commit</span> — інакше вони не потраплять в історію.
+      <strong>Обидва щоразу.</strong></div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🚦</div><div>
+      <span class="label ly">Ядро курсу</span>
+      <h2>Три стани, у яких може бути файл</h2>
+    </div></div>
+    <div class="three">
+      <div class="card cp"><h3>1 · Змінений</h3>
+        <p><b>modified</b></p>
+        <p class="mt">Ви щось правили й натиснули
+           <span class="ic">Ctrl+S</span>. Git це помітив
+           і показує в <b>Changes</b></p></div>
+      <div class="card cb"><h3>2 · Підготовлений</h3>
+        <p><b>staged</b></p>
+        <p class="mt">Ви сказали Git: «оцю зміну я хочу зберегти».
+           Вона перейшла в <b>Staged Changes</b></p></div>
+      <div class="card cg"><h3>3 · Збережений</h3>
+        <p><b>committed</b></p>
+        <p class="mt">Зміна в історії. Панель чиста.
+           Тепер її можна знайти й повернути</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🤔</span>
+      <div>Питання, яке ставлять усі: <strong>навіщо середній стан?</strong>
+      Чому не зберігати одразу? Відповідь — за два слайди,
+      і саме в ній суть уроку.</div></div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ДІАГРАМА ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">⚙️</div><div>
+      <span class="label ly">Як це працює</span>
+      <h2>Три стани й дві дії між ними</h2>
+    </div></div>
+
+    <svg class="diagram" viewBox="0 0 940 250" role="img"
+         aria-label="Схема: файл проходить три стани — змінений, підготовлений, збережений — і між ними дві дії: add і commit"
+         font-family="'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,sans-serif">
+      <defs>
+        <marker id="cah" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+          <path d="M0,0 L11,4.5 L0,9 Z" fill="#591429"/>
+        </marker>
+      </defs>
+
+      <rect x="14" y="60" width="248" height="118" rx="15" fill="#ffffff" stroke="#a8392f" stroke-width="2"/>
+      <text x="138" y="48" text-anchor="middle" fill="#a8392f" font-size="14.5" font-weight="700" letter-spacing="1.2">1 · ЗМІНЕНИЙ</text>
+      <text x="138" y="98" text-anchor="middle" fill="#282a29" font-size="17" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">modified</text>
+      <text x="138" y="126" text-anchor="middle" fill="#5c605e" font-size="15">правили й зберегли файл</text>
+      <text x="138" y="150" text-anchor="middle" fill="#5c605e" font-size="15">панель: <tspan font-weight="700">Changes</tspan></text>
+
+      <line x1="274" y1="119" x2="336" y2="119" stroke="#591429" stroke-width="2.5" marker-end="url(#cah)"/>
+      <text x="305" y="104" text-anchor="middle" fill="#591429" font-size="16" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">add</text>
+      <text x="305" y="142" text-anchor="middle" fill="#5c605e" font-size="13.5">кнопка +</text>
+
+      <rect x="348" y="60" width="248" height="118" rx="15" fill="#f1f3f7" stroke="#3c5a72" stroke-width="2.5"/>
+      <text x="472" y="48" text-anchor="middle" fill="#3c5a72" font-size="14.5" font-weight="700" letter-spacing="1.2">2 · ПІДГОТОВЛЕНИЙ</text>
+      <text x="472" y="98" text-anchor="middle" fill="#282a29" font-size="17" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">staged</text>
+      <text x="472" y="126" text-anchor="middle" fill="#5c605e" font-size="15">відібрали в наступний запис</text>
+      <text x="472" y="150" text-anchor="middle" fill="#3c5a72" font-size="15">панель: <tspan font-weight="700">Staged Changes</tspan></text>
+
+      <line x1="608" y1="119" x2="670" y2="119" stroke="#591429" stroke-width="2.5" marker-end="url(#cah)"/>
+      <text x="639" y="104" text-anchor="middle" fill="#591429" font-size="16" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">commit</text>
+      <text x="639" y="142" text-anchor="middle" fill="#5c605e" font-size="13.5">✓ Commit</text>
+
+      <rect x="682" y="60" width="242" height="118" rx="15" fill="#ffffff" stroke="#154734" stroke-width="2"/>
+      <text x="803" y="48" text-anchor="middle" fill="#154734" font-size="14.5" font-weight="700" letter-spacing="1.2">3 · ЗБЕРЕЖЕНИЙ</text>
+      <text x="803" y="98" text-anchor="middle" fill="#282a29" font-size="17" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">committed</text>
+      <text x="803" y="126" text-anchor="middle" fill="#5c605e" font-size="15">запис в історії</text>
+      <text x="803" y="150" text-anchor="middle" fill="#154734" font-size="15">панель <tspan font-weight="700">чиста</tspan></text>
+
+      <text x="470" y="212" text-anchor="middle" fill="#282a29" font-size="15.5">Дві дії, не одна. <tspan font-weight="700">add</tspan> — «оце беру», <tspan font-weight="700">commit</tspan> — «зберігаю те, що взяв».</text>
+      <text x="470" y="234" text-anchor="middle" fill="#5c605e" font-size="14.5">Файл, який змінили, але не додали через add, у запис НЕ потрапить.</text>
+    </svg>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🛒</div><div>
+      <span class="label lt">Відповідь на питання</span>
+      <h2>Навіщо потрібен середній стан</h2>
+    </div></div>
+    <p>Уявіть, що ви за годину зробили три різні речі: виправили помилку в тексті,
+       поміняли колір і додали нову сторінку. Якщо зберігати <strong>все одразу</strong>,
+       вийде <b>один</b> запис «щось поміняв».</p>
+    <div class="two mt">
+      <div class="card cp"><h3>Без add</h3>
+        <p>Один запис, у якому змішано три різні справи.
+           Через місяць не розібрати, що там було</p>
+        <p class="mt">Повернути <b>одну</b> з трьох змін —
+           неможливо</p></div>
+      <div class="card cg"><h3>З add</h3>
+        <p><b>Ви обираєте</b>, що саме входить у цей запис.
+           Три справи — три записи</p>
+        <p class="mt">Кожен можна знайти, прочитати
+           й повернути <b>окремо</b></p></div>
+    </div>
+    <div class="tip tg mt"><span class="tip-ico">🧺</span>
+      <div>Як кошик у магазині: <span class="ic">add</span> — <strong>покласти
+      в кошик</strong>, <span class="ic">commit</span> — <strong>пробити чек</strong>.
+      Що не поклав — те й не пробилось.</div></div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🖱️</div><div>
+      <span class="label lg">Де це в редакторі</span>
+      <h2>Дві кнопки на панелі Source Control</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="stat">
+          <div class="sfile"><span class="fl">Staged Changes</span></div>
+          <div class="sfile"><span class="fl">&nbsp;&nbsp;index.html</span><span class="sl-u">A</span></div>
+          <div class="sfile"><span class="fl">Changes</span></div>
+          <div class="sfile"><span class="fl">&nbsp;&nbsp;style.css</span><span class="sl-m">M</span></div>
+        </div>
+        <p class="mt" style="font-size:16px;color:var(--faint)">Так панель виглядає,
+          коли один файл підготовлено, а другий ні</p>
+      </div>
+      <div>
+        <div class="hbox ht"><b>Плюс</b> біля файлу — це і є
+          <span class="ic">add</span>. Файл переїде вгору,
+          у <b>Staged Changes</b></div>
+        <div class="hbox hb"><b>Мінус</b> у Staged — забрати назад.
+          Нічого страшного не станеться</div>
+        <div class="hbox hg">Поле зверху — <b>повідомлення</b>.
+          Далі синя кнопка <b>✓ Commit</b></div>
+      </div>
+    </div>
+    <div class="tip tb mt"><span class="tip-ico">🔤</span>
+      <div>Нова буква: <span class="ic">A</span> — <strong>added</strong>,
+      файл уперше додано в історію. Букви <span class="ic">U</span>
+      більше не буде — вона перетворюється на
+      <span class="ic">A</span> одразу після плюса.</div></div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lp">Передбач</span>
+      <h2>Що потрапить у запис?</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="steps">
+          <div class="step"><span class="step-n">1</span>
+            <span class="step-t">Змінили <span class="ic">index.html</span>, зберегли</span></div>
+          <div class="step"><span class="step-n">2</span>
+            <span class="step-t">Натиснули <b>+</b> біля нього</span></div>
+          <div class="step"><span class="step-n">3</span>
+            <span class="step-t">Змінили <span class="ic">index.html</span>
+              <b>ще раз</b>, зберегли</span></div>
+          <div class="step"><span class="step-n">4</span>
+            <span class="step-t">Натиснули <b>✓ Commit</b></span></div>
+        </div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Друга правка потрапить у запис?</h3>
+        <p class="rv-hint">Подумай, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>Ні. У записі буде тільки перша правка.</b></p>
+          <p><span class="ic">add</span> робить знімок файлу
+             <b>саме в ту мить</b>, коли ви натиснули плюс.
+             Усе, що зробили після, — це вже нова зміна.</p>
+          <p class="mt">Тому файл з'явиться на панелі <b>двічі</b>:
+             у <span class="ic">Staged Changes</span> (перша правка)
+             і в <span class="ic">Changes</span> (друга).</p>
+          <p class="mt" style="color:var(--brick)">Це збиває з пантелику всіх
+             на першому тижні. Правило просте:
+             <b>змінив після add — додай ще раз</b>.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 1</span>
+        <span class="t">Перший запис в історії</span><span class="tmr">7 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — робимо разом</span>
+        <div class="mono">1. Ctrl+S — зберегти файл
+2. плюс біля файлу — переїхав у Staged Changes
+3. написати повідомлення в поле зверху
+4. ✓ Commit — панель стала чистою</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Зробити <b>перший коміт</b> усього стартового комплекту. Повідомлення — «Перша версія сайту»</li>
+          <li>Перевірити: панель <b>чиста</b>, жодного файлу в списку</li>
+          <li>Змінити заголовок у <span class="ic">index.html</span>, зберегти. Знайти букву <span class="ic">M</span></li>
+          <li>Зробити <b>другий</b> коміт із цією зміною</li>
+          <li>⭐⭐ Натиснути плюс, потім <b>мінус</b> — забрати файл назад із Staged. Подивитись, куди він переїхав</li>
+          <li>⭐⭐⭐ Відтворити ситуацію зі слайда 9: add, потім змінити ще раз. Знайти файл <b>у двох місцях одночасно</b></li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label ly">Половина уроку</span>
+      <h2>Повідомлення — це не формальність</h2>
+    </div></div>
+    <p>Запис в історії складається з двох частин: <strong>що змінилось</strong>
+       (це Git запам'ятає сам) і <strong>навіщо</strong> — а оце може написати
+       тільки людина.</p>
+    <div class="hist mt">
+      <div class="hrow"><span class="hdot"></span>
+        <span class="hmsg">Додав сторінку контактів</span><span class="hwhen">сьогодні 14:20</span></div>
+      <div class="hrow"><span class="hdot"></span>
+        <span class="hmsg">Виправив меню: не працювало посилання на «Роботи»</span><span class="hwhen">вчора 16:05</span></div>
+      <div class="hrow"><span class="hdot"></span>
+        <span class="hmsg">Перша версія сайту</span><span class="hwhen">8 вересня</span></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">📅</span>
+      <div>Головна перевірка: <strong>чи зрозумієте ви це через місяць?</strong>
+      Не сьогодні — сьогодні ви й так пам'ятаєте.</div></div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">📐</div><div>
+      <span class="label lg">Шаблон</span>
+      <h2>Дієслово + що саме</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox hg"><b>Додав</b> сторінку контактів</div>
+        <div class="hbox hg"><b>Виправив</b> посилання в меню</div>
+        <div class="hbox hg"><b>Поміняв</b> кольори на темні</div>
+        <div class="hbox hg"><b>Видалив</b> зайві картинки</div>
+      </div>
+      <div class="card cb"><h3>Правила</h3>
+        <p><b>Один рядок.</b> Коротко, до 60–70 символів</p>
+        <p class="mt"><b>Що зробив</b>, а не «як». Файли й рядки
+           Git запам'ятає сам</p>
+        <p class="mt"><b>Без крапки</b> в кінці — так прийнято.
+           Не помилка, просто звичка</p>
+        <p class="mt">Українською або англійською — <b>але однаково</b>
+           в усьому проєкті</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">⚖️</div><div>
+      <span class="label lp">Приклади</span>
+      <h2>Вдалі та невдалі формулювання</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">Так писати не треба</span>
+        <div class="mono">зміни
+фікс
+урок 3
+робота
+asdfgh
+.
+поміняв файл
+все</div></div>
+      <div class="right"><span class="lbl">Так треба</span>
+        <div class="mono">Перша версія сайту
+Додав сторінку «Про мене»
+Виправив биті посилання в меню
+Поміняв фото на головній
+Додав список робіт
+Прибрав зайвий заголовок</div></div>
+    </div>
+    <div class="tip tp mt"><span class="tip-ico">🔍</span>
+      <div>Спільне в усій лівій колонці: вони описують <strong>вас</strong>
+      («я щось робив»), а не <strong>проєкт</strong> («у проєкті сталося оце»).
+      Історія — про проєкт.</div></div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🕵️</div><div>
+      <span class="label lp">Оціни</span>
+      <h2>Яке повідомлення нікуди не годиться?</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><b>А.</b> Додав футер із контактами</div>
+        <div class="hbox"><b>Б.</b> Виправив помилку</div>
+        <div class="hbox"><b>В.</b> Поміняв колір кнопок на зелений</div>
+        <div class="hbox"><b>Г.</b> Оновив index.html</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Два погані. Які саме й чому?</h3>
+        <p class="rv-hint">Обери, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>Б — «Виправив помилку».</b> Яку? Їх у проєкті може бути
+             двадцять. Через місяць це нічого не скаже.</p>
+          <p><b>Г — «Оновив index.html».</b> Те, що змінився саме
+             <span class="ic">index.html</span>, Git <b>і так знає</b>.
+             Повідомлення має казати те, чого Git не знає — <b>навіщо</b>.</p>
+          <p class="mt">А і В хороші: зрозуміло, що з'явилось у проєкті
+             й що шукати, якщо доведеться повертатись.</p>
+          <p class="mt" style="color:var(--brick)">Правило: <b>не пишіть назви
+             файлів</b> у повідомленні. Пишіть, що змінилось у проєкті.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 2</span>
+        <span class="t">Пишемо повідомлення</span><span class="tmr">8 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — дієслово + що саме</span>
+        <div class="mono">Додав сторінку «Про мене»
+Виправив биті посилання в меню</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Зробити <b>три зміни</b> в проєкті, кожну окремим комітом із нормальним повідомленням</li>
+          <li>На роздатці <b>переписати</b> чотири погані повідомлення на хороші</li>
+          <li>Показати сусідові свою історію — хай скаже, чи <b>йому</b> зрозуміло</li>
+          <li>⭐⭐ Написати повідомлення <b>англійською</b> для однієї зі змін</li>
+          <li>⭐⭐⭐ Придумати зміну, яку <b>важко</b> описати одним рядком. Пояснити класу чому</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🚧</div><div>
+      <span class="label lp">Що станеться на уроці</span>
+      <h2>Commit без повідомлення відкриє дивний файл</h2>
+    </div></div>
+    <p>Натиснули <b>✓ Commit</b>, а поле порожнє — VS Code відкриє вкладку
+       <span class="ic">COMMIT_EDITMSG</span> із текстом англійською.
+       Виглядає страшно, насправді ні.</p>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t">Це просто <b>інший спосіб</b> ввести повідомлення.
+          Напишіть його <b>першим рядком</b> цього файлу</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t">Збережіть (<span class="ic">Ctrl+S</span>)
+          і <b>закрийте вкладку</b>. Коміт зробиться</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t">Передумали — просто закрийте, нічого не пишучи.
+          Коміта не буде, нічого не зламається</span></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🧯</span>
+      <div>Простіше цього уникати: <strong>спершу пишемо повідомлення в поле,
+      потім тиснемо Commit</strong>. Саме в такому порядку.</div></div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">✂️</div><div>
+      <span class="label ly">Назва уроку</span>
+      <h2>Одна зміна — один запис</h2>
+    </div></div>
+    <p>Головне правило на весь рік. Зробили дві різні справи — це
+       <strong>два коміти</strong>, а не один.</p>
+    <div class="two mt">
+      <div class="wrong"><span class="lbl">Один запис на все</span>
+        <div class="mono">✗ «Робота за 15 вересня»
+
+  · виправив меню
+  · додав три фото
+  · поміняв кольори
+  · дописав контакти</div></div>
+      <div class="right"><span class="lbl">Чотири записи</span>
+        <div class="mono">✓ Виправив посилання в меню
+✓ Додав три фото на головну
+✓ Поміняв кольори на темні
+✓ Дописав контакти в футер</div></div>
+    </div>
+    <div class="tip tg mt"><span class="tip-ico">🎯</span>
+      <div>Перевірка: якщо в повідомленні хочеться написати
+      <strong>«і»</strong> — це, найімовірніше, <strong>два коміти</strong>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 3</span>
+        <span class="t">Три зміни — три записи</span><span class="tmr">10 хвилин</span></div>
+      <div class="demo"><span class="lbl">Порядок для кожної зміни — саме такий</span>
+        <div class="mono">зміна → Ctrl+S → плюс → повідомлення → ✓ Commit
+і аж потім братися за наступну</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Зміна 1: додати новий абзац на головну. <b>Окремий коміт</b></li>
+          <li>Зміна 2: виправити щось у <span class="ic">style.css</span>. <b>Окремий коміт</b></li>
+          <li>Зміна 3: створити новий файл <span class="ic">contacts.html</span>. <b>Окремий коміт</b></li>
+          <li>Записати всі три повідомлення на роздатку</li>
+          <li>⭐⭐ Зробити дві зміни <b>в різних файлах</b> і закомітити їх <b>окремо</b> — додаючи плюсом лише один файл за раз</li>
+          <li>⭐⭐⭐ Зробити дві зміни <b>в одному файлі</b> й спробувати закомітити окремо. Пояснити класу, чому не виходить</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🛠️</div><div>
+      <span class="label lp">Якщо щось пішло не так</span>
+      <h2>Чотири біди сьогоднішнього уроку</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox hp"><b>Кнопка Commit сіра</b> — у
+          <span class="ic">Staged Changes</span> порожньо.
+          Спершу плюс, потім коміт</div>
+        <div class="hbox hp"><b>Файл лишився в Changes</b> після коміта —
+          ви змінили його <b>після</b> того, як натиснули плюс</div>
+      </div>
+      <div>
+        <div class="hbox hp"><b>Відкрився COMMIT_EDITMSG</b> —
+          повідомлення було порожнє. Напишіть перший рядок і закрийте</div>
+        <div class="hbox hp"><b>Git просить назвати себе</b> —
+          <span class="ic">git config</span> не спрацював.
+          Повторіть із уроку 2</div>
+      </div>
+    </div>
+    <div class="tip tb mt"><span class="tip-ico">🧭</span>
+      <div>Спільне в усіх чотирьох: <strong>нічого не зламалось</strong>.
+      У Git майже неможливо втратити роботу — усе, що потрапило в історію,
+      лишається там назавжди.</div></div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lt">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>П'ять комітів поспіль.</b> П'ять маленьких змін,
+        кожна окремим записом із нормальним повідомленням</div>
+      <div class="bk"><b>Порожня папка.</b> Створити папку без файлів
+        і перевірити, чи можна її закомітити</div>
+      <div class="bk"><b>Видалення.</b> Видалити файл, який уже в історії.
+        Подивитись, яка буква з'явиться на панелі</div>
+      <div class="bk"><b>Перейменування.</b> Перейменувати файл
+        і подивитись, як це побачить Git</div>
+      <div class="bk"><b>Рецензія.</b> Прочитати історію сусіда
+        й сказати, які три повідомлення варто переписати</div>
+      <div class="bk"><b>Англійською.</b> Зробити три коміти
+        з повідомленнями англійською: Add, Fix, Change</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lt">Словник</span>
+      <h2>Слова, які лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="ic">commit</span> — запис в історії.
+          І дія, і результат</div>
+        <div class="hbox ht"><span class="ic">stage</span> — підготувати,
+          відібрати в наступний запис</div>
+        <div class="hbox hb"><span class="ic">staged changes</span> —
+          підготовлені зміни</div>
+      </div>
+      <div>
+        <div class="hbox hg"><span class="ic">modified</span> — змінений.
+          Буква <b>M</b></div>
+        <div class="hbox hp"><span class="ic">added</span> — доданий.
+          Буква <b>A</b></div>
+        <div class="hbox"><span class="ic">commit message</span> —
+          повідомлення до запису</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label ly">Підсумок</span>
+      <h2>Що є після третього уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Зроблено</h3><ul>
+        <li>історія проєкту <b>більше не порожня</b></li>
+        <li>три стани файлу й дві дії між ними</li>
+        <li>кілька комітів із нормальними повідомленнями</li>
+        <li>одна зміна — один запис</li>
+      </ul></div>
+      <div class="card cb"><h3>Наступного разу</h3><ul>
+        <li><b>читаємо</b> історію, яку сьогодні створили</li>
+        <li>що саме змінилось у кожному записі</li>
+        <li>порівняння двох версій файлу</li>
+        <li>як повернутись до старого стану</li>
+      </ul></div>
+    </div>
+    <div class="hbox hb mt"><strong>Домашнього завдання немає.</strong> Але папку
+      <span class="ic">portfolio</span> не видаляйте — наступного уроку
+      читатимемо саме вашу історію.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 4 · 22 вересня · Історія змін і порівняння версій</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

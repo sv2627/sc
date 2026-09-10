@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · Мобільна розробка · 6 клас · Урок 3</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          Розробка мобільних додатків (MIT App Inventor)
+  Клас          6
+  Урок          3 / 35 · 15.09.2026
+  Тема          Компонування екрана
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ГОЛОВНЕ НА ЦЬОМУ АРКУШІ — ЕСКІЗ (завдання 3). За планом уроку:
+     «Складання екрана за поданим ескізом». Учень СПЕРШУ ділить його
+     на поверхи олівцем — прямо тут, — і тільки потім сідає за
+     комп'ютер. Без цього кроку практика 3 розсипається.
+  ⚠️ СТАНДАРТ ВІД 08.09.2026. Довідка стиснута до одного блока вгорі,
+     решта аркуша — завдання, які пишуться рукою. Аркуш розрахований
+     на роботу В СХОВИЩІ: жодне завдання не потребує комп'ютера.
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок —
+                на ксероксі вони зникають. Тільки чорне на білому.
+  ОБСЯГ         Рівно одна сторінка A4.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b > h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b > h2 .tag{float:right; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.35fr 1fr}
+.two.k46{grid-template-columns:1fr 1.35fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+
+/* ─── ЕСКІЗ ─── */
+.sketch{border:var(--line); padding:2mm; display:flex; flex-direction:column; gap:1.6mm}
+.sk-row{display:flex; gap:1.6mm}
+.sk-box{border:var(--thin); min-height:11mm; display:flex; align-items:center;
+  justify-content:center; font-size:9.5pt; font-weight:700; text-align:center;
+  padding:1mm; flex:1}
+.sk-box.img{min-height:20mm; font-family:var(--fm)}
+.sk-hint{font-family:var(--fm); font-size:8.6pt; font-weight:700; text-align:right}
+
+/* дерево компонентів із пропусками */
+.tree{font-family:var(--fm); font-size:10pt; line-height:1.5; border:var(--line);
+  padding:1.6mm 2.2mm; font-weight:700}
+.tree u{text-decoration:none; border-bottom:var(--thin); display:inline-block; min-width:34mm}
+
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.6mm 1.8mm; font-size:10.5pt; text-align:left}
+table.t th{font-size:9.5pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:32mm}
+table.t td.m{font-family:var(--fm); font-weight:700}
+
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.4mm 0; font-size:10.8pt; vertical-align:bottom}
+table.voc td.en{width:50%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>Мобільна розробка &#183; 6 клас &#183; Урок 3 / 35 &#183; 15 вересня</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Компонування екрана</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Компонувальники</p>
+        <p>Палітра &#8594; розділ <b>Layout</b></p>
+        <p><code>Horizontal</code> &#8212; у рядок</p>
+        <p><code>Vertical</code> &#8212; у стовпчик</p>
+        <p><code>Table</code> &#8212; сітка Rows &#215; Columns</p>
+      </div>
+      <div>
+        <p class="rh">Ширина й висота</p>
+        <p><code>Automatic</code> &#8212; за вмістом</p>
+        <p><code>Fill parent</code> &#8212; на всю коробку</p>
+        <p><code>__ pixels</code> &#8212; точно</p>
+        <p><code>__ percent</code> &#8212; частка екрана</p>
+      </div>
+      <div>
+        <p class="rh">Картинка</p>
+        <p>компонент <code>Image</code></p>
+        <p>панель <b>Media &#8594; Upload File</b></p>
+        <p>властивість <code>Picture</code></p>
+        <p>назва файлу &#8212; <b>латиницею</b></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b two k46">
+    <div>
+      <h2>1 &#183; Намалюй екран<span class="tag">за деревом</span></h2>
+      <p class="q" style="font-size:9.8pt">Як стануть ці компоненти? Намалюй у рамці.</p>
+      <div class="tree" style="font-size:9pt; line-height:1.4">Screen1<br>
+&nbsp;&nbsp;├ Label1 &#171;Меню&#187;<br>
+&nbsp;&nbsp;├ <b>HorizontalArrangement1</b><br>
+&nbsp;&nbsp;│&nbsp;&nbsp;├ Button1 &#171;Так&#187;<br>
+&nbsp;&nbsp;│&nbsp;&nbsp;└ Button2 &#171;Ні&#187;<br>
+&nbsp;&nbsp;└ Button3 &#171;Вихід&#187;</div>
+    </div>
+    <div>
+      <h2>&nbsp;</h2>
+      <div style="border:var(--line); height:38mm"></div>
+      <p class="q" style="margin-top:1mm; font-size:9.8pt">Скільки &#171;поверхів&#187; на екрані?
+        <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></p>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>2 &#183; Ескіз: познач поверхи<span class="tag">проведи лінії олівцем</span></h2>
+    <div class="two k64">
+      <div class="sketch">
+        <div class="sk-row"><div class="sk-box img">К А Р Т И Н К А</div></div>
+        <div class="sk-row">
+          <div class="sk-box">Ім&#39;я</div>
+          <div class="sk-box">Місто</div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-box">Кнопка 1</div>
+          <div class="sk-box">Кнопка 2</div>
+          <div class="sk-box">Кнопка 3</div>
+        </div>
+      </div>
+      <div>
+        <p class="q" style="font-size:10pt">Для кожного поверху напиши, <b>що треба</b>:</p>
+        <table class="t">
+          <tr><th>Поверх</th><th class="a">Який компонувальник?</th></tr>
+          <tr><td>1 &#183; картинка</td><td class="a"></td></tr>
+          <tr><td>2 &#183; ім&#39;я і місто</td><td class="a"></td></tr>
+          <tr><td>3 &#183; три кнопки</td><td class="a"></td></tr>
+        </table>
+        <p class="q" style="margin-top:1mm; font-size:9.8pt">Яке <code>Width</code> поставити
+          кнопкам, щоб вони були <b>однакові</b>? <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="b two k64">
+    <div>
+      <h2>3 &#183; Що станеться<span class="tag">одним реченням</span></h2>
+      <p class="q"><b>а)</b> У компонувальника <code>Width = Automatic</code>, усередині порожньо.</p>
+      <div class="ln s"></div>
+      <p class="q" style="margin-top:.8mm"><b>б)</b> Трьом кнопкам у рядку поставили <code>Fill parent</code>.</p>
+      <div class="ln s"></div>
+      <p class="q" style="margin-top:.8mm"><b>в)</b> Файл назвали <code>моє фото.jpg</code> і вантажать у Media.</p>
+      <div class="ln s"></div>
+    </div>
+    <div>
+      <h2>4 &#183; Обери значення<span class="tag">Width</span></h2>
+      <table class="t">
+        <tr><th>Треба</th><th class="a">Значення</th></tr>
+        <tr><td>Картинка на всю ширину екрана</td><td class="a"></td></tr>
+        <tr><td>Кнопка рівно 120 точок</td><td class="a"></td></tr>
+        <tr><td>Картинка на третину рядка</td><td class="a"></td></tr>
+        <tr><td>Напис завширшки як його текст</td><td class="a"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b two k46">
+    <div>
+      <h2>5 &#183; Словник</h2>
+      <table class="voc">
+        <tr><td class="en">arrangement</td><td></td></tr>
+        <tr><td class="en">horizontal</td><td></td></tr>
+        <tr><td class="en">vertical</td><td></td></tr>
+        <tr><td class="en">fill parent</td><td></td></tr>
+        <tr><td class="en">media</td><td></td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>6 &#183; Своїми словами<span class="tag">&#9733;&#9733;&#9733;</span></h2>
+      <p class="q">Однокласник каже: &#171;Я перетягнув кнопку праворуч від картинки,
+      а вона все одно стрибнула вниз. App Inventor зламався&#187;.
+      Поясни, що насправді сталося і що йому зробити.</p>
+      <div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>Мобільна розробка &#183; 6 клас</span>
+    <span>Урок 3 &#183; 15.09.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

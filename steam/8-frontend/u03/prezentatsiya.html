@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Гіперпосилання. Сайт із кількох сторінок · Front-end · 8 клас · Урок 3</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Front-end
+  Клас          8
+  Школа         STEAM (Республіка) · вівторок
+  Урок          3 з 35 · 15.09.2026
+  Тема          Гіперпосилання. Сайт із кількох сторінок
+  Тривалість    45 хв — показ 18 · практика 27
+  Акцент        green (#154734) — --accent:var(--forest)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Три практичні блоки за машинами.
+  ────────────────────────────────────────────────────────────────
+  ЗМІСТ УРОКУ ЗА ПЛАНОМ, дослівно з
+  office/republic/«Front-end — 8 клас.docx», урок 3:
+    • Посилання на зовнішній ресурс та на власний файл
+    • Абсолютний і відносний шлях
+    • Створення кількох сторінок сайту та спільної навігації між ними
+    • Пошук помилок у розмітці засобами інструментів розробника
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО КЛАС УЖЕ ВМІЄ (урок 2, 08.09): списки, зображення,
+     ВІДНОСНИЙ ШЛЯХ і папка img/. Тому сьогодні шлях НЕ пояснюємо
+     з нуля — показуємо, що та сама ідея працює й для сторінок.
+     Це прямо сказано на s7. 8 клас іде швидше за 7-й.
+  ⚠️ БІЛЬШЕ САМОСТІЙНОЇ РОБОТИ В КЛАСІ (вимога користувача
+     10.09.2026, стосується всіх курсів веб / фронтенд / JS / Flutter).
+     Практика — 27 хвилин із 45. Кожен блок:
+     «ПРИКЛАД → ТЕПЕР САМОСТІЙНО», де учень РОЗШИРЮЄ зразок.
+     Плюс s20 — банк додаткових завдань.
+     ⚠️ ЯКЩО НЕ ВСТИГАЄТЕ — ріжеться показ (s14, s16), НЕ практика.
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКА      s9  (7 хв)  перші посилання
+                s15 (10 хв) сайт із трьох сторінок і спільне меню
+                s19 (10 хв) полагодь биті посилання й розший сайт
+  ПЕРЕДБАЧ      s8 — відповідь відкривається на ТОМУ Ж слайді (клац)
+  ДІАГРАМА      s7 — абсолютний шлях проти відносного, на одній
+                картинці. Не різати
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • семантичні теги <nav>, <header> — це УРОК 4. Меню сьогодні
+       робимо звичайним <ul> зі списком посилань
+     • якорі #id і навігація в межах сторінки — урок 8
+       («Класи, ідентифікатори, навігація сторінкою»)
+     • CSS, оформлення меню й посилань — урок 6 і далі
+     • Оцінювання й правила курсу — за правилом «слайди без голосу
+       вчителя» це в конспекті, не на екрані
+  ⚠️ ЩО ЛЕГКО ЗЛАМАТИ НА УРОЦІ
+     • посилання на файл, якого ще немає — браузер покаже
+       «Не вдалося знайти файл». Це s18, найчастіша біда
+     • забутий .html у href — теж s18
+  ────────────────────────────────────────────────────────────────
+  План          office/republic/Front-end — 8 клас.docx
+                Урок 3, 15.09.2026
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/steam/8-frontend/u03/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --surf2:#f1f3f7; --border:#e0e3e9;
+  --brand:#591429; --green:#227354; --forest:#154734; --gold:#f2c75c;
+  --goldink:#8a5a10; --brick:#a8392f; --steel:#3c5a72;
+  --teal:#227354; --blue:#3c5a72; --pink:#a8392f; --yellow:#8a5a10;
+  --purple:#8a5a10; --green2:#154734;
+  --text:#282a29; --ink:#282a29; --dim:#5c605e; --faint:#84888a;
+  --accent:var(--forest);
+  --f-head:'Source Serif 4','Meta Serif Pro',Georgia,'Times New Roman',serif;
+  --f-body:'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(110,231,160,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(110,231,160,.022) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(40,42,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:#e2ebe6}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:#e3efe9;color:var(--teal)}
+.lb{background:#e4eaf0;color:var(--blue)}
+.ly{background:#f7eeda;color:var(--yellow)}
+.lp{background:#f6e5e3;color:var(--pink)}
+.lg{background:#e2ebe6;color:var(--green)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cb h3{color:var(--blue)}
+.card.cp h3{color:var(--pink)} .card.cy h3{color:var(--yellow)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--text);line-height:1.7}
+.hbox.ht{border-color:var(--teal)} .hbox.hb{border-color:var(--blue)}
+.hbox.hp{border-color:var(--pink)} .hbox.hy{border-color:var(--yellow)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:#eef3f0;
+     border:1px solid rgba(110,231,160,.25);border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7}
+.tip.ty{background:#fbf6ea;border-color:#e8d5a8}
+.tip.tp{background:#fbf1f0;border-color:#e6c6c2}
+.tip.tb{background:#eef2f6;border-color:rgba(99,197,255,.28)}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+.dp{border-radius:13px;overflow:hidden;border:1px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(40,42,41,.08);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdfcfa;padding:15px 19px;font-size:16px;line-height:1.6;white-space:pre-wrap}
+.dp-out{background:#fff;color:#111;padding:18px 22px;font-family:var(--f-body)}
+.dp-out h1{font-size:1.9rem;color:#111;font-family:var(--f-head)}
+.sk{color:#3c5a72}.ss{color:#a8392f}.sn{color:#154734}
+.cm{color:#6b6f6d;font-style:italic}
+.sa{color:#227354}
+
+/* ─── розбір каркаса: рядок «тег → що робить» ─── */
+.brk{display:flex;flex-direction:column;gap:9px}
+.brow{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:11px;padding:11px 16px}
+.btag{font-family:var(--f-mono);font-size:16px;color:var(--accent);flex-shrink:0;
+      min-width:172px;font-weight:700}
+.bwhat{font-size:17px;line-height:1.6;color:var(--dim)}
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:400}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:rgba(110,231,160,.15);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:#f9f2e2;border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.prac{background:var(--surf2);border:2px solid var(--accent);border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.pbadge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+  background:var(--accent);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--accent)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:var(--goldink);background:#f9f2e2;
+  border:1px solid var(--gold);border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16px;flex-shrink:0;letter-spacing:1px;min-width:54px}
+.lv-t{font-size:17px;line-height:1.6;color:var(--text)}
+.vs{font-family:var(--f-mono);font-size:14px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:7px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid}
+.wrong{border-color:var(--brick);background:var(--surface)}
+.right{border-color:var(--forest);background:var(--surface)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--text)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3: «приклад → тепер самостійно» ─── */
+.demo{border:2px solid var(--steel);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--steel);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--accent);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--text,var(--ink))}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--brick)} .right{border-color:var(--forest)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6}
+.bk b{color:var(--accent)}
+
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1">Гіперпосилання</div>
+    <div class="title-sub">Сайт із кількох сторінок · Front-end · 8 клас · Урок 3 · 15 вересня 2026</div>
+    <div class="chips">
+      <span class="chip">&lt;a href&gt;</span>
+      <span class="chip">абсолютний шлях</span>
+      <span class="chip">відносний шлях</span>
+      <span class="chip">спільне меню</span>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lg">Минулого разу</span>
+      <h2>Одна річ із уроку 2 сьогодні вирішує все</h2>
+    </div></div>
+    <div class="three">
+      <div class="card"><h3>Списки</h3>
+        <p><span class="ic">&lt;ul&gt;</span>, <span class="ic">&lt;ol&gt;</span>,
+           <span class="ic">&lt;li&gt;</span>, вкладені</p></div>
+      <div class="card ct"><h3>Зображення</h3>
+        <p><span class="ic">&lt;img&gt;</span>, <span class="ic">alt</span>,
+           <span class="ic">width</span>, папка <span class="ic">img/</span></p></div>
+      <div class="card cy"><h3>Відносний шлях</h3>
+        <p><span class="ic">img/kotyk.jpg</span> · <span class="ic">../</span> —
+           <b>ось це головне</b></p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🗝️</span>
+      <div>Відносний шлях ви вже вмієте — для <strong>картинок</strong>.
+      Сьогодні виявиться, що <strong>та сама ідея</strong> працює й для
+      <strong>сторінок</strong>. Половина уроку вже у вас у голові.</div></div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lg">Сьогодні</span>
+      <h2>Сторінка перестає бути одна</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t">Тег <span class="ic">&lt;a&gt;</span> — <b>посилання</b>.
+          На чужий сайт і на свій файл</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Абсолютний</b> і <b>відносний</b> шлях —
+          у чому різниця й коли який</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t">Кілька сторінок і <b>спільне меню</b> між ними</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t">Шукати помилки <b>інструментами розробника</b>,
+          а не очима</span></div>
+    </div>
+    <div class="hbox mt">Результат уроку — <strong>справжній сайт</strong>:
+      три сторінки, з кожної можна перейти на будь-яку іншу.</div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🔗</div><div>
+      <span class="label lg">Нове</span>
+      <h2>Анатомія <span class="ic">&lt;a&gt;</span></h2>
+    </div></div>
+    <div class="dp">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+      <div class="dp-code">&lt;a <span class="sn">href</span>=<span class="ss">"about.html"</span>&gt;Про мене&lt;/a&gt;
+   <span class="cm">↑атрибут ↑куди ведемо      ↑на що тиснуть</span></div>
+    </div>
+    <div class="two mt">
+      <div>
+        <div class="hbox"><span class="ic">a</span> — від <b>anchor</b>, якір.
+          Історична назва, до неї просто звикають</div>
+        <div class="hbox"><span class="ic">href</span> — від
+          <b>hypertext reference</b>. Той самий вид атрибута,
+          що <span class="ic">src</span> у картинки</div>
+      </div>
+      <div class="card ct"><h3>Дві частини, обидві обов'язкові</h3>
+        <p><b>Куди</b> — у <span class="ic">href</span>, у лапках.</p>
+        <p class="mt"><b>На що тиснуть</b> — між
+           <span class="ic">&lt;a&gt;</span> і <span class="ic">&lt;/a&gt;</span>.
+           Це може бути текст, а може й картинка.</p></div>
+    </div>
+  </div>
+  </section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🌍</div><div>
+      <span class="label lb">Перший вид шляху</span>
+      <h2>Абсолютний — повна адреса</h2>
+    </div></div>
+    <div class="dp">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+      <div class="dp-code">&lt;a href=<span class="ss">"https://uk.wikipedia.org"</span>&gt;Вікіпедія&lt;/a&gt;</div>
+    </div>
+    <div class="two mt">
+      <div>
+        <div class="hbox hb">Починається з <span class="ic">https://</span> —
+          це ознака абсолютного шляху</div>
+        <div class="hbox">Каже <b>повну адресу</b>: протокол, сайт, сторінку.
+          Працює звідки завгодно</div>
+      </div>
+      <div class="card cb"><h3>Коли потрібен</h3>
+        <p>Тільки для <b>чужих сайтів</b>. Для своїх сторінок він
+           не просто зайвий — він <b>шкідливий</b>.</p>
+        <p class="mt">Чому — на наступному слайді</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">📁</div><div>
+      <span class="label lg">Другий вид шляху</span>
+      <h2>Відносний — той самий, що для картинок</h2>
+    </div></div>
+    <div class="dp">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+      <div class="dp-code">&lt;a href=<span class="ss">"about.html"</span>&gt;Про мене&lt;/a&gt;
+&lt;a href=<span class="ss">"blog/post.html"</span>&gt;Стаття&lt;/a&gt;
+&lt;a href=<span class="ss">"../index.html"</span>&gt;На головну&lt;/a&gt;</div>
+    </div>
+    <div class="three mt">
+      <div class="card ct"><h3><span class="ic">about.html</span></h3>
+        <p>Поруч зі мною, у тій самій папці</p></div>
+      <div class="card cy"><h3><span class="ic">blog/post.html</span></h3>
+        <p>Зайди в папку <b>blog</b> і візьми там</p></div>
+      <div class="card cp"><h3><span class="ic">../index.html</span></h3>
+        <p>Вийди на папку вгору</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">♻️</span>
+      <div>Правила <strong>рівно ті самі</strong>, що були для
+      <span class="ic">src</span> у картинок. Нічого нового вчити не треба.</div></div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ДІАГРАМА ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">⚙️</div><div>
+      <span class="label lg">Як це працює</span>
+      <h2>Чому для свого сайту потрібен саме відносний</h2>
+    </div></div>
+
+    <svg class="diagram" viewBox="0 0 940 270" role="img"
+         aria-label="Порівняння: з абсолютним шляхом сайт працює тільки на одному комп'ютері, з відносним — усюди"
+         font-family="'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,sans-serif">
+      <defs>
+        <marker id="lah" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+          <path d="M0,0 L11,4.5 L0,9 Z" fill="#154734"/>
+        </marker>
+      </defs>
+
+      <rect x="14" y="34" width="440" height="100" rx="13" fill="#ffffff" stroke="#a8392f" stroke-width="2"/>
+      <text x="234" y="24" text-anchor="middle" fill="#a8392f" font-size="14.5" font-weight="700" letter-spacing="1.2">АБСОЛЮТНИЙ ШЛЯХ ДО СВОГО ФАЙЛУ</text>
+      <text x="34" y="64" fill="#282a29" font-size="14.5" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">&lt;a href="C:/Users/Ivan/site/about.html"&gt;</text>
+      <text x="34" y="92" fill="#a8392f" font-size="14.5">Працює тільки на комп&#8217;ютері Івана.</text>
+      <text x="34" y="114" fill="#a8392f" font-size="14.5">На флешці, у сусіда, в інтернеті — <tspan font-weight="700">биті посилання</tspan>.</text>
+
+      <rect x="14" y="152" width="440" height="100" rx="13" fill="#ffffff" stroke="#154734" stroke-width="2.5"/>
+      <text x="234" y="142" text-anchor="middle" fill="#154734" font-size="14.5" font-weight="700" letter-spacing="1.2">ВІДНОСНИЙ ШЛЯХ</text>
+      <text x="34" y="182" fill="#282a29" font-size="14.5" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">&lt;a href="about.html"&gt;</text>
+      <text x="34" y="210" fill="#154734" font-size="14.5">Означає «сусідній файл у моїй папці».</text>
+      <text x="34" y="232" fill="#154734" font-size="14.5">Скопіював папку куди завгодно — <tspan font-weight="700">усе працює</tspan>.</text>
+
+      <line x1="466" y1="143" x2="516" y2="143" stroke="#154734" stroke-width="2.5" marker-end="url(#lah)"/>
+
+      <rect x="530" y="34" width="394" height="218" rx="13" fill="#f1f3f7" stroke="#154734" stroke-width="2"/>
+      <text x="727" y="24" text-anchor="middle" fill="#154734" font-size="14.5" font-weight="700" letter-spacing="1.2">ПРАВИЛО НА ВЕСЬ РІК</text>
+      <text x="727" y="82" text-anchor="middle" fill="#282a29" font-size="18" font-weight="700">Чужий сайт</text>
+      <text x="727" y="108" text-anchor="middle" fill="#3c5a72" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">https://…</text>
+      <line x1="580" y1="132" x2="874" y2="132" stroke="#c9ccd3" stroke-width="1.5"/>
+      <text x="727" y="164" text-anchor="middle" fill="#282a29" font-size="18" font-weight="700">Свій файл</text>
+      <text x="727" y="190" text-anchor="middle" fill="#154734" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">about.html</text>
+      <text x="727" y="226" text-anchor="middle" fill="#5c605e" font-size="14">Той самий принцип, що й у</text>
+      <text x="727" y="244" text-anchor="middle" fill="#5c605e" font-size="14">&lt;img src="img/kotyk.jpg"&gt; з уроку 2</text>
+    </svg>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label ly">Передбач</span>
+      <h2>Які з цих посилань зламаються?</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="tree">my-site/<br>
+&nbsp;&nbsp;├── index.html<br>
+&nbsp;&nbsp;├── about.html<br>
+&nbsp;&nbsp;└── <b>blog/</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── post.html</div>
+        <div class="dp mt">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">blog/post.html</span></div>
+          <div class="dp-code"><span class="cm">1</span> &lt;a href=<span class="ss">"index.html"</span>&gt;
+<span class="cm">2</span> &lt;a href=<span class="ss">"../index.html"</span>&gt;
+<span class="cm">3</span> &lt;a href=<span class="ss">"about"</span>&gt;
+<span class="cm">4</span> &lt;a href=<span class="ss">"../about.html"</span>&gt;</div>
+        </div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Три з чотирьох биті. Які працюють?</h3>
+        <p class="rv-hint">Розбери всі чотири, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>1 · бите.</b> Шукає <span class="ic">blog/index.html</span> —
+             там такого немає</p>
+          <p><b>2 · працює.</b> Вийшли на папку вгору, там
+             <span class="ic">index.html</span> є</p>
+          <p><b>3 · бите.</b> Забули <span class="ic">.html</span>.
+             Файлу з іменем <span class="ic">about</span> не існує</p>
+          <p><b>4 · працює.</b> Угору й до
+             <span class="ic">about.html</span></p>
+          <p class="mt" style="color:var(--brick)">Спільне в обох битих:
+             <b>сторінка просто не відкриється</b>, а в чому річ —
+             з тексту помилки не завжди зрозуміло. Перевіряти —
+             клацнувши по кожному посиланню.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 1</span>
+        <span class="t">Перші посилання</span><span class="tmr">7 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — розбираємо разом</span>
+        <div class="mono">&lt;a href="https://uk.wikipedia.org"&gt;Вікіпедія&lt;/a&gt;
+&lt;a href="about.html"&gt;Про мене&lt;/a&gt;</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — розширюй приклад</span>
+        <ul>
+          <li>Додати обидва на свою сторінку. Клацнути по кожному й перевірити</li>
+          <li>Додати <b>ще три</b> посилання на зовнішні сайти, які ти справді читаєш</li>
+          <li>Створити порожній <span class="ic">about.html</span> із каркасом — щоб друге посилання запрацювало</li>
+          <li>Зробити посиланням <b>картинку</b>: покласти <span class="ic">&lt;img&gt;</span> усередину <span class="ic">&lt;a&gt;</span></li>
+          <li>⭐⭐ Зробити <b>список посилань</b>: <span class="ic">&lt;li&gt;</span>, а всередині <span class="ic">&lt;a&gt;</span></li>
+          <li>⭐⭐⭐ Зламати навмисно: прибрати <span class="ic">.html</span>. Подивитись, що скаже браузер</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">📄</div><div>
+      <span class="label lg">Сайт починається з другої сторінки</span>
+      <h2>Один сайт — це кілька файлів у одній папці</h2>
+    </div></div>
+    <div class="two">
+      <div class="tree">my-site/<br>
+&nbsp;&nbsp;├── <b>index.html</b><span class="cm">   головна</span><br>
+&nbsp;&nbsp;├── about.html<span class="cm">    про мене</span><br>
+&nbsp;&nbsp;├── works.html<span class="cm">    роботи</span><br>
+&nbsp;&nbsp;└── img/</div>
+      <div>
+        <div class="hbox"><span class="ic">index.html</span> — <b>особливе ім'я</b>.
+          Це головна сторінка, її сервер відкриває за замовчуванням</div>
+        <div class="hbox">Решта — будь-які імена, <b>латиницею й без пробілів</b></div>
+        <div class="hbox ht">Кожен файл — <b>повноцінний HTML-документ</b>:
+          свій <span class="ic">&lt;!DOCTYPE&gt;</span>,
+          <span class="ic">&lt;head&gt;</span>, свій
+          <span class="ic">&lt;title&gt;</span></div>
+      </div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">📑</span>
+      <div>Найшвидший спосіб зробити другу сторінку — <strong>скопіювати першу</strong>
+      і поміняти вміст <span class="ic">&lt;body&gt;</span> та
+      <span class="ic">&lt;title&gt;</span>. Каркас у них однаковий.</div></div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">↔️</div><div>
+      <span class="label lg">Головне правило навігації</span>
+      <h2>Посилання туди — це ще не навігація</h2>
+    </div></div>
+    <p>Найчастіша помилка першого сайту: з головної можна піти на «Про мене»,
+       а назад — <strong>тільки кнопкою браузера</strong>. Так сайт не роблять.</p>
+    <div class="pair mt">
+      <div class="wrong"><span class="lbl">Глухий кут</span>
+        <div class="mono">index.html
+   → about.html
+
+about.html
+   (посилань немає)</div></div>
+      <div class="right"><span class="lbl">Навігація</span>
+        <div class="mono">index.html
+   → about.html
+   → works.html
+
+about.html
+   → index.html
+   → works.html</div></div>
+    </div>
+    <div class="hbox mt">Правило: <strong>з кожної сторінки можна потрапити
+      на кожну</strong>. Три сторінки — по два посилання на кожній.</div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🧭</div><div>
+      <span class="label lb">Як це роблять</span>
+      <h2>Спільне меню — список посилань</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">на кожній сторінці</span></div>
+        <div class="dp-code">&lt;ul&gt;
+  &lt;li&gt;&lt;a href=<span class="ss">"index.html"</span>&gt;Головна&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=<span class="ss">"about.html"</span>&gt;Про мене&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=<span class="ss">"works.html"</span>&gt;Роботи&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;</div>
+      </div>
+      <div>
+        <div class="hbox">Меню — це <b>звичайний список</b>, у кожному пункті
+          якого посилання. Нічого спеціального</div>
+        <div class="hbox ht">Ставиться <b>на самому початку</b>
+          <span class="ic">&lt;body&gt;</span>, однаково на всіх сторінках</div>
+        <div class="hbox hp"><b>Той самий блок копіюється в кожен файл.</b>
+          Так, це дублювання. Так, це незручно —
+          і саме тому пізніше з'являться інші інструменти</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🪟</div><div>
+      <span class="label ly">Корисний атрибут</span>
+      <h2><span class="ic">target="_blank"</span> — у новій вкладці</h2>
+    </div></div>
+    <div class="dp">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+      <div class="dp-code">&lt;a href=<span class="ss">"https://uk.wikipedia.org"</span> <span class="sn">target</span>=<span class="ss">"_blank"</span>&gt;Вікіпедія&lt;/a&gt;</div>
+    </div>
+    <div class="two mt">
+      <div class="card ct"><h3>Коли доречно</h3>
+        <p>Для посилань <b>на чужі сайти</b>: людина не втрачає вашу сторінку,
+           вона лишається у вкладці</p></div>
+      <div class="card cp"><h3>Коли зайве</h3>
+        <p>Для <b>своїх сторінок</b>. Інакше після п'яти кліків
+           у людини двадцять вкладок вашого ж сайту</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🔢</span>
+      <div>Зверніть увагу: у тега <span class="ic">&lt;a&gt;</span> тепер
+      <strong>два атрибути</strong> — через пробіл. Так і має бути,
+      їх може бути скільки завгодно.</div></div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lb">Культура</span>
+      <h2>Текст посилання має говорити сам</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">Погано</span>
+        <div class="mono">Щоб дізнатись більше,
+&lt;a href="about.html"&gt;тиць
+сюди&lt;/a&gt;.
+
+&lt;a href="works.html"&gt;
+клікни&lt;/a&gt;</div></div>
+      <div class="right"><span class="lbl">Добре</span>
+        <div class="mono">&lt;a href="about.html"&gt;Про
+мене&lt;/a&gt;
+
+&lt;a href="works.html"&gt;Мої
+роботи&lt;/a&gt;</div></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🎧</span>
+      <div>Причина та сама, що з <span class="ic">alt</span>: програма, яка читає
+      сторінку вголос, може зачитати <strong>список самих лише посилань</strong>.
+      Список із десяти «тиць сюди» ні про що не говорить.</div></div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 2</span>
+        <span class="t">Сайт із трьох сторінок</span><span class="tmr">10 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — меню, яке йде на кожну сторінку</span>
+        <div class="mono">&lt;ul&gt;
+  &lt;li&gt;&lt;a href="index.html"&gt;Головна&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="about.html"&gt;Про мене&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="works.html"&gt;Роботи&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Зробити <span class="ic">about.html</span> і <span class="ic">works.html</span> копіюванням головної. Поміняти <span class="ic">&lt;title&gt;</span> й вміст</li>
+          <li>Вставити меню <b>на всі три</b> сторінки, на початок <span class="ic">&lt;body&gt;</span></li>
+          <li><b>Перевірити всі шість переходів</b>: з кожної сторінки на кожну</li>
+          <li>Наповнити <span class="ic">works.html</span>: список робіт із картинками з уроку 2</li>
+          <li>⭐⭐ Додати <b>четверту</b> сторінку — і не забути дописати її в меню <b>на всіх</b> сторінках</li>
+          <li>⭐⭐⭐ Зробити підпапку <span class="ic">blog/</span> зі сторінкою всередині. Меню там доведеться писати через <span class="ic">../</span></li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🔧</div><div>
+      <span class="label ly">Інструменти розробника</span>
+      <h2><span class="ic">F12</span> → Elements: як браузер вас зрозумів</h2>
+    </div></div>
+    <p>У коді ви бачите те, що <b>написали</b>. У вкладці <b>Elements</b> —
+       те, що браузер <strong>зрозумів</strong>. Коли ці дві речі не збігаються,
+       помилка знаходиться за секунди.</p>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">▸</span>
+        <span class="step-t"><span class="ic">F12</span> → вкладка
+          <b>Elements</b>. Це дерево вашої сторінки</span></div>
+      <div class="step"><span class="step-n">▸</span>
+        <span class="step-t">Трикутники ліворуч <b>згортають</b> і розгортають
+          гілки — так видно вкладеність</span></div>
+      <div class="step"><span class="step-n">▸</span>
+        <span class="step-t">Незакритий тег видно одразу: гілка
+          <b>з'їла</b> те, що мало бути поруч із нею</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🕵️</div><div>
+      <span class="label lp">Діагностика</span>
+      <h2>Чотири причини битого посилання</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox hp"><b>1 · Файлу ще немає.</b> Написали
+          <span class="ic">works.html</span>, а створити забули.
+          Найчастіша причина сьогодні</div>
+        <div class="hbox hp"><b>2 · Забули <span class="ic">.html</span>.</b>
+          <span class="ic">href="about"</span> — такого файлу не існує</div>
+      </div>
+      <div>
+        <div class="hbox hp"><b>3 · Не той регістр.</b>
+          <span class="ic">About.html</span> проти
+          <span class="ic">about.html</span></div>
+        <div class="hbox hp"><b>4 · Не з тієї папки рахували.</b>
+          Зі сторінки в <span class="ic">blog/</span> треба
+          <span class="ic">../</span></div>
+      </div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🧭</span>
+      <div>Як перевіряти: <strong>клацнути по кожному посиланню самому</strong>.
+      Це єдиний надійний спосіб — очима биті посилання не видно.
+      Три сторінки — <b>шість переходів</b>, усі шість натиснути.</div></div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 3</span>
+        <span class="t">Перевір і розший — робиш сам</span><span class="tmr">10 хвилин</span></div>
+      <div class="demo"><span class="lbl">Порядок перевірки</span>
+        <div class="mono">1. клацнути ВСІ посилання на всіх сторінках
+2. знайшов бите — F12 → Elements, шукати причину
+3. виправити й перевірити ще раз</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Пройти всі переходи свого сайту. <b>Записати на роздатці</b>, які були биті й чому</li>
+          <li>Обміняйтеся з сусідом папками. Знайти биті посилання <b>в чужому</b> сайті</li>
+          <li>Додати на головну <b>три зовнішні</b> посилання з <span class="ic">target="_blank"</span></li>
+          <li>Переписати всі тексти посилань так, щоб <b>жодного «тиць сюди»</b></li>
+          <li>⭐⭐ Зробити меню <b>вкладеним</b> списком: «Роботи» → два підпункти</li>
+          <li>⭐⭐⭐ Через <span class="ic">F12</span> → Elements знайти на своїй сторінці <b>незакритий тег</b>. Якщо немає — зробити навмисно й побачити його в дереві</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lb">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Сторінка джерел.</b> Список із десяти сайтів,
+        якими ти користуєшся, з осмисленими назвами</div>
+      <div class="bk"><b>Галерея з переходами.</b> Кожна картинка на головній —
+        посилання на окрему сторінку про неї</div>
+      <div class="bk"><b>П'ята сторінка.</b> «Контакти» — і не забути
+        дописати її в меню на всіх інших</div>
+      <div class="bk"><b>Дві підпапки.</b> <span class="ic">blog/</span> і
+        <span class="ic">games/</span>, у кожній сторінка, меню через
+        <span class="ic">../</span></div>
+      <div class="bk"><b>Сайт-квест.</b> Чотири сторінки, на кожній вибір
+        із двох посилань — різні кінцівки</div>
+      <div class="bk"><b>Перевірка сусіда.</b> Знайти в чужому сайті
+        всі биті посилання й написати список причин</div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🧰</span>
+      <div>Усі шість робляться <strong>тільки тим, що було сьогодні й раніше</strong>.
+      Нічого нового шукати не треба.</div></div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lg">Словник</span>
+      <h2>Слова, які лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="ic">anchor</span> — якір.
+          Звідси тег <span class="ic">a</span></div>
+        <div class="hbox ht"><span class="ic">hypertext reference</span> —
+          посилання на гіпертекст. Це <span class="ic">href</span></div>
+        <div class="hbox"><span class="ic">absolute path</span> —
+          абсолютний шлях, повна адреса</div>
+      </div>
+      <div>
+        <div class="hbox hp"><span class="ic">relative path</span> —
+          відносний шлях, від поточного файлу</div>
+        <div class="hbox"><span class="ic">navigation</span> —
+          навігація, переходи сайтом</div>
+        <div class="hbox ht"><span class="ic">broken link</span> —
+          бите посилання</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lg">Підсумок</span>
+      <h2>Що є після третього уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="card ct"><h3>Зроблено</h3><ul>
+        <li>тег <span class="ic">&lt;a&gt;</span> і атрибут
+          <span class="ic">href</span></li>
+        <li>абсолютний і відносний шлях — і коли який</li>
+        <li><b>справжній сайт</b>: три сторінки, спільне меню</li>
+        <li>перевірка посилань і <span class="ic">F12</span> → Elements</li>
+      </ul></div>
+      <div class="card cb"><h3>Наступного разу</h3><ul>
+        <li>семантичні теги</li>
+        <li><span class="ic">&lt;nav&gt;</span> — те саме меню,
+          але правильно названо</li>
+        <li><span class="ic">&lt;header&gt;</span>,
+          <span class="ic">&lt;main&gt;</span>,
+          <span class="ic">&lt;footer&gt;</span></li>
+        <li>чому браузеру важливо, як називається блок</li>
+      </ul></div>
+    </div>
+    <div class="hbox mt"><strong>Домашнього завдання немає.</strong> Папку сайту
+      не видаляйте — з неї весь рік і росте проєкт.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 4 · 22 вересня · Семантичні теги</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

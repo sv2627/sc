@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Списки. Зображення та атрибути · Front-end · 7 клас · Урок 3</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Front-end
+  Клас          7
+  Школа         STEAM (Республіка) · вівторок
+  Урок          3 з 35 · 15.09.2026
+  Тема          Списки. Зображення та атрибути
+  Тривалість    45 хв — показ 18 · практика 27
+  Акцент        blue (#3c5a72) — --accent:var(--steel)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Три практичні блоки за машинами.
+  ────────────────────────────────────────────────────────────────
+  ЗМІСТ УРОКУ ЗА ПЛАНОМ, дослівно з
+  office/republic/«Front-end — 7 клас.docx», урок 3:
+    • Марковані, нумеровані та вкладені списки
+    • Поняття атрибута: назва та значення
+    • Додавання зображень, альтернативний текст, розміри
+    • Папка для зображень і відносний шлях до файлу
+    • Причини, через які зображення не відображається
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЦЕЙ КУРС КОРИСТУВАЧ НАЗВАВ ПЕРШИМ, кажучи про самостійну
+     роботу (10.09.2026), дослівно: «більше завдань в класі для
+     самостійної роботи… приклад в презентації — і самостійно
+     додати (ще кнопки, ще таблиці, ще блоки)».
+     Тому практика займає 27 хвилин із 45 — БІЛЬШЕ ПОЛОВИНИ уроку.
+     Кожен блок побудований як «ПРИКЛАД → ТЕПЕР САМОСТІЙНО»:
+     синя рамка — зразок, який розбираємо разом; пунктирна —
+     4–6 пунктів, де учень робить сам і РОЗШИРЮЄ зразок
+     (ще пункти, ще картинки, ще рівні вкладеності).
+     Плюс s21 — банк із шести додаткових завдань.
+     ⚠️ ЯКЩО НЕ ВСТИГАЄТЕ — ріжеться показ (s6, s17), НЕ практика.
+  ────────────────────────────────────────────────────────────────
+  ПРАКТИКА      s8  (8 хв)  списки
+                s18 (9 хв)  картинки
+                s19 (10 хв) сторінка-каталог, велика самостійна
+  ПЕРЕДБАЧ      s7 — відповідь відкривається на ТОМУ Ж слайді (клац)
+  ДІАГРАМА      s14 — як браузер шукає файл за відносним шляхом.
+                Найважча ідея уроку, не різати
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • гіперпосилання <a> — це УРОК 4 «Гіперпосилання. Сайт
+       із кількох сторінок». Сьогодні жодного <a>
+     • семантичні теги — урок 5
+     • CSS, будь-яке оформлення списків і картинок — урок 8 і далі
+     • Оцінювання й правила курсу — за правилом «слайди без голосу
+       вчителя» це в конспекті, не на екрані
+  ⚠️ ЩО ЛЕГКО ЗЛАМАТИ НА УРОЦІ
+     • відносний шлях: картинка лежить не там, де думає учень.
+       Це s14 і s17, головна біда уроку
+     • у <ul> кладуть <p> замість <li> — це s5
+  ────────────────────────────────────────────────────────────────
+  План          office/republic/Front-end — 7 клас.docx
+                Урок 3, 15.09.2026
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/steam/7-frontend/u03/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --surf2:#f1f3f7; --border:#e0e3e9;
+  --brand:#591429; --green:#227354; --forest:#154734; --gold:#f2c75c;
+  --goldink:#8a5a10; --brick:#a8392f; --steel:#3c5a72;
+  --teal:#227354; --blue:#3c5a72; --pink:#a8392f; --yellow:#8a5a10;
+  --purple:#8a5a10; --green2:#154734;
+  --text:#282a29; --ink:#282a29; --dim:#5c605e; --faint:#84888a;
+  --accent:var(--steel);
+  --f-head:'Source Serif 4','Meta Serif Pro',Georgia,'Times New Roman',serif;
+  --f-body:'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(40,42,41,.045) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(40,42,41,.045) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--teal));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(40,42,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:#e4eaf0}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:#e3efe9;color:var(--teal)}
+.lb{background:#e4eaf0;color:var(--blue)}
+.ly{background:#f7eeda;color:var(--yellow)}
+.lp{background:#f6e5e3;color:var(--pink)}
+.lg{background:#e2ebe6;color:var(--green)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cy h3{color:var(--yellow)}
+.card.cp h3{color:var(--pink)} .card.cg h3{color:var(--green)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--text);line-height:1.7}
+.hbox.ht{border-color:var(--teal)} .hbox.hy{border-color:var(--yellow)}
+.hbox.hp{border-color:var(--pink)} .hbox.hg{border-color:var(--green)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:#eef2f6;
+     border:1px solid rgba(99,197,255,.25);border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7}
+.tip.ty{background:#fbf6ea;border-color:#e8d5a8}
+.tip.tp{background:#fbf1f0;border-color:#e6c6c2}
+.tip.tg{background:#eef3f0;border-color:#c3d6cc}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+.dp{border-radius:13px;overflow:hidden;border:1px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(40,42,41,.08);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdfcfa;padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:#111;padding:18px 22px;font-family:var(--f-body)}
+.dp-out h1{font-size:1.9rem;color:#111;font-family:var(--f-head)}
+.sk{color:#3c5a72}.ss{color:#a8392f}.sn{color:#154734}
+.cm{color:#6b6f6d;font-style:italic}
+.sf{color:#8a5a10}.st{color:#227354}
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:400}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:#e4eaf0;color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:#f9f2e2;border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+/* ─── теми курсу ─── */
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:29px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--text)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.prac{background:var(--surf2);border:2px solid var(--accent);border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.pbadge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+  background:var(--accent);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--accent)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:var(--goldink);background:#f9f2e2;
+  border:1px solid var(--gold);border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16px;flex-shrink:0;letter-spacing:1px;min-width:54px}
+.lv-t{font-size:17px;line-height:1.6;color:var(--text)}
+.vs{font-family:var(--f-mono);font-size:14px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:7px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid}
+.wrong{border-color:var(--brick);background:var(--surface)}
+.right{border-color:var(--forest);background:var(--surface)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--text)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3: «приклад → тепер самостійно» ─── */
+.demo{border:2px solid var(--steel);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--steel);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--accent);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--text,var(--ink))}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--brick)} .right{border-color:var(--forest)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6}
+.bk b{color:var(--accent)}
+
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1">Списки. Зображення та атрибути</div>
+    <div class="title-sub">Front-end · 7 клас · Урок 3 · 15 вересня 2026</div>
+    <div class="chips">
+      <span class="chip">&lt;ul&gt; &lt;ol&gt; &lt;li&gt;</span>
+      <span class="chip">атрибут</span>
+      <span class="chip">&lt;img&gt;</span>
+      <span class="chip">відносний шлях</span>
+      <span class="chip">alt</span>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lb">Минулого разу</span>
+      <h2>Каркас і текст — це вже вміємо</h2>
+    </div></div>
+    <div class="three">
+      <div class="card"><h3>Документ</h3>
+        <p><span class="ic">&lt;!DOCTYPE&gt;</span>,
+           <span class="ic">&lt;head&gt;</span>, <span class="ic">&lt;body&gt;</span>,
+           <span class="ic">charset</span></p></div>
+      <div class="card ct"><h3>Текст</h3>
+        <p>Заголовки, абзаци, <span class="ic">&lt;strong&gt;</span>,
+           <span class="ic">&lt;em&gt;</span>, <span class="ic">&lt;br&gt;</span>,
+           коментарі</p></div>
+      <div class="card cg"><h3>Вкладеність</h3>
+        <p>Хто відкрився пізніше — закривається раніше.
+           І <span class="ic">F12</span>, щоб побачити, як браузер зрозумів</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">📍</span>
+      <div>Досі всі теги, які ви писали, були <strong>порожні всередині кутових
+      дужок</strong> — просто назва. Сьогодні всередину тега з'явиться
+      те, що ним керує.</div></div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lb">Сьогодні</span>
+      <h2>Дві великі теми й одне нове поняття</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Списки</b> — марковані, нумеровані, вкладені один в одного</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Атрибут</b> — назва і значення. Ключове поняття
+          на весь курс</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Зображення</b>: свій файл, своя папка,
+          відносний шлях, <span class="ic">alt</span> і розміри</span></div>
+    </div>
+    <div class="hbox hb mt">Результат уроку — <strong>сторінка-каталог</strong>:
+      списки й картинки разом. Її ви робите <b>самі</b>, останні десять хвилин.</div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">•</div><div>
+      <span class="label lt">Нове</span>
+      <h2>Два види списків, одна будова</h2>
+    </div></div>
+    <div class="pair">
+      <div class="right" style="border-color:var(--steel)"><span class="lbl" style="color:var(--steel)">маркований · крапки</span>
+        <div class="mono">&lt;ul&gt;
+  &lt;li&gt;Хліб&lt;/li&gt;
+  &lt;li&gt;Молоко&lt;/li&gt;
+  &lt;li&gt;Яйця&lt;/li&gt;
+&lt;/ul&gt;</div></div>
+      <div class="right"><span class="lbl">нумерований · 1, 2, 3</span>
+        <div class="mono">&lt;ol&gt;
+  &lt;li&gt;Увімкнути духовку&lt;/li&gt;
+  &lt;li&gt;Змішати все&lt;/li&gt;
+  &lt;li&gt;Пекти 40 хвилин&lt;/li&gt;
+&lt;/ol&gt;</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox"><span class="ic">ul</span> — <b>unordered list</b>,
+        невпорядкований. Порядок не важливий</div>
+      <div class="hbox ht"><span class="ic">ol</span> — <b>ordered list</b>,
+        упорядкований. Порядок важливий, тому й номери</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🧱</div><div>
+      <span class="label lp">Правило без винятків</span>
+      <h2>Усередині <span class="ic">&lt;ul&gt;</span> живе тільки <span class="ic">&lt;li&gt;</span></h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">Так не можна</span>
+        <div class="mono">&lt;ul&gt;
+  &lt;p&gt;Хліб&lt;/p&gt;
+  &lt;p&gt;Молоко&lt;/p&gt;
+&lt;/ul&gt;</div></div>
+      <div class="right"><span class="lbl">Так треба</span>
+        <div class="mono">&lt;ul&gt;
+  &lt;li&gt;Хліб&lt;/li&gt;
+  &lt;li&gt;Молоко&lt;/li&gt;
+&lt;/ul&gt;</div></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🔎</span>
+      <div>Браузер, як завжди, <strong>не поскаржиться</strong> — просто покаже
+      без крапок і з дивними відступами. Ознака: список є, а маркерів немає.
+      Перевірити через <span class="ic">F12</span>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🪆</div><div>
+      <span class="label lt">Вкладений список</span>
+      <h2>Список усередині пункту</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+        <div class="dp-code">&lt;ul&gt;
+  &lt;li&gt;Фрукти
+    <span class="st">&lt;ul&gt;</span>
+      <span class="st">&lt;li&gt;</span>Яблука<span class="st">&lt;/li&gt;</span>
+      <span class="st">&lt;li&gt;</span>Груші<span class="st">&lt;/li&gt;</span>
+    <span class="st">&lt;/ul&gt;</span>
+  &lt;/li&gt;
+  &lt;li&gt;Овочі&lt;/li&gt;
+&lt;/ul&gt;</div>
+      </div>
+      <div>
+        <div class="hbox hp">Вкладений <span class="ic">&lt;ul&gt;</span> стоїть
+          <strong>усередині <span class="ic">&lt;li&gt;</span></strong>, а не між ними</div>
+        <div class="hbox ht">Закривний <span class="ic">&lt;/li&gt;</span> —
+          <b>після</b> вкладеного списку. Це найчастіша помилка</div>
+        <div class="hbox hg">Браузер сам зробить відступ і змінить маркер.
+          Робити нічого не треба</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lp">Передбач</span>
+      <h2>Скільки пунктів побачить браузер?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+        <div class="dp-code">&lt;ol&gt;
+  &lt;li&gt;Перший&lt;/li&gt;
+  &lt;li&gt;Другий
+  &lt;li&gt;Третій&lt;/li&gt;
+&lt;/ol&gt;
+
+<span class="cm">// закривного &lt;/li&gt;
+// у другого немає</span></div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Скільки номерів буде на сторінці?</h3>
+        <p class="rv-hint">Порахуй сам, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>Три. І все виглядатиме правильно.</b></p>
+          <p>Для <span class="ic">&lt;li&gt;</span> браузеру дозволено
+             <b>здогадуватись</b>: побачив новий <span class="ic">&lt;li&gt;</span> —
+             значить попередній скінчився.</p>
+          <p class="mt" style="color:var(--brick)">Але <b>покладатись на це не можна</b>.
+             У вкладених списках така «здогадка» дає зовсім не те, що ви хотіли,
+             і знайти це потім дуже важко.</p>
+          <p class="mt">Правило на весь рік: <b>закриваємо все, що відкрили</b>.
+             Перевірити — <span class="ic">F12</span>.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 1</span>
+        <span class="t">Списки</span><span class="tmr">8 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — розбираємо разом</span>
+        <div class="mono">&lt;h2&gt;Що взяти в похід&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Намет&lt;/li&gt;
+  &lt;li&gt;Ліхтарик&lt;/li&gt;
+&lt;/ul&gt;</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — розширюй приклад</span>
+        <ul>
+          <li>Набрати приклад і <b>дописати ще три пункти</b> від себе</li>
+          <li>Зробити поруч <b>нумерований</b> список — порядок дій, 4 пункти</li>
+          <li>Додати <b>ще один</b> список на свою тему. Будь-який</li>
+          <li>Зробити <b>вкладеність</b>: усередині пункту «Їжа» ще три підпункти</li>
+          <li>⭐⭐ Зробити <b>два рівні</b> вкладеності — список у списку в списку</li>
+          <li>⭐⭐⭐ Покласти <span class="ic">&lt;ol&gt;</span> усередину <span class="ic">&lt;ul&gt;</span>. Подивитись, що вийде з нумерацією</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🏷️</div><div>
+      <span class="label ly">Ключове поняття курсу</span>
+      <h2>Атрибут — назва і значення</h2>
+    </div></div>
+    <p>Досі тег був просто назвою в кутових дужках. Але тегу часто треба
+       <strong>щось повідомити</strong>: яку картинку показати, куди вести,
+       якою мовою написано. Для цього всередину відкривного тега додають
+       <strong>атрибут</strong>.</p>
+    <div class="dp mt">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">будова</span></div>
+      <div class="dp-code">&lt;img <span class="sf">src</span><span class="sn">=</span><span class="ss">"kotyk.jpg"</span> <span class="sf">width</span><span class="sn">=</span><span class="ss">"400"</span>&gt;
+      <span class="cm">↑назва   ↑=   ↑значення в лапках</span></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox">Атрибути пишуть <b>тільки у відкривному тезі</b>.
+        У закривному їх не буває ніколи</div>
+      <div class="hbox ht">Атрибутів може бути <b>кілька</b> — через пробіл.
+        Порядок значення не має</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">👀</div><div>
+      <span class="label ly">Ви їх уже бачили</span>
+      <h2>Атрибути були з першого уроку</h2>
+    </div></div>
+    <div class="dp">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">каркас із уроку 2</span></div>
+      <div class="dp-code">&lt;html <span class="sf">lang</span>=<span class="ss">"uk"</span>&gt;
+&lt;meta <span class="sf">charset</span>=<span class="ss">"UTF-8"</span>&gt;</div>
+    </div>
+    <div class="two mt">
+      <div class="card ct"><h3><span class="ic">lang="uk"</span></h3>
+        <p>Атрибут <b>lang</b> зі значенням <b>uk</b>. Каже браузеру:
+           сторінка українською</p></div>
+      <div class="card cy"><h3><span class="ic">charset="UTF-8"</span></h3>
+        <p>Атрибут <b>charset</b>. Той самий, без якого текст
+           перетворювався на «кракозябри»</p></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">💡</span>
+      <div>Тобто атрибути ви <strong>вже писали</strong> — просто ще не знали,
+      що це вони. Тепер знаєте, і далі вони будуть скрізь.</div></div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🖼️</div><div>
+      <span class="label lt">Нове</span>
+      <h2><span class="ic">&lt;img&gt;</span> — тег, у якого немає вмісту</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+          <div class="dp-code">&lt;img <span class="sf">src</span>=<span class="ss">"img/kotyk.jpg"</span> <span class="sf">alt</span>=<span class="ss">"Рудий кіт спить"</span> <span class="sf">width</span>=<span class="ss">"400"</span>&gt;</div>
+        </div>
+      </div>
+      <div>
+        <div class="hbox hp"><strong>Немає закривного тега.</strong> Як
+          <span class="ic">&lt;br&gt;</span> і <span class="ic">&lt;hr&gt;</span></div>
+        <div class="hbox">Немає й <b>вмісту</b>: усе, що потрібно,
+          передається <strong>атрибутами</strong></div>
+        <div class="hbox ht">Три атрибути, які нам потрібні:
+          <span class="ic">src</span>, <span class="ic">alt</span>,
+          <span class="ic">width</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">📁</div><div>
+      <span class="label lb">Порядок у проєкті</span>
+      <h2>Картинки живуть у своїй папці</h2>
+    </div></div>
+    <div class="two">
+      <div class="tree">
+        <b>my-site/</b><br>
+        &nbsp;&nbsp;├── index.html<br>
+        &nbsp;&nbsp;├── about.html<br>
+        &nbsp;&nbsp;└── <b>img/</b><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── kotyk.jpg<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── logo.png
+      </div>
+      <div>
+        <div class="hbox ht">Папка називається <span class="ic">img</span> —
+          так прийнято. Могла б і інакше, але не вигадуйте</div>
+        <div class="hbox">Назви файлів — <strong>латиницею, без пробілів,
+          маленькими</strong>. Це не примха: сервери бувають чутливі
+          до великих літер</div>
+        <div class="hbox hp">Один файл на дві сторінки — це нормально.
+          Копіювати картинку двічі не треба</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🧭</div><div>
+      <span class="label lp">Найважче на уроці</span>
+      <h2>Відносний шлях: звідки браузер рахує</h2>
+    </div></div>
+    <p>Значення <span class="ic">src</span> — це <strong>дорога до файлу</strong>.
+       І рахується вона <strong>не від диска й не від папки проєкту</strong>,
+       а <strong>від того HTML-файлу, у якому написано <span class="ic">&lt;img&gt;</span></strong>.</p>
+    <div class="three mt">
+      <div class="card ct"><h3><span class="ic">img/kotyk.jpg</span></h3>
+        <p>Зайди в папку <b>img</b>, яка поруч зі мною, візьми там файл</p></div>
+      <div class="card cy"><h3><span class="ic">kotyk.jpg</span></h3>
+        <p>Файл лежить <b>поруч зі мною</b>, у тій самій папці</p></div>
+      <div class="card cp"><h3><span class="ic">../kotyk.jpg</span></h3>
+        <p>Дві крапки — <b>вийди на папку вгору</b>, і там шукай</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ДІАГРАМА ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">⚙️</div><div>
+      <span class="label lb">Як це працює</span>
+      <h2>Той самий файл, два різні шляхи</h2>
+    </div></div>
+
+    <svg class="diagram" viewBox="0 0 940 262" role="img"
+         aria-label="Схема: браузер починає шукати картинку від того HTML-файлу, у якому написано тег, тому з index.html шлях один, а зі сторінки в підпапці — інший"
+         font-family="'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,sans-serif">
+      <defs>
+        <marker id="fah" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+          <path d="M0,0 L11,4.5 L0,9 Z" fill="#3c5a72"/>
+        </marker>
+      </defs>
+
+      <rect x="14" y="30" width="300" height="212" rx="14" fill="#ffffff" stroke="#5c605e" stroke-width="2"/>
+      <text x="164" y="20" text-anchor="middle" fill="#5c605e" font-size="14.5" font-weight="700" letter-spacing="1.2">ПАПКА ПРОЄКТУ</text>
+      <text x="38" y="60" fill="#282a29" font-size="16" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">my-site/</text>
+      <text x="58" y="88" fill="#3c5a72" font-size="15.5" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">index.html</text>
+      <text x="58" y="114" fill="#5c605e" font-size="15.5" font-family="'JetBrains Mono', Menlo, monospace">img/</text>
+      <text x="80" y="140" fill="#154734" font-size="15.5" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">kotyk.jpg</text>
+      <text x="58" y="168" fill="#5c605e" font-size="15.5" font-family="'JetBrains Mono', Menlo, monospace">blog/</text>
+      <text x="80" y="194" fill="#a8392f" font-size="15.5" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">post.html</text>
+      <text x="164" y="226" text-anchor="middle" fill="#5c605e" font-size="14">картинка одна, файлів два</text>
+
+      <line x1="326" y1="88" x2="376" y2="88" stroke="#3c5a72" stroke-width="2.5" marker-end="url(#fah)"/>
+      <line x1="326" y1="194" x2="376" y2="194" stroke="#3c5a72" stroke-width="2.5" marker-end="url(#fah)"/>
+
+      <rect x="388" y="52" width="536" height="72" rx="12" fill="#ffffff" stroke="#3c5a72" stroke-width="2"/>
+      <text x="408" y="78" fill="#3c5a72" font-size="15" font-weight="700">з index.html пишемо:</text>
+      <text x="408" y="106" fill="#282a29" font-size="17" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">&lt;img src="img/kotyk.jpg"&gt;</text>
+
+      <rect x="388" y="158" width="536" height="72" rx="12" fill="#ffffff" stroke="#a8392f" stroke-width="2"/>
+      <text x="408" y="184" fill="#a8392f" font-size="15" font-weight="700">а з blog/post.html — уже інакше:</text>
+      <text x="408" y="212" fill="#282a29" font-size="17" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">&lt;img src="../img/kotyk.jpg"&gt;</text>
+
+      <text x="656" y="252" text-anchor="middle" fill="#282a29" font-size="15">Браузер рахує дорогу <tspan font-weight="700">від файлу, у якому написано тег</tspan> — не від папки проєкту.</text>
+    </svg>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">♿</div><div>
+      <span class="label lg">Обов'язковий атрибут</span>
+      <h2><span class="ic">alt</span> — текст замість картинки</h2>
+    </div></div>
+    <p>Опис того, <strong>що на зображенні</strong>. Пишеться завжди,
+       навіть якщо здається зайвим.</p>
+    <div class="three mt">
+      <div class="card ct"><h3>Картинка не завантажилась</h3>
+        <p>Замість неї людина побачить цей текст і зрозуміє,
+           що там мало бути</p></div>
+      <div class="card cg"><h3>Людина не бачить</h3>
+        <p>Програма, яка читає сторінку вголос, прочитає
+           саме <span class="ic">alt</span></p></div>
+      <div class="card cy"><h3>Пошук</h3>
+        <p>Google не бачить картинок. Він читає
+           <span class="ic">alt</span></p></div>
+    </div>
+    <div class="pair mt">
+      <div class="wrong"><span class="lbl">Погано</span>
+        <div class="mono">alt="картинка"
+alt="фото"
+alt="IMG_2847.jpg"</div></div>
+      <div class="right"><span class="lbl">Добре</span>
+        <div class="mono">alt="Рудий кіт спить на вікні"
+alt="Схема будови ноутбука"</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">📐</div><div>
+      <span class="label lt">Розміри</span>
+      <h2><span class="ic">width</span> і <span class="ic">height</span></h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox">Значення — <b>число без одиниць</b>. Це точки:
+          <span class="ic">width="400"</span></div>
+        <div class="hbox ht"><b>Задавайте тільки одне</b> — зазвичай
+          <span class="ic">width</span>. Друге браузер порахує сам,
+          зберігши пропорції</div>
+        <div class="hbox hp">Задали обидва навмання — картинка
+          <strong>стиснеться або розтягнеться</strong>. Люди на фото стають
+          товстими або худими</div>
+      </div>
+      <div class="card cy"><h3>Фото з телефона — це 4000 точок</h3>
+        <p>Без <span class="ic">width</span> така картинка займе весь екран
+           і поїде за край.</p>
+        <p class="mt">Тому <b>ширину ставимо завжди</b>. Для картинки в тексті
+           нормально 400–600.</p>
+        <p class="mt">Пізніше, з CSS, ми робитимемо це інакше й краще —
+           але це листопад</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🕵️</div><div>
+      <span class="label lp">Діагностика</span>
+      <h2>П'ять причин, чому картинки немає</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox hp"><b>1 · Помилка в назві файлу.</b>
+          <span class="ic">kotik.jpg</span> проти
+          <span class="ic">kotyk.jpg</span></div>
+        <div class="hbox hp"><b>2 · Не той регістр.</b>
+          <span class="ic">Kotyk.JPG</span> і <span class="ic">kotyk.jpg</span> —
+          для сервера це <b>різні файли</b></div>
+        <div class="hbox hp"><b>3 · Не те розширення.</b>
+          Файл <span class="ic">.png</span>, а написали
+          <span class="ic">.jpg</span></div>
+      </div>
+      <div>
+        <div class="hbox hp"><b>4 · Забули папку.</b>
+          <span class="ic">src="kotyk.jpg"</span> замість
+          <span class="ic">src="img/kotyk.jpg"</span></div>
+        <div class="hbox hp"><b>5 · Файл не там, де думаєте.</b>
+          Лишився в «Завантаженнях», а не в папці проєкту</div>
+        <div class="hbox hg"><b>Як перевірити:</b>
+          <span class="ic">F12</span> → вкладка <b>Console</b>. Там буде
+          червоний рядок із тим шляхом, <b>за яким браузер шукав</b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 2</span>
+        <span class="t">Картинки й атрибути</span><span class="tmr">9 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — розбираємо разом</span>
+        <div class="mono">1. створити папку img/ у папці проєкту
+2. зберегти туди картинку: латиниця, без пробілів
+3. &lt;img src="img/kotyk.jpg" alt="Рудий кіт спить" width="400"&gt;</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — розширюй приклад</span>
+        <ul>
+          <li>Зробити папку <span class="ic">img</span>, знайти картинку в інтернеті, зберегти <b>своїми руками</b></li>
+          <li>Вставити її з усіма трьома атрибутами</li>
+          <li>Додати <b>ще дві</b> картинки. Кожній — свій осмислений <span class="ic">alt</span></li>
+          <li>Поміняти <span class="ic">width</span> на 200 і на 600. Побачити різницю</li>
+          <li>⭐⭐ Зламати навмисно: прибрати <span class="ic">img/</span> зі шляху. Подивитись <span class="ic">F12</span> → Console і <b>прочитати</b>, де браузер шукав</li>
+          <li>⭐⭐⭐ Задати <b>обидва</b> розміри навмання — побачити, як картинка спотворюється</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 3</span>
+        <span class="t">Сторінка-каталог — робиш сам</span><span class="tmr">10 хвилин</span></div>
+      <div class="demo"><span class="lbl">Зразок одного блока — далі за аналогією</span>
+        <div class="mono">&lt;h2&gt;Кросівки&lt;/h2&gt;
+&lt;img src="img/shoes.jpg" alt="Білі кросівки" width="300"&gt;
+&lt;ul&gt;
+  &lt;li&gt;Розмір: 42&lt;/li&gt;
+  &lt;li&gt;Колір: білий&lt;/li&gt;
+&lt;/ul&gt;</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Тема каталогу — <b>своя</b>: ігри, книжки, коти, велосипеди, що завгодно</li>
+          <li>Зробити <b>три такі блоки</b> за зразком. Заголовок + картинка + список</li>
+          <li>Угорі сторінки — <span class="ic">&lt;h1&gt;</span> і <b>нумерований список</b> «Що є в каталозі»</li>
+          <li>Між блоками поставити <span class="ic">&lt;hr&gt;</span></li>
+          <li>⭐⭐ Додати <b>четвертий</b> блок, а в ньому — <b>вкладений</b> список характеристик</li>
+          <li>⭐⭐⭐ Перевірити <span class="ic">F12</span>, що жоден тег не лишився незакритим</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lg">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Рецепт.</b> Нумерований список кроків
+        + маркований список продуктів + фото страви</div>
+      <div class="bk"><b>Зміст книжки.</b> Три рівні вкладеності:
+        частини → розділи → підрозділи</div>
+      <div class="bk"><b>Галерея.</b> Шість картинок підряд,
+        усі шириною 250, у кожної свій <span class="ic">alt</span></div>
+      <div class="bk"><b>Порівняння.</b> Два списки поруч:
+        «плюси» і «мінуси» чогось на твій вибір</div>
+      <div class="bk"><b>Розклад тижня.</b> Список із п'яти днів,
+        у кожному вкладений список уроків</div>
+      <div class="bk"><b>Мапа сайту.</b> Вкладений список сторінок,
+        які ти хотів би зробити цього року</div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🧰</span>
+      <div>Усі шість робляться <strong>тільки тим, що було сьогодні й раніше</strong>.
+      Нічого нового шукати не треба.</div></div>
+  </div></section>
+
+  <!-- ══════════ 21 ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lt">Словник</span>
+      <h2>Слова, які лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="ic">unordered list</span> —
+          невпорядкований список. Це <span class="ic">ul</span></div>
+        <div class="hbox ht"><span class="ic">ordered list</span> —
+          упорядкований. Це <span class="ic">ol</span></div>
+        <div class="hbox hg"><span class="ic">list item</span> —
+          пункт списку. Це <span class="ic">li</span></div>
+      </div>
+      <div>
+        <div class="hbox hp"><span class="ic">attribute</span> —
+          атрибут: назва і значення</div>
+        <div class="hbox"><span class="ic">source</span> — джерело.
+          Це <span class="ic">src</span></div>
+        <div class="hbox ht"><span class="ic">alternative text</span> —
+          альтернативний текст. Це <span class="ic">alt</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lb">Підсумок</span>
+      <h2>Що є після третього уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Зроблено</h3><ul>
+        <li>списки трьох видів, зокрема вкладені</li>
+        <li>розумієте, що таке <b>атрибут</b></li>
+        <li>своя папка <span class="ic">img</span> і відносні шляхи</li>
+        <li>сторінка-каталог зроблена <b>самостійно</b></li>
+      </ul></div>
+      <div class="card ct"><h3>Наступного разу</h3><ul>
+        <li>гіперпосилання <span class="ic">&lt;a&gt;</span></li>
+        <li>друга сторінка сайту</li>
+        <li>меню, спільне для всіх сторінок</li>
+        <li>той самий відносний шлях — але вже між сторінками</li>
+      </ul></div>
+    </div>
+    <div class="hbox hb mt"><strong>Домашнього завдання немає.</strong> Папку
+      проєкту разом із <span class="ic">img</span> не видаляйте — наступного уроку
+      робимо з неї сайт із кількох сторінок.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 4 · 22 вересня · Гіперпосилання. Сайт із кількох сторінок</p>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
