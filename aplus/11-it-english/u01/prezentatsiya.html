@@ -1763,7 +1763,17 @@ document.addEventListener('touchend', e => {
   if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
 }, {passive:true});
 
-goTo(0);
+/* ═════════ ВІДКРИТТЯ НА ПОТРІБНОМУ СЛАЙДІ ═════════
+   Колода розрахована на ДВА уроки. Сторінка уроку 2 посилається сюди
+   з якорем #sN, щоб відкрити одразу свою половину, а не початок.
+   Без якоря — звичайний старт із першого слайда. */
+function slideFromHash() {
+  const m = location.hash.match(/^#s(\d+)$/);
+  if (!m) return 0;
+  return Math.max(0, Math.min(TOTAL - 1, parseInt(m[1], 10)));
+}
+goTo(slideFromHash());
+window.addEventListener('hashchange', () => goTo(slideFromHash()));
 </script>
 </body>
 </html>
