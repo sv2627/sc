@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Функції. Практична № 1 · Мобільна розробка Flutter · 10 клас · Урок 4</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Мобільна розробка Flutter I
+  Клас          10
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · четвер
+  Урок          4 з 36 · 24.09.2026
+  Тема          Функції. Практична № 1
+  Тривалість    45 хв — показ ~13 хв + практика 32 хв
+                (два блоки «приклад → самостійно» по 6 хв + практична 20 хв)
+  Акцент        blue (#0253b3)
+  Слайдів       25
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. DartPad у браузері, як і на уроках 1–3.
+  ────────────────────────────────────────────────────────────────
+  ПЛАН          office/plany/06-flutter-10.md, тема 1.4
+                «Параметри, return, іменовані параметри {required},
+                значення за замовчуванням, стрілкові =>.
+                Практична №1 (≥20 хв).»
+                Нове в коді: return, void, int add(int a, int b),
+                {required}, {int step = 1}, =>
+                Практична №1 «Набір функцій», рівні — розділ 7 плану.
+  ────────────────────────────────────────────────────────────────
+  ➕ ДОДАНО ПОНАД ПЛАН (правило «повна родина конструкцій», 10.09.2026):
+     • необовʼязкові ПОЗИЦІЙНІ параметри [ ] зі значенням
+       за замовчуванням — третій вид параметрів, план його пропускав
+     • ранній return (вихід посеред функції)
+     • функція як значення: анонімна (x) => …, передача функції
+       в параметр, тип int Function(int) — план має це в ⭐⭐⭐
+       практичної, тому потрібен хоча б один слайд
+     • рекурсія — теж ⭐⭐⭐ практичної, один слайд
+     • область видимості й функція, що кличе функцію — слайд 17
+     • слайд-довідник (слайд 18) — лишається на дошці під час практичної
+     Темп: 10 клас швидший (рішення користувача 04.09.2026), тому
+     показ стиснуто до таблиць, а практична — повні 20 хв.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ОЦІНКА — ПРАКТИЧНА №1. На слайдах про бали НЕ написано
+     (правило «слайди без голосу вчителя»). Критерії — у конспекті.
+  ⚠️ ФОРМАТ «ПРИКЛАД → ТЕПЕР САМОСТІЙНО». Практика 32 хв із 45.
+     слайд 7  (6 хв)  перші функції, return
+     слайд 13 (6 хв)  три види параметрів
+     слайди 19–20 (20 хв) ПРАКТИЧНА №1 ⭐ / ⭐⭐ / ⭐⭐⭐
+     слайд 21 — банк на 8 завдань
+     слайд 25 — домашнє: на звороті роздатки, 4 пункти, без DartPad;
+       відповіді в конспекті
+     ⛔ НЕ РІЗАТИ слайд 18 (довідник) і слайди 19–20 (практична ≥20 хв
+        за планом).
+     ЯКЩО НЕ ВСТИГАЄТЕ — ріжеться показ, НЕ практика. Знімати:
+       слайд 2 (навіщо функції — одним реченням),
+       слайди 15–16 (функція як значення, рекурсія — сильні прочитають
+       самі, це ⭐⭐⭐ практичної),
+       слайд 22 (пастки — роздати усно по ходу практичної).
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ГОЛОВНА ДУМКА: функцію учні знають із Python і JS. Нове в Dart —
+     ТИП перед іменем і типи параметрів, а ще іменовані параметри
+     { }, яких у JS немає взагалі.
+  ⚠️ ЩО ПЛУТАЮТЬ
+     • print усередині функції ≠ return. Функція, що друкує, нічого
+       не повертає — print(f()) з void-функцією не компілюється
+     • функція з типом int, у якої є шлях без return, — помилка
+       компіляції (не null, як у JS)
+     • іменований параметр викликають З ІМЕНЕМ: f(krok: 2), не f(2)
+     • у { } без required і без значення за замовчуванням параметр
+       має бути nullable (int?) — цього сьогодні уникаємо:
+       завжди або required, або = значення
+     • => приймає ОДИН вираз, не блок команд
+  ⚠️ КОД НА СЛАЙДАХ — ASCII У РЯДКАХ (grades/CLAUDE.md, копіювання
+     з PDF у DartPad): 'Pryvit', не кирилиця. Кирилиця лише в коментарях.
+  ⛔ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • List і Map — урок 5 (у прикладах тільки числа й рядки)
+     • null-safety (String?, ??, !) — урок 12 плану
+     • async / Future — IV період
+     • класи й методи — II період
+     • Оцінювання — у конспекті
+  ────────────────────────────────────────────────────────────────
+  ПЕРЕДБАЧ      слайди 6 і 12 — відповідь на ТОМУ Ж слайді (клац)
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/10-flutter/u04/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: акцент курсу — синій із палітри. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#eef1f8; --border:#dcdfe9;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(2,83,179,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lr{background:#fae7e8;color:var(--rose)}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(2,83,179,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#f9fbfd;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:14px 19px;font-family:var(--f-mono);
+        font-size:16px;border-top:1.5px solid var(--border);white-space:pre-wrap}
+.dp-out .lbl{font-family:var(--f-body);font-size:13px;color:var(--faint);
+             text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:6px}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #f9fbfd */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#6b6a72;font-style:italic}/* коментар */
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--blue);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid #b9c8e6;border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--blue);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--blue)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+.uk{color:var(--dim)}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--blue);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .dp-out{font-size:14.5px;padding:11px 15px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .demo,.solo{padding:10px 13px}
+  .demo .dp-code,.solo .dp-code{font-size:14.5px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .bank{gap:8px} .bk{padding:9px 12px;font-size:15px}
+  .refg{gap:6px} .rf{padding:6px 9px}
+  .rf .rt{font-size:13px;flex-basis:110px} .rf .rc{font-size:13px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+.demo .dp-code{border:1px solid var(--border);border-radius:9px;padding:11px 14px;
+  font-size:16px;line-height:1.65}
+
+/* довідник конструкцій — слайд 18 */
+.refg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rf{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+    padding:8px 12px;display:flex;align-items:baseline;gap:10px}
+.rf .rt{font-size:14.5px;color:var(--dim);flex:0 0 128px;line-height:1.3}
+.rf .rc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--brand);
+        line-height:1.35;flex:1}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4 ─── */
+.rv-body .mono{font-family:var(--f-mono);white-space:pre-wrap}
+.hbox.hp{border-color:var(--plum)}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Функції</h1>
+      <p class="title-sub">Практична № 1 · «Набір функцій»<br>
+        Мобільна розробка Flutter · 10 клас · Урок 4 з 36 · 24 вересня</p>
+      <div class="chips">
+        <span class="chip">return · void</span>
+        <span class="chip">(int a) · [int b = 1] · {required int c}</span>
+        <span class="chip">=&gt;</span>
+        <span class="chip">(x) =&gt; x * 2</span>
+        <span class="chip">рекурсія</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lm">Навіщо</span>
+      <h2>main() з уроку 3 став задовгим</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">було · три копії</span></div>
+        <div class="dp-code"><span class="sk">for</span> (<span class="sk">int</span> i = <span class="sn">1</span>; i &lt;= <span class="sn">10</span>; i++) {
+  <span class="sf">print</span>(<span class="ss">'3 x $i = ${3 * i}'</span>);
+}
+<span class="sk">for</span> (<span class="sk">int</span> i = <span class="sn">1</span>; i &lt;= <span class="sn">10</span>; i++) {
+  <span class="sf">print</span>(<span class="ss">'7 x $i = ${7 * i}'</span>);
+}
+<span class="cm">// і ще раз для 9…</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">стало · одна функція</span></div>
+        <div class="dp-code"><span class="sk">void</span> <span class="sf">tablycya</span>(<span class="sk">int</span> n) {
+  <span class="sk">for</span> (<span class="sk">int</span> i = <span class="sn">1</span>; i &lt;= <span class="sn">10</span>; i++) {
+    <span class="sf">print</span>(<span class="ss">'$n x $i = ${n * i}'</span>);
+  }
+}
+
+<span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sf">tablycya</span>(<span class="sn">3</span>);
+  <span class="sf">tablycya</span>(<span class="sn">7</span>);
+  <span class="sf">tablycya</span>(<span class="sn">9</span>);
+}</div>
+      </div>
+    </div>
+    <div class="hbox hm mt">Функція — це <strong>шматок коду з іменем</strong>. Написали раз,
+      викликаємо скільки завгодно. Знайшли помилку — правимо в <strong>одному</strong> місці.</div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lm">Карта уроку</span>
+      <h2>Уся родина функцій</h2>
+    </div></div>
+    <table class="tb">
+      <tr><th>Вид</th><th>Запис у Dart</th></tr>
+      <tr><td>повертає результат</td><td class="mono">int suma(int a, int b) { return a + b; }</td></tr>
+      <tr><td>нічого не повертає</td><td class="mono">void pryvit(String imya) { print(imya); }</td></tr>
+      <tr><td>необовʼязковий параметр</td><td class="mono">String f(String a, [String b = 'Hi'])</td></tr>
+      <tr><td>іменовані параметри</td><td class="mono">void lichy({required int kinec, int krok = 1})</td></tr>
+      <tr><td>стрілкова</td><td class="mono">int kvadrat(int x) =&gt; x * x;</td></tr>
+      <tr><td>без імені, як значення</td><td class="mono">(x) =&gt; x * 2</td></tr>
+      <tr><td>кличе сама себе</td><td class="mono">n * faktorial(n - 1)</td></tr>
+    </table>
+    <div class="tip mt"><span class="tip-ico">💡</span>
+      <div>Ідея та сама, що <span class="en">def</span> у Python і
+      <span class="en">function</span> у JS. Нове в Dart — <strong>тип перед іменем</strong>
+      і <strong>іменовані параметри</strong>, яких у JS немає.</div></div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🔬</div><div>
+      <span class="label lb">Анатомія</span>
+      <h2>З чого складається функція</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">int</span> <span class="sf">suma</span>(<span class="sk">int</span> a, <span class="sk">int</span> b) {
+  <span class="sk">return</span> a + b;
+}
+
+<span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">int</span> r = <span class="sf">suma</span>(<span class="sn">2</span>, <span class="sn">3</span>);
+  <span class="sf">print</span>(r);
+}</div>
+        <div class="dp-out"><span class="lbl">Console</span>5</div>
+      </div>
+      <div>
+        <div class="hbox hm"><b>1.</b> <span class="en">int</span> — <b>тип результату</b>: що функція віддасть</div>
+        <div class="hbox hm"><b>2.</b> <span class="en">suma</span> — <b>імʼя</b>, з малої літери</div>
+        <div class="hbox hm"><b>3.</b> <span class="en">(int a, int b)</span> — <b>параметри</b>, кожен зі своїм типом</div>
+        <div class="hbox hm"><b>4.</b> <span class="en">return</span> — <b>віддати</b> результат і вийти</div>
+        <div class="hbox"><span class="en">a</span>, <span class="en">b</span> — <b>параметри</b> (в оголошенні).
+          <span class="en">2</span>, <span class="en">3</span> — <b>аргументи</b> (у виклику)</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">↩️</div><div>
+      <span class="label lb">Результат</span>
+      <h2>void і return</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">void</span> <span class="sf">pryvit</span>(<span class="sk">String</span> imya) {
+  <span class="sf">print</span>(<span class="ss">'Pryvit, $imya!'</span>);
+}
+
+<span class="sk">String</span> <span class="sf">riven</span>(<span class="sk">int</span> bal) {
+  <span class="sk">if</span> (bal &gt;= <span class="sn">10</span>) <span class="sk">return</span> <span class="ss">'vysokyi'</span>;
+  <span class="sk">if</span> (bal &gt;= <span class="sn">7</span>) <span class="sk">return</span> <span class="ss">'dostatnii'</span>;
+  <span class="sk">return</span> <span class="ss">'pochatkovyi'</span>;
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">void</span> — «порожнеча»: функція <b>щось робить</b>,
+          але <b>нічого не віддає</b>. <span class="en">return</span> не потрібен</div>
+        <div class="hbox"><span class="en">return</span> <b>одразу виходить</b> з функції.
+          Спрацював перший — решта рядків не виконується</div>
+        <div class="hbox ho">⚠️ Функція з типом <span class="en">String</span> мусить повернути
+          рядок <b>на кожному шляху</b>. Забув останній <span class="en">return</span> —
+          програма <b>не запуститься</b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе? Скільки рядків?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">int</span> <span class="sf">dvichi</span>(<span class="sk">int</span> x) {
+  <span class="sf">print</span>(<span class="ss">'rakhuyu...'</span>);
+  <span class="sk">return</span> x * <span class="sn">2</span>;
+}
+
+<span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">int</span> a = <span class="sf">dvichi</span>(<span class="sn">3</span>);
+  <span class="sf">print</span>(a);
+  <span class="sf">print</span>(<span class="sf">dvichi</span>(a));
+}</div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Відповідь</h3>
+        <p class="rv-hint">Спочатку скажи сам, потім клацни.</p>
+        <div class="rv-body">
+          <p class="mono" style="white-space:pre-wrap;font-family:var(--f-mono)">rakhuyu...
+6
+rakhuyu...
+12</p>
+          <p class="mt"><b>Чотири</b> рядки. <span class="en">print</span> усередині
+            функції спрацьовує <b>при кожному виклику</b>, а <span class="en">return</span>
+            нічого не друкує — він тільки віддає число</p>
+          <p class="mt" style="color:var(--accent)">Друкувати — одне. Повертати — інше.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ПРИКЛАД → САМОСТІЙНО 1 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">За компʼютером · 6 хв</span>
+      <h2>Приклад — і самостійно</h2>
+    </div></div>
+    <div class="demo">
+      <span class="lbl">Приклад · пишемо разом</span>
+      <div class="dp-code"><span class="sk">double</span> <span class="sf">ziZnyzhkoyu</span>(<span class="sk">double</span> cina, <span class="sk">int</span> vidsotok) {
+  <span class="sk">return</span> cina - cina * vidsotok / <span class="sn">100</span>;
+}
+<span class="cm">// у main:</span> <span class="sf">print</span>(<span class="sf">ziZnyzhkoyu</span>(<span class="sn">400</span>, <span class="sn">25</span>));   <span class="cm">// 300.0</span></div>
+    </div>
+    <div class="solo">
+      <span class="lbl">Тепер самостійно · у своєму DartPad</span>
+      <ul>
+        <li>Виклич <span class="en">ziZnyzhkoyu</span> для трьох цін і виведи з підписом
+          <span class="en">'Cina: ...'</span></li>
+        <li>Напиши <span class="en">int kvadrat(int x)</span> і виведи квадрати 1–10 циклом
+          <span class="en">for</span></li>
+        <li>Напиши <span class="en">int maks(int a, int b)</span> — з двома
+          <span class="en">return</span> через <span class="en">if</span></li>
+        <li><b>Прибери останній <span class="en">return</span></b> у <span class="en">maks</span>,
+          прочитай помилку. Поверни</li>
+        <li>⭐⭐ <span class="en">void ramka(int n)</span> — друкує рядок із
+          <span class="en">n</span> зірочок: <span class="en">'*' * n</span></li>
+        <li>⭐⭐⭐ Перенеси «вгадай число» з уроку 3 у функцію
+          <span class="en">int vgadai(int secret)</span>, що повертає кількість спроб</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">1️⃣</div><div>
+      <span class="label lb">Параметри · вид 1 з 3</span>
+      <h2>Позиційні — порядок вирішує</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">String</span> <span class="sf">opys</span>(<span class="sk">String</span> nazva, <span class="sk">int</span> cina) {
+  <span class="sk">return</span> <span class="ss">'$nazva: $cina grn'</span>;
+}
+
+<span class="sf">opys</span>(<span class="ss">'Minecraft'</span>, <span class="sn">600</span>);  <span class="cm">// так</span>
+<span class="sf">opys</span>(<span class="sn">600</span>, <span class="ss">'Minecraft'</span>);  <span class="cm">// помилка: не ті типи</span>
+<span class="sf">opys</span>(<span class="ss">'Minecraft'</span>);       <span class="cm">// помилка: бракує аргументу</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Аргументи стають у параметри <b>по черзі</b>:
+          перший у перший, другий у другий</div>
+        <div class="hbox">Усі позиційні — <b>обовʼязкові</b>. Скільки параметрів,
+          стільки й аргументів</div>
+        <div class="hbox ho">Переплутав порядок — Dart <b>помітить за типами</b>
+          ще до запуску. Якщо типи однакові (<span class="en">int, int</span>) —
+          не помітить, і це найпідступніше</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">2️⃣</div><div>
+      <span class="label lp">Параметри · вид 2 з 3</span>
+      <h2>Необовʼязкові позиційні — у квадратних дужках</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">String</span> <span class="sf">pryvit</span>(<span class="sk">String</span> imya, [<span class="sk">String</span> slovo = <span class="ss">'Pryvit'</span>]) {
+  <span class="sk">return</span> <span class="ss">'$slovo, $imya!'</span>;
+}
+
+<span class="sf">print</span>(<span class="sf">pryvit</span>(<span class="ss">'Olia'</span>));
+<span class="sf">print</span>(<span class="sf">pryvit</span>(<span class="ss">'Olia'</span>, <span class="ss">'Hello'</span>));</div>
+        <div class="dp-out"><span class="lbl">Console</span>Pryvit, Olia!
+Hello, Olia!</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">[ ]</span> — «можна не передавати».
+          Тоді береться <b>значення за замовчуванням</b> після <span class="en">=</span></div>
+        <div class="hbox">Стоять <b>у кінці</b>, після обовʼязкових</div>
+        <div class="hbox ho">Порядок і тут вирішує: другий аргумент завжди
+          потрапляє в <span class="en">slovo</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">3️⃣</div><div>
+      <span class="label lm">Параметри · вид 3 з 3</span>
+      <h2>Іменовані — у фігурних дужках</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">void</span> <span class="sf">lichy</span>({<span class="sk">required int</span> kinec, <span class="sk">int</span> krok = <span class="sn">1</span>}) {
+  <span class="sk">for</span> (<span class="sk">int</span> i = <span class="sn">1</span>; i &lt;= kinec; i += krok) {
+    <span class="sf">print</span>(i);
+  }
+}
+
+<span class="sf">lichy</span>(kinec: <span class="sn">5</span>);            <span class="cm">// 1 2 3 4 5</span>
+<span class="sf">lichy</span>(kinec: <span class="sn">9</span>, krok: <span class="sn">4</span>);   <span class="cm">// 1 5 9</span>
+<span class="sf">lichy</span>(krok: <span class="sn">4</span>, kinec: <span class="sn">9</span>);   <span class="cm">// те саме</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">У виклику пишемо <b>імʼя: значення</b>.
+          Порядок <b>не важливий</b></div>
+        <div class="hbox"><span class="en">required</span> — без цього аргументу
+          програма <b>не запуститься</b></div>
+        <div class="hbox hp"><span class="en">int krok = 1</span> — можна не передавати,
+          тоді буде 1</div>
+        <div class="hbox ho">Так пишуть увесь Flutter:
+          <span class="en">Text('Hi', style: …)</span>. Звикаємо зараз</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">⚖️</div><div>
+      <span class="label lr">Порівняння</span>
+      <h2>Три види параметрів в одній таблиці</h2>
+    </div></div>
+    <table class="tb">
+      <tr><th>Вид</th><th>Оголошення</th><th>Виклик</th><th>Обовʼязковий?</th></tr>
+      <tr><td>позиційний</td><td class="mono">(int a)</td><td class="mono">f(2)</td><td>так · порядок важливий</td></tr>
+      <tr><td>необовʼязковий позиційний</td><td class="mono">(int a, [int b = 1])</td><td class="mono">f(2) · f(2, 5)</td><td>ні · є значення</td></tr>
+      <tr><td>іменований</td><td class="mono">({required int a})</td><td class="mono">f(a: 2)</td><td>так · порядок будь-який</td></tr>
+      <tr><td>іменований зі значенням</td><td class="mono">({int krok = 1})</td><td class="mono">f() · f(krok: 3)</td><td>ні · є значення</td></tr>
+    </table>
+    <div class="hbox hm mt">Поєднувати можна: <b>спершу позиційні</b>, потім <b>або</b>
+      <span class="en">[ ]</span>, <b>або</b> <span class="en">{ }</span> — обидва в одній функції не можна.</div>
+    <div class="hbox ho">Коли параметрів <b>три й більше</b> — беремо іменовані.
+      <span class="en">kvytok(misto: 'Lviv', den: 5)</span> читається без підказок.</div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ПЕРЕДБАЧ 2 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що поверне — або чому не запуститься?</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+          <div class="dp-code"><span class="sk">int</span> <span class="sf">plyus</span>({<span class="sk">required int</span> a, <span class="sk">int</span> b = <span class="sn">10</span>}) {
+  <span class="sk">return</span> a + b;
+}</div>
+        </div>
+        <table class="tb mt">
+          <tr><th>Виклик</th><th>Результат</th></tr>
+          <tr><td class="mono">А · plyus(a: 1)</td><td>?</td></tr>
+          <tr><td class="mono">Б · plyus(a: 1, b: 2)</td><td>?</td></tr>
+          <tr><td class="mono">В · plyus(b: 2, a: 1)</td><td>?</td></tr>
+          <tr><td class="mono">Г · plyus(1)</td><td>?</td></tr>
+          <tr><td class="mono">Д · plyus(b: 5)</td><td>?</td></tr>
+        </table>
+      </div>
+      <div class="card cm reveal">
+        <h3>Відповідь</h3>
+        <p class="rv-hint">Розбери всі пʼять, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>А</b> — 11: <span class="en">b</span> узяв значення 10</p>
+          <p><b>Б</b> — 3</p>
+          <p><b>В</b> — 3: порядок іменованих не важливий</p>
+          <p><b>Г</b> — <b>помилка</b>: іменований без імені.
+            Треба <span class="en">plyus(a: 1)</span></p>
+          <p><b>Д</b> — <b>помилка</b>: <span class="en">a</span> позначено
+            <span class="en">required</span>, а його не передали</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ПРИКЛАД → САМОСТІЙНО 2 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">За компʼютером · 6 хв</span>
+      <h2>Приклад — і самостійно</h2>
+    </div></div>
+    <div class="demo">
+      <span class="lbl">Приклад · пишемо разом</span>
+      <div class="dp-code"><span class="sk">double</span> <span class="sf">rakhunok</span>({<span class="sk">required double</span> suma, <span class="sk">int</span> chayovi = <span class="sn">10</span>}) {
+  <span class="sk">return</span> suma + suma * chayovi / <span class="sn">100</span>;
+}
+<span class="cm">// у main:</span> <span class="sf">print</span>(<span class="sf">rakhunok</span>(suma: <span class="sn">500</span>));   <span class="cm">// 550.0</span></div>
+    </div>
+    <div class="solo">
+      <span class="lbl">Тепер самостійно · у своєму DartPad</span>
+      <ul>
+        <li>Виклич із <span class="en">chayovi: 15</span> і з <span class="en">chayovi: 0</span></li>
+        <li>Поміняй аргументи місцями у виклику. Результат змінився?</li>
+        <li><b>Виклич без імені</b>: <span class="en">rakhunok(500)</span>. Прочитай помилку, поверни</li>
+        <li>Додай функцію з <span class="en">[ ]</span>:
+          <span class="en">String pryvit(String imya, [String slovo = 'Pryvit'])</span></li>
+        <li>⭐⭐ Перероби <span class="en">tablycya</span> зі слайда 2:
+          <span class="en">({required int n, int ryadkiv = 10})</span></li>
+        <li>⭐⭐⭐ <span class="en">String kartka({required String nazva, required int cina, int znyzhka = 0})</span>
+          — дописує <span class="en">'(-$znyzhka%)'</span>, тільки якщо знижка є</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">➡️</div><div>
+      <span class="label lb">Коротко</span>
+      <h2>Стрілкова функція <span class="en">=&gt;</span></h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="cm">// довгий запис</span>
+<span class="sk">int</span> <span class="sf">kvadrat</span>(<span class="sk">int</span> x) {
+  <span class="sk">return</span> x * x;
+}
+
+<span class="cm">// те саме одним рядком</span>
+<span class="sk">int</span> <span class="sf">kvadrat</span>(<span class="sk">int</span> x) =&gt; x * x;
+
+<span class="sk">bool</span> <span class="sf">parne</span>(<span class="sk">int</span> n) =&gt; n % <span class="sn">2</span> == <span class="sn">0</span>;
+<span class="sk">String</span> <span class="sf">hi</span>(<span class="sk">String</span> s) =&gt; <span class="ss">'Hi, $s!'</span>;</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">=&gt; вираз</span> — це скорочення
+          для <span class="en">{ return вираз; }</span></div>
+        <div class="hbox">Беремо, коли вся функція — <b>один вираз</b></div>
+        <div class="hbox ho">⚠️ Після <span class="en">=&gt;</span> не можна
+          кілька команд чи <span class="en">if</span> з блоком. Треба більше —
+          повертаємось до фігурних дужок</div>
+        <div class="hbox hb">Тернарний з уроку 3 тут до речі:
+          <span class="en">=&gt; bal &gt;= 7 ? 'tak' : 'ni';</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🎁</div><div>
+      <span class="label lp">⭐⭐⭐ Функція як значення</span>
+      <h2>Функцію можна передати в іншу функцію</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">int</span> <span class="sf">zastosuy</span>(<span class="sk">int</span> x, <span class="sk">int Function</span>(<span class="sk">int</span>) f) {
+  <span class="sk">return</span> <span class="sf">f</span>(x);
+}
+
+<span class="sk">int</span> <span class="sf">kvadrat</span>(<span class="sk">int</span> x) =&gt; x * x;
+
+<span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sf">print</span>(<span class="sf">zastosuy</span>(<span class="sn">5</span>, kvadrat));
+  <span class="sf">print</span>(<span class="sf">zastosuy</span>(<span class="sn">5</span>, (n) =&gt; n * <span class="sn">2</span>));
+}</div>
+        <div class="dp-out"><span class="lbl">Console</span>25
+10</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">int Function(int)</span> — тип
+          «функція, що бере <span class="en">int</span> і повертає <span class="en">int</span>»</div>
+        <div class="hbox">Передаємо <b>імʼя без дужок</b>: <span class="en">kvadrat</span>,
+          а не <span class="en">kvadrat()</span></div>
+        <div class="hbox hp"><span class="en">(n) =&gt; n * 2</span> — функція
+          <b>без імені</b>, написана просто на місці</div>
+        <div class="hbox ho">На уроці 6 так фільтруватимемо списки:
+          <span class="en">where((g) =&gt; …)</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🪞</div><div>
+      <span class="label lp">⭐⭐⭐ Рекурсія</span>
+      <h2>Функція, що кличе сама себе</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">int</span> <span class="sf">faktorial</span>(<span class="sk">int</span> n) {
+  <span class="sk">if</span> (n &lt;= <span class="sn">1</span>) <span class="sk">return</span> <span class="sn">1</span>;          <span class="cm">// база</span>
+  <span class="sk">return</span> n * <span class="sf">faktorial</span>(n - <span class="sn">1</span>);   <span class="cm">// крок</span>
+}
+
+<span class="sf">print</span>(<span class="sf">faktorial</span>(<span class="sn">5</span>));   <span class="cm">// 120</span></div>
+        <div class="dp-out"><span class="lbl">Як рахує</span>5 * 4 * 3 * 2 * 1 = 120</div>
+      </div>
+      <div>
+        <div class="hbox hm"><b>База</b> — коли зупинитись. Без неї функція
+          кличе себе <b>вічно</b>, і програма падає</div>
+        <div class="hbox"><b>Крок</b> — та сама задача, але <b>менша</b>:
+          <span class="en">n - 1</span></div>
+        <div class="hbox ho">Будь-яку рекурсію можна переписати циклом
+          <span class="en">for</span>. Цикл зазвичай швидший, рекурсія — коротша</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🧱</div><div>
+      <span class="label lr">Правила разом</span>
+      <h2>Функції кличуть функції · змінні живуть усередині</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">так</span></div>
+        <div class="dp-code"><span class="sk">int</span> <span class="sf">podvoity</span>(<span class="sk">int</span> x) =&gt; x * <span class="sn">2</span>;
+
+<span class="sk">int</span> <span class="sf">rakhuy</span>(<span class="sk">int</span> x) {
+  <span class="sk">int</span> d = <span class="sf">podvoity</span>(x);
+  <span class="sk">return</span> d + <span class="sn">1</span>;
+}
+<span class="cm">// rakhuy(4) → 9</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">помилка</span></div>
+        <div class="dp-code"><span class="sk">void</span> <span class="sf">lichylnyk</span>() {
+  <span class="sk">int</span> rahunok = <span class="sn">0</span>;
+  rahunok++;
+}
+
+<span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sf">lichylnyk</span>();
+  <span class="sf">print</span>(rahunok);  <span class="cm">// Undefined name</span>
+}</div>
+      </div>
+    </div>
+    <div class="hbox hm mt">Змінна, створена <b>всередині</b> функції, існує тільки там.
+      Потрібне значення назовні — <b>повертай його через</b> <span class="en">return</span>.
+      Порядок оголошення не важливий: <span class="en">main</span> може стояти й першою.</div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lp">Тримати відкритим</span>
+      <h2>Уся родина на одному екрані</h2>
+    </div></div>
+    <div class="refg">
+      <div class="rf"><span class="rt">з результатом</span>
+        <span class="rc">int f(int a) { return a * 2; }</span></div>
+      <div class="rf"><span class="rt">без результату</span>
+        <span class="rc">void f(String s) { print(s); }</span></div>
+      <div class="rf"><span class="rt">ранній вихід</span>
+        <span class="rc">if (x &lt; 0) return 0;</span></div>
+      <div class="rf"><span class="rt">стрілкова</span>
+        <span class="rc">int f(int x) =&gt; x * x;</span></div>
+      <div class="rf"><span class="rt">позиційні</span>
+        <span class="rc">f(int a, int b) → f(2, 3)</span></div>
+      <div class="rf"><span class="rt">необовʼязковий</span>
+        <span class="rc">f(int a, [int b = 1]) → f(2)</span></div>
+      <div class="rf"><span class="rt">іменовані</span>
+        <span class="rc">f({required int a}) → f(a: 2)</span></div>
+      <div class="rf"><span class="rt">зі значенням</span>
+        <span class="rc">f({int krok = 1}) → f()</span></div>
+      <div class="rf"><span class="rt">тип-функція</span>
+        <span class="rc">int Function(int) f</span></div>
+      <div class="rf"><span class="rt">без імені</span>
+        <span class="rc">(n) =&gt; n * 2</span></div>
+      <div class="rf"><span class="rt">рекурсія</span>
+        <span class="rc">if (n &lt;= 1) return 1; ... f(n - 1)</span></div>
+      <div class="rf"><span class="rt">рядок n разів</span>
+        <span class="rc">'*' * n</span></div>
+    </div>
+    <p class="center note mt">Цей слайд лишається на дошці, поки ви працюєте.
+      Те саме є в роздатці — у довідці вгорі.</p>
+  </div></section>
+
+  <!-- ══════════ 19 ── ПРАКТИЧНА ⭐ ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lo">Практична № 1 · 20 хв · рівень ⭐</span>
+      <h2>Набір функцій</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="demo">
+          <span class="lbl">Приклад · так виглядає одна функція і її виклик</span>
+          <div class="dp-code"><span class="sk">int</span> <span class="sf">perymetr</span>(<span class="sk">int</span> a, <span class="sk">int</span> b) {
+  <span class="sk">return</span> <span class="sn">2</span> * (a + b);
+}
+<span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sf">print</span>(<span class="ss">'Perymetr: ${perymetr(3, 4)}'</span>);
+}</div>
+        </div>
+        <div class="card reveal">
+          <h3>Перевір себе</h3>
+          <p class="rv-hint">Клацни, коли всі три запрацюють.</p>
+          <div class="rv-body">
+            <p class="mono" style="font-family:var(--f-mono);white-space:pre-wrap">plosha(3, 4)    → 12.0
+pryvit('Olia')  → Pryvit, Olia!
+parne(7)        → false
+parne(10)       → true</p>
+          </div>
+        </div>
+      </div>
+      <div class="solo">
+        <span class="lbl">⭐ Тепер самостійно · обовʼязково для всіх</span>
+        <ul>
+          <li><span class="en">double plosha(double a, double b)</span> — площа прямокутника</li>
+          <li><span class="en">String pryvit(String imya)</span> — повертає
+            <span class="en">'Pryvit, Olia!'</span></li>
+          <li><span class="en">bool parne(int n)</span> — <span class="en">true</span>,
+            якщо число парне</li>
+          <li>У <span class="en">main</span> виклич <b>кожну щонайменше двічі</b> з різними
+            аргументами й виведи результат із підписом</li>
+          <li>Над кожною функцією — коментар <span class="en">//</span>: що вона робить</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ── ПРАКТИЧНА ⭐⭐ ⭐⭐⭐ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практична № 1</span>
+        <span class="t">Далі — за рівнями</span><span class="tmr">той самий файл</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Перероби <span class="en">pryvit</span> на іменовані параметри зі значенням:
+            <span class="en">({required String imya, String slovo = 'Pryvit'})</span> ·
+            додай <span class="en">String opys(...)</span>, що повертає рядок з інтерполяцією
+            <span class="en">'$nazva: $cina grn'</span> · перепиши <span class="en">parne</span>
+            і <span class="en">plosha</span> <b>стрілкою</b> <span class="en">=&gt;</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t"><b>Перевір дані:</b> від'ємна сторона в <span class="en">plosha</span>
+            → <span class="en">print('Pomylka')</span> і ранній <span class="en">return 0</span> ·
+            плюс <b>одне на вибір</b>: <span class="en">zastosuy(int x, int Function(int) f)</span>
+            <b>або</b> рекурсія — <span class="en">faktorial(n)</span> чи <span class="en">fib(n)</span></span></div>
+      </div>
+      <div class="three mt">
+        <div class="card reveal"><h3>Підказка ⭐⭐</h3>
+          <p class="rv-hint">Клацни, якщо застряг.</p>
+          <div class="rv-body"><p>Виклик іменованих:
+            <span class="en">pryvit(imya: 'Olia')</span> і
+            <span class="en">pryvit(imya: 'Olia', slovo: 'Hi')</span></p></div></div>
+        <div class="card reveal"><h3>Підказка ⭐⭐⭐</h3>
+          <p class="rv-hint">Клацни, якщо застряг.</p>
+          <div class="rv-body"><p>Фібоначчі: <span class="en">fib(0) = 0</span>,
+            <span class="en">fib(1) = 1</span>, далі
+            <span class="en">fib(n - 1) + fib(n - 2)</span>.
+            <span class="en">fib(10)</span> → 55</p></div></div>
+        <div class="card reveal"><h3>Перевір себе</h3>
+          <p class="rv-hint">Клацни наприкінці.</p>
+          <div class="rv-body"><p><span class="en">plosha(-2, 5)</span> → Pomylka і 0.0 ·
+            <span class="en">faktorial(6)</span> → 720 ·
+            <span class="en">zastosuy(4, (n) =&gt; n + 1)</span> → 5</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ── БАНК ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🗃️</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>1.</b> <span class="en">int maks3(int a, int b, int c)</span> —
+        через <span class="en">maks</span> із двох, двічі</div>
+      <div class="bk"><b>2.</b> <span class="en">double cVf(double c) =&gt; c * 9 / 5 + 32;</span>
+        і зворотна <span class="en">fVc</span></div>
+      <div class="bk"><b>3.</b> <span class="en">bool mizh(int x, {required int vid, required int po})</span></div>
+      <div class="bk"><b>4.</b> <span class="en">void yalynka(int vysota)</span> — «ялинка»
+        із зірочок через <span class="en">'*' * n</span></div>
+      <div class="bk"><b>5.</b> <span class="en">int sumaDo(int n)</span> — сума 1…n циклом.
+        Потім — рекурсією</div>
+      <div class="bk"><b>6.</b> <span class="en">int kubyk()</span> з <span class="en">Random</span>:
+        кинь 60 разів, порахуй шістки</div>
+      <div class="bk"><b>7.</b> ⭐⭐ <span class="en">String ocinka(int bal)</span> —
+        <span class="en">switch</span> з уроку 3 всередині функції</div>
+      <div class="bk"><b>8.</b> ⭐⭐⭐ <span class="en">int povtory(int n, int Function(int) f)</span> —
+        застосувати <span class="en">f</span> до числа <span class="en">n</span> разів</div>
+    </div>
+    <div class="hbox hm mt">Усі вісім робляться <strong>тільки тим, що є в довіднику</strong>
+      на слайді 18 і в уроці 3.</div>
+  </div></section>
+
+  <!-- ══════════ 22 ── ПАСТКИ ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh"><div class="si">🐞</div><div>
+      <span class="label lo">Пастки</span>
+      <h2>Пʼять помилок, які ловлять усіх</h2>
+    </div></div>
+    <table class="tb">
+      <tr><th>DartPad пише</th><th>Причина</th></tr>
+      <tr><td class="mono">The body might complete normally…</td>
+          <td>є шлях без <span class="en">return</span> у функції з типом</td></tr>
+      <tr><td class="mono">…type of 'void' so its value can't be used</td>
+          <td><span class="en">print(f())</span>, а <span class="en">f</span> — <span class="en">void</span></td></tr>
+      <tr><td class="mono">Too many positional arguments</td>
+          <td>іменований викликали без імені: <span class="en">f(2)</span></td></tr>
+      <tr><td class="mono">The named parameter 'a' is required</td>
+          <td>забули <span class="en">required</span>-аргумент</td></tr>
+      <tr><td class="mono">Undefined name 'rahunok'</td>
+          <td>змінна живе в <b>іншій</b> функції</td></tr>
+    </table>
+    <div class="hbox hm mt">Помилку в DartPad <strong>читаємо до кінця</strong>: у ній
+      є назва параметра й номер рядка.</div>
+  </div></section>
+
+  <!-- ══════════ 23 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Словник</span>
+      <h2>Терміни — лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="en">function</span> — функція</div>
+        <div class="hbox hm"><span class="en">parameter</span> — параметр, змінна в оголошенні</div>
+        <div class="hbox hm"><span class="en">argument</span> — аргумент, значення у виклику</div>
+        <div class="hbox"><span class="en">return</span> — повернути результат</div>
+        <div class="hbox"><span class="en">void</span> — «порожнеча», нічого не повертає</div>
+      </div>
+      <div>
+        <div class="hbox hb"><span class="en">named parameter</span> — іменований параметр</div>
+        <div class="hbox hb"><span class="en">default value</span> — значення за замовчуванням</div>
+        <div class="hbox ho"><span class="en">required</span> — обовʼязковий</div>
+        <div class="hbox ho"><span class="en">arrow function</span> — стрілкова функція</div>
+        <div class="hbox"><span class="en">recursion</span> — рекурсія</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ── ПІДСУМОК ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Що є після четвертого уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cm"><h3>Зроблено</h3>
+        <p>функції з <span class="en">return</span> і <span class="en">void</span> ·
+          три види параметрів · значення за замовчуванням · стрілкова
+          <span class="en">=&gt;</span> · функція як значення · рекурсія ·
+          <b>Практична № 1</b></p></div>
+      <div class="card"><h3>Наступного разу</h3>
+        <p><b>List і Map</b> — набори значень. Квадратні дужки з
+          <span class="en">for-in</span> уроку 3 нарешті отримають імʼя,
+          а функції почнуть приймати цілі списки.</p></div>
+    </div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 5 · 1 жовтня · List і Map</p>
+  </div></section>
+
+  <!-- ══════════ 25 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lo">Домашнє</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox hm">Пишемо <strong>на звороті роздатки</strong>, від руки.
+      Приносимо <strong>1 жовтня</strong>, на урок 5. <strong>Без DartPad</strong> —
+      усе читаємо очима.</div>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Що виведе?</b> Два рядки.
+          <span class="en">int dodai(int a, [int b = 5]) =&gt; a + b;</span> &#8594;
+          <span class="en">print(dodai(2)); print(dodai(2, 3));</span></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Що поверне — або «помилка»?</b>
+          <span class="en">String bilet({required String misto, int den = 1}) =&gt; '$misto, den $den';</span>
+          &#8594; <span class="en">bilet(misto: 'Lviv')</span> ·
+          <span class="en">bilet(den: 3, misto: 'Kyiv')</span> ·
+          <span class="en">bilet('Lviv')</span></span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Знайди помилку</b> й допиши один рядок:
+          <span class="en">int maks(int a, int b) { if (a &gt; b) return a; }</span></span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><b>Перепиши стрілкою</b> <span class="en">=&gt;</span>:
+          <span class="en">int kub(int x) { return x * x * x; }</span> ·
+          <span class="en">bool velyke(int n) { return n &gt; 100; }</span></span></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

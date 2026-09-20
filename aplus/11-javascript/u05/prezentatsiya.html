@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Практична № 1 «Калькулятор у prompt» · JavaScript · 11 клас · Урок 5</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (основа мови)
+  Клас          11 (16–17 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум)
+  Урок          5 з 35 · 21.09.2026 · ПОНЕДІЛОК
+  Тема          Практична № 1 «Калькулятор у prompt» (тема 1.6 плану)
+  Тривалість    45 хв — показ ~8 · самостійна робота ~35 · здача 2
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЦЕ ПРАКТИЧНА З ОЦІНКОЮ. Критерії за 12-бальною шкалою — ТІЛЬКИ
+     в конспекті (2026-27-teacher/aplus/11-javascript/u05/konspekt.md).
+     На слайдах — умова рівнів ⭐ / ⭐⭐ / ⭐⭐⭐ як інструкція до роботи,
+     без жодної прив'язки до балів.
+  ⚠️ КОЛОДА КОРОТША ЗА ЗВИЧАЙНУ (16 слайдів, а не 30–35) — це не
+     теорія, а робочий урок. Колода = умова + довідник + підказки.
+     Нового в коді мало, і все воно з плану: isNaN (⭐⭐), toFixed,
+     %, ** (⭐⭐⭐). Далі клас працює сам.
+  ────────────────────────────────────────────────────────────────
+  СПИРАЄТЬСЯ НА уроки 1–4: prompt · Number() · NaN · null ·
+     шаблонні рядки · if / else if / else · === · && || ·
+     Number.isNaN · перевірка вводу · console.log · breakpoint ·
+     порядок лагодження з п'яти кроків.
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  ДОВІДНИК      сл. 4 — тримати на дошці ВЕСЬ час самостійної роботи
+  ПРИКЛАД → САМОСТІЙНО  сл. 5 — каркас з однією дією, решту дописують
+  ЗНАЙДИ        сл. 10 — відповідь відкривається на тому ж слайді
+  ПЕРЕВІР СЕБЕ  сл. 11 — таблиця тестів; її ж перевіряє вчитель
+  ДОМАШНЄ       сл. 16 — на звороті роздатки, на 23.09; відповіді в конспекті
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • цикли («порахувати ще раз?») — урок 8
+     • функції — урок 10; весь калькулятор — один лінійний скрипт
+     • confirm — з'явиться на уроці 7 (міні-проєкт)
+     • Оцінювання й критерії — у конспекті, не на екрані
+  ────────────────────────────────────────────────────────────────
+  План          office/plany/05-javascript-8.md, тема 1.6, розділ 7
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/11-javascript/u05/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:96px}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Практична № 1</h1>
+      <p class="title-sub">Калькулятор у prompt<br>
+        JavaScript · 11 клас · Урок 5 з 35 · 21 вересня</p>
+      <div class="chips">
+        <span class="chip">prompt</span>
+        <span class="chip">Number()</span>
+        <span class="chip">if / else if</span>
+        <span class="chip">isNaN</span>
+        <span class="chip">toFixed</span>
+        <span class="chip">% &nbsp;**</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🧮</div><div>
+      <span class="label lm">Що має вийти</span>
+      <h2>Три питання — одна відповідь</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><span class="ic">prompt</span> — <b>перше число</b>. Людина вводить <span class="ic">7</span></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><span class="ic">prompt</span> — <b>знак дії</b>: <span class="ic">+</span>
+          <span class="ic">-</span> <span class="ic">*</span> <span class="ic">/</span>. Людина вводить <span class="ic">*</span></span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><span class="ic">prompt</span> — <b>друге число</b>. Людина вводить <span class="ic">6</span></span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><span class="ic">alert</span> — <b>відповідь</b>: <span class="ic">7 * 6 = 42</span></span></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm">Працюєш <b>сам</b>. Можна дивитись свої файли з уроків 1–4
+        і довідник на дошці</div>
+      <div class="hbox hp">Нова папка <span class="ic">js-11/pr1</span>:
+        <span class="ic">index.html</span> + <span class="ic">script.js</span>,
+        каркас — як на уроці 1</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🪜</div><div>
+      <span class="label lo">Три рівні</span>
+      <h2>Кожен наступний — це попередній плюс ще щось</h2>
+    </div></div>
+    <div class="lvl">
+      <div class="lv"><span class="lv-s">⭐</span>
+        <span class="lv-t"><b>Рахує.</b> Два числа й знак через <span class="ic">prompt</span>,
+          чотири дії через <span class="ic">if</span> / <span class="ic">else if</span>,
+          відповідь в <span class="ic">alert</span> шаблонним рядком</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐</span>
+        <span class="lv-t"><b>Не ламається.</b> + Скасувати, порожнє поле, не число,
+          невідомий знак, <b>ділення на нуль</b> — на кожне своє повідомлення</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+        <span class="lv-t"><b>Уміє більше.</b> + дії <span class="ic">%</span> і
+          <span class="ic">**</span>, округлення <span class="ic">toFixed(2)</span>
+          і другий режим — <b>конвертер валют</b> на вибір людини</span></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🧱</span>
+      <div>Спершу доведи до кінця <strong>⭐</strong> і перевір тестами зі слайда 11.
+      Тільки тоді — до ⭐⭐. Недороблений ⭐⭐⭐ гірший за готовий ⭐⭐.</div></div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці весь урок</span>
+      <h2>Усе, що знадобиться, — уже було</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>ввід — урок 2</h4><pre>const raw = prompt('Число:');
+const a = Number(raw);
+// Скасувати → null
+// Number('') → 0</pre></div>
+      <div class="rf-c"><h4>розвилка — урок 3</h4><pre>if (op === '+') { … }
+else if (op === '-') { … }
+else { … }</pre></div>
+      <div class="rf-c"><h4>перевірки — урок 3</h4><pre>raw === null
+raw === ''
+Number.isNaN(a)
+b === 0 &amp;&amp; op === '/'</pre></div>
+      <div class="rf-c"><h4>відповідь — урок 2</h4><pre>alert(`${a} ${op} ${b}
+= ${result}`);</pre></div>
+      <div class="rf-c"><h4>змінна потім — урок 3</h4><pre>let result;
+// значення дає гілка</pre></div>
+      <div class="rf-c"><h4>налагодження — урок 4</h4><pre>console.log('op =', op,
+  typeof op);
+// і breakpoint у Sources</pre></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🧭</span>
+      <div>Щось не так — порядок лагодження з уроку 4: <strong>консоль → номер рядка →
+      <span class="ic">console.log</span> → breakpoint</strong>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ── ПРИКЛАД → САМОСТІЙНО ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Старт</span>
+        <span class="t">Рівень ⭐ — калькулятор, що рахує</span><span class="tmr">15 хвилин</span></div>
+      <div class="two" style="gap:14px">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — одна дія з чотирьох</span>
+        <div class="mono">const a = Number(prompt('Перше число:'));
+const op = prompt('Знак: + - * /');
+const b = Number(prompt('Друге число:'));
+let result;
+
+if (op === '+') {
+  result = a + b;
+}
+alert(`${a} ${op} ${b} = ${result}`);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Набрати приклад, перевірити <span class="ic">2 + 3</span></li>
+          <li>Дописати <span class="ic">-</span>, <span class="ic">*</span>, <span class="ic">/</span> через <span class="ic">else if</span></li>
+          <li>Прогнати перші три тести зі слайда 11</li>
+          <li>Ввести знак <span class="ic">^</span>. Що показав <span class="ic">alert</span> і чому?</li>
+          <li>Прибрати <span class="ic">Number()</span> з першого рядка — що стало з <span class="ic">+</span>? Повернути</li>
+          <li>Готово — зробити коміт і переходити до ⭐⭐</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🛡️</div><div>
+      <span class="label lo">Рівень ⭐⭐</span>
+      <h2>Калькулятор, який не ламається</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Що зробила людина</th><th>Що має побачити</th></tr>
+      <tr><td>натиснула <b>Скасувати</b> на будь-якому питанні</td><td>«Скасовано» — і далі нічого не питаємо</td></tr>
+      <tr><td>лишила поле <b>порожнім</b></td><td>«Поле порожнє»</td></tr>
+      <tr><td>ввела <b>не число</b>: <span class="ic">abc</span>, <span class="ic">5,5</span></td><td>«Це не число»</td></tr>
+      <tr><td>ввела <b>невідомий знак</b>: <span class="ic">^</span>, <span class="ic">x</span></td><td>«Невідомий знак: ^»</td></tr>
+      <tr><td>ділить <b>на нуль</b></td><td>«На нуль ділити не можна» — а не <span class="ic">Infinity</span></td></tr>
+    </table>
+    <div class="tip tr mt"><span class="tip-ico">💡</span>
+      <div><span class="ic">5,5</span> з комою — <strong>не число</strong> для JavaScript:
+      <span class="ic">Number('5,5')</span> → <span class="ic">NaN</span>. Дробові — тільки через крапку.</div></div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🧭</div><div>
+      <span class="label lm">Підказка до ⭐⭐</span>
+      <h2>Порядок перевірок — від вужчої</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t">Скасували? <span class="ic">raw === null</span></span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t">Порожньо? <span class="ic">raw === ''</span></span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t">Не число? <span class="ic">Number.isNaN(a)</span></span></div>
+        <div class="step"><span class="step-n">4</span>
+          <span class="step-t">Ділимо на нуль? <span class="ic">op === '/' &amp;&amp; b === 0</span></span></div>
+        <div class="step"><span class="step-n">5</span>
+          <span class="step-t">Інакше — <b>рахуємо</b> за знаком</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Спершу <b>зберегти сирий ввід</b> у
+          <span class="ic">raw</span>, потім <span class="ic">Number(raw)</span>. Інакше
+          Скасувати й порожнє поле не розрізнити: обидва стануть
+          <span class="ic">0</span></div>
+        <div class="hbox hp">Два числа й знак — <b>три</b> <span class="ic">prompt</span>.
+          Кожне число можна перевіряти одразу після його <span class="ic">prompt</span></div>
+        <div class="hbox ho"><span class="ic">isNaN(x)</span> — коротший брат
+          <span class="ic">Number.isNaN</span>: сам робить <span class="ic">Number()</span>.
+          Для вже перетвореного числа — однакові</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">➗</div><div>
+      <span class="label lo">Рівень ⭐⭐⭐ · нове в коді</span>
+      <h2><span class="ic">%</span> · <span class="ic">**</span> · <span class="ic">toFixed()</span></h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Запис</th><th>Що робить</th><th>Приклад</th><th>Результат</th></tr>
+      <tr><td class="o">%</td><td>остача від ділення</td><td class="o" style="width:auto">7 % 3</td><td class="r">1</td></tr>
+      <tr><td class="o">**</td><td>степінь</td><td class="o" style="width:auto">2 ** 10</td><td class="r">1024</td></tr>
+      <tr><td class="o">toFixed(2)</td><td>округлити до 2 знаків</td><td class="o" style="width:auto">(10 / 3).toFixed(2)</td><td class="r">'3.33'</td></tr>
+      <tr><td class="o">toFixed(0)</td><td>до цілого</td><td class="o" style="width:auto">(2.5).toFixed(0)</td><td class="r">'3'</td></tr>
+    </table>
+    <div class="two mt">
+      <div class="hbox hr"><span class="ic">toFixed</span> повертає <b>рядок</b>!
+        Лапки в результаті — не одруківка. Округлюй <b>тільки для показу</b>,
+        в останньому рядку</div>
+      <div class="hbox hm">Навіщо: <span class="ic">0.1 + 0.2</span> дає
+        <span class="ic">0.30000000000000004</span>. Це не баг JavaScript —
+        так комп'ютер зберігає дроби</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">💱</div><div>
+      <span class="label lo">Рівень ⭐⭐⭐</span>
+      <h2>Другий режим — конвертер валют</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · початок</span></div>
+        <div class="dp-code"><span class="sk">const</span> USD = <span class="sn">41.5</span>;  <span class="cm">// курс умовний</span>
+<span class="sk">const</span> EUR = <span class="sn">48.5</span>;
+
+<span class="sk">const</span> mode = <span class="sf">prompt</span>(<span class="ss">'1 — калькулятор, 2 — валюта'</span>);
+
+<span class="sk">if</span> (mode <span class="st">===</span> <span class="ss">'1'</span>) {
+  <span class="cm">// твій калькулятор</span>
+} <span class="sk">else if</span> (mode <span class="st">===</span> <span class="ss">'2'</span>) {
+  <span class="cm">// гривні → usd або eur</span>
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">'Немає такого режиму'</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm">Режим 2 питає <b>суму в гривнях</b> і <b>валюту</b>:
+          <span class="ic">usd</span> або <span class="ic">eur</span></div>
+        <div class="hbox hp">Відповідь: <span class="ic">1000 грн = 24.10 usd</span> —
+          через <span class="ic">toFixed(2)</span></div>
+        <div class="hbox ho">Весь калькулятор ⭐⭐ <b>переїжджає всередину</b>
+          першої гілки. Відступи — щоб бачити, де яка дужка</div>
+        <div class="hbox hr"><span class="ic">mode === '1'</span> — з лапками:
+          <span class="ic">prompt</span> дав рядок</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ЗНАЙДИ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Знайди</span>
+      <h2>Ввели 2, *, 3 — а побачили «2 + 3 = 23»</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+        <div class="dp-code"><span class="sk">let</span> a = <span class="sf">prompt</span>(<span class="ss">'Перше:'</span>);
+<span class="sk">let</span> op = <span class="sf">prompt</span>(<span class="ss">'Знак:'</span>);
+<span class="sk">let</span> b = <span class="sf">Number</span>(<span class="sf">prompt</span>(<span class="ss">'Друге:'</span>));
+<span class="sk">let</span> result;
+
+<span class="sk">if</span> (op <span class="st">=</span> <span class="ss">'+'</span>) {
+  result = a + b;
+} <span class="sk">else if</span> (op <span class="st">===</span> <span class="ss">'*'</span>) {
+  result = a * b;
+}
+<span class="sf">alert</span>(<span class="ss">`${a} ${op} ${b} = ${result}`</span>);</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Три біди, жодного червоного рядка</h3>
+        <p class="rv-hint">Знайди всі три, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">op = '+'</span> — одне <span class="ic">=</span>.
+             Знак <b>перезаписано</b> на плюс, умова завжди істинна. Тому в
+             <span class="ic">alert</span> плюс, хоч ввели зірочку</p>
+          <p><b>2.</b> <span class="ic">a</span> без <span class="ic">Number()</span> —
+             <span class="ic">'2' + 3</span> склеїлось у <span class="ic">'23'</span></p>
+          <p><b>3.</b> Немає <span class="ic">else</span> — на невідомий знак
+             буде <span class="ic">= undefined</span></p>
+          <p class="mt" style="color:var(--brand)">Як знайти самому:
+             <span class="ic">console.log('op =', op)</span> <b>до</b> і <b>після</b>
+             <span class="ic">if</span>. Змінилось — ось воно.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПЕРЕВІР СЕБЕ ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">✅</div><div>
+      <span class="label lm">Перевір себе — прожени всі свого рівня</span>
+      <h2>Таблиця тестів</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Рівень</th><th>Ввести</th><th>Має показати</th></tr>
+      <tr><td class="o">⭐</td><td class="o" style="width:auto">2 · + · 3</td><td><span class="ic">2 + 3 = 5</span></td></tr>
+      <tr><td class="o">⭐</td><td class="o" style="width:auto">7 · / · 2</td><td><span class="ic">7 / 2 = 3.5</span></td></tr>
+      <tr><td class="o">⭐</td><td class="o" style="width:auto">-4 · * · 5</td><td><span class="ic">-4 * 5 = -20</span></td></tr>
+      <tr><td class="o">⭐⭐</td><td class="o" style="width:auto">5 · / · 0</td><td>на нуль ділити не можна</td></tr>
+      <tr><td class="o">⭐⭐</td><td class="o" style="width:auto">abc</td><td>це не число</td></tr>
+      <tr><td class="o">⭐⭐</td><td class="o" style="width:auto">2 · ^ · 3</td><td>невідомий знак</td></tr>
+      <tr><td class="o">⭐⭐</td><td class="o" style="width:auto">Скасувати</td><td>скасовано, далі нічого не питає</td></tr>
+      <tr><td class="o">⭐⭐⭐</td><td class="o" style="width:auto">7 · % · 3 &nbsp;/&nbsp; 2 · ** · 10</td><td><span class="ic">1</span> &nbsp;/&nbsp; <span class="ic">1024</span></td></tr>
+      <tr><td class="o">⭐⭐⭐</td><td class="o" style="width:auto">10 · / · 3</td><td><span class="ic">3.33</span></td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🩺</div><div>
+      <span class="label lr">Діагностика</span>
+      <h2>Шість бід калькулятора</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox hr"><b><span class="ic">2 + 2 = 22</span></b> — немає
+          <span class="ic">Number()</span></div>
+        <div class="hbox hr"><b>Завжди рахує плюсом</b> — одне
+          <span class="ic">=</span> в умові</div>
+        <div class="hbox hp"><b><span class="ic">= undefined</span></b> — знак не
+          збігся з жодною гілкою, <span class="ic">else</span> немає</div>
+      </div>
+      <div>
+        <div class="hbox ho"><b><span class="ic">Infinity</span></b> — ділення на нуль
+          не перевірено</div>
+        <div class="hbox hm"><b>Не число, хоча ввів число</b> — дріб через кому
+          або пробіл у полі</div>
+        <div class="hbox hr"><b>Сторінка мовчить зовсім</b> — <span class="ic">SyntaxError</span>,
+          відкрий консоль</div>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🔦</span>
+      <div>Знак не збігається, хоча ввів правильний? <span class="ic">console.log('[' + op + ']')</span>
+      — квадратні дужки покажуть <strong>зайвий пробіл</strong>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 13 ── БАНК ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Зробив ⭐⭐⭐?</span>
+      <h2>Банк — доповни свій калькулятор</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Відсоток.</b> Ще один режим: «скільки це
+        p % від числа n»</div>
+      <div class="bk"><b>Парність.</b> Після відповіді одним <span class="ic">? :</span>
+        дописати «парне» чи «непарне»</div>
+      <div class="bk"><b>Середнє трьох.</b> Ще один режим: три числа → середнє з двома знаками</div>
+      <div class="bk"><b>Зворотна валюта.</b> Конвертер уміє і <span class="ic">usd</span> →
+        гривні</div>
+      <div class="bk"><b>Знак словами.</b> Людина може ввести <span class="ic">плюс</span>
+        замість <span class="ic">+</span> — теж працює</div>
+      <div class="bk"><b>Ціле ділення.</b> Знак <span class="ic">//</span> — частка без
+        остачі: <span class="ic">7 // 2</span> → <span class="ic">3</span>. Згадай
+        <span class="ic">%</span></div>
+    </div>
+    <div class="hbox hm mt">Усі шість — тільки тим, що вже було. Циклів і функцій не треба</div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">📤</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Перед тим, як сказати «готово»</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t">Усі тести <b>свого рівня</b> зі слайда 11 пройдено</span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t">У консолі <b>жодного червоного рядка</b></span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t">Службові <span class="ic">console.log</span> <b>прибрано</b></span></div>
+        <div class="step"><span class="step-n">4</span>
+          <span class="step-t">Коміт зроблено</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">Термінал</span></div>
+        <div class="dp-code">git status
+git add .
+git commit -m <span class="ss">"Практична 1: калькулятор
+у prompt, рівень ⭐⭐"</span></div>
+      </div>
+    </div>
+    <div class="hbox hp mt">Рівень пишемо <b>у повідомленні коміта</b> — так видно,
+      до чого ти дійшов</div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Далі</span>
+      <h2>Після практичної № 1</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cm"><h3>Сьогодні зібрали разом</h3><ul>
+        <li>ввід і <span class="ic">Number()</span> — урок 2</li>
+        <li>умови й перевірку вводу — урок 3</li>
+        <li>пошук помилок — урок 4</li>
+        <li><span class="ic">%</span>, <span class="ic">**</span>, <span class="ic">toFixed</span></li>
+      </ul></div>
+      <div class="card cp"><h3>Наступні два уроки</h3><ul>
+        <li><b>текстовий квест</b> у <span class="ic">prompt</span></li>
+        <li>розвилки, кінцівки, змінна стану</li>
+        <li>спершу — план на папері</li>
+        <li>потім — код і показ</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання — на наступному слайді.</strong>
+      Не встиг рівень — можна доробити вдома й зробити ще один коміт.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 6 · середа 23 вересня · Вільний урок проєкту: текстовий квест</p>
+  </div></section>
+
+  <!-- ══════════ 16 ── ДОМАШНЄ ЗАВДАННЯ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>На звороті роздатки, на 23 вересня</h2>
+    </div></div>
+    <div class="hbox">Ручкою або олівцем, <b>без комп'ютера</b>. Усе — тільки сьогоднішнє.</div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t">Записати результат кожного виразу:
+        <span class="ic">9 % 4</span> · <span class="ic">2 ** 5</span> ·
+        <span class="ic">(7 / 3).toFixed(2)</span> · <span class="ic">'5' + 2</span> ·
+        <span class="ic">Number('3,5')</span></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">Що має показати калькулятор рівня ⭐⭐ на кожному вводі:
+        <span class="ic">5 · / · 0</span> · <span class="ic">abc</span> · <span class="ic">2 · ^ · 3</span></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">Калькулятор завжди рахує плюсом, хоч би який знак ввели. Який один символ винен і як має бути?<br>
+        <span class="ic">if (op = '+') { result = a + b; }</span></span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t">Дописати умову, щоб спрацювало тільки на «не число»:<br>
+        <span class="ic">const a = Number(raw); if ( ________ ) { alert('Це не число'); }</span></span></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

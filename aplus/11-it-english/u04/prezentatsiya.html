@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7.7 Linear search · IT-англійська · 11 клас · Урок 4</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge IGCSE & O Level Computer Science
+                0478 / 0984 / 2210)
+  Клас          11
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · пʼятниця
+  Урок          4 з 36 · 25.09.2026
+  Тема          7.7 Common algorithms: linear search (ACTIVITY 7.5 — колода карт)
+  Акцент        plum (#602857)
+  Тривалість    45 хв = роздати 2 + ТЕСТ 15 (за уроки 1–3) + новий матеріал 28
+                Тому колода коротка: 16 слайдів на ~28 хв (останній —
+                домашнє завдання). Слайд 2 — лише
+                заставка «Test · 15 min», без змісту тесту (тест і ключ —
+                у 2026-27-teacher/aplus/11-it-english/u04/).
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — ТІЛЬКИ КНИЖКА. Нічого не вигадано.
+     Coursebook, розділ 7.7, с. 159–161 (+ Questions 16–17 зі с. 167,
+     Summary с. 192, Exam-style question 6 зі с. 194).
+     Скани: office/igcse-0478/rozdil-07-algorithm-design/s159…s161.jpeg, s167.jpeg
+     Дослівно взято:
+       • KEY WORDS search algorithm · sorting algorithm · linear search (с. 159) → s3
+       • 7.7 вступ + COMPUTER SCIENCE IN CONTEXT (с. 159)                    → s4
+       • означення linear search з тексту (с. 159) + рядок Summary (с. 192)  → s5
+       • ACTIVITY 7.5 — чотири кроки, дослівно (с. 159)                      → s6
+       • Example 1, Example 2, Example 3 (с. 160)                            → s7, s8, s10
+       • алгоритм FOR … NEXT ArrayIndex (с. 160), дослівно з коментарями     → s11
+       • «inefficient» + версія з Found ← FALSE і TIP про коментарі (с. 161) → s12
+         (у версії з WHILE лишено один коментар із пʼяти — інакше не влазить)
+       • Questions 16–17 (с. 167), Exam-style Q6 (с. 194)                    → s13
+     Слова word bank (s9) і словника (s14) — з тексту с. 159–161.
+     Переклади — мої.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • Bubble sort (с. 161–166, ACTIVITY 7.6) — урок 5, 02.10
+     • PROGRAMMING TASK 7.2 (с. 166) — поєднує пошук і сортування, тому
+       після уроку 5
+     • Оцінювання тесту — у конспекті й ключі, не на слайдах
+  ────────────────────────────────────────────────────────────────
+  СЛОВНИК       тричі: s3 (KEY WORDS, 3) · s9 (word bank, 10) · s14 (15 слів)
+  ПЕРЕДБАЧ      s7, s8, s10, s13 — відповідь на ТОМУ Ж слайді (reveal)
+  РІЗАТИ ПЕРШИМ s4 (вступ) і s12 (efficient) — у роздатці є
+  ────────────────────────────────────────────────────────────────
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/11-it-english/u04/konspekt.md
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: IGCSE-англійська 10 і 11 класів іде на plum. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f4eef3; --border:#e3d7e0;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--plum);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(96,40,87,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(96,40,87,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(96,40,87,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:44%}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2rem}
+h3{font-weight:700;font-size:1.28rem}
+p{font-size:18.5px;line-height:1.72;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:18.5px;line-height:1.75;color:var(--ink);margin-bottom:6px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:2.9rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.28rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:18px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--surf2)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.two.wide-l{grid-template-columns:1.35fr 1fr}
+.two.wide-r{grid-template-columns:1fr 1.35fr}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:19px 21px;
+      box-shadow:0 1px 3px rgba(96,40,87,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.65;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cb h3{color:var(--blue)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:13px 17px;margin:10px 0;font-size:17.5px;color:var(--ink);line-height:1.65;
+      box-shadow:0 1px 3px rgba(96,40,87,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--surf2);
+     border:1.5px solid var(--border);border-radius:11px;padding:13px 16px;
+     margin:11px 0;font-size:17.5px;line-height:1.65;color:var(--ink)}
+.tip.tb2{background:var(--sky);border-color:#c6d2ee}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.35rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── псевдокод: світлий блок, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(96,40,87,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:9px 14px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-title{flex:1;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9fc;color:var(--ink);padding:15px 18px;font-size:16px;line-height:1.7;white-space:pre-wrap}
+/* підсвітка — усі пари перевірені на ≥5:1 щодо #fdf9fc */
+.sk{color:#591429;font-weight:700}  /* ключове слово псевдокоду */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* ідентифікатор */
+.cm{color:#6f6570;font-style:italic}/* коментар */
+.bad{color:#a01818;font-weight:700}
+.codes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.codes .dp-code{font-size:14.5px;line-height:1.6}
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:16.5px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--accent);background:var(--surf2);font-size:15.5px}
+.tb td.mono{font-family:var(--f-mono);font-weight:700}
+.tb td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+.tb tr:last-child td{border-bottom:0}
+
+.qs{display:flex;flex-direction:column;gap:10px}
+.qs .q{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--accent);
+       border-radius:0 10px 10px 0;padding:11px 16px;font-size:17px;line-height:1.55}
+.qs .q b{color:var(--accent)}
+
+.steps{display:flex;flex-direction:column;gap:11px}
+.step{display:flex;align-items:flex-start;gap:14px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:13px 17px}
+.step-n{width:32px;height:32px;border-radius:9px;background:var(--surf2);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:15px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:17.5px;line-height:1.55;color:var(--ink)}
+
+/* ─── практичний блок ─── */
+.prac{background:var(--surf2);border:2px solid #d9bfd2;border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--plum);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--plum)}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:16.5px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:5px 13px;flex-shrink:0}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--dim);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16.5px;flex-shrink:0;letter-spacing:1px;min-width:74px;
+      font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.lv-t{font-size:17px;line-height:1.6;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:11px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:15px}
+.note{font-size:16px;color:var(--faint);line-height:1.55}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.uk{color:var(--dim)}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:16.5px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16px;line-height:1.42}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.mw{background:var(--surface);border:2px solid #d9bfd2;border-radius:14px;padding:14px 18px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.35rem;color:var(--accent);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:16px;color:var(--dim);line-height:1.45}
+
+/* «я вмію» */
+.can{display:flex;flex-direction:column;gap:9px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:11px 16px;
+       font-size:17px;line-height:1.45}
+.can-b{width:22px;height:22px;border:2px solid var(--accent);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.72rem} h3{font-size:1.14rem}
+  .sh{margin-bottom:11px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:16.5px;line-height:1.55}
+  .card{padding:14px 16px} .card p,.card li{font-size:15.5px;line-height:1.5}
+  .hbox{font-size:16px;padding:10px 14px;margin:7px 0}
+  .tip{font-size:16px;padding:10px 13px;margin:8px 0}
+  .tip-ico{font-size:1.15rem}
+  .label{margin-bottom:7px}
+  .mt{margin-top:10px}
+  .two{gap:15px} .three{gap:11px}
+  .step{padding:10px 13px} .step-t{font-size:16px}
+  .step-n{width:28px;height:28px;font-size:14px}
+  .can-i{font-size:15.5px;padding:9px 13px}
+  .prac{padding:13px 16px} .lv{padding:9px 12px} .lv-t{font-size:15.5px}
+  .prac-lead{font-size:15.5px;margin-bottom:9px}
+  .ptime{font-size:14.5px;padding:4px 10px}
+  .mw{padding:11px 14px} .mw .w{font-size:1.15rem} .mw .t{font-size:14.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:15.5px} .vp .uk{font-size:15px}
+  .vg{gap:9px}
+  .tb th,.tb td{padding:6px 10px;font-size:15px}
+  .qs .q{font-size:15.5px;padding:9px 13px}
+  .dp-code{font-size:14px;line-height:1.55} .dp-bar{padding:6px 11px}
+  .codes .dp-code{font-size:13px;line-height:1.5}
+  .title-h1{font-size:2.3rem} .title-sub{font-size:1.12rem;margin-bottom:20px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 4: ряд «карт» для пошуку ═══ */
+.deck{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0}
+.cd{min-width:58px;height:74px;padding:0 8px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface);border:2px solid var(--plum);border-radius:9px;
+  font-family:var(--f-mono);font-weight:700;font-size:1.45rem;color:var(--ink);
+  box-shadow:0 2px 5px rgba(96,40,87,.08)}
+.deck.sm .cd{min-width:40px;height:50px;font-size:1.1rem;border-radius:7px}
+@media (max-height:800px){.cd{height:60px;min-width:50px;font-size:1.25rem}
+  .deck.sm .cd{height:42px;min-width:36px;font-size:1rem}}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">7.7 Linear search</h1>
+      <p class="title-sub">Лінійний пошук · ACTIVITY 7.5 — колода карт<br>
+        IT-англійська · 11 клас · Урок 4 з 36 · 25 вересня · с. 159–161</p>
+      <div class="chips">
+        <span class="chip">search algorithm</span>
+        <span class="chip">each item in turn</span>
+        <span class="chip">ArrayIndex &#8592; ArrayIndex + 1</span>
+        <span class="chip">Found &#8592; FALSE</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── ТЕСТ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="title-wrap">
+      <span class="label lr">Test · 15 min</span>
+      <h1 class="title-h1" style="font-size:3.4rem">Test</h1>
+      <p class="title-sub">Уроки 1–3 · 7.1–7.6 і 7.7 totalling … average<br>
+        Олівець або ручка · 15 хвилин</p>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── KEY WORDS ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key words · с. 159</span>
+      <h2>Три означення з книжки</h2>
+    </div></div>
+    <div class="mini" style="grid-template-columns:1fr">
+      <div class="mw"><div class="w">search algorithm</div>
+        <div class="t">a series of steps that searches for a specific value in a set of data</div></div>
+      <div class="mw"><div class="w">sorting algorithm</div>
+        <div class="t">a series of steps that will rearrange a set of data into an order,
+          e.g. ascending numerical data</div></div>
+      <div class="mw"><div class="w">linear search</div>
+        <div class="t">a search algorithm that visits each item of data in turn to check
+          whether it is the data being looked for</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🔎</div><div>
+      <span class="label lp">7.7 Common algorithms · с. 159</span>
+      <h2>Search і sort — навіщо</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>search algorithm</h3>
+        <p>«checks a set of data to identify whether a specific value exists in the data,
+          or not.» Приклад — <span class="en">linear search</span></p></div>
+      <div class="card cm"><h3>sorting algorithm</h3>
+        <p>«takes a set of data and rearranges it to be in a specific order, e.g. in
+          ascending alphabetical order.» Приклад — <span class="en">bubble sort</span></p></div>
+    </div>
+    <div class="hbox hm mt"><b>Computer science in context:</b> a user may enter a username
+      and the program needs to search for this in the set of valid usernames.</div>
+    <div class="hbox">Алгоритмів багато. Програміст обирає той, що <b>efficient</b> — і за
+      часом роботи, і за обсягом памʼяті («the time it takes to run, and the amount of memory
+      it needs»).</div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">➡️</div><div>
+      <span class="label lp">Linear search · с. 159</span>
+      <h2>Один за одним, з першого</h2>
+    </div></div>
+    <p>«A <span class="en">linear search</span> will check each item one at a time, starting with
+      the <strong>first item</strong> and continuing until it either <strong>finds the item</strong>,
+      or it <strong>checks the last value</strong>.»</p>
+    <div class="two mt">
+      <div class="card"><h3>Стоп № 1</h3><p>знайшли — <span class="en">found</span></p></div>
+      <div class="card cm"><h3>Стоп № 2</h3><p>перевірили останній — <span class="en">not found</span></p></div>
+    </div>
+    <div class="hbox hm mt">Summary книжки, с. 192: «A linear search checks each item of data
+      <b>in turn</b>.»</div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ACTIVITY 7.5 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Activity 7.5</span>
+        <span class="t">Ace of Spades</span><span class="ptime">5 хвилин</span></div>
+      <p class="prac-lead">«Get a set of playing cards. Select 10 random cards and place them face
+        down on the table in a row. Perform a linear search to see if the Ace of Spades is in
+        the set.» — с. 159</p>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t">Turn over the first card.</span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t">Is it the Ace of Spades?</span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t">If it is, then stop searching, you’ve found it.</span></div>
+        <div class="step"><span class="step-n">4</span><span class="step-t">If it isn’t, turn over the next card. Repeat from 2.</span></div>
+      </div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🃏</span>
+      <div>Рахуйте, скільки карт перевернули. Найкраще — <strong>1</strong>, найгірше —
+      <strong>10</strong>, і тоді ще невідомо, чи туз узагалі є.</div></div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🔢</div><div>
+      <span class="label lb">Example 1 · с. 160</span>
+      <h2>Search this set of data for the number 4</h2>
+    </div></div>
+    <div class="deck">
+      <span class="cd">5</span><span class="cd">3</span><span class="cd">9</span><span class="cd">4</span>
+      <span class="cd">2</span><span class="cd">1</span><span class="cd">8</span>
+    </div>
+    <div class="card cm reveal mt">
+      <h3>Скільки порівнянь? Що скаже алгоритм після кожного?</h3>
+      <p class="rv-hint">Спершу англійською вголос — потім клацни.</p>
+      <div class="rv-body">
+        <p>Compare the first number (5) with the search value (4). They are not the same.<br>
+          Compare the second number (3) with 4. They are not the same.<br>
+          Compare the third number (9) with 4. They are not the same.<br>
+          Compare the fourth number (4) with 4. They are the same. <b>It has been found.</b></p>
+        <p class="mt" style="color:var(--accent)"><b>4</b> порівняння. Решту (2, 1, 8) не перевіряємо.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">❔</div><div>
+      <span class="label lb">Example 2 · с. 160</span>
+      <h2>Search this set of data for the character "#"</h2>
+    </div></div>
+    <div class="deck">
+      <span class="cd">"a"</span><span class="cd">"v"</span><span class="cd">"!"</span>
+    </div>
+    <div class="card cm reveal mt">
+      <h3>Чим закінчиться пошук?</h3>
+      <p class="rv-hint">Подумай, потім клацни.</p>
+      <div class="rv-body">
+        <p>Compare the "a" with "#". They are not the same.<br>
+          Compare the "v" with "#". They are not the same.<br>
+          Compare the "!" with "#". They are not the same.<br>
+          <b>There are no more values, so "#" is not found.</b></p>
+        <p class="mt" style="color:var(--accent)">Стоп № 2: перевірили <b>останнє</b> —
+          і тільки тепер можна сказати <span class="en">not found</span>.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── WORD BANK ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lo">Word bank · с. 159–161</span>
+      <h2>Робочі слова пошуку</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">search value</span><span class="uk">значення, яке шукаємо</span></div>
+      <div class="vp"><span class="en">item</span><span class="uk">один елемент даних</span></div>
+      <div class="vp"><span class="en">in turn</span><span class="uk">по черзі</span></div>
+      <div class="vp"><span class="en">compare</span><span class="uk">порівнювати</span></div>
+      <div class="vp"><span class="en">found / not found</span><span class="uk">знайдено / не знайдено</span></div>
+      <div class="vp"><span class="en">array</span><span class="uk">масив — набір даних під одним іменем</span></div>
+      <div class="vp"><span class="en">element</span><span class="uk">елемент масиву</span></div>
+      <div class="vp"><span class="en">index</span><span class="uk">номер елемента, з 0</span></div>
+      <div class="vp"><span class="en">efficient</span><span class="uk">ощадливий: менше кроків</span></div>
+      <div class="vp"><span class="en">inefficient</span><span class="uk">неощадливий: зайва робота</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🗄️</div><div>
+      <span class="label lb">Example 3 · с. 160</span>
+      <h2>Searching an array</h2>
+    </div></div>
+    <p>«The array <span class="en">dataArray</span> stores a set of data under one identifier.
+      Each element in the array has an <strong>index</strong>.»</p>
+    <table class="tb mt" style="max-width:560px">
+      <tr><th>Index</th><td class="c">0</td><td class="c">1</td><td class="c">2</td><td class="c">3</td></tr>
+      <tr><th>Data</th><td class="c">1</td><td class="c">5</td><td class="c">6</td><td class="c">8</td></tr>
+    </table>
+    <div class="card cm reveal mt">
+      <h3>Search the array for the number 6</h3>
+      <p class="rv-hint">Запитання для кожного індексу — потім клацни.</p>
+      <div class="rv-body">
+        <p><span class="ic">Is DataArray[0] = 6?</span> No, DataArray[0] = 1<br>
+          <span class="ic">Is DataArray[1] = 6?</span> No, DataArray[1] = 5<br>
+          <span class="ic">Is DataArray[2] = 6?</span> Yes, DataArray[2] = 6</p>
+        <p class="mt" style="color:var(--accent)"><b>6 was found in index 2.</b> Index — з нуля:
+          третій елемент має індекс 2.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">⌨️</div><div>
+      <span class="label lb">Algorithm · с. 160</span>
+      <h2>Linear search у псевдокоді</h2>
+    </div></div>
+    <div class="dp">
+      <div class="dp-bar"><span class="dp-title">с. 160 · «This can now be written as an algorithm»</span></div>
+      <div class="dp-code"><span class="sk">FOR</span> <span class="sf">ArrayIndex</span> = <span class="sn">0</span> <span class="sk">to</span> <span class="sk">LENGTH</span>(<span class="sf">Array</span>) -<span class="sn">1</span> <span class="cm">//loop through each element</span>
+    <span class="cm">//check if the current index is the data searched for</span>
+    <span class="sk">IF</span> <span class="sf">DataArray</span>[<span class="sf">ArrayIndex</span>] = <span class="sf">SearchValue</span> <span class="sk">THEN</span>
+        <span class="cm">//if it is, output the index where it is found</span>
+        <span class="sk">OUTPUT</span> <span class="ss">"Found at "</span> &amp; <span class="sf">ArrayIndex</span>
+    <span class="sk">ELSE</span>
+        <span class="cm">//if it not found, increment arrayIndex to check the next value</span>
+        <span class="sf">ArrayIndex</span> &#8592; <span class="sf">ArrayIndex</span> + <span class="sn">1</span>
+    <span class="sk">ENDIF</span>
+<span class="sk">NEXT</span> <span class="sf">ArrayIndex</span></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🔍</span>
+      <div>В одному алгоритмі книжки — і <span class="ic">=</span>, і <span class="ic">&#8592;</span>.
+      Обидва валідні (с. 155). Логіка: <strong>порівняти → вивести або перейти до наступного</strong>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">⏱️</div><div>
+      <span class="label lr">Efficient · с. 161</span>
+      <h2>Знайшли — зупинись</h2>
+    </div></div>
+    <div class="two wide-r">
+      <div>
+        <div class="hbox hm">«This algorithm is <b>inefficient</b> because if it finds the search
+          value then it <b>still continues searching</b>.»</div>
+        <div class="hbox">Корисно лише тоді, коли треба знати, чи значення трапляється
+          <b>більше ніж раз</b>.</div>
+        <div class="hbox ho">Коментар у різних мовах: <span class="ic">#</span>
+          <span class="ic">//</span> <span class="ic">/*</span> <span class="ic">'</span> —
+          у псевдокоді годиться будь-який (TIP, с. 161).</div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">с. 161 · more efficient · коментарі скорочено</span></div>
+        <div class="dp-code" style="font-size:14px;line-height:1.5"><span class="sf">Found</span> &#8592; <span class="sk">FALSE</span>
+<span class="sf">ArrayIndex</span> &#8592; <span class="sn">0</span>
+<span class="sk">WHILE</span> <span class="sf">Found</span> = <span class="sk">FALSE</span> <span class="sk">AND</span> <span class="sf">ArrayIndex</span> &lt; <span class="sk">LENGTH</span>(<span class="sf">Array</span>) <span class="sk">DO</span>
+    <span class="sk">IF</span> <span class="sf">DataArray</span>[<span class="sf">ArrayIndex</span>] = <span class="sf">SearchValue</span> <span class="sk">THEN</span>
+        <span class="sk">OUTPUT</span> <span class="ss">"Found at "</span> &amp; <span class="sf">ArrayIndex</span>
+        <span class="cm">//set found to be true to stop the while loop running again</span>
+        <span class="sf">Found</span> &#8592; <span class="sk">TRUE</span>
+    <span class="sk">ELSE</span>
+        <span class="sf">ArrayIndex</span> &#8592; <span class="sf">ArrayIndex</span> + <span class="sn">1</span>
+    <span class="sk">ENDIF</span>
+<span class="sk">ENDWHILE</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── QUESTIONS ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lo">Questions 16–17 · с. 167</span>
+      <h2>Perform a linear search</h2>
+    </div></div>
+    <div class="two">
+      <div class="card reveal">
+        <h3>16 · the number 6</h3>
+        <div class="deck sm"><span class="cd">10</span><span class="cd">5</span><span class="cd">6</span>
+          <span class="cd">8</span><span class="cd">1</span><span class="cd">2</span></div>
+        <p class="rv-hint">Кожне порівняння — одним рядком. Потім клацни.</p>
+        <div class="rv-body">
+          <p>10 — not the same · 5 — not the same · <b>6 — the same. Found.</b></p>
+          <p style="color:var(--accent)">3 порівняння · index 2</p>
+        </div>
+      </div>
+      <div class="card cm reveal">
+        <h3>17 · the letter "f"</h3>
+        <div class="deck sm"><span class="cd">b</span><span class="cd">u</span><span class="cd">l</span>
+          <span class="cd">p</span><span class="cd">f</span><span class="cd">a</span><span class="cd">g</span><span class="cd">h</span></div>
+        <p class="rv-hint">Кожне порівняння — одним рядком. Потім клацни.</p>
+        <div class="rv-body">
+          <p>b · u · l · p — not the same · <b>f — the same. Found.</b></p>
+          <p style="color:var(--accent)">5 порівнянь · index 4</p>
+        </div>
+      </div>
+    </div>
+    <div class="hbox hm mt"><b>Exam-style question 6</b> (с. 194) — у роздатці: <b>show</b> the
+      stages of a linear search, when looking for the number 100 in:
+      <span class="ic">10 20 8 6 5 3 1</span> <b>[3]</b></div>
+  </div></section>
+
+  <!-- ══════════ 14 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key vocabulary</span>
+      <h2>Слова уроку</h2>
+    </div></div>
+    <div class="vg" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="vp"><span class="en">search algorithm</span><span class="uk">алгоритм пошуку</span></div>
+      <div class="vp"><span class="en">sorting algorithm</span><span class="uk">алгоритм сортування</span></div>
+      <div class="vp"><span class="en">linear search</span><span class="uk">лінійний пошук</span></div>
+      <div class="vp"><span class="en">search value</span><span class="uk">значення, яке шукаємо</span></div>
+      <div class="vp"><span class="en">item</span><span class="uk">елемент даних</span></div>
+      <div class="vp"><span class="en">in turn</span><span class="uk">по черзі</span></div>
+      <div class="vp"><span class="en">compare</span><span class="uk">порівнювати</span></div>
+      <div class="vp"><span class="en">found / not found</span><span class="uk">знайдено / не знайдено</span></div>
+      <div class="vp"><span class="en">array</span><span class="uk">масив</span></div>
+      <div class="vp"><span class="en">element</span><span class="uk">елемент масиву</span></div>
+      <div class="vp"><span class="en">index</span><span class="uk">індекс, з 0</span></div>
+      <div class="vp"><span class="en">identifier</span><span class="uk">імʼя (змінної, масиву)</span></div>
+      <div class="vp"><span class="en">efficient</span><span class="uk">ощадливий</span></div>
+      <div class="vp"><span class="en">inefficient</span><span class="uk">неощадливий</span></div>
+      <div class="vp"><span class="en">ascending</span><span class="uk">за зростанням</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">☑️</div><div>
+      <span class="label lr">I can…</span>
+      <h2>Чек-лист уроку</h2>
+    </div></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div><div>I can explain the difference between a
+        <span class="en">search algorithm</span> and a <span class="en">sorting algorithm</span>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can explain how a
+        <span class="en">linear search</span> works.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can show the stages of a linear search
+        on a set of data.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can say why stopping when the value is
+        found is more <span class="en">efficient</span>.</div></div>
+    </div>
+    <div class="hbox hm mt">Наступного разу — <strong>bubble sort</strong> (с. 161–166),
+      <span class="en">ACTIVITY 7.6</span> з тією самою колодою карт.</div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 5 · 2 жовтня</p>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🏠</div><div>
+      <span class="label lo">Homework</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox hm">Пишемо <strong>на звороті роздатки</strong> — він порожній.
+      Комп'ютер не потрібен. Принести на урок 5, <strong>2 жовтня</strong>.</div>
+    <div class="two wide-l mt">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><div class="step-t">
+          <span class="en">Example 1</span>, с. 160 — дані праворуч. Заповни таблицю:
+          <span class="ic">ArrayIndex</span> · <span class="ic">DataArray[ArrayIndex]</span> ·
+          <span class="ic">= SearchValue?</span>. Скільки порівнянь і що виведе
+          <span class="ic">OUTPUT "Found at " &amp; ArrayIndex</span>?</div></div>
+        <div class="step"><span class="step-n">2</span><div class="step-t">
+          <span class="en">Example 2</span>, с. 160: <span class="ic">"a" "v" "!"</span>,
+          <span class="ic">SearchValue = "#"</span>. Скільки порівнянь і що скаже алгоритм?
+          Чому це видно аж після останнього елемента?</div></div>
+        <div class="step"><span class="step-n">3</span><div class="step-t">
+          Той самий масив, <span class="ic">SearchValue = "v"</span>: скільки порівнянь
+          і <span class="en">found at</span> який <span class="en">index</span>?</div></div>
+        <div class="step"><span class="step-n">4</span><div class="step-t">
+          <span class="en">Translate:</span> <span class="en">item</span> ·
+          <span class="en">array</span> · <span class="en">element</span> ·
+          <span class="en">identifier</span> · <span class="en">inefficient</span> ·
+          <span class="en">ascending</span>.</div></div>
+      </div>
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-title">до пункту 1 · с. 160</span></div>
+          <div class="dp-code"><span class="sf">Index</span>        <span class="sn">0</span>  <span class="sn">1</span>  <span class="sn">2</span>  <span class="sn">3</span>  <span class="sn">4</span>  <span class="sn">5</span>  <span class="sn">6</span>
+<span class="sf">DataArray</span>    <span class="sn">5</span>  <span class="sn">3</span>  <span class="sn">9</span>  <span class="sn">4</span>  <span class="sn">2</span>  <span class="sn">1</span>  <span class="sn">8</span>
+<span class="sf">SearchValue</span> &#8592; <span class="sn">4</span></div>
+        </div>
+        <p class="note mt">Алгоритм — с. 161, версія з <span class="ic">Found &#8592; FALSE</span>.</p>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

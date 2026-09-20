@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Умови · JavaScript · 8 клас · Урок 3</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (перший рік мови)
+  Клас          8 (13–14 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · понеділок
+  Урок          3 з 35 · 21.09.2026
+  Тема          Умови (тема 1.4 плану)
+  Тривалість    45 хв — показ 15 · практика 30
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Чотири практичні блоки за машинами.
+  ⚠️ ЗВІДКИ ВЗЯТО. Основа — колода 11 класу aplus/11-javascript/u03
+     (той самий план, тема 1.4, проведена 14.09). Узято майже дослівно:
+     міст із Python, анатомія if, таблиця операторів, пастка
+     prompt-рядка, схема порядку гілок (SVG без змін), «мертві гілки»,
+     атракціон, перевірка вводу, «чотири рядки — чотири біди».
+     Колоду 11 класу НЕ чіпали.
+  ⚠️ ЩО ЗМІНЕНО ПРОТИ 11 КЛАСУ
+     • темп 8 класу повільніший — 27 слайдів, а не 31; злито
+       «минулого разу» із «сьогодні», === і == в один слайд,
+       else з else if в один слайд, && з || в один слайд
+     • ДОДАНО повну родину умов (вимога користувача 10.09.2026
+       «всі види конструкцій»): оглядова таблиця сл. 3, вкладений if сл. 16,
+       тернарний оператор сл. 17, switch сл. 18 і СЛАЙД-ДОВІДНИК сл. 23,
+       який лишається на дошці під час практик 3–4 і банку.
+       У колоді 11 класу switch і тернарного оператора свідомо не було
+     • прибрано слайд про git — у 8 класі перший push на уроці 7
+     • банк завдань — 8 карток, а не 6 (з'явились switch і ? :)
+  ⚠️ ЩО ВІДОМО   JavaScript клас не вивчав. Python — третій рік,
+     if / elif / else клас пише. Логіку не пояснюємо з нуля —
+     показуємо ІНШИЙ ЗАПИС. Урок 2 пообіцяв: «розрізняти порожнє
+     поле й Скасувати почнемо на уроці 3» — це сл. 20.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ БІЛЬШЕ САМОСТІЙНОЇ РОБОТИ В КЛАСІ (вимога користувача 10.09.2026).
+     Кожен практичний блок — «ПРИКЛАД → ТЕПЕР САМОСТІЙНО», 6 пунктів,
+     останні ⭐⭐ / ⭐⭐⭐, і в кожному блоці один пункт навмисно ламає
+     код. Плюс сл. 24 — банк із восьми завдань.
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ нижче людські (1 = титул); id у коді на одиницю менший
+  ПРАКТИКА      сл. 8 (6 хв) · 13 (8 хв) · 19 (8 хв) · 22 (8 хв)
+  ПЕРЕДБАЧ/ВИПРАВ  сл. 7 · 12 · 15 · 21 —
+                відповідь відкривається на ТОМУ Ж слайді (клац)
+  ДІАГРАМА      сл. 11 — порядок гілок «Квитка в кіно». Не різати
+  ДОВІДНИК      сл. 23 — уся родина на одному екрані, тримати на дошці
+  ДОМАШНЄ       сл. 27 — на звороті роздатки, на 28.09; відповіді в конспекті
+  РІЗАТИ ПЕРШИМ сл. 15 (атракціон) · 21 (виправ) · 25 (словник —
+                перенести на урок 4). Практику НЕ різати
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • цикли — урок 8 (02.11)
+     • try / catch — не в плані першого року
+     • налагодження в DevTools — це УРОК 4 (28.09)
+     • Оцінювання й правила курсу — у конспекті, не на екрані
+  ⚠️ ЩО ЛЕГКО ЗЛАМАТИ НА УРОЦІ
+     • одне = замість === у if — помилки не буде, умова завжди
+       істинна (сл. 21)
+     • switch порівнює строго: switch (age) з case 18 не спрацює,
+       якщо забули Number() (сл. 18)
+     • Chrome блокує діалоги після кількох prompt поспіль — лікується
+       закриттям вкладки (урок 2)
+  ────────────────────────────────────────────────────────────────
+  План          office/plany/05-javascript-8.md, тема 1.4
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/8-javascript/u03/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:96px}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── імітація діалогового вікна Chrome ─── */
+.dlg{border:2px solid var(--border);border-radius:12px;background:var(--surface);
+  overflow:hidden;box-shadow:0 4px 16px rgba(89,20,41,.10);max-width:460px;margin:0 auto}
+.dlg-bar{background:var(--surf2);border-bottom:1.5px solid var(--border);
+  padding:8px 14px;font-family:var(--f-mono);font-size:13px;color:var(--dim)}
+.dlg-body{padding:16px 18px;font-size:17.5px;color:var(--ink)}
+.dlg-in{margin-top:11px;border:1.5px solid var(--border);border-radius:7px;
+  padding:8px 11px;font-family:var(--f-mono);font-size:16px;color:var(--dim);background:var(--bg)}
+.dlg-btn{display:flex;gap:9px;justify-content:flex-end;padding:0 18px 15px}
+.dlg-btn span{border:1.5px solid var(--border);border-radius:8px;padding:7px 17px;font-size:15.5px}
+.dlg-btn span.ok{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Умови</h1>
+      <p class="title-sub">Сторінка починає вирішувати сама<br>
+        JavaScript · 8 клас · Урок 3 з 35 · 21 вересня</p>
+      <div class="chips">
+        <span class="chip">if</span>
+        <span class="chip">else if</span>
+        <span class="chip">else</span>
+        <span class="chip">===</span>
+        <span class="chip">&amp;&amp; &nbsp;||</span>
+        <span class="chip">? :</span>
+        <span class="chip">switch</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lm">Минулого разу → сьогодні</span>
+      <h2>Код перестає бути прямою лінією</h2>
+    </div></div>
+    <div class="chk">
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">alert · prompt</span></div>
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">Number()</span></div>
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">`${ }` у зворотних лапках</span></div>
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">NaN · null</span></div>
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">'2' + 3 → '23'</span></div>
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">% — остача</span></div>
+    </div>
+    <p class="mt">Досі кожен рядок виконувався <strong>згори вниз, рівно раз</strong>.
+       Сьогодні з'являється розвилка: частина коду виконається, частина — ні.
+       Залежно від того, що ввела людина.</p>
+    <div class="hbox hm">Результат уроку: <strong>«Квиток у кіно»</strong> — чотири ціни
+      за віком — і перша <b>перевірка вводу</b>: порожнє поле, Скасувати, не число.</div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ОГЛЯД РОДИНИ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lm">Огляд</span>
+      <h2>Уся родина умов — сім записів</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Запис</th><th>Коли потрібен</th></tr>
+      <tr><td class="o" style="width:250px">if</td><td>зробити щось, <b>тільки якщо</b> умова істинна</td></tr>
+      <tr><td class="o">if … else</td><td>одне з двох — <b>або</b> так, <b>або</b> інакше</td></tr>
+      <tr><td class="o">else if</td><td>сходинки: три, чотири, п'ять варіантів</td></tr>
+      <tr><td class="o">&amp;&amp; &nbsp;|| &nbsp;!</td><td>кілька умов разом: і · або · не</td></tr>
+      <tr><td class="o">if усередині if</td><td>вкладений: друге питання — тільки після першого</td></tr>
+      <tr><td class="o">умова ? a : b</td><td>вибрати одне з двох <b>значень</b> в один рядок</td></tr>
+      <tr><td class="o">switch</td><td>одна змінна — багато <b>точних</b> значень</td></tr>
+    </table>
+    <div class="hbox hp mt">Кожен наступний слайд просто дає ім'я одному рядку цієї таблиці.
+      Усі сім — на одному екрані в кінці уроку, <b>слайд 23</b>.</div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🐍</div><div>
+      <span class="label lp">Міст із Python</span>
+      <h2>Ідея та сама, запис інший</h2>
+    </div></div>
+    <div class="pair">
+      <div class="right"><span class="lbl">Python</span>
+        <div class="mono">age = 20
+
+if age &lt; 6:
+    print("Безкоштовно")
+elif age &lt; 18:
+    print("Дитячий")
+else:
+    print("Дорослий")</div></div>
+      <div class="right" style="border-color:var(--brand)"><span class="lbl" style="color:var(--brand)">JavaScript</span>
+        <div class="mono">const age = 20;
+
+if (age &lt; 6) {
+  alert("Безкоштовно");
+} else if (age &lt; 18) {
+  alert("Дитячий");
+} else {
+  alert("Дорослий");
+}</div></div>
+    </div>
+    <div class="three mt">
+      <div class="hbox hm">Умова — <b>у круглих дужках</b>, обов'язково</div>
+      <div class="hbox hp">Тіло — <b>у фігурних дужках</b>, а не за відступом</div>
+      <div class="hbox ho"><span class="ic">elif</span> → <span class="ic">else if</span>,
+        двома словами</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🔩</div><div>
+      <span class="label lm">Нове в коді</span>
+      <h2>Анатомія <span class="ic">if</span></h2>
+    </div></div>
+    <div class="dp">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+      <div class="dp-code"><span class="sk">if</span> (temperature <span class="st">&gt;</span> <span class="sn">25</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Спекотно'</span>);
+}</div>
+    </div>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><span class="ic">if</span> — ключове слово, завжди маленькими літерами</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Круглі дужки</b> — вираз, який дає
+          <span class="ic">true</span> або <span class="ic">false</span></span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Фігурні дужки</b> — що виконається, якщо вийшло
+          <span class="ic">true</span></span></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🚫</span>
+      <div>Після круглої дужки крапки з комою <strong>немає</strong>.
+      <span class="ic">if (x &gt; 5);</span> — і тіло виконається завжди. Помилки не буде.</div></div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">⚖️</div><div>
+      <span class="label lm">Порівняння</span>
+      <h2>Шість операторів — відповідь <span class="ic">true</span> або <span class="ic">false</span></h2>
+    </div></div>
+    <div class="two">
+      <table class="ops">
+        <tr><th>Оператор</th><th>Читається</th><th>Приклад</th></tr>
+        <tr><td class="o">===</td><td>дорівнює</td><td class="r">5 === 5</td></tr>
+        <tr><td class="o">!==</td><td>не дорівнює</td><td class="r">5 !== 3</td></tr>
+        <tr><td class="o">&gt;</td><td>більше</td><td class="r">10 &gt; 3</td></tr>
+        <tr><td class="o">&lt;</td><td>менше</td><td class="r">3 &lt; 10</td></tr>
+        <tr><td class="o">&gt;=</td><td>більше або дорівнює</td><td class="r">7 &gt;= 7</td></tr>
+        <tr><td class="o">&lt;=</td><td>менше або дорівнює</td><td class="r">6 &lt;= 7</td></tr>
+      </table>
+      <div>
+        <div class="wrong"><span class="lbl">== підганяє типи — не пишемо</span>
+          <div class="mono">'5' == 5    // true
+0 == ''     // true</div></div>
+        <div class="right mt"><span class="lbl">=== порівнює чесно</span>
+          <div class="mono">'5' === 5   // false
+5 === 5     // true</div></div>
+      </div>
+    </div>
+    <div class="tip tr mt"><span class="tip-ico">📏</span>
+      <div>Правило на весь рік: <strong>тільки <span class="ic">===</span> і
+      <span class="ic">!==</span></strong>. А одне <span class="ic">=</span> — це взагалі
+      не порівняння, а «поклади в змінну».</div></div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Передбач</span>
+      <h2><span class="ic">prompt</span> дає рядок — і що з того?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">консоль</span></div>
+        <div class="dp-code"><span class="cm">// у полі ввели 7</span>
+<span class="sk">const</span> s = <span class="sf">prompt</span>(<span class="ss">'Число:'</span>);
+
+<span class="sf">console</span>.<span class="sf">log</span>(s <span class="st">===</span> <span class="sn">7</span>);
+<span class="sf">console</span>.<span class="sf">log</span>(s <span class="st">&gt;</span> <span class="sn">3</span>);
+<span class="sf">console</span>.<span class="sf">log</span>(<span class="sf">Number</span>(s) <span class="st">===</span> <span class="sn">7</span>);
+<span class="sf">console</span>.<span class="sf">log</span>(<span class="sn">10</span> <span class="st">&gt;=</span> <span class="sn">10</span>);
+<span class="sf">console</span>.<span class="sf">log</span>(<span class="sn">2</span> <span class="st">&lt;</span> <span class="sn">5</span> <span class="st">&lt;</span> <span class="sn">1</span>);</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>П'ять рядків — п'ять відповідей</h3>
+        <p class="rv-hint">Назви всі п'ять, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">false</span> — рядок <span class="ic">'7'</span> і число <span class="ic">7</span></p>
+          <p><b>2.</b> <span class="ic">true</span> — <span class="ic">&gt;</span> сам перетворив рядок</p>
+          <p><b>3.</b> <span class="ic">true</span> — тепер обидва числа</p>
+          <p><b>4.</b> <span class="ic">true</span> — «або дорівнює»</p>
+          <p><b>5.</b> <span class="ic">false</span>! Рахується зліва направо:
+             <span class="ic">2 &lt; 5</span> → <span class="ic">true</span>, далі
+             <span class="ic">true &lt; 1</span> → <span class="ic">1 &lt; 1</span> → <b>false</b></p>
+          <p class="mt" style="color:var(--brand)"><span class="ic">Number()</span> —
+             одразу в рядку з <span class="ic">prompt</span>. А подвійні нерівності
+             пишуться інакше — слайд 14.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Перша розвилка</span><span class="tmr">6 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — розберемо разом</span>
+        <div class="mono">const age = Number(prompt('Скільки тобі років?'));
+
+if (age &gt;= 18) {
+  alert('Ви повнолітній');
+}</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Набрати приклад <b>своїми руками</b>. Перевірити на 20 і на 10</li>
+          <li>Другий <span class="ic">if</span> поруч: вік менший за 6 — «Безкоштовно»</li>
+          <li>Третій: вік <b>рівно</b> 14 — «Як у нашому класі». Тільки <span class="ic">===</span></li>
+          <li>Спитати температуру: більше 25 — «Спекотно», менше 0 — «Мороз»</li>
+          <li>⭐⭐ Прибрати <span class="ic">Number()</span>. Які умови зламались, а які ні? Повернути назад</li>
+          <li>⭐⭐⭐ Поставити <span class="ic">;</span> після дужки одного <span class="ic">if</span> — що сталося і чому</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🪜</div><div>
+      <span class="label lm">Нове в коді</span>
+      <h2><span class="ic">else</span> і <span class="ic">else if</span></h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">дві гілки</span></div>
+        <div class="dp-code"><span class="sk">if</span> (age <span class="st">&gt;=</span> <span class="sn">18</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Повнолітній'</span>);
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">'Неповнолітній'</span>);
+}</div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">сходинки</span></div>
+        <div class="dp-code"><span class="sk">if</span> (age <span class="st">&lt;</span> <span class="sn">6</span>) {
+  price = <span class="sn">0</span>;
+} <span class="sk">else if</span> (age <span class="st">&lt;</span> <span class="sn">18</span>) {
+  price = <span class="sn">80</span>;
+} <span class="sk">else</span> {
+  price = <span class="sn">150</span>;
+}</div>
+      </div>
+    </div>
+    <div class="three mt">
+      <div class="hbox hm"><span class="ic">else</span> не має умови — це
+        <b>«у всіх інших випадках»</b></div>
+      <div class="hbox hp">Перевірки йдуть <b>згори вниз</b>. Перша
+        <span class="ic">true</span> виконується, решта <b>пропускаються</b></div>
+      <div class="hbox ho">Два окремі <span class="ic">if</span> можуть спрацювати
+        <b>обидва</b>. <span class="ic">else if</span> — тільки один</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🎬</div><div>
+      <span class="label lo">Задача уроку</span>
+      <h2>Квиток у кіно</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <table class="ops">
+          <tr><th>Вік</th><th>Категорія</th><th>Ціна</th></tr>
+          <tr><td class="o">до 6</td><td>малюк</td><td class="r">0 ₴</td></tr>
+          <tr><td class="o">6–17</td><td>дитячий</td><td class="r">80 ₴</td></tr>
+          <tr><td class="o">18–59</td><td>дорослий</td><td class="r">150 ₴</td></tr>
+          <tr><td class="o">60+</td><td>пенсійний</td><td class="r">100 ₴</td></tr>
+        </table>
+        <div class="hbox hm mt"><span class="ic">let</span>, а не <span class="ic">const</span>:
+          ціна з'являється <b>пізніше</b> й залежить від гілки</div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code" style="font-size:16px;line-height:1.6"><span class="sk">const</span> age = <span class="sf">Number</span>(<span class="sf">prompt</span>(<span class="ss">'Вік:'</span>));
+<span class="sk">let</span> price;
+
+<span class="sk">if</span> (age <span class="st">&lt;</span> <span class="sn">6</span>) {
+  price = <span class="sn">0</span>;
+} <span class="sk">else if</span> (age <span class="st">&lt;</span> <span class="sn">18</span>) {
+  price = <span class="sn">80</span>;
+} <span class="sk">else if</span> (age <span class="st">&lt;</span> <span class="sn">60</span>) {
+  price = <span class="sn">150</span>;
+} <span class="sk">else</span> {
+  price = <span class="sn">100</span>;
+}
+<span class="sf">alert</span>(<span class="ss">`Квиток: ${price} грн`</span>);</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ДІАГРАМА (перенесено з 11 класу без змін) ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🧭</div><div>
+      <span class="label lm">Як це працює</span>
+      <h2>Чому порядок гілок вирішує все</h2>
+    </div></div>
+    <svg class="diagram" viewBox="0 0 940 300" role="img"
+         aria-label="Схема: вік проходить чотири перевірки згори вниз, перша істинна визначає ціну, решта пропускаються"
+         font-family="'Montserrat','Segoe UI',system-ui,sans-serif">
+      <defs>
+        <marker id="ar" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+          <path d="M0,0 L10,4 L0,8 Z" fill="#55564f"/>
+        </marker>
+      </defs>
+
+      <rect x="12" y="126" width="122" height="52" rx="12" fill="#ffffff" stroke="#591429" stroke-width="2"/>
+      <text x="73" y="148" text-anchor="middle" fill="#591429" font-size="15" font-weight="700">вік</text>
+      <text x="73" y="168" text-anchor="middle" fill="#55564f" font-size="14" font-family="'JetBrains Mono', Menlo, monospace">70</text>
+
+      <line x1="140" y1="152" x2="176" y2="152" stroke="#55564f" stroke-width="2.5" marker-end="url(#ar)"/>
+
+      <rect x="184" y="18" width="166" height="60" rx="11" fill="#fbeaea" stroke="#af3b41" stroke-width="2"/>
+      <text x="267" y="42" text-anchor="middle" fill="#af3b41" font-size="15" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">age &lt; 6</text>
+      <text x="267" y="64" text-anchor="middle" fill="#af3b41" font-size="14">false → далі</text>
+
+      <rect x="184" y="96" width="166" height="60" rx="11" fill="#fbeaea" stroke="#af3b41" stroke-width="2"/>
+      <text x="267" y="120" text-anchor="middle" fill="#af3b41" font-size="15" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">age &lt; 18</text>
+      <text x="267" y="142" text-anchor="middle" fill="#af3b41" font-size="14">false → далі</text>
+
+      <rect x="184" y="174" width="166" height="60" rx="11" fill="#fbeaea" stroke="#af3b41" stroke-width="2"/>
+      <text x="267" y="198" text-anchor="middle" fill="#af3b41" font-size="15" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">age &lt; 60</text>
+      <text x="267" y="220" text-anchor="middle" fill="#af3b41" font-size="14">false → далі</text>
+
+      <rect x="184" y="252" width="166" height="42" rx="11" fill="#e8f3ee" stroke="#1c6b4e" stroke-width="2.5"/>
+      <text x="267" y="278" text-anchor="middle" fill="#1c6b4e" font-size="15" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">else</text>
+
+      <line x1="267" y1="78" x2="267" y2="94" stroke="#55564f" stroke-width="2" marker-end="url(#ar)"/>
+      <line x1="267" y1="156" x2="267" y2="172" stroke="#55564f" stroke-width="2" marker-end="url(#ar)"/>
+      <line x1="267" y1="234" x2="267" y2="250" stroke="#55564f" stroke-width="2" marker-end="url(#ar)"/>
+
+      <line x1="356" y1="273" x2="404" y2="273" stroke="#1c6b4e" stroke-width="2.5" marker-end="url(#ar)"/>
+      <rect x="412" y="248" width="146" height="50" rx="11" fill="#ffffff" stroke="#1c6b4e" stroke-width="2"/>
+      <text x="485" y="279" text-anchor="middle" fill="#1c6b4e" font-size="17" font-weight="700">100 ₴</text>
+
+      <rect x="600" y="18" width="330" height="128" rx="13" fill="#ffffff" stroke="#602857" stroke-width="2"/>
+      <text x="765" y="44" text-anchor="middle" fill="#602857" font-size="14.5" font-weight="700" letter-spacing="1.1">ЯКЩО ПЕРЕСТАВИТИ ГІЛКИ</text>
+      <text x="622" y="72" fill="#2e2f2b" font-size="14.5" font-family="'JetBrains Mono', Menlo, monospace">if (age &lt; 60) …</text>
+      <text x="622" y="94" fill="#2e2f2b" font-size="14.5" font-family="'JetBrains Mono', Menlo, monospace">else if (age &lt; 18) …</text>
+      <text x="622" y="122" fill="#af3b41" font-size="14.5" font-weight="700">друга гілка не спрацює НІКОЛИ:</text>
+      <text x="622" y="140" fill="#af3b41" font-size="14.5">усе, що менше 18, уже менше 60</text>
+
+      <rect x="600" y="164" width="330" height="130" rx="13" fill="#ffffff" stroke="#0253b3" stroke-width="2"/>
+      <text x="765" y="190" text-anchor="middle" fill="#0253b3" font-size="14.5" font-weight="700" letter-spacing="1.1">ПРАВИЛО</text>
+      <text x="765" y="220" text-anchor="middle" fill="#2e2f2b" font-size="15">Гілки шикуються</text>
+      <text x="765" y="242" text-anchor="middle" fill="#2e2f2b" font-size="15" font-weight="700">від найвужчої до найширшої</text>
+      <text x="765" y="272" text-anchor="middle" fill="#55564f" font-size="14">Найвужча — «до 6». Найширша —</text>
+      <text x="765" y="290" text-anchor="middle" fill="#55564f" font-size="14">else, який ловить решту</text>
+    </svg>
+  </div></section>
+
+  <!-- ══════════ 12 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ</span>
+      <h2>Тут дві гілки мертві</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code"><span class="sk">if</span> (age <span class="st">&lt;</span> <span class="sn">60</span>) {
+  price = <span class="sn">150</span>;
+} <span class="sk">else if</span> (age <span class="st">&lt;</span> <span class="sn">18</span>) {
+  price = <span class="sn">80</span>;
+} <span class="sk">else if</span> (age <span class="st">&lt;</span> <span class="sn">6</span>) {
+  price = <span class="sn">0</span>;
+} <span class="sk">else</span> {
+  price = <span class="sn">100</span>;
+}</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Які гілки не спрацюють ніколи і чому?</h3>
+        <p class="rv-hint">Знайди сам, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>Мертві — друга й третя.</b></p>
+          <p>Будь-який вік, менший за 18, менший і за 60. Перша гілка
+             забирає його собі — до другої черга не доходить <b>ніколи</b>.
+             Так само з третьою.</p>
+          <p class="mt">Насправді працюють лише дві ціни: до 60 → 150 ₴, решта → 100 ₴.</p>
+          <p class="mt" style="color:var(--brand)">Лікується перестановкою:
+             найвужча умова — <b>першою</b>. Червоного рядка в консолі не було.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">Квиток у кіно</span><span class="tmr">8 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — код зі слайда 10</span>
+        <div class="mono">if (age &lt; 6) { … } else if (age &lt; 18) { … } else if (age &lt; 60) { … } else { … }</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Набрати всі <b>чотири</b> гілки. Перевірити на 3, 12, 30, 70</li>
+          <li>Перевірити <b>межі</b>: 6, 18, 60. Чи збігається з таблицею?</li>
+          <li>Додати в повідомлення категорію: «Квиток дитячий: 80 грн»</li>
+          <li>П'ята гілка: студентський, 18–22 роки, 110 ₴. <b>Куди</b> її вставити?</li>
+          <li>⭐⭐ Переставити дві гілки так, щоб одна стала мертвою. Знайти вік, на якому це видно</li>
+          <li>⭐⭐⭐ Другим <span class="ic">prompt</span> спитати день тижня. У вівторок — знижка 50 %</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🔗</div><div>
+      <span class="label lm">Нове в коді</span>
+      <h2><span class="ic">&amp;&amp;</span> — і · <span class="ic">||</span> — або · <span class="ic">!</span> — не</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+          <div class="dp-code"><span class="cm">// діапазон 18–22 — тільки так</span>
+<span class="sk">if</span> (age <span class="st">&gt;=</span> <span class="sn">18</span> <span class="st">&amp;&amp;</span> age <span class="st">&lt;=</span> <span class="sn">22</span>) { … }
+
+<span class="cm">// вихідний</span>
+<span class="sk">if</span> (day <span class="st">===</span> <span class="ss">'сб'</span> <span class="st">||</span> day <span class="st">===</span> <span class="ss">'нд'</span>) { … }</div>
+        </div>
+        <div class="hbox hr mt"><span class="ic">18 &lt;= age &lt;= 22</span> — <b>так не можна</b>
+          (слайд 7). Змінна пишеться <b>двічі</b>, по разу в кожній половині</div>
+      </div>
+      <table class="ops">
+        <tr><th>Вираз</th><th>Результат</th></tr>
+        <tr><td class="o" style="width:auto">true &amp;&amp; true</td><td class="r">true</td></tr>
+        <tr><td class="o" style="width:auto">true &amp;&amp; false</td><td class="r">false</td></tr>
+        <tr><td class="o" style="width:auto">true || false</td><td class="r">true</td></tr>
+        <tr><td class="o" style="width:auto">false || false</td><td class="r">false</td></tr>
+        <tr><td class="o" style="width:auto">!true</td><td class="r">false</td></tr>
+      </table>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">⌨️</span>
+      <div><span class="ic">&amp;&amp;</span> — потрібні <strong>обидві</strong>.
+      <span class="ic">||</span> — досить <strong>однієї</strong>; набирається двічі
+      клавішею <span class="ic">\</span> із Shift.</div></div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🎢</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Хто пройде на атракціон?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code"><span class="sk">if</span> (height <span class="st">&gt;=</span> <span class="sn">140</span> <span class="st">&amp;&amp;</span> age <span class="st">&gt;=</span> <span class="sn">12</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Можна'</span>);
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">'Не можна'</span>);
+}
+
+<span class="cm">// А · зріст 150, вік 10
+// Б · зріст 130, вік 15
+// В · зріст 160, вік 12
+// Г · зріст 140, вік 12</span></div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Хто з чотирьох пройде?</h3>
+        <p class="rv-hint">Розбери всіх чотирьох, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>А</b> — ні. Зріст так, вік ні</p>
+          <p><b>Б</b> — ні. Вік так, зріст ні</p>
+          <p><b>В</b> — так. Обидві умови</p>
+          <p><b>Г</b> — <b>так</b>. Рівно на межі, а <span class="ic">&gt;=</span> — «або дорівнює»</p>
+          <p class="mt" style="color:var(--brand)">А якби стояло <span class="ic">||</span>?
+             Тоді пройшли б <b>усі четверо</b>: кожен має хоча б одне «так».</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🪆</div><div>
+      <span class="label lm">Нове в коді</span>
+      <h2>Вкладений <span class="ic">if</span> — питання в питанні</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code"><span class="sk">if</span> (age <span class="st">&gt;=</span> <span class="sn">12</span>) {
+  <span class="sk">if</span> (height <span class="st">&gt;=</span> <span class="sn">140</span>) {
+    <span class="sf">alert</span>(<span class="ss">'Можна'</span>);
+  } <span class="sk">else</span> {
+    <span class="sf">alert</span>(<span class="ss">'Підрости'</span>);
+  }
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">'Замалий вік'</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm">Другий <span class="ic">if</span> живе <b>всередині</b>
+          фігурних дужок першого. Його перевіряють, <b>тільки якщо</b>
+          перша умова дала <span class="ic">true</span></div>
+        <div class="hbox hp">Навіщо, якщо є <span class="ic">&amp;&amp;</span>?
+          Тут людина дізнається, <b>що саме</b> не так: вік чи зріст.
+          У кожного рівня — <b>свій</b> <span class="ic">else</span></div>
+        <div class="hbox ho">Кожна <span class="ic">{</span> має свою
+          <span class="ic">}</span>. Відступ — щоб бачити, де яка</div>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">📐</span>
+      <div>Правило: усі рівні ведуть до <strong>однієї</strong> дії — пиши
+      <span class="ic">&amp;&amp;</span>. У кожного рівня своя відповідь — вкладай.</div></div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">❔</div><div>
+      <span class="label lm">Нове в коді</span>
+      <h2>Тернарний оператор <span class="ic">? :</span></h2>
+    </div></div>
+    <div class="pair">
+      <div class="right" style="border-color:var(--brand)"><span class="lbl" style="color:var(--brand)">if … else — п'ять рядків</span>
+        <div class="mono">let kind;
+if (age &gt;= 18) {
+  kind = 'дорослий';
+} else {
+  kind = 'дитячий';
+}</div></div>
+      <div class="right"><span class="lbl">? : — один рядок, те саме</span>
+        <div class="mono">const kind = age &gt;= 18
+  ? 'дорослий'
+  : 'дитячий';</div></div>
+    </div>
+    <div class="three mt">
+      <div class="hbox hm">Читається: <b>умова? — тоді це, інакше — те</b></div>
+      <div class="hbox hp">Дає <b>значення</b>, яке кладемо у змінну або в
+        <span class="ic">${ }</span></div>
+      <div class="hbox hr">Тільки для <b>двох</b> варіантів. Три й більше —
+        <span class="ic">else if</span></div>
+    </div>
+    <div class="dp mt">
+      <div class="dp-code" style="padding:11px 19px"><span class="sf">alert</span>(<span class="ss">`Число ${n} — ${n % 2 === 0 ? 'парне' : 'непарне'}`</span>);</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🎛️</div><div>
+      <span class="label lm">Нове в коді</span>
+      <h2><span class="ic">switch</span> — одна змінна, багато точних значень</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code" style="font-size:16px;line-height:1.55"><span class="sk">const</span> day = <span class="sf">prompt</span>(<span class="ss">'День: пн, вт … нд'</span>);
+
+<span class="sk">switch</span> (day) {
+  <span class="sk">case</span> <span class="ss">'сб'</span>:
+  <span class="sk">case</span> <span class="ss">'нд'</span>:
+    <span class="sf">alert</span>(<span class="ss">'Вихідний'</span>);
+    <span class="sk">break</span>;
+  <span class="sk">case</span> <span class="ss">'пт'</span>:
+    <span class="sf">alert</span>(<span class="ss">'Майже вихідний'</span>);
+    <span class="sk">break</span>;
+  <span class="sk">default</span>:
+    <span class="sf">alert</span>(<span class="ss">'Робочий день'</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">case</span> — одне значення.
+          Порівнює <b>строго</b>, як <span class="ic">===</span>: число з
+          <span class="ic">prompt</span> — через <span class="ic">Number()</span></div>
+        <div class="hbox hr"><span class="ic">break</span> — «вийти».
+          Забули — код <b>провалюється</b> в наступний <span class="ic">case</span></div>
+        <div class="hbox hp"><span class="ic">default</span> — те саме, що
+          <span class="ic">else</span>: «усе інше»</div>
+        <div class="hbox ho">Два <span class="ic">case</span> поспіль без
+          <span class="ic">break</span> між ними — це «або»</div>
+      </div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🚫</span>
+      <div><span class="ic">switch</span> не вміє діапазонів. «Квиток у кіно» (до 6, 6–17…)
+      — тільки <span class="ic">else if</span>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 19 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">&amp;&amp; · ? : · switch</span><span class="tmr">8 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад</span>
+        <div class="mono">const n = Number(prompt('Число:'));
+const kind = n % 2 === 0 ? 'парне' : 'непарне';
+alert(`${n} — ${kind}`);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Набрати приклад. Перевірити на 4, 7 і 0</li>
+          <li>Атракціон: спитати зріст і вік, пустити через <span class="ic">&amp;&amp;</span>. Замінити на <span class="ic">||</span> — хто пройде тепер?</li>
+          <li><span class="ic">switch</span> «Оцінка»: <span class="ic">'A'</span>, <span class="ic">'B'</span>, <span class="ic">'C'</span> → словами, <span class="ic">default</span> — «Невідома оцінка»</li>
+          <li>Прибрати один <span class="ic">break</span>. Що вивелось? Повернути назад</li>
+          <li>⭐⭐ Атракціон переписати <b>вкладеними</b> <span class="ic">if</span>: відмова каже, що саме не так</li>
+          <li>⭐⭐⭐ «Вихідний чи ні» — через <span class="ic">||</span> в <span class="ic">if</span>, потім через <span class="ic">switch</span>, потім одним <span class="ic">? :</span></li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🛡️</div><div>
+      <span class="label lp">Обіцяне на уроці 2</span>
+      <h2>Перевіряємо ввід</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code" style="font-size:16px;line-height:1.6"><span class="sk">const</span> raw = <span class="sf">prompt</span>(<span class="ss">'Вік:'</span>);
+<span class="sk">const</span> age = <span class="sf">Number</span>(raw);
+
+<span class="sk">if</span> (raw <span class="st">===</span> <span class="sk">null</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Ви скасували'</span>);
+} <span class="sk">else if</span> (raw <span class="st">===</span> <span class="ss">''</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Поле порожнє'</span>);
+} <span class="sk">else if</span> (<span class="sf">Number</span>.<span class="sf">isNaN</span>(age)) {
+  <span class="sf">alert</span>(<span class="ss">'Це не число'</span>);
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">`Вік: ${age}`</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">raw</span> — те, що <b>ввели</b>, ще рядком.
+          <span class="ic">age</span> — уже число. Перевіряємо <b>обидва</b></div>
+        <div class="hbox hp">Порядок: Скасувати → порожньо → не число →
+          <b>усе гаразд</b>. Той самий принцип «від вужчого»</div>
+        <div class="hbox hr"><span class="ic">age === NaN</span> —
+          <b>не працює</b>: <span class="ic">NaN</span> не дорівнює навіть
+          сам собі. Тільки <span class="ic">Number.isNaN()</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ</span>
+      <h2>Чотири рядки — чотири різні біди</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code"><span class="sk">let</span> age = <span class="sf">prompt</span>(<span class="ss">'Вік:'</span>);
+
+<span class="sk">if</span> (age <span class="st">===</span> <span class="sn">18</span>) { … }
+<span class="sk">if</span> (age <span class="st">=</span> <span class="sn">18</span>) { … }
+<span class="sk">if</span> (<span class="sn">18</span> <span class="st">&lt;=</span> age <span class="st">&lt;=</span> <span class="sn">22</span>) { … }
+<span class="sk">if</span> (age <span class="st">&gt;=</span> <span class="sn">18</span>); { … }</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Що не так у кожному?</h3>
+        <p class="rv-hint">Розбери всі чотири, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>1.</b> Немає <span class="ic">Number()</span> — <span class="ic">'18' === 18</span>,
+             завжди <span class="ic">false</span></p>
+          <p><b>2.</b> Одне <span class="ic">=</span> — це присвоєння. Умова
+             <b>завжди</b> істинна, а <span class="ic">age</span> ще й зіпсовано</p>
+          <p><b>3.</b> Подвійна нерівність — треба
+             <span class="ic">age &gt;= 18 &amp;&amp; age &lt;= 22</span></p>
+          <p><b>4.</b> <span class="ic">;</span> після дужки — тіло
+             <span class="ic">if</span> порожнє, блок виконається завжди</p>
+          <p class="mt" style="color:var(--brand)">Спільне в усіх чотирьох:
+             <b>жодного червоного рядка в консолі</b>.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ── ПРАКТИКА 4 ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 4</span>
+        <span class="t">Квиток із перевіркою вводу</span><span class="tmr">8 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — слайди 10 і 20 разом</span>
+        <div class="mono">спитати вік → null? → порожньо? → не число?
+            → усе гаразд — рахуємо ціну</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Додати до «Квитка» перевірку на <span class="ic">null</span>, порожнє поле й <span class="ic">Number.isNaN</span></li>
+          <li>Перевірити всі три: Скасувати · порожнє OK · слово <span class="ic">сім</span></li>
+          <li>Відсіяти безглуздий вік: менший за 0 <b>або</b> більший за 120</li>
+          <li>Навмисно замінити одне <span class="ic">===</span> на <span class="ic">=</span>. Що бачить людина? Повернути</li>
+          <li>⭐⭐ Спитати ще й кількість квитків і порахувати суму</li>
+          <li>⭐⭐⭐ Кількість теж перевірити. Повідомлення каже, <b>що саме</b> не так і в якому полі</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 23 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — тримаємо на дошці</span>
+      <h2>Усі умови на одному екрані</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>if</h4><pre>if (a &gt; 5) {
+  alert('так');
+}</pre></div>
+      <div class="rf-c"><h4>if … else</h4><pre>if (a &gt;= 18) {
+  alert('так');
+} else {
+  alert('ні');
+}</pre></div>
+      <div class="rf-c"><h4>else if</h4><pre>if (a &lt; 6) { … }
+else if (a &lt; 18) { … }
+else { … }
+// вужча — першою</pre></div>
+      <div class="rf-c"><h4>&amp;&amp; &nbsp;|| &nbsp;!</h4><pre>a &gt;= 18 &amp;&amp; a &lt;= 22
+d === 'сб' || d === 'нд'
+!ok
+// === і !==, не ==</pre></div>
+      <div class="rf-c"><h4>вкладений if</h4><pre>if (a &gt;= 12) {
+  if (h &gt;= 140) { … }
+  else { … }
+} else { … }</pre></div>
+      <div class="rf-c"><h4>? :</h4><pre>const t = a &gt;= 18
+  ? 'дорослий'
+  : 'дитячий';</pre></div>
+    </div>
+    <div class="two" style="margin-top:11px;grid-template-columns:1.25fr 1fr;gap:11px">
+      <div class="rf-c"><h4>switch</h4><pre>switch (day) {
+  case 'сб': case 'нд': alert('вихідний'); break;
+  default: alert('робочий');
+}</pre></div>
+      <div class="rf-c"><h4>перевірка вводу</h4><pre>raw === null      // Скасувати
+raw === ''        // порожньо
+Number.isNaN(n)   // не число</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ── БАНК ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Оцінка за балами.</b> 0–59 «незадовільно», 60–74 «задовільно»,
+        75–89 «добре», 90–100 «відмінно»</div>
+      <div class="bk"><b>Найбільше з трьох.</b> Спитати три числа й назвати
+        найбільше. Тільки умови й <span class="ic">&amp;&amp;</span></div>
+      <div class="bk"><b>Пароль.</b> Прийняти, тільки якщо довжина
+        <span class="ic">.length</span> не менша за 8</div>
+      <div class="bk"><b>Пора року.</b> Номер місяця 1–12 → пора року.
+        Число поза межами — повідомлення</div>
+      <div class="bk"><b>День тижня.</b> <span class="ic">switch</span>: число 1–7 →
+        назва дня. Не забути <span class="ic">Number()</span></div>
+      <div class="bk"><b>Світлофор.</b> <span class="ic">switch</span>: «червоний»,
+        «жовтий», «зелений» → що робити пішоходу</div>
+      <div class="bk"><b>Знак і парність.</b> Додатне, від'ємне чи нуль — через
+        <span class="ic">else if</span>; парне чи ні — одним <span class="ic">? :</span></div>
+      <div class="bk"><b>Високосний рік.</b> Ділиться на 4, але не на 100,
+        або ділиться на 400. Одна умова з <span class="ic">&amp;&amp;</span> і <span class="ic">||</span></div>
+    </div>
+    <div class="hbox hm mt">Усі вісім робляться <b>тільки тим, що було сьогодні й раніше</b></div>
+  </div></section>
+
+  <!-- ══════════ 25 ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Словник</span>
+      <h2>Слова, які лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="ic">condition</span> — умова</div>
+        <div class="hbox hm"><span class="ic">branch</span> — гілка, один зі шляхів</div>
+        <div class="hbox hp"><span class="ic">boolean</span> — тип із двох значень:
+          <span class="ic">true</span> / <span class="ic">false</span></div>
+        <div class="hbox hr"><span class="ic">strict equality</span> — сувора рівність,
+          <span class="ic">===</span></div>
+      </div>
+      <div>
+        <div class="hbox ho"><span class="ic">nested</span> — вкладений</div>
+        <div class="hbox"><span class="ic">ternary</span> — тернарний, «з трьох частин»</div>
+        <div class="hbox hm"><span class="ic">switch</span> / <span class="ic">case</span> —
+          перемикач / випадок</div>
+        <div class="hbox hp"><span class="ic">default</span> — за замовчуванням</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 26 ══════════ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Після уроку 3 у вас є</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cm"><h3>У коді</h3><ul>
+        <li><span class="ic">if</span> / <span class="ic">else if</span> / <span class="ic">else</span></li>
+        <li><span class="ic">&amp;&amp;</span>, <span class="ic">||</span>, <span class="ic">!</span> і вкладений <span class="ic">if</span></li>
+        <li><span class="ic">? :</span> і <span class="ic">switch</span></li>
+        <li>«Квиток у кіно» з перевіркою вводу</li>
+      </ul></div>
+      <div class="card cp"><h3>У голові</h3><ul>
+        <li>тільки <span class="ic">===</span>, не <span class="ic">==</span> і не <span class="ic">=</span></li>
+        <li>гілки — від вужчої до ширшої</li>
+        <li>діапазон пишеться через <span class="ic">&amp;&amp;</span></li>
+        <li>без <span class="ic">break</span> <span class="ic">switch</span> провалюється</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання — на наступному слайді.</strong>
+      Хто не встиг банк завдань — можна доробити вдома, але це не обов'язково.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 4 · 28 вересня · Помилки і налагодження</p>
+  </div></section>
+
+  <!-- ══════════ 27 ── ДОМАШНЄ ЗАВДАННЯ ══════════ -->
+  <section class="slide" id="s26"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>На звороті роздатки, на 28 вересня</h2>
+    </div></div>
+    <div class="hbox">Ручкою або олівцем, <b>комп'ютер не потрібен</b>. Усе — тільки сьогоднішнє.</div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t">Написати
+        <span class="ic">true</span> чи <span class="ic">false</span> навпроти кожного:
+        <span class="ic">5 === '5'</span> · <span class="ic">3 !== 4</span> ·
+        <span class="ic">2 &gt; 1 &amp;&amp; 1 &gt; 2</span> · <span class="ic">false || !false</span></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">Яка гілка не спрацює ніколи і чому?<br>
+        <span class="ic">if (t &gt; 0) { alert('тепло'); } else if (t &gt; 25) { alert('спека'); } else { alert('холод'); }</span></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">Скільки вікон і з яким текстом при <span class="ic">n = 2</span>?<br>
+        <span class="ic">switch (n) { case 1: alert('один'); break; case 2: alert('два'); case 3: alert('три'); break; default: alert('інше'); }</span></span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t">Переписати одним рядком через <span class="ic">? :</span><br>
+        <span class="ic">let s; if (n &gt; 0) { s = 'додатне'; } else { s = 'недодатне'; }</span></span></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
