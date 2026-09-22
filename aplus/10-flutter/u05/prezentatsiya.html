@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>List і Map · Мобільна розробка Flutter · 10 клас · Урок 5</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Мобільна розробка Flutter (Flutter I + II за рік)
+  Клас          10
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · четвер
+  Урок          5 з 68 · 24.09.2026
+  Тема          List і Map
+  Тривалість    45 хв — розминка 2 хв + показ ~17 хв + практика 25 хв
+                (два блоки «приклад → самостійно» 7 і 8 хв + практика 10 хв)
+  Акцент        blue (#0253b3)
+  Слайдів       26
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. DartPad у браузері, як і на уроках 1–4.
+  ⚠️ ПЕРШИЙ УРОК ПІСЛЯ ЗЛИТТЯ КУРСІВ (рішення 22.09.2026): з 23.09
+     Flutter іде двічі на тиждень — середа і четвер. Урок 4 був учора.
+     Тому розминка (слайд 2) посилається на вчорашній урок, а не на
+     «минулий тиждень».
+  ────────────────────────────────────────────────────────────────
+  ПЛАН          office/plany/06-flutter-10.md, тема 1.5
+                «List: створити, add, remove, length, індекс, for-in,
+                contains, sort. Map: ключ → значення, [key], keys.
+                Порівнюємо з масивом і обʼєктом у JS.»
+                Нове в коді: List<String>, add(), remove(), length, [i],
+                contains(), sort(), Map<String, String>, map[key],
+                keys, values
+                Артефакт: «Список покупок + словник термінів».
+                Оцінка: поточна.
+  ────────────────────────────────────────────────────────────────
+  ➕ ДОДАНО ПОНАД ПЛАН (правило «повна родина конструкцій», 10.09.2026):
+     • addAll, insert, removeAt, removeLast, clear — план дає лише
+       add і remove, але родина прибирання без них неповна
+     • isEmpty / isNotEmpty — пара до length
+     • indexOf (і -1 як «немає») — пара до contains
+     • reversed.toList() і join(', ') — без join список показують
+       людині у вигляді [a, b, c], що неправильно
+     • Map: containsKey, remove, clear, values, forEach — план дає
+       тільки [key] і keys
+     • null на невідомому ключі Map (слайд 18) — це головна різниця
+       між List і Map у поведінці; повний урок про null буде 12-м
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ОЦІНКА — ПОТОЧНА, за роботу на уроці. На слайдах про бали НЕ
+     написано (правило «слайди без голосу вчителя»). Критерії — у конспекті.
+  ⚠️ ФОРМАТ «ПРИКЛАД → ТЕПЕР САМОСТІЙНО». Практика 25 хв із 45.
+     слайд 6  (7 хв)   створення, індекс, заміна, вихід за межі
+     слайд 14 (8 хв)   add/remove/sort/contains/join + суми
+     слайди 21–22 (10 хв) практика ⭐ / ⭐⭐ / ⭐⭐⭐
+     слайд 26 — домашнє: на роздатці, 5 пунктів, без DartPad;
+       відповіді в конспекті
+     ⛔ НЕ РІЗАТИ слайд 20 (довідник) і слайди 21–22 (практика).
+     ЯКЩО НЕ ВСТИГАЄТЕ — ріжеться показ, НЕ практика. Знімати:
+       слайд 3 (навіщо — одним реченням),
+       слайд 13 (sort/reversed/join — join показати усно в практиці),
+       слайд 23 (пастки — роздати усно по ходу практики).
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ГОЛОВНА ДУМКА: масив із JS учні бачили. Нове в Dart — ТИП у
+     кутових дужках (List<String>) і те, що Map — це JS-обʼєкт, у
+     якого ключ може бути будь-яким, а не лише іменем властивості.
+  ⚠️ ЩО ПЛУТАЮТЬ
+     • length БЕЗ дужок, add()/sort()/clear() — З дужками
+     • s[5] у списку з пʼяти елементів — падіння RangeError
+     • remove у List — за ЗНАЧЕННЯМ і лише перший збіг;
+       remove у Map — за КЛЮЧЕМ
+     • sort() міняє сам список, а не повертає новий
+     • m['немає'] → null мовчки, s[99] → падіння одразу
+     • помилка в ключі Map створює НОВИЙ запис, а не виправляє старий
+     • reversed без .toList() — ще не список
+  ⚠️ КОД НА СЛАЙДАХ — ASCII У РЯДКАХ (grades/CLAUDE.md, копіювання
+     з PDF у DartPad): 'hlib', не кирилиця. Кирилиця лише в коментарях.
+  ⛔ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • List<Map<String, dynamic>> і where/firstWhere — урок 6
+     • null-safety (String?, ??, !) — урок 12 плану
+     • класи й обʼєкти — урок 9
+     • Set — у програмі курсу немає, не вводимо
+     • Оцінювання — у конспекті
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: акцент курсу — синій із палітри. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#eef1f8; --border:#dcdfe9;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(2,83,179,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lr{background:#fae7e8;color:var(--rose)}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(2,83,179,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#f9fbfd;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:14px 19px;font-family:var(--f-mono);
+        font-size:16px;border-top:1.5px solid var(--border);white-space:pre-wrap}
+.dp-out .lbl{font-family:var(--f-body);font-size:13px;color:var(--faint);
+             text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:6px}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #f9fbfd */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#6b6a72;font-style:italic}/* коментар */
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--blue);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid #b9c8e6;border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--blue);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--blue)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+.uk{color:var(--dim)}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--blue);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .dp-out{font-size:14.5px;padding:11px 15px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .demo,.solo{padding:10px 13px}
+  .demo .dp-code,.solo .dp-code{font-size:14.5px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .bank{gap:8px} .bk{padding:9px 12px;font-size:15px}
+  .refg{gap:6px} .rf{padding:6px 9px}
+  .rf .rt{font-size:13px;flex-basis:110px} .rf .rc{font-size:13px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+.demo .dp-code{border:1px solid var(--border);border-radius:9px;padding:11px 14px;
+  font-size:16px;line-height:1.65}
+
+/* довідник конструкцій — слайд 18 */
+.refg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rf{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+    padding:8px 12px;display:flex;align-items:baseline;gap:10px}
+.rf .rt{font-size:14.5px;color:var(--dim);flex:0 0 128px;line-height:1.3}
+.rf .rc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--brand);
+        line-height:1.35;flex:1}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4 ─── */
+.rv-body .mono{font-family:var(--f-mono);white-space:pre-wrap}
+.hbox.hp{border-color:var(--plum)}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">List і Map</h1>
+      <p class="title-sub">Набори значень · «Список покупок + словник термінів»<br>
+        Мобільна розробка Flutter · 10 клас · Урок 5 з 68 · 24 вересня</p>
+      <div class="chips">
+        <span class="chip">List&lt;String&gt;</span>
+        <span class="chip">add · remove · length</span>
+        <span class="chip">[i] · for-in</span>
+        <span class="chip">contains · sort</span>
+        <span class="chip">Map&lt;String, String&gt;</span>
+        <span class="chip">keys · values</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── РОЗМИНКА ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔥</div><div>
+      <span class="label lb">Розминка · 2 хв</span>
+      <h2>З учорашнього уроку</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox">Що поверне?
+          <span class="en">int dodai(int a, [int b = 5]) =&gt; a + b;</span><br>
+          <span class="en">dodai(2)</span> · <span class="en">dodai(2, 3)</span></div>
+        <div class="hbox">Чим <span class="en">return</span> відрізняється від
+          <span class="en">print</span>?</div>
+        <div class="hbox hm">Вчора одна функція працювала з <b>одним</b> товаром.
+          Сьогодні навчимось тримати <b>всі товари одразу</b></div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Відповідь</h3>
+        <p class="rv-hint">Спершу скажи сам.</p>
+        <div class="rv-body">
+          <p class="mono" style="white-space:pre-wrap;font-family:var(--f-mono)">dodai(2)     → 7
+dodai(2, 3)  → 5</p>
+          <p class="mt"><span class="en">print</span> показує людині й нічого не віддає.
+            <span class="en">return</span> віддає значення програмі й нічого не показує</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── НАВІЩО ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lm">Навіщо</span>
+      <h2>Тридцять товарів — тридцять змінних?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="cm">// так робити не можна</span>
+<span class="sk">String</span> tovar1 = <span class="ss">'Minecraft'</span>;
+<span class="sk">String</span> tovar2 = <span class="ss">'Terraria'</span>;
+<span class="sk">String</span> tovar3 = <span class="ss">'Stardew'</span>;
+<span class="cm">// ... і ще двадцять сім</span>
+
+<span class="cm">// а якщо треба додати ще один?</span>
+<span class="cm">// а якщо порахувати, скільки їх?</span>
+<span class="cm">// а якщо перебрати всі циклом?</span></div>
+      </div>
+      <div>
+        <div class="hbox ho">Кожна нова річ — <b>новий рядок коду</b>. Цикл по них
+          не пройде: у <span class="en">tovar1</span> і <span class="en">tovar2</span>
+          немає нічого спільного, крім вигляду назви</div>
+        <div class="hbox hm"><b>List</b> — це одна змінна, в якій лежить
+          <b>скільки завгодно</b> значень по порядку</div>
+        <div class="hbox"><b>Map</b> — те саме, але значення лежать не по номерах,
+          а <b>за іменами</b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── LIST: СТВОРИТИ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">1️⃣</div><div>
+      <span class="label lb">List · створення</span>
+      <h2>Три способи зробити список</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="cm">// 1. одразу зі значеннями — тип Dart вгадає сам</span>
+<span class="sk">var</span> igry = [<span class="ss">'Minecraft'</span>, <span class="ss">'Terraria'</span>, <span class="ss">'Stardew'</span>];
+
+<span class="cm">// 2. з явним типом — так робимо, коли це поле класу</span>
+<span class="sk">List</span>&lt;<span class="sk">String</span>&gt; nazvy = [<span class="ss">'Minecraft'</span>, <span class="ss">'Terraria'</span>];
+
+<span class="cm">// 3. порожній, наповнимо пізніше</span>
+<span class="sk">List</span>&lt;<span class="sk">int</span>&gt; ciny = [];
+
+<span class="sf">print</span>(igry);   <span class="cm">// [Minecraft, Terraria, Stardew]</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">List&lt;String&gt;</span> читається
+          «список <b>рядків</b>». У кутових дужках — <b>що саме</b> лежить усередині</div>
+        <div class="hbox">Список однорідний: у <span class="en">List&lt;int&gt;</span>
+          не покласти <span class="en">'Minecraft'</span>. Dart не дасть це навіть
+          написати</div>
+        <div class="hbox ho">Порожній список <b>обовʼязково</b> з типом:
+          <span class="en">List&lt;int&gt; ciny = [];</span><br>
+          Просто <span class="en">var ciny = [];</span> — і Dart не знатиме, що туди
+          можна класти</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ── LIST: ІНДЕКС ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🔢</div><div>
+      <span class="label lb">List · доступ</span>
+      <h2>Номер у квадратних дужках. З нуля</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> igry = [<span class="ss">'Minecraft'</span>, <span class="ss">'Terraria'</span>, <span class="ss">'Stardew'</span>];
+<span class="cm">//                0            1            2</span>
+
+<span class="sf">print</span>(igry[<span class="sn">0</span>]);       <span class="cm">// Minecraft</span>
+<span class="sf">print</span>(igry[<span class="sn">2</span>]);       <span class="cm">// Stardew</span>
+<span class="sf">print</span>(igry.first);   <span class="cm">// Minecraft</span>
+<span class="sf">print</span>(igry.last);    <span class="cm">// Stardew</span>
+
+igry[<span class="sn">1</span>] = <span class="ss">'Hollow Knight'</span>;  <span class="cm">// замінили</span>
+<span class="sf">print</span>(igry[<span class="sn">3</span>]);       <span class="cm">// ПАДІННЯ: індексу 3 немає</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><b>Нумерація з нуля.</b> У списку з трьох елементів
+          останній номер — <b>2</b>, а не 3</div>
+        <div class="hbox"><span class="en">first</span> і <span class="en">last</span> —
+          те саме, що <span class="en">[0]</span> і
+          <span class="en">[length - 1]</span>, але читається краще</div>
+        <div class="hbox ho">Вийшов за межі — програма <b>падає на ходу</b>
+          (<span class="en">RangeError</span>). Dart цього не бачить заздалегідь,
+          бо номер може бути порахований під час роботи</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ПРИКЛАД → САМОСТІЙНО 1 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">За компʼютером · 7 хв</span>
+      <h2>Приклад — і самостійно</h2>
+    </div></div>
+    <div class="demo">
+      <span class="lbl">Приклад · пишемо разом</span>
+      <div class="dp-code"><span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">List</span>&lt;<span class="sk">String</span>&gt; spysok = [<span class="ss">'hlib'</span>, <span class="ss">'moloko'</span>, <span class="ss">'syr'</span>];
+  <span class="sf">print</span>(<span class="ss">'Persha pokupka: ${spysok[0]}'</span>);
+  <span class="sf">print</span>(<span class="ss">'Ostannia: ${spysok.last}'</span>);
+}</div>
+    </div>
+    <div class="solo">
+      <span class="lbl">Тепер самостійно · у своєму DartPad</span>
+      <ul>
+        <li>Зроби <span class="en">List&lt;String&gt;</span> із <b>пʼяти</b> своїх улюблених ігор
+          і виведи весь список одним <span class="en">print</span></li>
+        <li>Виведи <b>третю</b> гру. Уважно: який це індекс?</li>
+        <li>Зроби <span class="en">List&lt;int&gt;</span> із пʼяти цін і виведи
+          <span class="en">first</span> та <span class="en">last</span></li>
+        <li>Заміни другу гру на іншу через <span class="en">igry[1] = ...</span>
+          і виведи список ще раз</li>
+        <li><b>Зверни в падіння:</b> звернись до індексу <span class="en">5</span>,
+          прочитай помилку, поверни як було</li>
+        <li>⭐⭐ Виведи першу й останню гру <b>одним</b> рядком через інтерполяцію
+          <span class="en">${...}</span></li>
+        <li>⭐⭐⭐ Виведи гру «посередині» списку, не пишучи число руками:
+          порахуй індекс із <span class="en">length</span></li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── LIST: ДОДАТИ ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">➕</div><div>
+      <span class="label lb">List · додати · 3 способи</span>
+      <h2>Список росте</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">List</span>&lt;<span class="sk">String</span>&gt; spysok = [<span class="ss">'hlib'</span>];
+
+spysok.<span class="sf">add</span>(<span class="ss">'moloko'</span>);
+<span class="cm">// [hlib, moloko]</span>
+
+spysok.<span class="sf">addAll</span>([<span class="ss">'syr'</span>, <span class="ss">'yabluka'</span>]);
+<span class="cm">// [hlib, moloko, syr, yabluka]</span>
+
+spysok.<span class="sf">insert</span>(<span class="sn">0</span>, <span class="ss">'voda'</span>);
+<span class="cm">// [voda, hlib, moloko, syr, yabluka]</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">add</span> — <b>один</b> елемент у кінець.
+          Це 95 % випадків</div>
+        <div class="hbox"><span class="en">addAll</span> — одразу <b>цілий список</b>
+          у кінець. Приймає список, а не елемент</div>
+        <div class="hbox"><span class="en">insert(індекс, що)</span> — вставити
+          <b>у середину</b>. Усі, хто правіше, зсуваються</div>
+        <div class="hbox ho">Це <b>методи</b>, як функції з уроку 4, тільки
+          викликаються через крапку <b>в самого списку</b>:
+          <span class="en">spysok.add(...)</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── LIST: ПРИБРАТИ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">➖</div><div>
+      <span class="label lb">List · прибрати · 4 способи</span>
+      <h2>Список меншає</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> s = [<span class="ss">'voda'</span>, <span class="ss">'hlib'</span>, <span class="ss">'syr'</span>, <span class="ss">'hlib'</span>];
+
+s.<span class="sf">remove</span>(<span class="ss">'hlib'</span>);
+<span class="cm">// [voda, syr, hlib] — тільки ПЕРШИЙ hlib</span>
+
+s.<span class="sf">removeAt</span>(<span class="sn">0</span>);
+<span class="cm">// [syr, hlib] — за номером</span>
+
+s.<span class="sf">removeLast</span>();
+<span class="cm">// [syr]</span>
+
+s.<span class="sf">clear</span>();
+<span class="cm">// [] — порожній, але список живий</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">remove</span> шукає <b>за значенням</b>
+          і прибирає <b>лише перший</b> збіг. Решта однакових лишаються</div>
+        <div class="hbox"><span class="en">removeAt</span> — <b>за номером</b>.
+          Не плутати: <span class="en">remove(0)</span> у
+          <span class="en">List&lt;int&gt;</span> шукатиме <b>значення</b> нуль</div>
+        <div class="hbox"><span class="en">clear</span> робить список порожнім.
+          Сам список нікуди не дівається — у нього можна знову класти</div>
+        <div class="hbox ho"><span class="en">remove</span> повертає
+          <span class="en">true</span> або <span class="en">false</span> — чи справді
+          щось прибрав. Немає такого елемента — просто
+          <span class="en">false</span>, без падіння</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── LIST: СКІЛЬКИ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">📏</div><div>
+      <span class="label lb">List · розмір</span>
+      <h2>Скільки їх і чи є вони взагалі</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> s = [<span class="ss">'hlib'</span>, <span class="ss">'moloko'</span>, <span class="ss">'syr'</span>];
+
+<span class="sf">print</span>(s.length);       <span class="cm">// 3</span>
+<span class="sf">print</span>(s.isEmpty);      <span class="cm">// false</span>
+<span class="sf">print</span>(s.isNotEmpty);   <span class="cm">// true</span>
+
+<span class="cm">// останній індекс — завжди length - 1</span>
+<span class="sf">print</span>(s[s.length - <span class="sn">1</span>]);  <span class="cm">// syr</span>
+
+<span class="sk">if</span> (s.isEmpty) {
+  <span class="sf">print</span>(<span class="ss">'Spysok porozhniy'</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">length</span> — <b>без дужок</b>.
+          Це властивість, а не метод: <span class="en">s.length</span>, не
+          <span class="en">s.length()</span></div>
+        <div class="hbox"><b>Кількість — 3, останній індекс — 2.</b> Різниця на
+          одиницю, і саме на ній роблять найбільше помилок</div>
+        <div class="hbox ho"><span class="en">if (s.length == 0)</span> теж працює,
+          але <span class="en">isEmpty</span> читається як речення —
+          і в Dart прийнято саме так</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПЕРЕДБАЧ 1 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе кожен рядок?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> s = [<span class="ss">'a'</span>, <span class="ss">'b'</span>, <span class="ss">'a'</span>, <span class="ss">'c'</span>];
+
+s.<span class="sf">remove</span>(<span class="ss">'a'</span>);
+<span class="sf">print</span>(s);
+
+s.<span class="sf">removeAt</span>(<span class="sn">0</span>);
+<span class="sf">print</span>(s);
+
+<span class="sf">print</span>(s.length);
+<span class="sf">print</span>(s.isEmpty);</div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Відповідь</h3>
+        <p class="rv-hint">Спочатку скажи сам, потім клацни.</p>
+        <div class="rv-body">
+          <p class="mono" style="white-space:pre-wrap;font-family:var(--f-mono)">[b, a, c]
+[a, c]
+2
+false</p>
+          <p class="mt"><span class="en">remove('a')</span> прибрав <b>перший</b>
+            <span class="en">'a'</span> — другий лишився і зсунувся на початок.
+            Потім <span class="en">removeAt(0)</span> прибрав уже <b>його</b></p>
+          <p class="mt" style="color:var(--accent)">Після кожного прибирання номери
+            решти <b>змінюються</b>.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── LIST: ПЕРЕБРАТИ ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lb">List · перебір · 2 способи</span>
+      <h2>Цикл нарешті має що перебирати</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> s = [<span class="ss">'hlib'</span>, <span class="ss">'moloko'</span>, <span class="ss">'syr'</span>];
+
+<span class="cm">// for-in: потрібні самі значення</span>
+<span class="sk">for</span> (<span class="sk">String</span> tovar <span class="sk">in</span> s) {
+  <span class="sf">print</span>(tovar);
+}
+
+<span class="cm">// for(i): потрібен ще й номер</span>
+<span class="sk">for</span> (<span class="sk">int</span> i = <span class="sn">0</span>; i &lt; s.length; i++) {
+  <span class="sf">print</span>(<span class="ss">'${i + 1}. ${s[i]}'</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm">На уроці 3 <span class="en">for-in</span> ми вже бачили —
+          тепер зрозуміло, <b>по чому</b> він ходить</div>
+        <div class="hbox">Правило вибору: потрібен <b>лише елемент</b> —
+          <span class="en">for-in</span>; потрібен <b>номер</b> (нумерований список,
+          порівняння сусідів) — <span class="en">for(i)</span></div>
+        <div class="hbox ho"><b>Не можна</b> прибирати елементи зі списку
+          <b>всередині</b> <span class="en">for-in</span> по ньому ж —
+          Dart кине помилку прямо під час циклу</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── LIST: ШУКАТИ ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🔍</div><div>
+      <span class="label lb">List · пошук</span>
+      <h2>Чи є воно тут</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> s = [<span class="ss">'hlib'</span>, <span class="ss">'moloko'</span>, <span class="ss">'syr'</span>];
+
+<span class="sf">print</span>(s.<span class="sf">contains</span>(<span class="ss">'syr'</span>));      <span class="cm">// true</span>
+<span class="sf">print</span>(s.<span class="sf">contains</span>(<span class="ss">'Syr'</span>));      <span class="cm">// false — регістр!</span>
+
+<span class="sf">print</span>(s.<span class="sf">indexOf</span>(<span class="ss">'moloko'</span>));   <span class="cm">// 1</span>
+<span class="sf">print</span>(s.<span class="sf">indexOf</span>(<span class="ss">'kava'</span>));     <span class="cm">// -1 — немає</span>
+
+<span class="sk">if</span> (!s.<span class="sf">contains</span>(<span class="ss">'kava'</span>)) {
+  s.<span class="sf">add</span>(<span class="ss">'kava'</span>);   <span class="cm">// щоб не було двічі</span>
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">contains</span> відповідає
+          <b>так або ні</b>. Це те, що частіше за все й потрібно</div>
+        <div class="hbox"><span class="en">indexOf</span> каже <b>де саме</b>.
+          Не знайшов — повертає <span class="en">-1</span>, а не падає
+          й не повертає порожнечу</div>
+        <div class="hbox ho"><b>Регістр має значення:</b>
+          <span class="en">'syr'</span> і <span class="en">'Syr'</span> — різні рядки.
+          Порівнюючи введене людиною, спершу приводять до одного регістру</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── LIST: ВПОРЯДКУВАТИ ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lb">List · порядок і вивід</span>
+      <h2>Відсортувати й показати людині</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> s = [<span class="ss">'syr'</span>, <span class="ss">'hlib'</span>, <span class="ss">'moloko'</span>];
+
+s.<span class="sf">sort</span>();
+<span class="sf">print</span>(s);   <span class="cm">// [hlib, moloko, syr]</span>
+
+<span class="sf">print</span>(s.reversed.<span class="sf">toList</span>());
+<span class="cm">// [syr, moloko, hlib]</span>
+
+<span class="sf">print</span>(s.<span class="sf">join</span>(<span class="ss">', '</span>));
+<span class="cm">// hlib, moloko, syr</span>
+
+<span class="sk">var</span> ciny = [<span class="sn">300</span>, <span class="sn">50</span>, <span class="sn">120</span>];
+ciny.<span class="sf">sort</span>();
+<span class="sf">print</span>(ciny);  <span class="cm">// [50, 120, 300]</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">sort</span> міняє <b>сам список</b>,
+          а не повертає новий. Після нього старий порядок втрачено назавжди</div>
+        <div class="hbox">Рядки сортуються за абеткою, числа — за величиною.
+          Dart знає, як порівнювати і те, і те</div>
+        <div class="hbox"><span class="en">join(', ')</span> склеює список в
+          <b>один рядок</b> — саме так список показують людині, а не як
+          <span class="en">[a, b, c]</span></div>
+        <div class="hbox ho"><span class="en">reversed</span> сам по собі списком
+          <b>не є</b> — потрібне <span class="en">.toList()</span>. Це перша зустріч
+          із таким; далі їх буде більше</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРИКЛАД → САМОСТІЙНО 2 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">За компʼютером · 8 хв</span>
+      <h2>Приклад — і самостійно</h2>
+    </div></div>
+    <div class="demo">
+      <span class="lbl">Приклад · пишемо разом</span>
+      <div class="dp-code"><span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">List</span>&lt;<span class="sk">String</span>&gt; spysok = [<span class="ss">'syr'</span>, <span class="ss">'hlib'</span>];
+  spysok.<span class="sf">add</span>(<span class="ss">'moloko'</span>);
+  spysok.<span class="sf">sort</span>();
+  <span class="sk">for</span> (<span class="sk">int</span> i = <span class="sn">0</span>; i &lt; spysok.length; i++) {
+    <span class="sf">print</span>(<span class="ss">'${i + 1}. ${spysok[i]}'</span>);
+  }
+  <span class="sf">print</span>(<span class="ss">'Vsjogo: ${spysok.length}'</span>);
+}</div>
+    </div>
+    <div class="solo">
+      <span class="lbl">Тепер самостійно · у своєму DartPad</span>
+      <ul>
+        <li>Зроби список із <b>чотирьох</b> покупок, додай пʼяту через
+          <span class="en">add</span>, виведи нумерованим списком</li>
+        <li>Прибери одну через <span class="en">remove</span> і виведи, скільки лишилось</li>
+        <li>Відсортуй і виведи <b>одним рядком</b> через
+          <span class="en">join(', ')</span></li>
+        <li>Перевір <span class="en">contains</span>: якщо
+          <span class="en">'kava'</span> немає — додай її</li>
+        <li><span class="en">List&lt;int&gt; ciny</span> із пʼяти чисел: відсортуй,
+          виведи найдешевшу (<span class="en">first</span>) і найдорожчу
+          (<span class="en">last</span>)</li>
+        <li>⭐⭐ Порахуй <b>суму</b> цін циклом <span class="en">for-in</span>
+          у змінну <span class="en">suma</span></li>
+        <li>⭐⭐⭐ Виведи <b>середню</b> ціну і скільки товарів дорожчі за середню</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── MAP: НАВІЩО ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🗝️</div><div>
+      <span class="label lm">Map · навіщо</span>
+      <h2>Коли номер нічого не означає</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="cm">// СПИСОК: «що там під номером 1?»</span>
+<span class="sk">var</span> slovnyk = [<span class="ss">'widget'</span>, <span class="ss">'vidzhet'</span>, <span class="ss">'state'</span>, <span class="ss">'stan'</span>];
+<span class="sf">print</span>(slovnyk[<span class="sn">1</span>]);   <span class="cm">// vidzhet — але чому саме 1?</span>
+
+<span class="cm">// MAP: «що означає widget?»</span>
+<span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">String</span>&gt; sl = {
+  <span class="ss">'widget'</span>: <span class="ss">'vidzhet'</span>,
+  <span class="ss">'state'</span>: <span class="ss">'stan'</span>,
+};
+<span class="sf">print</span>(sl[<span class="ss">'widget'</span>]);  <span class="cm">// vidzhet</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">У <b>Map</b> замість номера — <b>ключ</b>. Ключ ти
+          вигадуєш сам, і він щось означає</div>
+        <div class="hbox"><span class="en">Map&lt;String, String&gt;</span> читається
+          «<b>ключ</b> — рядок, <b>значення</b> — рядок». Перший тип — ключ,
+          другий — значення</div>
+        <div class="hbox">Фігурні дужки <span class="en">{ }</span>, пара пишеться
+          через <b>двокрапку</b>: <span class="en">'kliuch': znachennia</span></div>
+        <div class="hbox ho"><b>Порядку тут немає сенсу.</b> Питання до Map — не
+          «який третій», а «що лежить під цим іменем»</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── MAP: ЧИТАТИ Й ПИСАТИ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">2️⃣</div><div>
+      <span class="label lb">Map · читати, дописувати, міняти</span>
+      <h2>Один запис — один рядок</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">int</span>&gt; ciny = {
+  <span class="ss">'hlib'</span>: <span class="sn">25</span>,
+  <span class="ss">'moloko'</span>: <span class="sn">40</span>,
+};
+
+<span class="sf">print</span>(ciny[<span class="ss">'hlib'</span>]);   <span class="cm">// 25</span>
+
+ciny[<span class="ss">'syr'</span>] = <span class="sn">180</span>;      <span class="cm">// дописали новий</span>
+ciny[<span class="ss">'hlib'</span>] = <span class="sn">30</span>;      <span class="cm">// змінили наявний</span>
+
+<span class="sf">print</span>(ciny);
+<span class="cm">// {hlib: 30, moloko: 40, syr: 180}</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Дописати й змінити — <b>той самий рядок</b>:
+          <span class="en">map[kliuch] = znachennia</span>. Ключа не було — зʼявиться;
+          був — перезапишеться</div>
+        <div class="hbox ho">Саме тому <b>випадкова помилка в ключі не помітна</b>:
+          <span class="en">ciny['hlub'] = 30</span> не виправить хліб, а <b>додасть
+          третій запис</b> із дивною назвою</div>
+        <div class="hbox">Порожня Map — з типом, як і список:<br>
+          <span class="en">Map&lt;String, int&gt; m = {};</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── MAP: ПРИБРАТИ Й ПЕРЕВІРИТИ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🧹</div><div>
+      <span class="label lb">Map · прибрати й перевірити</span>
+      <h2>Чи є такий ключ</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> ciny = {<span class="ss">'hlib'</span>: <span class="sn">25</span>, <span class="ss">'syr'</span>: <span class="sn">180</span>};
+
+<span class="sf">print</span>(ciny.<span class="sf">containsKey</span>(<span class="ss">'hlib'</span>));  <span class="cm">// true</span>
+<span class="sf">print</span>(ciny.length);                <span class="cm">// 2</span>
+<span class="sf">print</span>(ciny.isEmpty);               <span class="cm">// false</span>
+
+ciny.<span class="sf">remove</span>(<span class="ss">'syr'</span>);
+<span class="sf">print</span>(ciny);      <span class="cm">// {hlib: 25}</span>
+
+ciny.<span class="sf">clear</span>();
+<span class="sf">print</span>(ciny);      <span class="cm">// {}</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">containsKey</span> перевіряє <b>ключ</b>.
+          Для значень є <span class="en">containsValue</span>, але він потрібен
+          значно рідше</div>
+        <div class="hbox"><span class="en">remove</span> у Map — <b>за ключем</b>
+          (у List був за значенням). Одна назва, різна робота — дивись, із чим працюєш</div>
+        <div class="hbox"><span class="en">length</span>, <span class="en">isEmpty</span>,
+          <span class="en">clear</span> — такі самі, як у List. Це не збіг:
+          так зроблено навмисно, щоб менше запамʼятовувати</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ПЕРЕДБАЧ 2 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>А якщо ключа немає?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> s = [<span class="ss">'hlib'</span>, <span class="ss">'syr'</span>];
+<span class="sk">var</span> m = {<span class="ss">'hlib'</span>: <span class="sn">25</span>, <span class="ss">'syr'</span>: <span class="sn">180</span>};
+
+<span class="sf">print</span>(m[<span class="ss">'kava'</span>]);
+<span class="sf">print</span>(s[<span class="sn">5</span>]);</div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Відповідь</h3>
+        <p class="rv-hint">Обидва рядки поводяться по-різному. Чому?</p>
+        <div class="rv-body">
+          <p class="mono" style="white-space:pre-wrap;font-family:var(--f-mono)">null
+падіння: RangeError</p>
+          <p class="mt"><b>Map на невідомий ключ віддає
+            <span class="en">null</span></b> — «нічого». Програма їде далі,
+            і помилка спливе десь пізніше</p>
+          <p class="mt"><b>List на неіснуючий індекс — падає одразу.</b>
+            Бо список знає свою довжину, а Map не може знати всі ключі,
+            яких у ній немає</p>
+          <p class="mt" style="color:var(--accent)">Слово <span class="en">null</span>
+            запамʼятайте: на уроці 12 буде цілий урок про нього.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── MAP: ПЕРЕБРАТИ ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lb">Map · перебір · 3 способи</span>
+      <h2>Пройти по всіх записах</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> ciny = {<span class="ss">'hlib'</span>: <span class="sn">25</span>, <span class="ss">'syr'</span>: <span class="sn">180</span>};
+
+<span class="cm">// 1. по ключах — найчастіше</span>
+<span class="sk">for</span> (<span class="sk">String</span> k <span class="sk">in</span> ciny.keys) {
+  <span class="sf">print</span>(<span class="ss">'$k: ${ciny[k]}'</span>);
+}
+
+<span class="cm">// 2. тільки значення</span>
+<span class="sk">for</span> (<span class="sk">int</span> c <span class="sk">in</span> ciny.values) {
+  <span class="sf">print</span>(c);
+}
+
+<span class="cm">// 3. пара одразу</span>
+ciny.<span class="sf">forEach</span>((k, v) =&gt; <span class="sf">print</span>(<span class="ss">'$k — $v grn'</span>));</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">keys</span> — усі ключі,
+          <span class="en">values</span> — усі значення. Мати ключ достатньо:
+          значення завжди поруч, через <span class="en">ciny[k]</span></div>
+        <div class="hbox"><span class="en">forEach</span> одразу дає обидва.
+          Тут упізнається стрілка <span class="en">=&gt;</span> з уроку 4 —
+          це та сама коротка функція</div>
+        <div class="hbox ho">Сума значень рахується так само, як по списку:
+          <span class="en">for (int c in ciny.values) suma += c;</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lp">Тримати відкритим</span>
+      <h2>Уся родина на одному екрані</h2>
+    </div></div>
+    <div class="refg">
+      <div class="rf"><span class="rt">створити список</span>
+        <span class="rc">List&lt;String&gt; s = ['a', 'b'];</span></div>
+      <div class="rf"><span class="rt">порожній список</span>
+        <span class="rc">List&lt;int&gt; c = [];</span></div>
+      <div class="rf"><span class="rt">узяти / замінити</span>
+        <span class="rc">s[0] · s.first · s.last · s[0] = 'x'</span></div>
+      <div class="rf"><span class="rt">додати</span>
+        <span class="rc">s.add('c') · s.addAll([...]) · s.insert(0, 'x')</span></div>
+      <div class="rf"><span class="rt">прибрати</span>
+        <span class="rc">s.remove('a') · s.removeAt(0) · s.removeLast() · s.clear()</span></div>
+      <div class="rf"><span class="rt">скільки</span>
+        <span class="rc">s.length · s.isEmpty · s.isNotEmpty</span></div>
+      <div class="rf"><span class="rt">перебрати</span>
+        <span class="rc">for (String x in s) · for (int i = 0; i &lt; s.length; i++)</span></div>
+      <div class="rf"><span class="rt">шукати</span>
+        <span class="rc">s.contains('a') · s.indexOf('a') → -1</span></div>
+      <div class="rf"><span class="rt">порядок і вивід</span>
+        <span class="rc">s.sort() · s.reversed.toList() · s.join(', ')</span></div>
+      <div class="rf"><span class="rt">створити Map</span>
+        <span class="rc">Map&lt;String, int&gt; m = {'a': 1};</span></div>
+      <div class="rf"><span class="rt">узяти / дописати</span>
+        <span class="rc">m['a'] · m['b'] = 2</span></div>
+      <div class="rf"><span class="rt">прибрати й перевірити</span>
+        <span class="rc">m.remove('a') · m.containsKey('a') · m.length · m.clear()</span></div>
+      <div class="rf"><span class="rt">перебрати Map</span>
+        <span class="rc">for (String k in m.keys) · m.values · m.forEach((k, v) =&gt; ...)</span></div>
+      <div class="rf"><span class="rt">немає такого</span>
+        <span class="rc">m['нема'] → null · s[99] → падіння</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ── ПРАКТИЧНА ⭐ ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lo">Практика · 10 хв · рівень ⭐</span>
+      <h2>Список покупок + словник термінів</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="demo">
+          <span class="lbl">Приклад · так виглядає початок</span>
+          <div class="dp-code"><span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">List</span>&lt;<span class="sk">String</span>&gt; pokupky = [<span class="ss">'hlib'</span>, <span class="ss">'syr'</span>];
+  pokupky.<span class="sf">add</span>(<span class="ss">'kava'</span>);
+
+  <span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">String</span>&gt; slovnyk = {
+    <span class="ss">'list'</span>: <span class="ss">'spysok'</span>,
+    <span class="ss">'map'</span>: <span class="ss">'slovnyk'</span>,
+  };
+  <span class="sf">print</span>(slovnyk[<span class="ss">'list'</span>]);
+}</div>
+        </div>
+        <div class="card reveal">
+          <h3>Перевір себе</h3>
+          <p class="rv-hint">Клацни, коли обидві частини працюють.</p>
+          <div class="rv-body">
+            <p class="mono" style="font-family:var(--f-mono);white-space:pre-wrap">1. hlib
+2. kava
+3. syr
+Vsjogo: 3
+
+list — spysok
+map — slovnyk
+widget — vidzhet</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="hbox hm"><b>Частина 1 · список покупок</b></div>
+        <div class="hbox">Список із <b>пʼяти</b> покупок · додай шосту через
+          <span class="en">add</span> · прибери одну через
+          <span class="en">remove</span></div>
+        <div class="hbox">Відсортуй · виведи <b>нумерованим</b> списком через
+          <span class="en">for(i)</span> · унизу
+          <span class="en">'Vsjogo: ${...length}'</span></div>
+        <div class="hbox hm"><b>Частина 2 · словник термінів</b></div>
+        <div class="hbox"><span class="en">Map&lt;String, String&gt;</span> із
+          <b>пʼяти</b> англійських слів уроку й перекладу · допиши шосте через
+          <span class="en">slovnyk['...'] = '...'</span></div>
+        <div class="hbox">Виведи всі пари циклом по
+          <span class="en">keys</span> у вигляді
+          <span class="en">'slovo — pereklad'</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ── ПРАКТИЧНА ⭐⭐ ⭐⭐⭐ ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh"><div class="si">🚀</div><div>
+      <span class="label lo">Практика · далі</span>
+      <h2>Кому мало</h2>
+    </div></div>
+    <div class="lvl">
+      <div class="lv"><span class="lv-s">⭐⭐</span>
+        <span class="lv-t">Додай <span class="en">Map&lt;String, int&gt; ciny</span> — ціна
+          кожної покупки. Порахуй <b>суму замовлення</b> циклом по
+          <span class="en">values</span> і виведи
+          <span class="en">'Do splaty: ... grn'</span>.<br>
+          Перед додаванням покупки перевіряй <span class="en">contains</span>, щоб
+          та сама річ не потрапила у список двічі</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+        <span class="lv-t">Зроби <b>функції</b> з уроку 4 замість коду в
+          <span class="en">main</span>:<br>
+          <span class="en">void pokazhy(List&lt;String&gt; s)</span> — друкує нумерований
+          список · <span class="en">int suma(Map&lt;String, int&gt; c)</span> — повертає суму ·
+          <span class="en">bool dodai(List&lt;String&gt; s, String t)</span> — додає, якщо
+          ще немає, і повертає, чи вдалося.<br>
+          Потім знайди <b>найдорожчу</b> покупку: пройди по
+          <span class="en">keys</span>, тримаючи в змінній поточний максимум</span></div>
+    </div>
+    <div class="hbox ho mt">Хто дописав усе — <b>не зупиняйся</b>: додай
+      <span class="en">Map&lt;String, int&gt;</span> «скільки штук» і порахуй суму
+      з урахуванням кількості. Це вже майже урок 6</div>
+  </div></section>
+
+  <!-- ══════════ 23 ── ПАСТКИ ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="sh"><div class="si">⚠️</div><div>
+      <span class="label lo">Пастки</span>
+      <h2>На чому спотикаються всі</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Індекс з нуля, а довжина з одиниці.</b>
+          У списку з пʼяти елементів <span class="en">s[5]</span> — падіння.
+          Останній — <span class="en">s[4]</span>, він же
+          <span class="en">s.last</span></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b><span class="en">length</span> без дужок</b>, а
+          <span class="en">add()</span>, <span class="en">sort()</span>,
+          <span class="en">clear()</span> — з дужками. Властивість проти методу</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b><span class="en">remove</span> у List — за значенням,
+          у Map — за ключем.</b> І в List він прибирає <b>лише перший</b> збіг</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><b><span class="en">sort()</span> псує оригінал.</b>
+          Він не повертає новий список — він перекладає елементи в тому самому.
+          Потрібен старий порядок — зберігай копію заздалегідь</span></div>
+      <div class="step"><span class="step-n">5</span>
+        <span class="step-t"><b>Помилка в ключі Map мовчить.</b>
+          <span class="en">m['hlub'] = 30</span> не виправить
+          <span class="en">'hlib'</span>, а створить новий запис. Читання ж
+          неіснуючого ключа дає <span class="en">null</span> без попередження</span></div>
+      <div class="step"><span class="step-n">6</span>
+        <span class="step-t"><b>Квадратні дужки для List, фігурні для Map.</b>
+          <span class="en">[ ]</span> — по порядку, <span class="en">{ }</span> —
+          за іменем, пара через двокрапку</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Словник уроку</span>
+      <h2>Ці слова будуть у Flutter щодня</h2>
+    </div></div>
+    <div class="refg">
+      <div class="rf"><span class="rt">list</span><span class="rc">список</span></div>
+      <div class="rf"><span class="rt">map</span><span class="rc">словник, відповідність</span></div>
+      <div class="rf"><span class="rt">key — value</span><span class="rc">ключ — значення</span></div>
+      <div class="rf"><span class="rt">index</span><span class="rc">номер елемента</span></div>
+      <div class="rf"><span class="rt">length</span><span class="rc">довжина, кількість</span></div>
+      <div class="rf"><span class="rt">add — remove</span><span class="rc">додати — прибрати</span></div>
+      <div class="rf"><span class="rt">contains</span><span class="rc">містить</span></div>
+      <div class="rf"><span class="rt">sort</span><span class="rc">упорядкувати</span></div>
+      <div class="rf"><span class="rt">empty</span><span class="rc">порожній</span></div>
+      <div class="rf"><span class="rt">join</span><span class="rc">склеїти в рядок</span></div>
+      <div class="rf"><span class="rt">insert</span><span class="rc">вставити</span></div>
+      <div class="rf"><span class="rt">RangeError</span><span class="rc">вийшов за межі списку</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 25 ── ПІДСУМОК ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Що є після пʼятого уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="card">
+        <h3>Уміємо</h3>
+        <p>тримати багато значень в одній змінній · брати за номером і за ключем ·
+          додавати, прибирати, рахувати · перебирати циклом · шукати й сортувати ·
+          показувати людині через <span class="en">join</span></p>
+      </div>
+      <div class="card cm">
+        <h3>Наступного разу</h3>
+        <p><b>Список Mapʼів</b> — <span class="en">List&lt;Map&lt;String, dynamic&gt;&gt;</span>.
+          Кожен товар стане не назвою, а <b>цілим записом</b> із назвою, ціною
+          і жанром одразу. Це вже майже база даних — і саме з неї виросте
+          «GameStore»</p>
+      </div>
+    </div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 6 · 30 вересня · Список Mapʼів як база даних</p>
+  </div></section>
+
+  <!-- ══════════ 26 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lo">Домашнє</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox hm">Пишемо <strong>на роздатці</strong>, від руки.
+      Приносимо <strong>30 вересня</strong>, на урок 6. <strong>Без DartPad</strong> —
+      усе читаємо очима.</div>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Що виведе?</b> Три рядки.
+          <span class="en">var s = ['kit', 'pes', 'kit'];</span>
+          &#8594; <span class="en">print(s.length);</span>
+          <span class="en">s.remove('kit'); print(s);</span>
+          <span class="en">print(s.indexOf('kit'));</span></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Що виведе?</b>
+          <span class="en">var m = {'red': 'chervonyi', 'blue': 'synii'};</span>
+          &#8594; <span class="en">print(m['blue']);</span> ·
+          <span class="en">print(m['green']);</span> ·
+          <span class="en">print(m.length);</span></span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Знайди помилку</b> й перепиши рядок правильно:
+          <span class="en">var ocinky = [10, 8, 12]; print(ocinky[3]);</span></span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><b>Допиши</b> пропущене слово:
+          <span class="en">var mista = ['Lviv', 'Kyiv']; mista.____('Odesa');</span>
+          — щоб у списку стало три міста</span></div>
+      <div class="step"><span class="step-n">5</span>
+        <span class="step-t"><b>List чи Map?</b> Для кожного напиши одне слово:
+          оцінки за контрольну · столиця кожної країни · імена учнів по порядку ·
+          скільки коштує кожен товар</span></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

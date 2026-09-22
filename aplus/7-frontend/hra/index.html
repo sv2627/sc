@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Зроби свою гру · Front-end II 7 клас · A+</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#f6eef0;--border:#e7d9dd;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--green:#1b7a3e;
+--pink:#f4a6b3;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--blue);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#c2aab0}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+h2{font-family:var(--f-head);font-size:1.55rem;font-weight:800;margin:0 0 12px;line-height:1.2}
+h3{font-family:var(--f-head);font-size:1.15rem;font-weight:800;margin:22px 0 8px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:30px;max-width:780px}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+p{margin-bottom:12px}
+ul,ol{margin:0 0 12px;padding-left:24px}
+li{margin-bottom:6px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+padding:24px 26px;margin-bottom:18px;box-shadow:0 1px 3px rgba(89,20,41,.05)}
+a.card{display:block;transition:border-color .18s,background .18s,transform .18s}
+a.card:hover{border-color:var(--accent);background:var(--surf2);transform:translateY(-2px)}
+.card .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);display:block;margin-bottom:9px}
+.grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 6px;border-radius:5px}
+/* Рядки коду — кожен у своєму <span>. Без pre-wrap вони злипаються в один. */
+.code{font-family:var(--f-mono);font-size:15px;line-height:1.65;background:#1b1720;
+color:#f2e9ec;border-radius:12px;padding:18px 20px;overflow-x:auto;
+white-space:pre-wrap;margin:12px 0}
+.code .c{color:#9f8fa6}       /* коментар */
+.code .t{color:#7ec8ff}       /* тег */
+.code .s{color:#ffd479}       /* рядок */
+.code .n{color:#b9f6ca}       /* назва налаштування */
+.code b{color:#ff9ec4;font-weight:700}
+table{width:100%;border-collapse:collapse;margin:10px 0 4px;font-size:16.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+color:var(--faint);font-weight:700}
+td:first-child{white-space:nowrap}
+.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:20px;
+box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--accent);display:block;margin-bottom:8px}
+.hero.warn{border-left-color:var(--rose)}
+.hero.warn .k{color:var(--rose)}
+.hero.ok{border-left-color:var(--green)}
+.hero.ok .k{color:var(--green)}
+.step{display:flex;gap:16px;margin-bottom:16px;align-items:flex-start}
+.step .num{font-family:var(--f-mono);font-weight:700;font-size:15px;color:#fff;
+background:var(--accent);min-width:30px;height:30px;border-radius:50%;
+display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:3px}
+.lvl{font-family:var(--f-mono);font-size:12px;letter-spacing:1px;padding:4px 11px;
+border-radius:20px;background:var(--sky);color:var(--blue);display:inline-block;margin-bottom:8px}
+.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+font-size:15px;color:var(--dim)}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}
+.card{padding:19px 20px}.hero{padding:18px 20px}.code{font-size:13.5px}
+table{font-size:15px}th,td{padding:7px 8px}}
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+</style>
+</head>
+<body><div class="wrap">
+
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">7 клас · Front-end II</a><span class="sep">/</span><span>Зроби свою гру</span></nav>
+
+<div class="kicker">Позапрограмний набір · робиш удома · оцінки немає</div>
+<h1>Зроби свою гру</h1>
+<p class="lead">Ти вже вмієш HTML і CSS. Гру пишуть третьою мовою — JavaScript, і її ми вчитимемо у 8 класі. Але чекати рік нецікаво, тому <b>JavaScript уже написаний за тебе</b>. Твоя робота — зібрати сторінку і сказати грі, якою вона має бути.</p>
+
+<div class="hero ok">
+  <span class="k">Чесно кажучи</span>
+  <p>Це не «ти зробив гру з нуля» — це «ти скористався чужим кодом і зробив із нього своє». Саме так працює справжня розробка: ніхто не пише все сам. Але й списати тут нічого: <b>сторінка, кольори, картинка і правила — твої</b>, і двох однакових ігор у класі бути не повинно.</p>
+</div>
+
+<h2 style="margin-top:34px">Як підключити</h2>
+
+<div class="card">
+  <div class="step"><span class="num">1</span><div>Створи папку для гри й поклади в неї файл <code>gra.js</code> — забери його <a href="gra.js" download style="color:var(--accent);border-bottom:1px solid"><b>за цим посиланням</b></a> (правою кнопкою → «Зберегти як…»).</div></div>
+  <div class="step"><span class="num">2</span><div>Поруч зроби свій <code>index.html</code> — звичайний, з <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code> і своїм CSS.</div></div>
+  <div class="step"><span class="num">3</span><div>Постав у <code>&lt;body&gt;</code> порожній блок — саме туди приїде гра:
+    <div class="code"><span class="t">&lt;div</span> id=<span class="s">"gra"</span><span class="t">&gt;&lt;/div&gt;</span></div></div></div>
+  <div class="step"><span class="num">4</span><div>Наприкінці <code>&lt;body&gt;</code> підключи рушій і опиши гру:
+    <div class="code"><span class="t">&lt;script</span> src=<span class="s">"gra.js"</span><span class="t">&gt;&lt;/script&gt;</span>
+<span class="t">&lt;script&gt;</span>
+  <b>Гра</b>.змійка({ <span class="n">поле</span>: 20, <span class="n">кольорЗмійки</span>: <span class="s">'#00e676'</span> });
+<span class="t">&lt;/script&gt;</span></div></div></div>
+  <div class="step"><span class="num">5</span><div>Відкрий сторінку через <b>Live Server</b> — і грай.</div></div>
+</div>
+
+<div class="hero warn">
+  <span class="k">Головна пастка</span>
+  <p><code>&lt;script src="gra.js"&gt;</code> має стояти <b>раніше</b>, ніж рядок із <code>Гра.змійка(…)</code>. Інакше браузер спершу почує слово «Гра», якого ще не знає, і в консолі (<b>F12</b>) буде <code>Гра is not defined</code>. Правило просте: <b>спочатку підключи, потім користуйся</b>.</p>
+</div>
+
+<h2 style="margin-top:34px">Дві готові гри</h2>
+
+<div class="grid2">
+  <a class="card" href="zmiyka.html" style="border-left:5px solid #00a152">
+    <span class="k">Шаблон · відкрий і збережи собі</span>
+    <h2 style="color:#00a152">🐍 Змійка</h2>
+    <p>Класика. Керується стрілками, їсть яблука, росте. Міняєш розмір поля, швидкість, кольори й саме яблуко — воно може бути будь-яким емодзі.</p>
+  </a>
+  <a class="card" href="pazl.html" style="border-left:5px solid #6a3d9a">
+    <span class="k">Шаблон · відкрий і збережи собі</span>
+    <h2 style="color:#6a3d9a">🧩 Пазл</h2>
+    <p>П'ятнашки з <b>твоєї</b> картинки: фото, малюнок, скрін улюбленої гри. Плитки — звичайні блоки в <b>CSS&nbsp;Grid</b>, тому стилі до них ти пишеш сам.</p>
+  </a>
+</div>
+
+<h2 style="margin-top:34px">Довідник налаштувань</h2>
+
+<div class="card">
+  <h3 style="margin-top:0">🐍 <code>Гра.змійка({ … })</code></h3>
+  <table>
+    <tr><th>Налаштування</th><th>Що означає</th><th>Якщо не писати</th></tr>
+    <tr><td><code>поле</code></td><td>скільки клітинок по стороні</td><td><code>20</code></td></tr>
+    <tr><td><code>клітинка</code></td><td>розмір клітинки в пікселях</td><td><code>24</code></td></tr>
+    <tr><td><code>швидкість</code></td><td>мілісекунд на крок. <b>Менше число — швидше</b></td><td><code>150</code></td></tr>
+    <tr><td><code>кольорФону</code></td><td>колір поля</td><td><code>'#101418'</code></td></tr>
+    <tr><td><code>кольорСітки</code></td><td>колір ліній сітки</td><td>ледь помітний білий</td></tr>
+    <tr><td><code>кольорЗмійки</code></td><td>колір тіла</td><td><code>'#00e676'</code></td></tr>
+    <tr><td><code>кольорГолови</code></td><td>колір голови</td><td>як тіло</td></tr>
+    <tr><td><code>їжа</code></td><td>емодзі: <code>'🍎'</code>, <code>'🍕'</code>, <code>'💎'</code>. Прибереш — буде квадрат</td><td>квадрат</td></tr>
+    <tr><td><code>кольорЇжі</code></td><td>колір квадрата-їжі</td><td><code>'#ff5252'</code></td></tr>
+    <tr><td><code>крізьСтіни</code></td><td><code>true</code> — виповзає з протилежного боку замість смерті</td><td><code>false</code></td></tr>
+    <tr><td><code>показуватиРахунок</code></td><td><code>false</code> — сховати число в кутку поля</td><td><code>true</code></td></tr>
+    <tr><td><code>наПочаток</code></td><td>що робити на старті й після кожного перезапуску — сюди ставлять обнулення табло</td><td>нічого</td></tr>
+    <tr><td><code>наОчко</code></td><td>що робити, коли з'їдено яблуко</td><td>нічого</td></tr>
+    <tr><td><code>наКінець</code></td><td>що робити, коли гра скінчилась</td><td>нічого</td></tr>
+  </table>
+  <p style="margin-top:14px;color:var(--dim);font-size:16.5px">Керування: <b>стрілки</b> або <b>WASD</b>, <b>пробіл</b> — почати заново. З телефона — <b>свайп</b> пальцем.</p>
+
+  <h3>🧩 <code>Гра.пазл({ … })</code></h3>
+  <table>
+    <tr><th>Налаштування</th><th>Що означає</th><th>Якщо не писати</th></tr>
+    <tr><td><code>картинка</code></td><td>назва файлу поруч зі сторінкою. <b>Обов'язкове</b></td><td>помилка в консолі</td></tr>
+    <tr><td><code>сітка</code></td><td><code>3</code> → пазл 3×3. Від 2 до 8</td><td><code>3</code></td></tr>
+    <tr><td><code>розмір</code></td><td>сторона пазла в пікселях</td><td><code>420</code></td></tr>
+    <tr><td><code>показуватиНомери</code></td><td><code>false</code> — сховати номери-підказки (важче!)</td><td><code>true</code></td></tr>
+    <tr><td><code>наПеремогу</code></td><td>що робити, коли пазл зібрано. Дає <b>ходи</b> і <b>секунди</b></td><td>нічого</td></tr>
+  </table>
+  <p style="margin-top:14px;color:var(--dim);font-size:16.5px">Кнопка «перемішати заново» робиться так: <code>&lt;button onclick="Гра.пазлЗаново()"&gt;Заново&lt;/button&gt;</code></p>
+</div>
+
+<div class="hero">
+  <span class="k">Стилі пазла — твої</span>
+  <p>Рушій дає плиткам класи <code>.пазл</code>, <code>.плитка</code>, <code>.порожня</code> і <code>.номер</code>. Твій CSS сильніший за стилі рушія, тому можеш міняти все: <code>gap</code> (шви між плитками), <code>border-radius</code>, колір фону, тінь, <code>transition</code>. Це та сама сітка, що на уроці 4 — <code>display: grid</code> уже стоїть.</p>
+  <div class="code"><span class="c">/* шви товщі, плитки круглі, номери прибрано */</span>
+.пазл { <span class="n">gap</span>: 8px; <span class="n">background</span>: crimson; }
+.пазл .плитка { <span class="n">border-radius</span>: 50%; }
+.пазл .номер { <span class="n">display</span>: none; }</div>
+</div>
+
+<h2 style="margin-top:34px">Три рівні</h2>
+
+<div class="card">
+  <span class="lvl">⭐ базовий</span>
+  <p>Взяти один шаблон, змінити <b>заголовок, кольори і хоча б три налаштування</b>. Гра запускається, у неї можна грати.</p>
+</div>
+<div class="card">
+  <span class="lvl">⭐⭐ середній</span>
+  <p>Своя сторінка навколо гри: шапка з назвою, правила, табло рахунку, кнопка. Пазл — <b>зі своєї картинки</b>. Сторінка виглядає як зроблена, а не як шаблон: свої шрифти, фон, відступи.</p>
+</div>
+<div class="card">
+  <span class="lvl">⭐⭐⭐ високий</span>
+  <p>Обидві гри на одній сторінці з перемиканням, або <b>третя власна гра</b> з цеглинок нижче. Плюс адаптив: на телефоні грати так само зручно, як на ноутбуку.</p>
+</div>
+
+<h2 style="margin-top:34px">Цеглинки для своєї гри <span style="color:var(--faint);font-size:1rem">⭐⭐⭐</span></h2>
+
+<div class="card">
+  <p>Поле так само ділиться на клітинки. П'ять команд — і можна зібрати «злови предмет», лабіринт чи втечу.</p>
+  <table>
+    <tr><th>Команда</th><th>Що робить</th></tr>
+    <tr><td><code>Гра.полотно({ поле: 16, клітинка: 30 })</code></td><td>готує поле</td></tr>
+    <tr><td><code>Гра.очисти('#101418')</code></td><td>заливає поле кольором</td></tr>
+    <tr><td><code>Гра.намалюйКвадрат(3, 5, 'red')</code></td><td>квадрат у колонці 3, рядку 5</td></tr>
+    <tr><td><code>Гра.намалюйТекст('🍎', 2, 2)</code></td><td>емодзі або текст у клітинці</td></tr>
+    <tr><td><code>Гра.наКлавішу(function (напрям) { … })</code></td><td>напрям: <code>'вліво'</code>, <code>'вправо'</code>, <code>'вгору'</code>, <code>'вниз'</code>, <code>'пробіл'</code></td></tr>
+    <tr><td><code>Гра.кожніМілісекунд(500, function () { … })</code></td><td>повторює дію</td></tr>
+    <tr><td><code>Гра.випадкове(1, 6)</code></td><td>випадкове число, як кубик</td></tr>
+  </table>
+  <div class="code"><span class="c">// «Злови зірку»: рухаєш квадрат, ловиш зірку</span>
+<b>Гра</b>.полотно({ <span class="n">поле</span>: 12, <span class="n">клітинка</span>: 34 });
+<span style="color:#ff9ec4">var</span> я = { к: 6, р: 6 };
+<span style="color:#ff9ec4">var</span> зірка = { к: <b>Гра</b>.випадкове(0, 11), р: <b>Гра</b>.випадкове(0, 11) };
+
+<b>Гра</b>.наКлавішу(<span style="color:#ff9ec4">function</span> (напрям) {
+  <span style="color:#ff9ec4">if</span> (напрям === <span class="s">'вліво'</span>)  я.к = я.к - 1;
+  <span style="color:#ff9ec4">if</span> (напрям === <span class="s">'вправо'</span>) я.к = я.к + 1;
+  <span style="color:#ff9ec4">if</span> (напрям === <span class="s">'вгору'</span>)  я.р = я.р - 1;
+  <span style="color:#ff9ec4">if</span> (напрям === <span class="s">'вниз'</span>)   я.р = я.р + 1;
+});
+
+<b>Гра</b>.кожніМілісекунд(60, <span style="color:#ff9ec4">function</span> () {
+  <b>Гра</b>.очисти(<span class="s">'#101418'</span>);
+  <b>Гра</b>.намалюйТекст(<span class="s">'⭐'</span>, зірка.к, зірка.р);
+  <b>Гра</b>.намалюйКвадрат(я.к, я.р, <span class="s">'#00e676'</span>);
+  <span style="color:#ff9ec4">if</span> (я.к === зірка.к &amp;&amp; я.р === зірка.р) {
+    зірка = { к: <b>Гра</b>.випадкове(0, 11), р: <b>Гра</b>.випадкове(0, 11) };
+  }
+});</div>
+</div>
+
+<h2 style="margin-top:34px">Коли щось не працює</h2>
+
+<div class="card">
+  <p>Перше, що робиш завжди: <b>F12</b> → вкладка <b>Console</b>. Біла сторінка без помилки — рідкість; майже завжди помилка там є.</p>
+  <table>
+    <tr><th>У консолі</th><th>Що сталося</th></tr>
+    <tr><td><code>Гра is not defined</code></td><td><code>&lt;script src="gra.js"&gt;</code> стоїть <b>після</b> твого коду або шлях до файлу неправильний</td></tr>
+    <tr><td><code>на сторінці немає елемента з id="gra"</code></td><td>забув рядок <code>&lt;div id="gra"&gt;&lt;/div&gt;</code> у <code>&lt;body&gt;</code></td></tr>
+    <tr><td><code>не вказано картинку</code></td><td>у пазлі немає налаштування <code>картинка</code></td></tr>
+    <tr><td>помилок нема, а пазл сірий</td><td>картинка не знайшлася: перевір назву файлу <b>разом із розширенням</b> і те, що він лежить поруч зі сторінкою</td></tr>
+    <tr><td>гра є, але не реагує</td><td>клацни мишкою по сторінці — браузер має «почути» клавіші саме на ній</td></tr>
+  </table>
+</div>
+
+<div class="hero warn" style="margin-top:24px">
+  <span class="k">Одне правило</span>
+  <p>Кома, дужка й лапка мають бути на місці. Пропущена кома між налаштуваннями ламає <b>всю</b> гру, а не одне налаштування. Копіюй шаблон і міняй <b>значення</b>, не чіпаючи розділові знаки, — і майже все працюватиме з першого разу.</p>
+</div>
+
+<div class="foot">
+  Front-end II · 7 клас · A+ · 2026/27 · рушій <code>gra.js</code> версії 1.0<br>
+  Оцінки за це немає. Зробиш — покажеш класу; не зробиш — нічого не станеться.
+</div>
+
+</div></body>
+</html>
