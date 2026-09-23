@@ -1,20 +1,23 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   ГРА — рушій для власних ігор
+   GAME — рушій для власних ігор
    Front-end II · 7 клас · A+ · 2026/27
 
    Підключається одним рядком:
        <script src="gra.js"></script>
 
    Далі досить описати гру налаштуваннями — писати JavaScript не треба:
-       Гра.змійка({ поле: 20, кольорЗмійки: '#00e676' });
-       Гра.пазл({ картинка: 'foto.jpg', сітка: 3 });
+       Game.snake({ field: 20, snakeColor: '#00e676' });
+       Game.puzzle({ image: 'foto.jpg', grid: 3 });
 
-   Хто хоче більше — унизу файлу є прості цеглинки (намалюйКвадрат,
-   наКлавішу, кожніМілісекунд), з яких збирається третя, своя гра.
+   Хто хоче більше — унизу файлу є прості цеглинки (drawSquare, onKey,
+   everyMs), з яких збирається третя, своя гра.
 
    Тут нема нічого чарівного: усе це ті самі команди, які будуть
    у JavaScript у 8 класі. Зараз ми ними користуємось, а через рік
-   напишемо такі самі самі.
+   напишемо такі самі.
+
+   Назви англійською навмисно: рівно так вони виглядають у справжніх
+   бібліотеках, і саме ці слова будуть у 8 класі.
    ═══════════════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -24,489 +27,489 @@
 
   // Бере число з налаштувань. Якщо учень нічого не написав або написав
   // дурницю — тихо підставляє запасне значення, а не ламає гру.
-  function число(значення, запасне) {
-    var n = Number(значення);
-    return isFinite(n) && n > 0 ? n : запасне;
+  function num(value, fallback) {
+    var n = Number(value);
+    return isFinite(n) && n > 0 ? n : fallback;
   }
 
   // Знаходить місце для гри на сторінці. Немає такого id — кажемо про це
   // вголос у консолі, українською, бо мовчазна поломка гірша за помилку.
-  function знайтиМісце(id) {
-    var вузол = document.getElementById(id);
-    if (!вузол) {
+  function findMount(id) {
+    var node = document.getElementById(id);
+    if (!node) {
       console.error(
-        'Гра: на сторінці немає елемента з id="' + id + '". ' +
+        'Game: на сторінці немає елемента з id="' + id + '". ' +
         'Додай у HTML рядок:  <div id="' + id + '"></div>'
       );
     }
-    return вузол;
+    return node;
   }
 
   // Стилі рушія кладемо ПЕРШИМИ в <head>, щоб CSS учня, який іде далі,
   // завжди перемагав. Інакше твої кольори не працювали б — і незрозуміло чому.
-  function стилі(css) {
-    var тег = document.createElement('style');
-    тег.textContent = css;
-    document.head.insertBefore(тег, document.head.firstChild);
+  function addStyles(css) {
+    var tag = document.createElement('style');
+    tag.textContent = css;
+    document.head.insertBefore(tag, document.head.firstChild);
   }
 
-  var Гра = { версія: '1.0' };
+  var Game = { version: '2.0' };
 
-  /* Випадкове ціле число від «від» до «до» включно.
-     Гра.випадкове(1, 6) — як кидок кубика. */
-  Гра.випадкове = function (від, до) {
-    return Math.floor(Math.random() * (до - від + 1)) + від;
+  /* Випадкове ціле число від from до to включно.
+     Game.random(1, 6) — як кидок кубика. */
+  Game.random = function (from, to) {
+    return Math.floor(Math.random() * (to - from + 1)) + from;
   };
 
   /* ═══════════════════════════════════════════════════════════════════════
-     ЗМІЙКА
+     SNAKE — Змійка
      ═══════════════════════════════════════════════════════════════════════ */
 
-  Гра.змійка = function (н) {
-    н = н || {};
+  Game.snake = function (s) {
+    s = s || {};
 
     // Менше шести клітинок — змійка довжиною 3 не вміщується і гра
     // ламається ще до першого кроку. Мовчки піднімаємо до шести.
-    var поле        = Math.max(6, Math.round(число(н.поле, 20)));   // клітинок по стороні
-    var клітинка    = Math.round(число(н.клітинка, 24));    // розмір клітинки, пікселів
-    var швидкість   = число(н.швидкість, 150);              // мілісекунд на крок
-    var кольорФону  = н.кольорФону   || '#101418';
-    var кольорСітки = н.кольорСітки  || 'rgba(255,255,255,.06)';
-    var кольорЗмійки = н.кольорЗмійки || '#00e676';
-    var кольорГолови = н.кольорГолови || кольорЗмійки;
-    var кольорЇжі   = н.кольорЇжі    || '#ff5252';
-    var їжа         = н.їжа || '';               // емодзі; порожньо — просто квадрат
-    var крізьСтіни  = н.крізьСтіни === true;     // виповзати з іншого боку
-    var показуватиРахунок = н.показуватиРахунок !== false;
+    var field      = Math.max(6, Math.round(num(s.field, 20)));   // клітинок по стороні
+    var cell       = Math.round(num(s.cell, 24));                 // розмір клітинки, пікселів
+    var speed      = num(s.speed, 150);                           // мілісекунд на крок
+    var bgColor    = s.bgColor    || '#101418';
+    var gridColor  = s.gridColor  || 'rgba(255,255,255,.06)';
+    var snakeColor = s.snakeColor || '#00e676';
+    var headColor  = s.headColor  || snakeColor;
+    var foodColor  = s.foodColor  || '#ff5252';
+    var food       = s.food || '';                 // емодзі; порожньо — просто квадрат
+    var wrapWalls  = s.wrapWalls === true;         // виповзати з іншого боку
+    var showScore  = s.showScore !== false;
 
-    var полотно = створитиПолотно(н.місце || 'gra', поле * клітинка, поле * клітинка);
-    if (!полотно) return;
-    var пензель = полотно.getContext('2d');
+    var canvas = makeCanvas(s.mount || 'game', field * cell, field * cell);
+    if (!canvas) return;
+    var brush = canvas.getContext('2d');
 
-    var змія, напрям, наступний, яблуко, рахунок, живий, таймер, стартовано;
+    var snake, dir, nextDir, apple, score, alive, timer, started;
 
-    function почати() {
-      var центр = Math.floor(поле / 2);
-      змія = [
-        { к: центр,     р: центр },
-        { к: центр - 1, р: центр },
-        { к: центр - 2, р: центр }
+    function start() {
+      var mid = Math.floor(field / 2);
+      snake = [
+        { x: mid,     y: mid },
+        { x: mid - 1, y: mid },
+        { x: mid - 2, y: mid }
       ];
-      напрям = { к: 1, р: 0 };
-      наступний = { к: 1, р: 0 };
-      рахунок = 0;
-      живий = true;
+      dir = { x: 1, y: 0 };
+      nextDir = { x: 1, y: 0 };
+      score = 0;
+      alive = true;
       // Гра чекає на першу стрілку. Без цього вона стартує сама і за
       // півтори секунди врізається в стіну — учень відкриває сторінку
       // й одразу бачить «кінець», ніби все зламано.
-      стартовано = false;
-      покластиЯблуко();
-      малювати();
-      clearInterval(таймер);
-      таймер = setInterval(крок, швидкість);
+      started = false;
+      placeApple();
+      draw();
+      clearInterval(timer);
+      timer = setInterval(step, speed);
       // Без цього після перезапуску табло учня й далі показувало б
       // «Гру закінчено» — рушію нічим було сказати сторінці, що почалось нове.
-      if (typeof н.наПочаток === 'function') н.наПочаток();
+      if (typeof s.onStart === 'function') s.onStart();
     }
 
     // Яблуко не має з'являтися всередині змії — інакше воно невидиме
     // і гра виглядає зламаною.
-    function покластиЯблуко() {
-      var спроба, зайнято, i;
+    function placeApple() {
+      var tryCell, busy, i;
       do {
-        спроба = { к: Гра.випадкове(0, поле - 1), р: Гра.випадкове(0, поле - 1) };
-        зайнято = false;
-        for (i = 0; i < змія.length; i++) {
-          if (змія[i].к === спроба.к && змія[i].р === спроба.р) { зайнято = true; break; }
+        tryCell = { x: Game.random(0, field - 1), y: Game.random(0, field - 1) };
+        busy = false;
+        for (i = 0; i < snake.length; i++) {
+          if (snake[i].x === tryCell.x && snake[i].y === tryCell.y) { busy = true; break; }
         }
-      } while (зайнято);
-      яблуко = спроба;
+      } while (busy);
+      apple = tryCell;
     }
 
-    function крок() {
-      if (!живий || !стартовано) return;
-      напрям = наступний;
+    function step() {
+      if (!alive || !started) return;
+      dir = nextDir;
 
-      var голова = { к: змія[0].к + напрям.к, р: змія[0].р + напрям.р };
+      var head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
 
-      if (крізьСтіни) {
-        голова.к = (голова.к + поле) % поле;
-        голова.р = (голова.р + поле) % поле;
-      } else if (голова.к < 0 || голова.р < 0 || голова.к >= поле || голова.р >= поле) {
-        кінець();
+      if (wrapWalls) {
+        head.x = (head.x + field) % field;
+        head.y = (head.y + field) % field;
+      } else if (head.x < 0 || head.y < 0 || head.x >= field || head.y >= field) {
+        gameOver();
         return;
       }
 
-      for (var i = 0; i < змія.length; i++) {
-        if (змія[i].к === голова.к && змія[i].р === голова.р) { кінець(); return; }
+      for (var i = 0; i < snake.length; i++) {
+        if (snake[i].x === head.x && snake[i].y === head.y) { gameOver(); return; }
       }
 
-      змія.unshift(голова);
+      snake.unshift(head);
 
-      if (голова.к === яблуко.к && голова.р === яблуко.р) {
-        рахунок++;
-        покластиЯблуко();
-        if (typeof н.наОчко === 'function') н.наОчко(рахунок);
+      if (head.x === apple.x && head.y === apple.y) {
+        score++;
+        placeApple();
+        if (typeof s.onScore === 'function') s.onScore(score);
       } else {
-        змія.pop();               // не з'їли — хвіст підтягується, довжина та сама
+        snake.pop();              // не з'їли — хвіст підтягується, довжина та сама
       }
 
-      малювати();
+      draw();
     }
 
-    function кінець() {
-      живий = false;
-      clearInterval(таймер);
-      малювати();
-      if (typeof н.наКінець === 'function') н.наКінець(рахунок);
+    function gameOver() {
+      alive = false;
+      clearInterval(timer);
+      draw();
+      if (typeof s.onGameOver === 'function') s.onGameOver(score);
     }
 
-    function квадрат(к, р, колір) {
-      пензель.fillStyle = колір;
-      пензель.fillRect(к * клітинка + 1, р * клітинка + 1, клітинка - 2, клітинка - 2);
+    function square(x, y, color) {
+      brush.fillStyle = color;
+      brush.fillRect(x * cell + 1, y * cell + 1, cell - 2, cell - 2);
     }
 
-    function малювати() {
-      пензель.fillStyle = кольорФону;
-      пензель.fillRect(0, 0, полотно.width, полотно.height);
+    function draw() {
+      brush.fillStyle = bgColor;
+      brush.fillRect(0, 0, canvas.width, canvas.height);
 
-      пензель.strokeStyle = кольорСітки;
-      пензель.lineWidth = 1;
-      for (var i = 1; i < поле; i++) {
-        пензель.beginPath();
-        пензель.moveTo(i * клітинка + .5, 0);
-        пензель.lineTo(i * клітинка + .5, полотно.height);
-        пензель.moveTo(0, i * клітинка + .5);
-        пензель.lineTo(полотно.width, i * клітинка + .5);
-        пензель.stroke();
+      brush.strokeStyle = gridColor;
+      brush.lineWidth = 1;
+      for (var i = 1; i < field; i++) {
+        brush.beginPath();
+        brush.moveTo(i * cell + .5, 0);
+        brush.lineTo(i * cell + .5, canvas.height);
+        brush.moveTo(0, i * cell + .5);
+        brush.lineTo(canvas.width, i * cell + .5);
+        brush.stroke();
       }
 
-      if (їжа) {
-        пензель.font = Math.round(клітинка * .8) + 'px serif';
-        пензель.textAlign = 'center';
-        пензель.textBaseline = 'middle';
-        пензель.fillText(їжа, (яблуко.к + .5) * клітинка, (яблуко.р + .55) * клітинка);
+      if (food) {
+        brush.font = Math.round(cell * .8) + 'px serif';
+        brush.textAlign = 'center';
+        brush.textBaseline = 'middle';
+        brush.fillText(food, (apple.x + .5) * cell, (apple.y + .55) * cell);
       } else {
-        квадрат(яблуко.к, яблуко.р, кольорЇжі);
+        square(apple.x, apple.y, foodColor);
       }
 
-      for (var j = змія.length - 1; j >= 0; j--) {
-        квадрат(змія[j].к, змія[j].р, j === 0 ? кольорГолови : кольорЗмійки);
+      for (var j = snake.length - 1; j >= 0; j--) {
+        square(snake[j].x, snake[j].y, j === 0 ? headColor : snakeColor);
       }
 
-      if (показуватиРахунок) {
-        пензель.fillStyle = '#ffffff';
-        пензель.font = '700 ' + Math.round(клітинка * .7) + 'px system-ui, sans-serif';
-        пензель.textAlign = 'left';
-        пензель.textBaseline = 'top';
-        пензель.fillText(String(рахунок), 8, 6);
+      if (showScore) {
+        brush.fillStyle = '#ffffff';
+        brush.font = '700 ' + Math.round(cell * .7) + 'px system-ui, sans-serif';
+        brush.textAlign = 'left';
+        brush.textBaseline = 'top';
+        brush.fillText(String(score), 8, 6);
       }
 
-      if (!живий) напис('Рахунок: ' + рахунок, 'пробіл або дотик — ще раз');
-      else if (!стартовано) напис('Готовий?', 'стрілка або свайп — почати');
+      if (!alive) banner('Рахунок: ' + score, 'пробіл або дотик — ще раз');
+      else if (!started) banner('Готовий?', 'стрілка або свайп — почати');
     }
 
     // Затемнення з великим і малим написом посередині поля.
-    function напис(великий, малий) {
-      пензель.fillStyle = 'rgba(0,0,0,.66)';
-      пензель.fillRect(0, 0, полотно.width, полотно.height);
-      пензель.fillStyle = '#ffffff';
-      пензель.textAlign = 'center';
-      пензель.textBaseline = 'middle';
-      пензель.font = '800 ' + Math.round(полотно.width / 11) + 'px system-ui, sans-serif';
-      пензель.fillText(великий, полотно.width / 2, полотно.height / 2 - 16);
-      пензель.font = '600 ' + Math.round(полотно.width / 24) + 'px system-ui, sans-serif';
-      пензель.fillText(малий, полотно.width / 2, полотно.height / 2 + 26);
+    function banner(big, small) {
+      brush.fillStyle = 'rgba(0,0,0,.66)';
+      brush.fillRect(0, 0, canvas.width, canvas.height);
+      brush.fillStyle = '#ffffff';
+      brush.textAlign = 'center';
+      brush.textBaseline = 'middle';
+      brush.font = '800 ' + Math.round(canvas.width / 11) + 'px system-ui, sans-serif';
+      brush.fillText(big, canvas.width / 2, canvas.height / 2 - 16);
+      brush.font = '600 ' + Math.round(canvas.width / 24) + 'px system-ui, sans-serif';
+      brush.fillText(small, canvas.width / 2, canvas.height / 2 + 26);
     }
 
     // Назад у себе не повертаємось: це миттєва смерть, і гравець
     // не розуміє, що сталося. Такий натиск просто ігноруємо.
-    function повернути(к, р) {
-      if (!живий) return;
-      if (напрям.к === -к && напрям.р === -р) return;
-      наступний = { к: к, р: р };
-      if (!стартовано) { стартовано = true; малювати(); }
+    function turn(x, y) {
+      if (!alive) return;
+      if (dir.x === -x && dir.y === -y) return;
+      nextDir = { x: x, y: y };
+      if (!started) { started = true; draw(); }
     }
 
-    document.addEventListener('keydown', function (подія) {
-      var к = подія.key;
-      if (к === 'ArrowLeft'  || к === 'a' || к === 'ф') повернути(-1, 0);
-      else if (к === 'ArrowRight' || к === 'd' || к === 'в') повернути(1, 0);
-      else if (к === 'ArrowUp'    || к === 'w' || к === 'ц') повернути(0, -1);
-      else if (к === 'ArrowDown'  || к === 's' || к === 'і') повернути(0, 1);
-      else if (к === ' ' && !живий) почати();
+    document.addEventListener('keydown', function (e) {
+      var k = e.key;
+      if (k === 'ArrowLeft'       || k === 'a' || k === 'ф') turn(-1, 0);
+      else if (k === 'ArrowRight' || k === 'd' || k === 'в') turn(1, 0);
+      else if (k === 'ArrowUp'    || k === 'w' || k === 'ц') turn(0, -1);
+      else if (k === 'ArrowDown'  || k === 's' || k === 'і') turn(0, 1);
+      else if (k === ' ' && !alive) start();
       else return;
-      подія.preventDefault();        // щоб сторінка не стрибала від стрілок
+      e.preventDefault();        // щоб сторінка не стрибала від стрілок
     });
 
-    свайп(полотно, повернути, function () { if (!живий) почати(); });
+    addSwipe(canvas, turn, function () { if (!alive) start(); });
 
-    почати();
+    start();
   };
 
   /* ═══════════════════════════════════════════════════════════════════════
-     ПАЗЛ — п'ятнашки з власної картинки
+     PUZZLE — Пазл (п'ятнашки з власної картинки)
 
      Зроблений не на полотні, а звичайними <div> у CSS Grid — тими самими
      сіткою і клітинками, що на уроці 4. Тому плитки можна фарбувати,
      заокруглювати й анімувати власним CSS, як будь-який блок на сторінці.
      ═══════════════════════════════════════════════════════════════════════ */
 
-  стилі(
-    '.пазл{display:grid;gap:2px;width:420px;max-width:100%;aspect-ratio:1/1;' +
+  addStyles(
+    '.puzzle{display:grid;gap:2px;width:420px;max-width:100%;aspect-ratio:1/1;' +
     'background:#222;padding:2px;border-radius:12px;user-select:none;' +
     '-webkit-user-select:none;touch-action:manipulation}' +
-    '.пазл .плитка{background-color:#3a3a3a;background-repeat:no-repeat;' +
+    '.puzzle .tile{background-color:#3a3a3a;background-repeat:no-repeat;' +
     'position:relative;cursor:pointer;border-radius:6px;overflow:hidden;' +
     'transition:transform .12s,filter .12s}' +
-    '.пазл .плитка:hover{filter:brightness(1.12)}' +
-    '.пазл .плитка:active{transform:scale(.96)}' +
-    '.пазл .порожня{background-image:none!important;background-color:transparent;' +
+    '.puzzle .tile:hover{filter:brightness(1.12)}' +
+    '.puzzle .tile:active{transform:scale(.96)}' +
+    '.puzzle .empty{background-image:none!important;background-color:transparent;' +
     'cursor:default;pointer-events:none}' +
-    '.пазл .номер{position:absolute;left:5px;top:3px;font:700 15px/1 system-ui,sans-serif;' +
+    '.puzzle .number{position:absolute;left:5px;top:3px;font:700 15px/1 system-ui,sans-serif;' +
     'color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.85);pointer-events:none}' +
-    '.пазл.зібрано .плитка{cursor:default}' +
-    '.пазл.зібрано .порожня{background-image:inherit;background-color:transparent}'
+    '.puzzle.solved .tile{cursor:default}' +
+    '.puzzle.solved .empty{background-image:inherit;background-color:transparent}'
   );
 
-  Гра.пазл = function (н) {
-    н = н || {};
+  Game.puzzle = function (s) {
+    s = s || {};
 
     // 2×2 — найлегший, 8×8 — уже 63 плитки й нереально зібрати за урок.
-    var сітка    = Math.min(8, Math.max(2, Math.round(число(н.сітка, 3))));  // 3 → пазл 3×3
-    var картинка = н.картинка || '';
-    var розмір   = Math.round(число(н.розмір, 420));       // сторона пазла, пікселів
-    var номери   = н.показуватиНомери !== false;
+    var grid  = Math.min(8, Math.max(2, Math.round(num(s.grid, 3))));  // 3 → пазл 3×3
+    var image = s.image || '';
+    var size  = Math.round(num(s.size, 420));            // сторона пазла, пікселів
+    var showNumbers = s.showNumbers !== false;
 
-    if (!картинка) {
-      console.error('Гра.пазл: не вказано картинку. Приклад:  Гра.пазл({ картинка: "foto.jpg" })');
+    if (!image) {
+      console.error('Game.puzzle: не вказано картинку. Приклад:  Game.puzzle({ image: "foto.jpg" })');
       return;
     }
 
-    var місце = знайтиМісце(н.місце || 'gra');
-    if (!місце) return;
+    var mount = findMount(s.mount || 'game');
+    if (!mount) return;
 
-    var всього  = сітка * сітка;
-    var порожня = всього - 1;            // індекс порожньої клітинки
-    var плитки  = [];                    // плитки[позиція] = який шматок тут лежить
-    var ходи    = 0;
-    var старт   = null;
-    var зібрано = false;
+    var total = grid * grid;
+    var hole  = total - 1;               // номер шматка, який вважається порожнім
+    var tiles = [];                      // tiles[позиція] = який шматок тут лежить
+    var moves = 0;
+    var startedAt = null;
+    var solved = false;
 
-    місце.className = 'пазл';
-    місце.style.gridTemplateColumns = 'repeat(' + сітка + ', 1fr)';
-    місце.style.width = розмір + 'px';
-    місце.innerHTML = '';
+    mount.className = 'puzzle';
+    mount.style.gridTemplateColumns = 'repeat(' + grid + ', 1fr)';
+    mount.style.width = size + 'px';
+    mount.innerHTML = '';
 
-    var вузли = [];
-    for (var i = 0; i < всього; i++) {
-      плитки[i] = i;
-      var плитка = document.createElement('div');
-      плитка.className = 'плитка';
-      плитка.addEventListener('click', (function (позиція) {
-        return function () { клік(позиція); };
+    var nodes = [];
+    for (var i = 0; i < total; i++) {
+      tiles[i] = i;
+      var tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.addEventListener('click', (function (pos) {
+        return function () { click(pos); };
       })(i));
-      місце.appendChild(плитка);
-      вузли.push(плитка);
+      mount.appendChild(tile);
+      nodes.push(tile);
     }
 
     // Один шматок картинки = одна клітинка сітки. Картинку розтягуємо
-    // на всі сітка×сітка клітинок і зсуваємо так, щоб у вікні лишився
+    // на всі grid×grid клітинок і зсуваємо так, щоб у вікні лишився
     // потрібний шматок — це той самий background-position, що в CSS.
-    function намалювати() {
-      for (var поз = 0; поз < всього; поз++) {
-        var шматок = плитки[поз];
-        var вузол  = вузли[поз];
-        if (шматок === порожня && !зібрано) {
-          вузол.className = 'плитка порожня';
-          вузол.innerHTML = '';
-          вузол.style.backgroundImage = 'none';
+    function draw() {
+      for (var pos = 0; pos < total; pos++) {
+        var piece = tiles[pos];
+        var node  = nodes[pos];
+        if (piece === hole && !solved) {
+          node.className = 'tile empty';
+          node.innerHTML = '';
+          node.style.backgroundImage = 'none';
           continue;
         }
-        var к = шматок % сітка;
-        var р = Math.floor(шматок / сітка);
-        вузол.className = 'плитка';
-        вузол.style.backgroundImage = 'url("' + картинка + '")';
-        вузол.style.backgroundSize = (сітка * 100) + '% ' + (сітка * 100) + '%';
-        вузол.style.backgroundPosition =
-          (сітка === 1 ? 0 : (к / (сітка - 1)) * 100) + '% ' +
-          (сітка === 1 ? 0 : (р / (сітка - 1)) * 100) + '%';
-        вузол.innerHTML = номери && !зібрано
-          ? '<span class="номер">' + (шматок + 1) + '</span>'
+        var col = piece % grid;
+        var row = Math.floor(piece / grid);
+        node.className = 'tile';
+        node.style.backgroundImage = 'url("' + image + '")';
+        node.style.backgroundSize = (grid * 100) + '% ' + (grid * 100) + '%';
+        node.style.backgroundPosition =
+          (grid === 1 ? 0 : (col / (grid - 1)) * 100) + '% ' +
+          (grid === 1 ? 0 : (row / (grid - 1)) * 100) + '%';
+        node.innerHTML = showNumbers && !solved
+          ? '<span class="number">' + (piece + 1) + '</span>'
           : '';
       }
     }
 
-    function деПорожня() {
-      for (var i = 0; i < всього; i++) if (плитки[i] === порожня) return i;
+    function holeAt() {
+      for (var i = 0; i < total; i++) if (tiles[i] === hole) return i;
       return -1;
     }
 
     // Сусідні по стороні — і не через край рядка. Без перевірки колонки
     // плитка з кінця рядка «стрибала» б на початок наступного.
-    function сусідні(a, b) {
-      var ка = a % сітка, ра = Math.floor(a / сітка);
-      var кб = b % сітка, рб = Math.floor(b / сітка);
-      return Math.abs(ка - кб) + Math.abs(ра - рб) === 1;
+    function neighbours(a, b) {
+      var ca = a % grid, ra = Math.floor(a / grid);
+      var cb = b % grid, rb = Math.floor(b / grid);
+      return Math.abs(ca - cb) + Math.abs(ra - rb) === 1;
     }
 
-    function пересунути(позиція) {
-      var пуста = деПорожня();
-      if (!сусідні(позиція, пуста)) return false;
-      плитки[пуста] = плитки[позиція];
-      плитки[позиція] = порожня;
+    function move(pos) {
+      var empty = holeAt();
+      if (!neighbours(pos, empty)) return false;
+      tiles[empty] = tiles[pos];
+      tiles[pos] = hole;
       return true;
     }
 
-    function клік(позиція) {
-      if (зібрано) return;
-      if (!пересунути(позиція)) return;
-      if (старт === null) старт = Date.now();
-      ходи++;
-      намалювати();
-      перевірити();
+    function click(pos) {
+      if (solved) return;
+      if (!move(pos)) return;
+      if (startedAt === null) startedAt = Date.now();
+      moves++;
+      draw();
+      checkWin();
     }
 
-    function перевірити() {
-      for (var i = 0; i < всього; i++) if (плитки[i] !== i) return;
-      зібрано = true;
-      місце.classList.add('зібрано');
-      намалювати();
-      var секунди = старт ? Math.round((Date.now() - старт) / 1000) : 0;
-      if (typeof н.наПеремогу === 'function') н.наПеремогу(ходи, секунди);
+    function checkWin() {
+      for (var i = 0; i < total; i++) if (tiles[i] !== i) return;
+      solved = true;
+      mount.classList.add('solved');
+      draw();
+      var seconds = startedAt ? Math.round((Date.now() - startedAt) / 1000) : 0;
+      if (typeof s.onWin === 'function') s.onWin(moves, seconds);
     }
 
     // Перемішуємо не випадковою розкладкою, а великою кількістю чесних
     // ходів із зібраного стану. Випадкова розкладка в п'ятнашках
     // у половині випадків НЕ збирається взагалі — класична пастка.
-    function перемішати() {
-      var кроків = всього * 40;
-      for (var i = 0; i < кроків; i++) {
-        var пуста = деПорожня();
-        var сусіди = [];
-        for (var j = 0; j < всього; j++) if (сусідні(j, пуста)) сусіди.push(j);
-        пересунути(сусіди[Гра.випадкове(0, сусіди.length - 1)]);
+    function shuffle() {
+      var steps = total * 40;
+      for (var i = 0; i < steps; i++) {
+        var empty = holeAt();
+        var around = [];
+        for (var j = 0; j < total; j++) if (neighbours(j, empty)) around.push(j);
+        move(around[Game.random(0, around.length - 1)]);
       }
       // Раптом перемішалося назад у зібране — мішаємо ще раз.
-      for (var k = 0; k < всього; k++) if (плитки[k] !== k) return;
-      перемішати();
+      for (var k = 0; k < total; k++) if (tiles[k] !== k) return;
+      shuffle();
     }
 
-    перемішати();
-    намалювати();
+    shuffle();
+    draw();
 
-    Гра.пазлЗаново = function () {
-      зібрано = false; ходи = 0; старт = null;
-      місце.classList.remove('зібрано');
-      перемішати();
-      намалювати();
+    Game.shufflePuzzle = function () {
+      solved = false; moves = 0; startedAt = null;
+      mount.classList.remove('solved');
+      shuffle();
+      draw();
     };
   };
 
   /* ═══════════════════════════════════════════════════════════════════════
      ЦЕГЛИНКИ ДЛЯ ВЛАСНОЇ ГРИ  ⭐⭐⭐
-     Із цих п'яти команд збирається третя гра — «злови предмет», «лабіринт»,
+     Із цих команд збирається третя гра — «злови предмет», «лабіринт»,
      «втеча». Поле так само ділиться на клітинки, як у змійці.
      ═══════════════════════════════════════════════════════════════════════ */
 
-  var моє = null;   // полотно власної гри: { пензель, клітинка, поле }
+  var my = null;   // полотно власної гри: { brush, cell, field, node }
 
-  /* Готує поле: Гра.полотно({ поле: 16, клітинка: 30 }) */
-  Гра.полотно = function (н) {
-    н = н || {};
-    var поле = Math.round(число(н.поле, 16));
-    var клітинка = Math.round(число(н.клітинка, 30));
-    var полотно = створитиПолотно(н.місце || 'gra', поле * клітинка, поле * клітинка);
-    if (!полотно) return;
-    моє = { пензель: полотно.getContext('2d'), клітинка: клітинка, поле: поле, вузол: полотно };
-    Гра.очисти(н.кольорФону || '#101418');
+  /* Готує поле: Game.board({ field: 16, cell: 30 }) */
+  Game.board = function (s) {
+    s = s || {};
+    var field = Math.round(num(s.field, 16));
+    var cell = Math.round(num(s.cell, 30));
+    var canvas = makeCanvas(s.mount || 'game', field * cell, field * cell);
+    if (!canvas) return;
+    my = { brush: canvas.getContext('2d'), cell: cell, field: field, node: canvas };
+    Game.clear(s.bgColor || '#101418');
   };
 
-  /* Заливає все поле кольором: Гра.очисти('#101418') */
-  Гра.очисти = function (колір) {
-    if (!моє) return;
-    моє.пензель.fillStyle = колір || '#101418';
-    моє.пензель.fillRect(0, 0, моє.вузол.width, моє.вузол.height);
+  /* Заливає все поле кольором: Game.clear('#101418') */
+  Game.clear = function (color) {
+    if (!my) return;
+    my.brush.fillStyle = color || '#101418';
+    my.brush.fillRect(0, 0, my.node.width, my.node.height);
   };
 
-  /* Малює квадрат у клітинці: Гра.намалюйКвадрат(3, 5, 'red') */
-  Гра.намалюйКвадрат = function (колонка, рядок, колір) {
-    if (!моє) return;
-    моє.пензель.fillStyle = колір || '#ffffff';
-    моє.пензель.fillRect(
-      колонка * моє.клітинка + 1, рядок * моє.клітинка + 1,
-      моє.клітинка - 2, моє.клітинка - 2
+  /* Малює квадрат у клітинці: Game.drawSquare(3, 5, 'red') */
+  Game.drawSquare = function (col, row, color) {
+    if (!my) return;
+    my.brush.fillStyle = color || '#ffffff';
+    my.brush.fillRect(
+      col * my.cell + 1, row * my.cell + 1,
+      my.cell - 2, my.cell - 2
     );
   };
 
-  /* Пише текст або емодзі в клітинці: Гра.намалюйТекст('🍎', 2, 2) */
-  Гра.намалюйТекст = function (текст, колонка, рядок, колір) {
-    if (!моє) return;
-    моє.пензель.fillStyle = колір || '#ffffff';
-    моє.пензель.font = Math.round(моє.клітинка * .8) + 'px system-ui, serif';
-    моє.пензель.textAlign = 'center';
-    моє.пензель.textBaseline = 'middle';
-    моє.пензель.fillText(текст, (колонка + .5) * моє.клітинка, (рядок + .55) * моє.клітинка);
+  /* Пише текст або емодзі в клітинці: Game.drawText('🍎', 2, 2) */
+  Game.drawText = function (text, col, row, color) {
+    if (!my) return;
+    my.brush.fillStyle = color || '#ffffff';
+    my.brush.font = Math.round(my.cell * .8) + 'px system-ui, serif';
+    my.brush.textAlign = 'center';
+    my.brush.textBaseline = 'middle';
+    my.brush.fillText(text, (col + .5) * my.cell, (row + .55) * my.cell);
   };
 
-  /* Реагує на стрілки: Гра.наКлавішу(function (напрям) { ... })
-     напрям буде 'вліво', 'вправо', 'вгору', 'вниз' або 'пробіл'. */
-  Гра.наКлавішу = function (дія) {
-    document.addEventListener('keydown', function (подія) {
-      var назви = {
-        ArrowLeft: 'вліво', ArrowRight: 'вправо',
-        ArrowUp: 'вгору', ArrowDown: 'вниз', ' ': 'пробіл'
+  /* Реагує на стрілки: Game.onKey(function (direction) { ... })
+     direction буде 'left', 'right', 'up', 'down' або 'space'. */
+  Game.onKey = function (action) {
+    document.addEventListener('keydown', function (e) {
+      var names = {
+        ArrowLeft: 'left', ArrowRight: 'right',
+        ArrowUp: 'up', ArrowDown: 'down', ' ': 'space'
       };
-      var напрям = назви[подія.key];
-      if (!напрям) return;
-      подія.preventDefault();
-      дія(напрям);
+      var direction = names[e.key];
+      if (!direction) return;
+      e.preventDefault();
+      action(direction);
     });
   };
 
   /* Повторює дію раз на стільки мілісекунд:
-     Гра.кожніМілісекунд(500, function () { ... }) */
-  Гра.кожніМілісекунд = function (мс, дія) {
-    return setInterval(дія, число(мс, 500));
+     Game.everyMs(500, function () { ... }) */
+  Game.everyMs = function (ms, action) {
+    return setInterval(action, num(ms, 500));
   };
 
   /* ─── Спільне для полотен ──────────────────────────────────────────── */
 
-  // Учень пише в HTML просто <div id="gra"></div>, а полотно рушій
+  // Учень пише в HTML просто <div id="game"></div>, а полотно рушій
   // робить сам. Якщо це вже <canvas> — беремо його як є.
-  function створитиПолотно(id, ширина, висота) {
-    var місце = знайтиМісце(id);
-    if (!місце) return null;
-    var полотно;
-    if (місце.tagName === 'CANVAS') {
-      полотно = місце;
+  function makeCanvas(id, width, height) {
+    var mount = findMount(id);
+    if (!mount) return null;
+    var canvas;
+    if (mount.tagName === 'CANVAS') {
+      canvas = mount;
     } else {
-      місце.innerHTML = '';
-      полотно = document.createElement('canvas');
-      місце.appendChild(полотно);
+      mount.innerHTML = '';
+      canvas = document.createElement('canvas');
+      mount.appendChild(canvas);
     }
-    полотно.width = ширина;
-    полотно.height = висота;
-    полотно.style.maxWidth = '100%';
-    полотно.style.touchAction = 'none';
-    полотно.style.display = 'block';
-    return полотно;
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.maxWidth = '100%';
+    canvas.style.touchAction = 'none';
+    canvas.style.display = 'block';
+    return canvas;
   }
 
   // Керування пальцем — щоб гру можна було показати з телефона.
-  function свайп(вузол, повернути, дотик) {
+  function addSwipe(node, turn, tap) {
     var x0 = 0, y0 = 0;
-    вузол.addEventListener('touchstart', function (п) {
-      x0 = п.touches[0].clientX; y0 = п.touches[0].clientY;
+    node.addEventListener('touchstart', function (e) {
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
     }, { passive: true });
-    вузол.addEventListener('touchend', function (п) {
-      var dx = п.changedTouches[0].clientX - x0;
-      var dy = п.changedTouches[0].clientY - y0;
-      if (Math.abs(dx) < 24 && Math.abs(dy) < 24) { дотик(); return; }
-      if (Math.abs(dx) > Math.abs(dy)) повернути(dx > 0 ? 1 : -1, 0);
-      else повернути(0, dy > 0 ? 1 : -1);
+    node.addEventListener('touchend', function (e) {
+      var dx = e.changedTouches[0].clientX - x0;
+      var dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) < 24 && Math.abs(dy) < 24) { tap(); return; }
+      if (Math.abs(dx) > Math.abs(dy)) turn(dx > 0 ? 1 : -1, 0);
+      else turn(0, dy > 0 ? 1 : -1);
     }, { passive: true });
   }
 
-  window.Гра = Гра;
+  window.Game = Game;
 })();
