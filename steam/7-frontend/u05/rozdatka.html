@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · Front-end · 7 клас · Урок 5</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          Front-end
+  Клас          7
+  Урок          5 / 35 · 29.09.2026
+  Тема          Гіперпосилання. Сайт із кількох сторінок
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ТІЛЬКИ СХОВИЩЕ. Урок іде за ноутбуками, аркуш на уроці НЕ
+     роздається і слайди на нього не посилаються. Друкується на
+     випадок тривоги: усі вісім завдань — олівцем, без комп'ютера.
+     Журналу перевірки переходів (як у 8 класі) тут навмисно немає:
+     роздатка й ноутбуки не поєднуються (правило 20.09.2026).
+  ⚠️ ЗАВДАННЯ 3 — EMMET НА ПАПЕРІ. Розгорнути скорочення руками —
+     це перевірка, що дитина розуміє, ЩО саме дає Tab.
+  ⚠️ СЕЛЕКТОР .tag виправлено на «.b h2 .tag» — у двоколонкових
+     блоках старі «.b > h2» і «.b > h2 .tag» не діяли (дефект із handoff 23.09): заголовки лишались браузерними, великими.
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок —
+                на ксероксі вони зникають. Тільки чорне на білому.
+  ОБСЯГ         Рівно одна сторінка A4.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b h2 code{text-transform:none}
+.b h2 .tag{float:right; margin-left:4mm; text-transform:none; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.35fr 1fr}
+.two.k46{grid-template-columns:1fr 1.35fr}
+.two.tree-l{grid-template-columns:52mm 1fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:9.6pt; font-weight:700; padding-bottom:.4mm; flex-shrink:0}
+
+pre.c{font-family:var(--fm); font-size:10pt; line-height:1.32; border:var(--line);
+  padding:1.6mm 2.2mm; white-space:pre-wrap; font-weight:700}
+.tree{font-family:var(--fm); font-size:9.8pt; line-height:1.44; border:var(--line);
+  padding:1.6mm 2mm; font-weight:700}
+
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.5mm 1.8mm; font-size:10.2pt; text-align:left}
+table.t th{font-size:9.3pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:22mm; text-align:center}
+table.t td.m{font-family:var(--fm); font-weight:700}
+
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.4mm 0; font-size:10.6pt; vertical-align:bottom}
+table.voc td.en{width:52%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>Front-end &#183; 7 клас &#183; Урок 5 / 35 &#183; 29 вересня</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Гіперпосилання. Сайт із кількох сторінок</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Посилання</p>
+        <p><code>&lt;a href=&quot;куди"&gt;текст&lt;/a&gt;</code></p>
+        <p><code>target="_blank"</code> &#8212; нова вкладка</p>
+        <p><code>&lt;a&gt;&lt;img&gt;&lt;/a&gt;</code> &#8212; картинка-посилання</p>
+        <p>з кожної сторінки &#8212; на кожну</p>
+      </div>
+      <div>
+        <p class="rh">Два види адрес</p>
+        <p><b>чужий сайт</b> &#8212; <code>https://…</code></p>
+        <p><b>свій файл</b> &#8212; <code>about.html</code></p>
+        <p><code>blog/</code> &#8212; зайди в папку</p>
+        <p><code>../</code> &#8212; вийди на папку вгору</p>
+      </div>
+      <div>
+        <p class="rh">VS Code швидше</p>
+        <p><code>!</code> Tab &#8212; каркас сторінки</p>
+        <p><code>&gt;</code> &#8212; всередину &#183; <code>*3</code> &#8212; тричі</p>
+        <p><code>nav&gt;a*3</code> Tab &#8212; меню</p>
+        <p>Alt+Shift+&#8595; &#183; Ctrl+/ &#183; Ctrl+S &#8594; F5</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b two tree-l">
+    <div>
+      <h2>1 &#183; Дерево</h2>
+      <div class="tree">game-site/<br>
+&nbsp;&nbsp;├ index.html<br>
+&nbsp;&nbsp;├ heroes.html<br>
+&nbsp;&nbsp;├ levels.html<br>
+&nbsp;&nbsp;├ <b>img/</b><br>
+&nbsp;&nbsp;│&nbsp;&nbsp;└ boss.png<br>
+&nbsp;&nbsp;└ <b>news/</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└ update.html</div>
+    </div>
+    <div>
+      <h2>2 &#183; Впиши <code>href</code><span class="tag">за деревом ліворуч</span></h2>
+      <p class="q" style="font-size:10.2pt"><b>а)</b> З <code>index.html</code> на
+        <code>heroes.html</code>:</p>
+      <div class="sl"><span>&lt;a href=&quot;</span><span style="margin-left:auto">"&gt;</span></div>
+      <p class="q" style="margin-top:.8mm; font-size:10.2pt"><b>б)</b> З
+        <code>news/update.html</code> на головну:</p>
+      <div class="sl"><span>&lt;a href=&quot;</span><span style="margin-left:auto">"&gt;</span></div>
+      <p class="q" style="margin-top:.8mm; font-size:10.2pt"><b>в)</b> З
+        <code>index.html</code> на <code>news/update.html</code>:</p>
+      <div class="sl"><span>&lt;a href=&quot;</span><span style="margin-left:auto">"&gt;</span></div>
+    </div>
+  </div>
+
+  <div class="b two k64">
+    <div>
+      <h2>3 &#183; Працює чи бите<span class="tag">пишемо в news/update.html</span></h2>
+      <table class="t">
+        <tr><th>Написано</th><th class="a">+ / &#8722;</th></tr>
+        <tr><td class="m">href=&quot;levels.html"</td><td class="a"></td></tr>
+        <tr><td class="m">href=&quot;../levels.html"</td><td class="a"></td></tr>
+        <tr><td class="m">href=&quot;../heroes"</td><td class="a"></td></tr>
+        <tr><td class="m">href=&quot;../index.html"</td><td class="a"></td></tr>
+      </table>
+      <p class="q" style="margin-top:1mm; font-size:10.2pt">Чому третій рядок битий?</p>
+      <div class="ln s"></div>
+    </div>
+    <div>
+      <h2>4 &#183; Розгорни руками<span class="tag">що дасть Tab</span></h2>
+      <p class="q"><code>nav&gt;a*3</code> &#8594;</p>
+      <div class="ln s"></div><div class="ln s"></div><div class="ln s"></div><div class="ln s"></div><div class="ln s"></div>
+      <p class="q" style="margin-top:1mm"><code>a[href=heroes.html]</code> &#8594;</p>
+      <div class="ln s"></div>
+    </div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>5 &#183; Скільки переходів</h2>
+      <p class="q">З кожної на кожну: 3 сторінки &#8212; 6 переходів.</p>
+      <div class="sl"><span>4 сторінки &#8212;</span></div>
+      <div class="sl"><span>5 сторінок &#8212;</span></div>
+    </div>
+    <div>
+      <h2>6 &#183; Щоб посилання говорило саме</h2>
+      <p class="q">Усі рівні гри &#8212; <code>&lt;a&gt;</code>тиць сюди<code>&lt;/a&gt;</code>.</p>
+      <div class="ln s"></div>
+      <p class="q" style="margin-top:.8mm">Про героїв &#8212; <code>&lt;a&gt;</code>клікни<code>&lt;/a&gt;</code>.</p>
+      <div class="ln s"></div>
+    </div>
+  </div>
+
+  <div class="b two k46">
+    <div>
+      <h2>7 &#183; Словник</h2>
+      <table class="voc">
+        <tr><td class="en">link</td><td></td></tr>
+        <tr><td class="en">anchor</td><td></td></tr>
+        <tr><td class="en">navigation</td><td></td></tr>
+        <tr><td class="en">target</td><td></td></tr>
+        <tr><td class="en">broken link</td><td></td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>8 &#183; Своїми словами<span class="tag">&#9733;&#9733;&#9733;</span></h2>
+      <p class="q">Однокласник поставив посилання
+      <code>href=&quot;C:/Users/Ivan/game-site/heroes.html"</code>. У нього все працює.
+      Ти скопіював його папку на флешку &#8212; посилання биті.
+      Чому? Як він мав написати?</p>
+      <div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>Front-end &#183; 7 клас</span>
+    <span>Урок 5 &#183; 29.09.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

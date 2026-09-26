@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · JavaScript · 11 клас · Урок 7</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          JavaScript I
+  Клас          11
+  Урок          7 / 35 · 28.09.2026 · понеділок
+  Тема          Міні-проєкт I «Текстовий квест»
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ПРАВИЛО ВІД 24.09.2026: презентація = клас, роздатка = сховище.
+     Урок іде за ноутбуками, аркуш у класі НЕ видається і слайди на
+     нього не посилаються. Друкується на випадок тривоги: жодне
+     завдання не потребує комп'ютера. ДЗ — на CodePen, не тут.
+  Фрагменти коду й вводи — інші, ніж на слайдах і в ДЗ.
+  Ключ — у конспекті.
+  .tag: селектор «.b h2 .tag» (не «.b > h2») — інакше тег у
+     двоколонкових блоках злипається із заголовком.
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок —
+                на ксероксі вони зникають. Тільки чорне на білому.
+  ОБСЯГ         Рівно одна сторінка A4. Перевірено вимірюванням.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b > h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b h2 .tag{margin-left:4mm;float:right; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.4fr 1fr}
+.three{display:grid; grid-template-columns:1fr 1fr 1fr; gap:5mm}
+.two.k46{grid-template-columns:1fr 1.4fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7.2mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:10pt; font-weight:700; padding-bottom:.4mm}
+
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.6mm 1.8mm; font-size:10.5pt; text-align:left}
+table.t th{font-size:9.5pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:30mm; text-align:center}
+table.t td.m{font-family:var(--fm); font-weight:700}
+
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.5mm 0; font-size:11pt; vertical-align:bottom}
+table.voc td.en{width:48%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+pre.c{font-family:var(--fm); font-size:10.5pt; line-height:1.34; border:var(--line);
+  padding:1.6mm 2.2mm; white-space:pre-wrap; font-weight:700}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+.wb{border:var(--line); min-height:16mm; padding:1.4mm 2mm}
+.wb .cap{font-family:var(--fm); font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:.6px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>JavaScript &#183; 11 клас &#183; Урок 7 / 35 &#183; 28 вересня</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Текстовий квест: дописати, перевірити, показати</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Очистити ввід</p>
+        <p><code>let c = prompt('…');</code></p>
+        <p><code>if (c !== null) {</code></p>
+        <p><code>&#160;&#160;c = c.trim().toLowerCase(); }</code></p>
+      </div>
+      <div>
+        <p class="rh">Що повертає</p>
+        <p><code>prompt</code> &#8594; рядок або <code>null</code></p>
+        <p><code>confirm</code> &#8594; <code>true</code> або <code>false</code></p>
+        <p><code>alert</code> &#8594; нічого</p>
+      </div>
+      <div>
+        <p class="rh">Квест</p>
+        <p>кожен <code>if</code> з <code>prompt</code> має <code>else</code></p>
+        <p><code>c === '1' || c === 'ліс'</code></p>
+        <p><code>score += 10;</code> &#183; <code>location.reload();</code></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="two k64">
+    <div class="b">
+      <h2>1 &#183; Де гра мовчить?<span class="tag">висячі гілки</span></h2>
+      <pre class="c">const c1 = prompt('1 сад, 2 дах');
+if (c1 === '1') {
+  const c2 = prompt('1 гладь, 2 тікай');
+  if (c2 === '2') { alert('Втік!'); }
+} else if (c1 === '2') { alert('Дах!'); }</pre>
+    </div>
+    <div class="b">
+      <h2>&#160;<span class="tag">запиши</span></h2>
+      <p class="q">Два вводи, після яких гра мовчить:</p>
+      <div class="sl"><span>а)</span></div>
+      <div class="sl"><span>б)</span></div>
+      <p class="q" style="margin-top:1.4mm">Що дописати і куди:</p>
+      <div class="ln s"></div>
+    </div>
+  </div>
+
+  <div class="two k64">
+    <div class="b">
+      <h2>2 &#183; Що покаже гра?<span class="tag">простеж</span></h2>
+      <pre class="c">let c = prompt('1 вгору, 2 вниз');
+if (c !== null) {
+  c = c.trim().toLowerCase();
+}
+if (c === null) { alert('Пауза'); }
+else if (c === '1' || c === 'вгору') {
+  alert('Вежа');
+} else if (c === '2' || c === 'вниз') {
+  alert('Підвал');
+} else { alert('Стоїш. КІНЕЦЬ'); }</pre>
+    </div>
+    <div class="b">
+      <h2>&#160;<span class="tag">що покаже alert</span></h2>
+      <table class="t">
+        <tr><th>Ввели</th><th>alert</th></tr>
+        <tr><td class="m">&#9251;1</td><td></td></tr>
+        <tr><td class="m">ВНИЗ</td><td></td></tr>
+        <tr><td class="m">Вгору&#9251;</td><td></td></tr>
+        <tr><td class="m">(порожньо), OK</td><td></td></tr>
+        <tr><td class="m">Скасувати</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="b">
+      <h2>3 &#183; prompt чи confirm<span class="tag">що в змінній</span></h2>
+      <table class="t">
+        <tr><th>Вікно</th><th>Натиснули</th><th class="a">У змінній</th></tr>
+        <tr><td class="m">confirm</td><td>OK</td><td class="a"></td></tr>
+        <tr><td class="m">confirm</td><td>Скасувати</td><td class="a"></td></tr>
+        <tr><td class="m">prompt</td><td>Скасувати</td><td class="a"></td></tr>
+        <tr><td class="m">prompt</td><td>ввели 5, OK</td><td class="a"></td></tr>
+      </table>
+    </div>
+    <div class="b">
+      <h2>4 &#183; Допиши<span class="tag">4 пропуски</span></h2>
+      <pre class="c">_____ score = 0;
+if (_________('Битися з тролем?')) {
+  score ____ 15;
+}
+if (confirm('Ще раз?')) {
+  location.________();
+}</pre>
+    </div>
+  </div>
+
+  <div class="two k64">
+    <div class="b">
+      <h2>5 &#183; Знайди три біди<span class="tag">гра ламається</span></h2>
+      <pre class="c">let c = prompt('1 ліс, 2 річка');
+c = c.toLowerCase();
+if (c === '1' || 'ліс') { alert('Ліс'); }
+const go = confirm('Плисти?');
+if (go === null) { alert('Стоп'); }</pre>
+    </div>
+    <div class="b">
+      <h2>&#160;<span class="tag">біда і як виправити</span></h2>
+      <div class="sl"><span>1)</span></div>
+      <div class="sl"><span>2)</span></div>
+      <div class="sl"><span>3)</span></div>
+      <div class="ln s"></div>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>6 &#183; Словник<span class="tag">переклад пишеш сам</span></h2>
+    <div class="three">
+      <table class="voc"><tr><td class="en">confirm</td><td></td></tr></table>
+      <table class="voc"><tr><td class="en">score</td><td></td></tr></table>
+      <table class="voc"><tr><td class="en">playtest</td><td></td></tr></table>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>JavaScript &#183; 11 клас</span>
+    <span>Урок 7 &#183; 28.09.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Список Map'ів як база даних · Мобільна розробка Flutter · 10 клас · Урок 6</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Мобільна розробка Flutter (Flutter I + II за рік)
+  Клас          10
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · середа 15:20, Медіатека
+  Урок          6 з 68 · 30.09.2026
+  Тема          Список Map'ів як база даних
+  Тривалість    45 хв — розминка 2 хв + показ ~17 хв + практика 26 хв
+                (два блоки «приклад → самостійно» 7 і 8 хв + практика 11 хв)
+  Акцент        blue (#0253b3)
+  Слайдів       25
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. DartPad у браузері, як на уроках 1–5.
+  ────────────────────────────────────────────────────────────────
+  ПЛАН          office/plany/06-flutter-10.md, розділ 6, урок 6
+                «List<Map<String, dynamic>>, пошук за ключем, where,
+                сума, shuffle. Каталог GameStore»
+                Артефакт: консольний «Каталог GameStore».
+                Оцінка: без оцінки в плані (поточна — за бажанням учителя).
+  Місток        з уроку 5, слайд 25: «кожен товар стане цілим записом».
+                Далі: урок 7 (чт 01.10) — практикум + старт «Арени»,
+                герой там — такий самий Map.
+  ────────────────────────────────────────────────────────────────
+  ➕ ДОДАНО ПОНАД ПЛАН (правило «повна родина конструкцій», 10.09.2026):
+     • родина пошуку повністю: цикл + break + прапорець · firstWhere ·
+       any · indexWhere (-1) · where — план називає лише «пошук за
+       ключем» і where
+     • map(...).join — без нього відфільтровані записи показують
+       як {nazva: ..., cina: ...}, а не назвами
+     • зміна поля запису, add запису, removeAt і removeWhere —
+       база без «редагувати й прибрати» неповна
+     • середнє й максимум — пара до суми
+     • as int — без нього сума по dynamic не компілюється
+       (int + dynamic дає num, а num у int не кладеться)
+     • shuffle проти Random().nextInt — два способи «випадкового»
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ФОРМАТ «ПРИКЛАД → ТЕПЕР САМОСТІЙНО». Практика 26 хв із 45.
+     слайд 9  (7 хв)    свій каталог: записи, вивід, додати, змінити
+     слайд 15 (8 хв)    where, сума, середня, найдорожча
+     слайди 19–20 (11 хв) практика ⭐ / ⭐⭐ / ⭐⭐⭐ + банк (слайд 21)
+     слайд 25 — домашнє: DartPad, код повідомленням на платформі
+       до 01.10 (урок 7); відповіді в конспекті
+     ⛔ НЕ РІЗАТИ слайд 18 (довідник) і слайди 19–20 (практика).
+     ЯКЩО НЕ ВСТИГАЄТЕ — ріжеться показ, НЕ практика. Знімати:
+       слайд 11 (firstWhere/any/indexWhere — лишити тільки where),
+       слайд 17 (функції — вони є в ⭐⭐ практики),
+       слайди 22–23 (пастки й словник — усно по ходу практики).
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ГОЛОВНА ДУМКА: запис = Map (рядок таблиці), база = List таких
+     Map (уся таблиця). Два квадратні дужки поспіль: спершу НОМЕР
+     запису, потім КЛЮЧ поля — katalog[1]['nazva'].
+  ⚠️ ЩО ПЛУТАЮТЬ
+     • var katalog = [...] — Dart виводить Map<String, Object>, і
+       g['cina'] < 500 не компілюється. Каталог — з явним типом
+     • katalog['nazva'] — у списку ключів немає, спершу номер
+     • suma += g['cina'] без as int — помилка num/int
+     • where повертає не список — потрібне .toList() (як reversed)
+     • firstWhere, коли нічого не знайдено, ПАДАЄ (Bad state:
+       No element) — спершу any
+     • помилка в ключі ('cena' замість 'cina') мовчки дає null
+     • shuffle, як і sort, міняє сам список
+  ⚠️ КОД НА СЛАЙДАХ — ASCII У РЯДКАХ (копіювання з PDF у DartPad):
+     'Minecraft', 'sandbox', ' - ', не кирилиця й не довге тире.
+     Кирилиця лише в коментарях.
+  ⚠️ ДАНІ КАТАЛОГУ на слайдах однакові скрізь (перевірка в голові):
+     Minecraft sandbox 650 4.8 · Terraria sandbox 250 4.9 ·
+     Portal puzzle 500 4.7 · Stardew farm 350 4.9 ·
+     FIFA sport 1800 3.9  ⇒ сума 3550, середня 710.0,
+     дешевші за 500: Terraria, Stardew
+  ⛔ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • sort з compareTo і fold — урок 11 (на List<Game>)
+     • ?? і ! — урок 12 (null-safety); тому в ⭐⭐⭐ лічильник жанрів
+       через update(..., ifAbsent: ...), без ??
+     • класи — урок 9 («навіщо клас, коли є Map» — довгий тип
+       List<Map<String, dynamic>> на слайді 17 і є відповіддю)
+     • Оцінювання — у конспекті
+  ────────────────────────────────────────────────────────────────
+  Аркуш         rozdatka.html — 1 сторінка A4, для сховища
+  Конспект      2026-27-teacher/aplus/10-flutter/u06/konspekt.md
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: акцент курсу — синій із палітри. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#eef1f8; --border:#dcdfe9;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(2,83,179,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lr{background:#fae7e8;color:var(--rose)}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(2,83,179,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#f9fbfd;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:14px 19px;font-family:var(--f-mono);
+        font-size:16px;border-top:1.5px solid var(--border);white-space:pre-wrap}
+.dp-out .lbl{font-family:var(--f-body);font-size:13px;color:var(--faint);
+             text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:6px}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #f9fbfd */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#6b6a72;font-style:italic}/* коментар */
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--blue);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid #b9c8e6;border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--blue);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--blue)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+.uk{color:var(--dim)}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--blue);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .dp-out{font-size:14.5px;padding:11px 15px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .demo,.solo{padding:10px 13px}
+  .demo .dp-code,.solo .dp-code{font-size:14.5px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .bank{gap:8px} .bk{padding:9px 12px;font-size:15px}
+  .refg{gap:6px} .rf{padding:6px 9px}
+  .rf .rt{font-size:13px;flex-basis:110px} .rf .rc{font-size:13px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+.demo .dp-code{border:1px solid var(--border);border-radius:9px;padding:11px 14px;
+  font-size:16px;line-height:1.65}
+
+/* довідник конструкцій — слайд 18 */
+.refg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rf{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+    padding:8px 12px;display:flex;align-items:baseline;gap:10px}
+.rf .rt{font-size:14.5px;color:var(--dim);flex:0 0 128px;line-height:1.3}
+.rf .rc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--brand);
+        line-height:1.35;flex:1}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4 ─── */
+.rv-body .mono{font-family:var(--f-mono);white-space:pre-wrap}
+.hbox.hp{border-color:var(--plum)}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Список Map'ів як база даних</h1>
+      <p class="title-sub">Кожна гра — цілий запис · «Каталог GameStore»<br>
+        Мобільна розробка Flutter · 10 клас · Урок 6 з 68 · 30 вересня</p>
+      <div class="chips">
+        <span class="chip">List&lt;Map&lt;String, dynamic&gt;&gt;</span>
+        <span class="chip">katalog[i]['kliuch']</span>
+        <span class="chip">пошук за ключем</span>
+        <span class="chip">where · firstWhere · any</span>
+        <span class="chip">сума · середня</span>
+        <span class="chip">shuffle</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── РОЗМИНКА ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔥</div><div>
+      <span class="label lb">Розминка · 2 хв</span>
+      <h2>З уроку 5</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox">Що виведе кожен <span class="en">print</span>?<br>
+          <span class="en">Map&lt;String, int&gt; m = {'hlib': 25};</span><br>
+          <span class="en">m['syr'] = 180;</span><br>
+          <span class="en">print(m.length);</span> · <span class="en">print(m['kava']);</span></div>
+        <div class="hbox"><b>List</b> чи <b>Map</b>? «імена учнів по порядку» ·
+          «ціна кожного товару»</div>
+        <div class="hbox hm">А якщо в гри є <b>і назва, і жанр, і ціна</b> — і ігор
+          тридцять?</div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Відповідь</h3>
+        <p class="rv-hint">Спершу скажи сам.</p>
+        <div class="rv-body">
+          <p class="mono">2
+null</p>
+          <p class="mt">Імена по порядку — <b>List</b>. Ціна кожного товару — <b>Map</b></p>
+          <p class="mt">Сьогодні — <b>обидва разом</b>: список, у якому кожен елемент — Map</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── НАВІЩО ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🧩</div><div>
+      <span class="label lm">Навіщо</span>
+      <h2>Два списки розʼїжджаються</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">var</span> nazvy = [<span class="ss">'Minecraft'</span>, <span class="ss">'Terraria'</span>, <span class="ss">'Portal'</span>];
+<span class="sk">var</span> ciny  = [<span class="sn">650</span>, <span class="sn">250</span>, <span class="sn">500</span>];
+
+<span class="cm">// Minecraft розпродано — прибрали</span>
+nazvy.<span class="sf">removeAt</span>(<span class="sn">0</span>);
+<span class="cm">// ... а ціну прибрати забули</span>
+
+<span class="sf">print</span>(<span class="ss">'${nazvy[0]}: ${ciny[0]}'</span>);
+<span class="cm">// Terraria: 650  — чужа ціна!</span></div>
+      </div>
+      <div>
+        <div class="hbox ho">Назва в одному списку, ціна в іншому — вони тримаються
+          разом <b>лише номером</b>. Один <span class="en">removeAt</span> — і все
+          поїхало</div>
+        <div class="hbox hm"><b>Запис</b> — один Map, де лежить <b>усе</b> про одну гру:
+          назва, жанр, ціна</div>
+        <div class="hbox"><b>База даних</b> — список таких записів. Прибрав запис —
+          прибрав гру цілком, нічого не розʼїхалось</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ОДИН ЗАПИС ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">1️⃣</div><div>
+      <span class="label lb">Запис · Map&lt;String, dynamic&gt;</span>
+      <h2>Одна гра — один Map</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt; gra = {
+  <span class="ss">'nazva'</span>: <span class="ss">'Minecraft'</span>,   <span class="cm">// String</span>
+  <span class="ss">'zhanr'</span>: <span class="ss">'sandbox'</span>,     <span class="cm">// String</span>
+  <span class="ss">'cina'</span>: <span class="sn">650</span>,            <span class="cm">// int</span>
+  <span class="ss">'reytyng'</span>: <span class="sn">4.8</span>,        <span class="cm">// double</span>
+};
+
+<span class="sf">print</span>(gra[<span class="ss">'nazva'</span>]);       <span class="cm">// Minecraft</span>
+<span class="sf">print</span>(gra[<span class="ss">'cina'</span>] + <span class="sn">50</span>);   <span class="cm">// 700</span>
+gra[<span class="ss">'cina'</span>] = <span class="sn">599</span>;          <span class="cm">// змінили поле</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Ключі — <b>назви полів</b>, завжди рядки. Значення — <b>різних</b>
+          типів: текст, ціле, дробове</div>
+        <div class="hbox"><span class="en">dynamic</span> — «значення може бути
+          <b>будь-якого</b> типу». Без нього в один Map не покласти і
+          <span class="en">'Minecraft'</span>, і <span class="en">650</span></div>
+        <div class="hbox ho">Усе інше — як на уроці 5: <span class="en">gra['kliuch']</span>
+          читає, <span class="en">gra['kliuch'] = ...</span> міняє або дописує</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ── КАТАЛОГ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🗃️</div><div>
+      <span class="label lb">База · List&lt;Map&lt;String, dynamic&gt;&gt;</span>
+      <h2>Список записів — це таблиця</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.6fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">List</span>&lt;<span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt;&gt; katalog = [
+  {<span class="ss">'nazva'</span>: <span class="ss">'Minecraft'</span>, <span class="ss">'zhanr'</span>: <span class="ss">'sandbox'</span>, <span class="ss">'cina'</span>: <span class="sn">650</span>},
+  {<span class="ss">'nazva'</span>: <span class="ss">'Terraria'</span>, <span class="ss">'zhanr'</span>: <span class="ss">'sandbox'</span>, <span class="ss">'cina'</span>: <span class="sn">250</span>},
+  {<span class="ss">'nazva'</span>: <span class="ss">'Portal'</span>, <span class="ss">'zhanr'</span>: <span class="ss">'puzzle'</span>, <span class="ss">'cina'</span>: <span class="sn">500</span>},
+];
+
+<span class="sf">print</span>(katalog.length);        <span class="cm">// 3</span>
+<span class="sf">print</span>(katalog[<span class="sn">1</span>]);            <span class="cm">// {nazva: Terraria, ...}</span>
+<span class="sf">print</span>(katalog[<span class="sn">1</span>][<span class="ss">'nazva'</span>]);   <span class="cm">// Terraria</span>
+<span class="sf">print</span>(katalog[<span class="sn">2</span>][<span class="ss">'cina'</span>]);    <span class="cm">// 500</span></div>
+      </div>
+      <div>
+        <table class="tb">
+          <tr><th>#</th><th>nazva</th><th>cina</th></tr>
+          <tr><td class="mono">0</td><td class="mono">Minecraft</td><td class="mono">650</td></tr>
+          <tr><td class="mono">1</td><td class="mono">Terraria</td><td class="mono">250</td></tr>
+          <tr><td class="mono">2</td><td class="mono">Portal</td><td class="mono">500</td></tr>
+        </table>
+        <div class="hbox hm mt"><b>Дві пари дужок</b>: спершу <b>номер рядка</b>,
+          потім <b>ключ стовпця</b> — <span class="en">katalog[1]['nazva']</span></div>
+        <div class="hbox ho">Тип пишемо <b>повністю</b>. З
+          <span class="en">var</span> Dart вгадає не той тип, і порівняння цін
+          потім не спрацюють</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ПЕРЕДБАЧ 1 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе кожен рядок?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">List</span>&lt;<span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt;&gt; k = [
+  {<span class="ss">'nazva'</span>: <span class="ss">'Terraria'</span>, <span class="ss">'cina'</span>: <span class="sn">250</span>},
+  {<span class="ss">'nazva'</span>: <span class="ss">'Portal'</span>, <span class="ss">'cina'</span>: <span class="sn">500</span>},
+  {<span class="ss">'nazva'</span>: <span class="ss">'FIFA'</span>, <span class="ss">'cina'</span>: <span class="sn">1800</span>},
+];
+<span class="sf">print</span>(k[<span class="sn">1</span>][<span class="ss">'nazva'</span>]);
+<span class="sf">print</span>(k[<span class="sn">2</span>][<span class="ss">'cina'</span>] - k[<span class="sn">0</span>][<span class="ss">'cina'</span>]);
+<span class="sf">print</span>(k.length);
+<span class="sf">print</span>(k[<span class="sn">0</span>][<span class="ss">'zhanr'</span>]);
+<span class="sf">print</span>(k[<span class="sn">3</span>][<span class="ss">'nazva'</span>]);</div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Відповідь</h3>
+        <p class="rv-hint">Спочатку скажи сам, потім клацни.</p>
+        <div class="rv-body">
+          <p class="mono">Portal
+1550
+3
+null
+падіння: RangeError</p>
+          <p class="mt">Поля <span class="en">'zhanr'</span> у записі немає — Map
+            мовчки віддає <span class="en">null</span></p>
+          <p class="mt">Запису під номером 3 немає — список <b>падає</b>. Той самий
+            урок 5, тільки тепер обидва в одному рядку</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ПЕРЕБІР ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lb">Перебір · 2 способи</span>
+      <h2>Показати весь каталог</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="cm">// for-in: потрібен лише запис</span>
+<span class="sk">for</span> (<span class="sk">var</span> g <span class="sk">in</span> katalog) {
+  <span class="sf">print</span>(<span class="ss">'${g['nazva']} - ${g['cina']} grn'</span>);
+}
+<span class="cm">// Minecraft - 650 grn</span>
+<span class="cm">// Terraria - 250 grn ...</span>
+
+<span class="cm">// for(i): потрібен ще й номер</span>
+<span class="sk">for</span> (<span class="sk">int</span> i = <span class="sn">0</span>; i &lt; katalog.length; i++) {
+  <span class="sk">var</span> g = katalog[i];
+  <span class="sf">print</span>(<span class="ss">'${i + 1}. ${g['nazva']} (${g['zhanr']})'</span>);
+}
+<span class="cm">// 1. Minecraft (sandbox) ...</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">g</span> — це <b>один запис</b>, цілий Map.
+          <span class="en">var</span> тут можна: Dart бере тип зі списку</div>
+        <div class="hbox">Усередині <span class="en">${ }</span> можна писати
+          <b>ті самі одинарні лапки</b>: <span class="en">'${g['nazva']}'</span> —
+          це правильний Dart</div>
+        <div class="hbox ho">Фігурні дужки <b>обовʼязкові</b>: без них
+          <span class="en">'$g['nazva']'</span> — помилка, рядок обривається на
+          другій лапці</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ДОДАТИ, ЗМІНИТИ, ПРИБРАТИ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">✏️</div><div>
+      <span class="label lb">Редагувати базу · 4 дії</span>
+      <h2>Додати, змінити, прибрати запис</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="cm">// 1. додати запис — цілий Map</span>
+katalog.<span class="sf">add</span>({
+  <span class="ss">'nazva'</span>: <span class="ss">'FIFA'</span>, <span class="ss">'zhanr'</span>: <span class="ss">'sport'</span>, <span class="ss">'cina'</span>: <span class="sn">1800</span>,
+});
+
+<span class="cm">// 2. змінити одне поле</span>
+katalog[<span class="sn">0</span>][<span class="ss">'cina'</span>] = <span class="sn">599</span>;
+
+<span class="cm">// 3. прибрати за номером</span>
+katalog.<span class="sf">removeAt</span>(<span class="sn">1</span>);
+
+<span class="cm">// 4. прибрати за умовою</span>
+katalog.<span class="sf">removeWhere</span>((g) =&gt; g[<span class="ss">'nazva'</span>] == <span class="ss">'FIFA'</span>);</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">add</span> — той самий, що в уроці 5.
+          Тільки тепер кладемо не слово, а <b>цілий Map</b> у фігурних дужках</div>
+        <div class="hbox">Поле міняється так само, як у Map, — просто спершу
+          <b>номер запису</b></div>
+        <div class="hbox ho"><span class="en">removeWhere</span> прибирає <b>всі</b>
+          записи, для яких умова — <span class="en">true</span>. Умова — коротка
+          функція зі стрілкою з уроку 4</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРИКЛАД → САМОСТІЙНО 1 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">За компʼютером · 7 хв</span>
+      <h2>Приклад — і самостійно</h2>
+    </div></div>
+    <div class="demo">
+      <span class="lbl">Приклад · пишемо разом</span>
+      <div class="dp-code"><span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">List</span>&lt;<span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt;&gt; katalog = [
+    {<span class="ss">'nazva'</span>: <span class="ss">'Minecraft'</span>, <span class="ss">'zhanr'</span>: <span class="ss">'sandbox'</span>, <span class="ss">'cina'</span>: <span class="sn">650</span>},
+    {<span class="ss">'nazva'</span>: <span class="ss">'Terraria'</span>, <span class="ss">'zhanr'</span>: <span class="ss">'sandbox'</span>, <span class="ss">'cina'</span>: <span class="sn">250</span>},
+  ];
+  <span class="sk">for</span> (<span class="sk">var</span> g <span class="sk">in</span> katalog) <span class="sf">print</span>(<span class="ss">'${g['nazva']} - ${g['cina']} grn'</span>);
+}</div>
+    </div>
+    <div class="solo">
+      <span class="lbl">Тепер самостійно · у своєму DartPad</span>
+      <ul>
+        <li>Свій каталог: <b>пʼять</b> ігор, поля <span class="en">nazva</span>,
+          <span class="en">zhanr</span>, <span class="en">cina</span>, <span class="en">reytyng</span></li>
+        <li>Виведи нумерованим списком: <span class="en">1. Minecraft (sandbox) - 650 grn</span></li>
+        <li>Додай шосту гру через <span class="en">add</span>, зміни ціну першої,
+          виведи ще раз і <span class="en">length</span></li>
+        <li><b>Зверни в помилку:</b> у <span class="en">print</span> напиши
+          <span class="en">'cena'</span> замість <span class="en">'cina'</span>. Що вивело? Поверни</li>
+        <li>⭐⭐ Виведи лише ігри з рейтингом <b>не нижче 4.8</b> — <span class="en">if</span>
+          усередині циклу</li>
+        <li>⭐⭐⭐ Дописуй <span class="en">HIT</span> після назви, якщо рейтинг ≥ 4.8, —
+          через <span class="en">? :</span> у <span class="en">${ }</span></li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПОШУК ЦИКЛОМ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🔍</div><div>
+      <span class="label lb">Пошук за ключем · спосіб 1</span>
+      <h2>Знайти гру за назвою</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">String</span> shukaiemo = <span class="ss">'Portal'</span>;
+<span class="sk">bool</span> znaishly = <span class="sk">false</span>;
+
+<span class="sk">for</span> (<span class="sk">var</span> g <span class="sk">in</span> katalog) {
+  <span class="sk">if</span> (g[<span class="ss">'nazva'</span>] == shukaiemo) {
+    <span class="sf">print</span>(<span class="ss">'$shukaiemo: ${g['cina']} grn'</span>);
+    znaishly = <span class="sk">true</span>;
+    <span class="sk">break</span>;
+  }
+}
+<span class="sk">if</span> (!znaishly) {
+  <span class="sf">print</span>(<span class="ss">'Takoi gry nemaie'</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm">Ідемо по записах і порівнюємо <b>одне поле</b>. Збіглось —
+          показали й <span class="en">break</span>: далі шукати нема чого</div>
+        <div class="hbox"><span class="en">znaishly</span> — <b>прапорець</b>. Без нього
+          після циклу не знати, знайшли чи ні</div>
+        <div class="hbox ho"><span class="en">'portal'</span> з малої не знайде
+          <span class="en">'Portal'</span>: регістр має значення, як у
+          <span class="en">contains</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПОШУК КОРОТКО ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lb">Пошук за ключем · ще 3 способи</span>
+      <h2>Той самий пошук одним рядком</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.6fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="cm">// чи є хоч один такий? → true / false</span>
+<span class="sf">print</span>(katalog.<span class="sf">any</span>((g) =&gt; g[<span class="ss">'nazva'</span>] == <span class="ss">'Portal'</span>));
+<span class="cm">// true</span>
+
+<span class="cm">// під яким номером? → -1, якщо немає</span>
+<span class="sf">print</span>(katalog.<span class="sf">indexWhere</span>((g) =&gt; g[<span class="ss">'nazva'</span>] == <span class="ss">'Doom'</span>));
+<span class="cm">// -1</span>
+
+<span class="cm">// дай сам запис</span>
+<span class="sk">var</span> p = katalog.<span class="sf">firstWhere</span>((g) =&gt; g[<span class="ss">'nazva'</span>] == <span class="ss">'FIFA'</span>);
+<span class="sf">print</span>(p[<span class="ss">'cina'</span>]);   <span class="cm">// 1800</span>
+
+katalog.<span class="sf">firstWhere</span>((g) =&gt; g[<span class="ss">'nazva'</span>] == <span class="ss">'Doom'</span>);
+<span class="cm">// ПАДІННЯ: Bad state: No element</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">У всіх трьох — <b>та сама умова</b> зі стрілкою.
+          Різниця лише в тому, <b>що</b> повертають</div>
+        <div class="hbox"><span class="en">any</span> — так/ні ·
+          <span class="en">indexWhere</span> — номер ·
+          <span class="en">firstWhere</span> — запис</div>
+        <div class="hbox ho"><span class="en">firstWhere</span> без збігу
+          <b>падає</b>. Не впевнений, що є, — спершу
+          <span class="en">any</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── WHERE ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🧪</div><div>
+      <span class="label lb">Фільтр · where</span>
+      <h2>Відібрати всі записи за умовою</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="cm">// katalog: Minecraft 650 · Terraria 250 ·</span>
+<span class="cm">// Portal 500 · Stardew 350 · FIFA 1800</span>
+
+<span class="sk">var</span> deshevi = katalog
+    .<span class="sf">where</span>((g) =&gt; g[<span class="ss">'cina'</span>] &lt; <span class="sn">500</span>)
+    .<span class="sf">toList</span>();
+<span class="sf">print</span>(deshevi.length);   <span class="cm">// 2</span>
+
+<span class="cm">// лише назви, одним рядком</span>
+<span class="sf">print</span>(deshevi.<span class="sf">map</span>((g) =&gt; g[<span class="ss">'nazva'</span>]).<span class="sf">join</span>(<span class="ss">', '</span>));
+<span class="cm">// Terraria, Stardew</span>
+
+<span class="sk">int</span> skilky = katalog
+    .<span class="sf">where</span>((g) =&gt; g[<span class="ss">'zhanr'</span>] == <span class="ss">'sandbox'</span>)
+    .length;              <span class="cm">// 2</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">where</span> лишає <b>всі</b> записи, для яких
+          умова — <span class="en">true</span>. Сам каталог <b>не чіпає</b>
+          (на відміну від <span class="en">removeWhere</span>)</div>
+        <div class="hbox">Повертає ще <b>не список</b> — потрібне
+          <span class="en">.toList()</span>, як у <span class="en">reversed</span></div>
+        <div class="hbox ho"><span class="en">map</span> перетворює кожен запис на
+          щось інше — тут на назву. <span class="en">join</span> склеює, як в уроці 5</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ПЕРЕДБАЧ 2 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе кожен print?</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">List</span>&lt;<span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt;&gt; k = [
+  {<span class="ss">'nazva'</span>: <span class="ss">'Doom'</span>, <span class="ss">'cina'</span>: <span class="sn">450</span>},
+  {<span class="ss">'nazva'</span>: <span class="ss">'Tetris'</span>, <span class="ss">'cina'</span>: <span class="sn">100</span>},
+  {<span class="ss">'nazva'</span>: <span class="ss">'Halo'</span>, <span class="ss">'cina'</span>: <span class="sn">900</span>},
+];
+<span class="sf">print</span>(k.<span class="sf">where</span>((g) =&gt; g[<span class="ss">'cina'</span>] &gt; <span class="sn">400</span>).length);
+<span class="sf">print</span>(k.<span class="sf">any</span>((g) =&gt; g[<span class="ss">'cina'</span>] &gt; <span class="sn">1000</span>));
+<span class="sf">print</span>(k.<span class="sf">indexWhere</span>((g) =&gt; g[<span class="ss">'nazva'</span>] == <span class="ss">'Halo'</span>));
+<span class="sf">print</span>(k.<span class="sf">firstWhere</span>((g) =&gt; g[<span class="ss">'cina'</span>] &lt; <span class="sn">200</span>)[<span class="ss">'nazva'</span>]);</div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Відповідь</h3>
+        <p class="rv-hint">Спочатку скажи сам, потім клацни.</p>
+        <div class="rv-body">
+          <p class="mono">2
+false
+2
+Tetris</p>
+          <p class="mt">Дорожчі за 400 — Doom і Halo. Дорожчої за 1000 немає.
+            Halo — третій запис, тобто <b>номер 2</b></p>
+          <p class="mt"><span class="en">firstWhere</span> повернув <b>запис</b> —
+            і до нього одразу можна дописати <span class="en">['nazva']</span></p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── СУМА, СЕРЕДНЯ, МАКСИМУМ ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">➕</div><div>
+      <span class="label lb">Порахувати · 3 задачі</span>
+      <h2>Сума, середня, найдорожча</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">int</span> suma = <span class="sn">0</span>;
+<span class="sk">for</span> (<span class="sk">var</span> g <span class="sk">in</span> katalog) {
+  suma += g[<span class="ss">'cina'</span>] <span class="sk">as</span> <span class="sk">int</span>;
+}
+<span class="sf">print</span>(suma);          <span class="cm">// 3550</span>
+
+<span class="sk">double</span> serednia = suma / katalog.length;
+<span class="sf">print</span>(serednia);      <span class="cm">// 710.0</span>
+
+<span class="sk">var</span> top = katalog[<span class="sn">0</span>];
+<span class="sk">for</span> (<span class="sk">var</span> g <span class="sk">in</span> katalog) {
+  <span class="sk">if</span> (g[<span class="ss">'cina'</span>] &gt; top[<span class="ss">'cina'</span>]) top = g;
+}
+<span class="sf">print</span>(top[<span class="ss">'nazva'</span>]);  <span class="cm">// FIFA</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">as int</span> — «повір, тут ціле число».
+          Значення з <span class="en">dynamic</span> Dart сам до
+          <span class="en">int</span> не додасть</div>
+        <div class="hbox"><span class="en">/</span> завжди дає
+          <span class="en">double</span>: навіть рівно 710 друкується як
+          <span class="en">710.0</span></div>
+        <div class="hbox ho">Для максимуму тримаємо <b>цілий запис</b>, а не лише
+          ціну — тоді в кінці відома й назва</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ПРИКЛАД → САМОСТІЙНО 2 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">За компʼютером · 8 хв</span>
+      <h2>Приклад — і самостійно</h2>
+    </div></div>
+    <div class="demo">
+      <span class="lbl">Приклад · пишемо разом, у тому ж файлі</span>
+      <div class="dp-code"><span class="sk">var</span> deshevi = katalog.<span class="sf">where</span>((g) =&gt; g[<span class="ss">'cina'</span>] &lt; <span class="sn">500</span>).<span class="sf">toList</span>();
+<span class="sf">print</span>(<span class="ss">'Deshevi: ${deshevi.map((g) =&gt; g['nazva']).join(', ')}'</span>);
+
+<span class="sk">int</span> suma = <span class="sn">0</span>;
+<span class="sk">for</span> (<span class="sk">var</span> g <span class="sk">in</span> katalog) suma += g[<span class="ss">'cina'</span>] <span class="sk">as</span> <span class="sk">int</span>;
+<span class="sf">print</span>(<span class="ss">'Suma: $suma grn'</span>);</div>
+    </div>
+    <div class="solo">
+      <span class="lbl">Тепер самостійно · у своєму каталозі</span>
+      <ul>
+        <li>Назви ігор, <b>дешевших за 400</b>, одним рядком: <span class="en">where</span> +
+          <span class="en">map</span> + <span class="en">join</span></li>
+        <li>Скільки ігор <b>твого улюбленого жанру</b> — <span class="en">where(...).length</span></li>
+        <li><b>Середня</b> ціна каталогу й скільки ігор дорожчі за середню</li>
+        <li>Чи є гра з рейтингом <b>5.0</b>? Одним <span class="en">any</span></li>
+        <li><b>Зверни в помилку:</b> прибери <span class="en">as int</span>, прочитай
+          повідомлення, поверни</li>
+        <li>⭐⭐ Найдорожча <b>і</b> найдешевша — в <b>одному</b> циклі</li>
+        <li>⭐⭐⭐ Для ігор, дорожчих за 500, виведи ціну зі знижкою 20 %:
+          <span class="en">Minecraft: 650 -&gt; 520.0 grn</span></li>
+      </ul>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── SHUFFLE ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🎲</div><div>
+      <span class="label lb">Випадковий вибір · 2 способи</span>
+      <h2>Гра дня</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">import</span> <span class="ss">'dart:math'</span>;   <span class="cm">// для Random</span>
+
+<span class="cm">// 1. перетасувати весь каталог</span>
+katalog.<span class="sf">shuffle</span>();
+<span class="sf">print</span>(<span class="ss">'Gra dnia: ${katalog.first['nazva']}'</span>);
+
+<span class="cm">// три різні випадкові — перші три після shuffle</span>
+<span class="sk">var</span> tri = katalog.<span class="sf">sublist</span>(<span class="sn">0</span>, <span class="sn">3</span>);
+<span class="sf">print</span>(tri.<span class="sf">map</span>((g) =&gt; g[<span class="ss">'nazva'</span>]).<span class="sf">join</span>(<span class="ss">', '</span>));
+
+<span class="cm">// 2. випадковий номер — порядок не міняється</span>
+<span class="sk">int</span> i = <span class="sf">Random</span>().<span class="sf">nextInt</span>(katalog.length);
+<span class="sf">print</span>(katalog[i][<span class="ss">'nazva'</span>]);</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">shuffle</span>, як і
+          <span class="en">sort</span>, міняє <b>сам список</b>. Старий порядок
+          пропадає</div>
+        <div class="hbox"><span class="en">sublist(0, 3)</span> — записи з номерами
+          0, 1, 2. Після <span class="en">shuffle</span> це три випадкові <b>без повторів</b></div>
+        <div class="hbox ho"><span class="en">Random</span> — з уроку 3.
+          <span class="en">nextInt(n)</span> дає від 0 до n-1 — якраз усі номери
+          списку. <span class="en">import</span> — першим рядком файлу</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ФУНКЦІЇ НАД БАЗОЮ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🧰</div><div>
+      <span class="label lb">Функції з уроку 4</span>
+      <h2>Каталог як параметр</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+        <div class="dp-code"><span class="sk">int</span> <span class="sf">suma</span>(<span class="sk">List</span>&lt;<span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt;&gt; k) {
+  <span class="sk">int</span> s = <span class="sn">0</span>;
+  <span class="sk">for</span> (<span class="sk">var</span> g <span class="sk">in</span> k) {
+    s += g[<span class="ss">'cina'</span>] <span class="sk">as</span> <span class="sk">int</span>;
+  }
+  <span class="sk">return</span> s;
+}
+
+<span class="sk">bool</span> <span class="sf">ye</span>(<span class="sk">List</span>&lt;<span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt;&gt; k, <span class="sk">String</span> n) =&gt;
+    k.<span class="sf">any</span>((g) =&gt; g[<span class="ss">'nazva'</span>] == n);
+
+<span class="cm">// у main:</span>
+<span class="sf">print</span>(<span class="sf">suma</span>(katalog));           <span class="cm">// 3550</span>
+<span class="sf">print</span>(<span class="sf">ye</span>(katalog, <span class="ss">'Doom'</span>));     <span class="cm">// false</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Каталог передається у функцію так само, як число чи
+          рядок: <b>тип</b> і <b>імʼя</b> параметра</div>
+        <div class="hbox">Тип <span class="en">List&lt;Map&lt;String, dynamic&gt;&gt;</span>
+          довгий і повторюється в кожній функції. Запамʼятайте це відчуття</div>
+        <div class="hbox ho">На уроці 9 запис стане <b>класом</b>
+          <span class="en">Game</span> — і тип скоротиться до
+          <span class="en">List&lt;Game&gt;</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lp">Тримати відкритим</span>
+      <h2>Уся база на одному екрані</h2>
+    </div></div>
+    <div class="refg">
+      <div class="rf"><span class="rt">каталог</span>
+        <span class="rc">List&lt;Map&lt;String, dynamic&gt;&gt; k = [{...}, {...}];</span></div>
+      <div class="rf"><span class="rt">поле запису</span>
+        <span class="rc">k[0]['nazva'] · k[0]['cina'] = 599</span></div>
+      <div class="rf"><span class="rt">додати запис</span>
+        <span class="rc">k.add({'nazva': 'X', 'cina': 100})</span></div>
+      <div class="rf"><span class="rt">прибрати</span>
+        <span class="rc">k.removeAt(1) · k.removeWhere((g) =&gt; ...)</span></div>
+      <div class="rf"><span class="rt">перебрати</span>
+        <span class="rc">for (var g in k) print('${g['nazva']}');</span></div>
+      <div class="rf"><span class="rt">з номером</span>
+        <span class="rc">for (int i = 0; i &lt; k.length; i++)</span></div>
+      <div class="rf"><span class="rt">знайти циклом</span>
+        <span class="rc">if (g['nazva'] == n) { ...; break; }</span></div>
+      <div class="rf"><span class="rt">чи є / де</span>
+        <span class="rc">k.any((g) =&gt; ...) · k.indexWhere((g) =&gt; ...) → -1</span></div>
+      <div class="rf"><span class="rt">дай запис</span>
+        <span class="rc">k.firstWhere((g) =&gt; ...) — немає → падіння</span></div>
+      <div class="rf"><span class="rt">відібрати</span>
+        <span class="rc">k.where((g) =&gt; g['cina'] &lt; 500).toList()</span></div>
+      <div class="rf"><span class="rt">лише назви</span>
+        <span class="rc">k.map((g) =&gt; g['nazva']).join(', ')</span></div>
+      <div class="rf"><span class="rt">сума</span>
+        <span class="rc">for (var g in k) s += g['cina'] as int;</span></div>
+      <div class="rf"><span class="rt">середня</span>
+        <span class="rc">double sr = s / k.length;</span></div>
+      <div class="rf"><span class="rt">випадково</span>
+        <span class="rc">k.shuffle() · k.sublist(0, 3) · Random().nextInt(k.length)</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── ПРАКТИКА ⭐ ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lo">Практика · 11 хв · рівень ⭐</span>
+      <h2>Каталог GameStore</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="demo">
+          <span class="lbl">Приклад · так виглядає початок</span>
+          <div class="dp-code"><span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">List</span>&lt;<span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt;&gt; katalog = [
+    {<span class="ss">'nazva'</span>: <span class="ss">'Minecraft'</span>, <span class="ss">'zhanr'</span>: ...},
+  ];
+  <span class="sf">print</span>(<span class="ss">'=== GameStore ==='</span>);
+}</div>
+        </div>
+        <div class="card reveal">
+          <h3>Перевір себе</h3>
+          <p class="rv-hint">На каталозі з уроку — клацни, коли все працює.</p>
+          <div class="rv-body">
+            <p class="mono">1. Minecraft (sandbox) - 650 grn
+2. Terraria (sandbox) - 250 grn
+3. Portal (puzzle) - 500 grn
+4. Stardew (farm) - 350 grn
+5. FIFA (sport) - 1800 grn
+Portal: 500 grn
+Deshevi: Terraria, Stardew
+Suma: 3550, serednia: 710.0</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="hbox hm"><b>1 · Вітрина.</b> Каталог із <b>шести</b> ігор, чотири поля
+          в кожній. Нумерований список:
+          <span class="en">1. Nazva (zhanr) - 650 grn</span></div>
+        <div class="hbox"><b>2 · Пошук.</b> Змінна <span class="en">shukaiemo</span> →
+          ціна гри або <span class="en">'Takoi gry nemaie'</span>. Перевір на наявній
+          і на вигаданій назві</div>
+        <div class="hbox"><b>3 · Фільтр.</b> Назви ігор, дешевших за 500, одним рядком</div>
+        <div class="hbox"><b>4 · Підсумок.</b> Сума й середня ціна каталогу</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ── ПРАКТИКА ⭐⭐ ⭐⭐⭐ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🚀</div><div>
+      <span class="label lo">Практика · далі</span>
+      <h2>Кому мало</h2>
+    </div></div>
+    <div class="lvl">
+      <div class="lv"><span class="lv-s">⭐⭐</span>
+        <span class="lv-t"><b>Функції замість коду в main:</b>
+          <span class="en">void pokazhy(k)</span> · <span class="en">int suma(k)</span> ·
+          <span class="en">void znaidy(k, String nazva)</span>.<br>
+          <b>Кошик:</b> <span class="en">List&lt;String&gt; koshyk = ['Terraria', 'Portal'];</span>
+          — для кожної назви знайди запис у каталозі й порахуй
+          <span class="en">'Do splaty: ... grn'</span></span></div>
+      <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+        <span class="lv-t"><b>Статистика жанрів</b> у <span class="en">Map&lt;String, int&gt; stat = {};</span>
+          — скільки ігор кожного жанру. Для кожного запису:<br>
+          <span class="en">stat.update(g['zhanr'], (v) =&gt; v + 1, ifAbsent: () =&gt; 1);</span><br>
+          <b>Гра дня:</b> <span class="en">shuffle</span>, перша гра — зі знижкою 30 %,
+          решта — за звичайною ціною</span></div>
+    </div>
+    <div class="hbox ho mt">Хто дописав усе — зроби <b>героя</b> як Map:
+      <span class="en">{'imia': 'Lytsar', 'hp': 100, 'ataka': 15}</span>, список із трьох
+      героїв, і виведи того, у кого найбільше <span class="en">hp</span>. Це початок уроку 7</div>
+  </div></section>
+
+  <!-- ══════════ 21 ── БАНК ЗАВДАНЬ ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🏦</div><div>
+      <span class="label lp">Банк завдань · для тих, хто закінчив</span>
+      <h2>Ще вісім задач до каталогу</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>1.</b> Скільки коштують <b>усі ігри одного жанру</b> разом</div>
+      <div class="bk"><b>2.</b> Гра з <b>найвищим рейтингом</b> — назва й число</div>
+      <div class="bk"><b>3.</b> Чи є гра <b>дешевша за 100</b>? Одним рядком</div>
+      <div class="bk"><b>4.</b> Прибери всі ігри з рейтингом <b>нижче 4.0</b> і виведи,
+        скільки лишилось</div>
+      <div class="bk"><b>5.</b> Підніми всім ціну на <b>10 %</b> циклом. Ціна лишається цілою:
+        <span class="en">(g['cina'] * 1.1).round()</span></div>
+      <div class="bk"><b>6.</b> Назви всіх ігор <b>за абеткою</b>:
+        <span class="en">map</span> → <span class="en">toList</span> →
+        <span class="en">sort</span> → <span class="en">join</span></div>
+      <div class="bk"><b>7.</b> <b>Лотерея:</b> три випадкові ігри без повторів і
+        їхня сума</div>
+      <div class="bk"><b>8.</b> <b>Найдешевша</b> серед ігор із рейтингом не нижче 4.8:
+        спершу <span class="en">where</span>, потім пошук мінімуму циклом</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ── ПАСТКИ ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh"><div class="si">⚠️</div><div>
+      <span class="label lo">Пастки</span>
+      <h2>На чому спотикаються всі</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Тип каталогу — повністю.</b>
+          <span class="en">var katalog = [...]</span> Dart прочитає не як
+          <span class="en">dynamic</span>, і <span class="en">g['cina'] &lt; 500</span>
+          не скомпілюється</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Спершу номер, потім ключ.</b>
+          <span class="en">katalog['nazva']</span> — помилка: у списку ключів немає.
+          Правильно <span class="en">katalog[0]['nazva']</span></span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b><span class="en">as int</span> у сумі.</b>
+          <span class="en">suma += g['cina'];</span> не компілюється — значення з
+          <span class="en">dynamic</span> треба назвати числом</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><b><span class="en">where</span> — ще не список.</b>
+          Без <span class="en">.toList()</span> не працює <span class="en">[0]</span></span></div>
+      <div class="step"><span class="step-n">5</span>
+        <span class="step-t"><b><span class="en">firstWhere</span> без збігу падає.</b>
+          Спершу <span class="en">any</span> — або пошук циклом із прапорцем</span></div>
+      <div class="step"><span class="step-n">6</span>
+        <span class="step-t"><b>Помилка в ключі мовчить.</b>
+          <span class="en">g['cena']</span> замість <span class="en">g['cina']</span> — це
+          <span class="en">null</span>, а не повідомлення про помилку</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 23 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Словник уроку</span>
+      <h2>Ці слова будуть у Flutter щодня</h2>
+    </div></div>
+    <div class="refg">
+      <div class="rf"><span class="rt">record</span><span class="rc">запис</span></div>
+      <div class="rf"><span class="rt">field</span><span class="rc">поле запису</span></div>
+      <div class="rf"><span class="rt">dynamic</span><span class="rc">будь-якого типу</span></div>
+      <div class="rf"><span class="rt">catalog</span><span class="rc">каталог</span></div>
+      <div class="rf"><span class="rt">where</span><span class="rc">де — відібрати за умовою</span></div>
+      <div class="rf"><span class="rt">first where</span><span class="rc">перший, де…</span></div>
+      <div class="rf"><span class="rt">any</span><span class="rc">хоч один</span></div>
+      <div class="rf"><span class="rt">index where</span><span class="rc">номер першого, де…</span></div>
+      <div class="rf"><span class="rt">shuffle</span><span class="rc">перетасувати</span></div>
+      <div class="rf"><span class="rt">sublist</span><span class="rc">частина списку</span></div>
+      <div class="rf"><span class="rt">sum — average</span><span class="rc">сума — середнє</span></div>
+      <div class="rf"><span class="rt">no element</span><span class="rc">немає такого елемента</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ── ПІДСУМОК ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Що є після шостого уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="card">
+        <h3>Уміємо</h3>
+        <p>тримати все про одну річ в одному записі · складати записи в базу ·
+          додавати, міняти, прибирати · шукати за ключем чотирма способами ·
+          відбирати через <span class="en">where</span> · рахувати суму, середню,
+          максимум · вибирати випадково</p>
+      </div>
+      <div class="card cm">
+        <h3>Наступного разу</h3>
+        <p><b>Практикум і старт «Арени».</b> Герой — це такий самий Map:
+          імʼя, здоровʼя, атака. Бій — цикл, у якому герої бʼють одне одного,
+          поки хтось не впаде</p>
+      </div>
+    </div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 7 · 1 жовтня · Практикум Dart + старт міні-проєкту I</p>
+  </div></section>
+
+  <!-- ══════════ 25 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>Чужий каталог</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">У <strong>DartPad</strong> (dartpad.dev).
+      Код — <strong>повідомленням на платформі</strong> до <strong>1 жовтня</strong>.
+      Першим рядком — коментар із прізвищем.</div>
+    <div class="dp mt">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">main.dart · скопіюй на початок main</span></div>
+      <div class="dp-code"><span class="sk">List</span>&lt;<span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt;&gt; k = [
+  {<span class="ss">'nazva'</span>: <span class="ss">'Portal'</span>, <span class="ss">'zhanr'</span>: <span class="ss">'puzzle'</span>, <span class="ss">'cina'</span>: <span class="sn">300</span>},
+  {<span class="ss">'nazva'</span>: <span class="ss">'Doom'</span>, <span class="ss">'zhanr'</span>: <span class="ss">'shooter'</span>, <span class="ss">'cina'</span>: <span class="sn">450</span>},
+  {<span class="ss">'nazva'</span>: <span class="ss">'Tetris'</span>, <span class="ss">'zhanr'</span>: <span class="ss">'puzzle'</span>, <span class="ss">'cina'</span>: <span class="sn">100</span>},
+  {<span class="ss">'nazva'</span>: <span class="ss">'Halo'</span>, <span class="ss">'zhanr'</span>: <span class="ss">'shooter'</span>, <span class="ss">'cina'</span>: <span class="sn">900</span>},
+];</div>
+    </div>
+    <div class="steps mt" style="gap:8px">
+      <div class="step" style="padding:9px 16px"><span class="step-n">1</span><span class="step-t">
+        <b>Спершу вгадай</b>, потім запусти: <span class="en">k[1]['nazva']</span> ·
+        <span class="en">k[3]['cina']</span> · <span class="en">k.length</span> ·
+        <span class="en">k[0]['reytyng']</span>. Здогадки — коментарями</span></div>
+      <div class="step" style="padding:9px 16px"><span class="step-n">2</span><span class="step-t">
+        Усі ігри нумерованим списком: <span class="en">1. Portal (puzzle) - 300 grn</span></span></div>
+      <div class="step" style="padding:9px 16px"><span class="step-n">3</span><span class="step-t">
+        Назви жанру <span class="en">puzzle</span> і назви дешевших за 500
+        (<span class="en">where</span> + <span class="en">map</span> + <span class="en">join</span>) ·
+        сума й середня ціна циклом з <span class="en">as int</span></span></div>
+      <div class="step" style="padding:9px 16px"><span class="step-n">4</span><span class="step-t">
+        ⭐⭐ Функція <span class="en">znaidy(k, nazva)</span>: ціна або
+        <span class="en">'Takoi gry nemaie'</span>. Перевір на <span class="en">'Tetris'</span>
+        і <span class="en">'Mario'</span></span></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

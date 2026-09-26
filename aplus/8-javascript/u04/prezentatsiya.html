@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Помилки і налагодження · JavaScript · 8 клас · Урок 4</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (перший рік мови)
+  Клас          8 (13–14 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · понеділок
+  Урок          4 з 35 · 28.09.2026
+  Тема          Помилки і налагодження (тема 1.5 плану)
+  Тривалість    45 хв — показ 17 · практика 28
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Чотири практичні блоки за машинами.
+  ⚠️ ЗВІДКИ ВЗЯТО. Основа — колода 11 класу aplus/11-javascript/u04
+     (той самий план, тема 1.5, проведена 16.09). Узято: схема
+     «з чого складається повідомлення» (SVG), три типи помилок,
+     кома замість плюса, чотири точки для console.log, breakpoint,
+     «порожнє поле дає Малюк», «0 балів завжди», пастка «київ».
+     Колоду 11 класу НЕ чіпали.
+  ⚠️ ЩО ЗМІНЕНО ПРОТИ 11 КЛАСУ
+     • 29 слайдів, а не 32; злито «console.log проти breakpoint»
+       з debugger, «три дрібниці» — з панеллю паузи
+     • TypeError показано на тому, що 8 клас уже бачив: const, який
+       переприсвоїли (урок 1), і null від Скасувати (урок 2).
+       toUpperCase як приклад прибрано — методів рядків ще не було
+     • ДОДАНО повну родину (вимога «всі види конструкцій»): оглядова
+       таблиця сл. 3 (чотири біди + чотири інструменти), логічна
+       помилка окремим слайдом сл. 9, debugger у коді сл. 16,
+       СЛАЙД-ДОВІДНИК сл. 25 — тримати на дошці під час практик 3–4
+     • кожен блок «самостійно» — 6 пунктів, один ламає код навмисно
+     • банк — 8 карток, а не 6
+     • слайда про git немає — Git у курсі не згадується; здача —
+       рівень і прізвище коментарем ПЕРШИМ рядком script.js (сл. 24)
+  ⚠️ ЩО ВІДОМО   Урок 1: SyntaxError, ReferenceError, NaN уже бачили
+     («Три червоні написи»), const не переприсвоюється.
+     Урок 2: prompt дає рядок, Скасувати дає null.
+     Урок 3: одне = замість ===, мертві гілки, Number.isNaN.
+     Урок 3 пообіцяв toLowerCase і trim — це сл. 21.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ОСОБЛИВІСТЬ УРОКУ: він ПРО ПОМИЛКИ, тому код на сл. 5, 6, 7,
+     12, 17, 22 зламаний НАВМИСНО. Кожен такий блок підписаний
+     у заголовку панелі «зламано навмисно».
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ нижче людські (1 = титул); id у коді на одиницю менший
+  ПРАКТИКА      сл. 8 (6 хв) · 13 (7 хв) · 18 (6 хв) · 23 (9 хв)
+  ЗНАЙДИ/ВИПРАВ сл. 7 · 12 · 17 · 22 —
+                відповідь відкривається на ТОМУ Ж слайді (клац)
+  ДІАГРАМА      сл. 4 — з чого складається повідомлення. Не різати
+  ДОВІДНИК      сл. 25 — уся родина на одному екрані, тримати на дошці
+  ДОМАШНЄ       сл. 29 — на CodePen, код повідомленням на платформі
+                до 05.10; відповіді в конспекті
+  РІЗАТИ ПЕРШИМ сл. 17 (виправ) · 16 (debugger — сказати усно на
+                практиці 3) · 27 (словник — на урок 5). Практику НЕ різати
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • try / catch — не в плані першого року
+     • цикли — урок 8 (02.11). Вікторина — ТРИ окремі prompt
+     • Network, Performance та інші вкладки DevTools — зайве
+     • Оцінювання й правила курсу — у конспекті, не на екрані
+  ⚠️ ЩО ЛЕГКО ЗЛАМАТИ НА УРОЦІ
+     • breakpoint: поставили після завантаження — треба оновити
+       сторінку; Chrome іноді губить мітку (сл. 15)
+     • при SyntaxError breakpoint не спрацює — файл не запускався
+     • Chrome блокує діалоги після кількох prompt поспіль — лікується
+       закриттям вкладки (урок 2)
+  ────────────────────────────────────────────────────────────────
+  План          office/plany/05-javascript-8.md, тема 1.5
+  Аркуш         rozdatka.html — 1 сторінка A4, для сховища
+  Конспект      2026-27-teacher/aplus/8-javascript/u04/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:120px;white-space:nowrap}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── імітація діалогового вікна Chrome ─── */
+.dlg{border:2px solid var(--border);border-radius:12px;background:var(--surface);
+  overflow:hidden;box-shadow:0 4px 16px rgba(89,20,41,.10);max-width:460px;margin:0 auto}
+.dlg-bar{background:var(--surf2);border-bottom:1.5px solid var(--border);
+  padding:8px 14px;font-family:var(--f-mono);font-size:13px;color:var(--dim)}
+.dlg-body{padding:16px 18px;font-size:17.5px;color:var(--ink)}
+.dlg-in{margin-top:11px;border:1.5px solid var(--border);border-radius:7px;
+  padding:8px 11px;font-family:var(--f-mono);font-size:16px;color:var(--dim);background:var(--bg)}
+.dlg-btn{display:flex;gap:9px;justify-content:flex-end;padding:0 18px 15px}
+.dlg-btn span{border:1.5px solid var(--border);border-radius:8px;padding:7px 17px;font-size:15.5px}
+.dlg-btn span.ok{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Помилки<br>і налагодження</h1>
+      <p class="title-sub">Червоний рядок — це підказка, а не вирок<br>
+        JavaScript · 8 клас · Урок 4 з 35 · 28 вересня</p>
+      <div class="chips">
+        <span class="chip">SyntaxError</span>
+        <span class="chip">ReferenceError</span>
+        <span class="chip">TypeError</span>
+        <span class="chip">console.log</span>
+        <span class="chip">breakpoint</span>
+        <span class="chip">debugger</span>
+        <span class="chip">+=</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lm">Минулого разу → сьогодні</span>
+      <h2>Умови — і жодного червоного рядка</h2>
+    </div></div>
+    <div class="chk">
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">if · else if · else</span></div>
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">=== замість ==</span></div>
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">&amp;&amp; · || · !</span></div>
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">вужча гілка — першою</span></div>
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">switch · break</span></div>
+      <div class="chk-i"><span class="chk-b">▪</span><span class="chk-t">Number.isNaN()</span></div>
+    </div>
+    <p class="mt">Одне <span class="ic">=</span> замість <span class="ic">===</span>, мертва гілка,
+       забутий <span class="ic">Number()</span> — усе це ламало програму
+       <strong>мовчки</strong>. Сьогодні — що робити, коли браузер кричить червоним,
+       і як шукати біду, коли він мовчить.</p>
+    <div class="hbox hm">Результат уроку: <strong>вікторина на три питання</strong>
+      з підрахунком балів — і вміння полагодити її, коли вона зламається.</div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ОГЛЯД РОДИНИ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lm">Огляд</span>
+      <h2>Чотири види бід — і чим кожну ловити</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Біда</th><th>Як виглядає</th><th>Чим ловити</th></tr>
+      <tr><td class="o" style="width:220px">SyntaxError</td><td>сторінка <b>зовсім нічого</b> не робить</td><td>прочитати червоний рядок</td></tr>
+      <tr><td class="o">ReferenceError</td><td><span class="ic">… is not defined</span></td><td>клац по номеру рядка</td></tr>
+      <tr><td class="o">TypeError</td><td><span class="ic">Cannot read …</span> · <span class="ic">Assignment to constant …</span></td><td>те саме</td></tr>
+      <tr><td class="o" style="color:var(--plum)">логічна</td><td>червоного <b>немає</b>, результат дивний</td><td><span class="ic">console.log</span> · breakpoint · <span class="ic">debugger</span></td></tr>
+    </table>
+    <div class="hbox hp mt">Перші три браузер <b>називає сам</b>. Четверту доводиться шукати
+      власноруч. Усе разом — на одному екрані, <b>слайд 25</b>.</div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ДІАГРАМА (із 11 класу) ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🔬</div><div>
+      <span class="label lm">Як це працює</span>
+      <h2>З чого складається повідомлення</h2>
+    </div></div>
+
+    <svg class="diagram" viewBox="0 0 940 250" role="img"
+         aria-label="Розбір рядка помилки в консолі: тип помилки, опис, файл і номер рядка"
+         font-family="'Montserrat','Segoe UI',system-ui,sans-serif">
+      <defs>
+        <marker id="eah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+          <path d="M0,0 L10,4 L0,8 Z" fill="#af3b41"/>
+        </marker>
+      </defs>
+
+      <rect x="20" y="30" width="900" height="62" rx="10" fill="#fbeaea" stroke="#af3b41" stroke-width="2"/>
+      <text x="44" y="68" fill="#af3b41" font-size="20" font-weight="700" font-family="'JetBrains Mono', Menlo, monospace">Uncaught ReferenceError: nmae is not defined</text>
+      <text x="700" y="68" fill="#55564f" font-size="18" font-family="'JetBrains Mono', Menlo, monospace">script.js:7</text>
+
+      <line x1="150" y1="100" x2="150" y2="140" stroke="#af3b41" stroke-width="2" marker-end="url(#eah)"/>
+      <line x1="420" y1="100" x2="420" y2="140" stroke="#af3b41" stroke-width="2" marker-end="url(#eah)"/>
+      <line x1="770" y1="100" x2="770" y2="140" stroke="#af3b41" stroke-width="2" marker-end="url(#eah)"/>
+
+      <rect x="26" y="148" width="256" height="86" rx="11" fill="#ffffff" stroke="#591429" stroke-width="2"/>
+      <text x="154" y="176" text-anchor="middle" fill="#591429" font-size="15.5" font-weight="700">ТИП ПОМИЛКИ</text>
+      <text x="154" y="200" text-anchor="middle" fill="#2e2f2b" font-size="14.5">яка саме категорія</text>
+      <text x="154" y="222" text-anchor="middle" fill="#55564f" font-size="14">їх три, і всі три сьогодні</text>
+
+      <rect x="298" y="148" width="300" height="86" rx="11" fill="#ffffff" stroke="#602857" stroke-width="2"/>
+      <text x="448" y="176" text-anchor="middle" fill="#602857" font-size="15.5" font-weight="700">ЩО САМЕ НЕ ТАК</text>
+      <text x="448" y="200" text-anchor="middle" fill="#2e2f2b" font-size="14.5">англійською, але коротко</text>
+      <text x="448" y="222" text-anchor="middle" fill="#55564f" font-size="14">тут навіть видно одруківку в імені</text>
+
+      <rect x="614" y="148" width="300" height="86" rx="11" fill="#ffffff" stroke="#1c6b4e" stroke-width="2"/>
+      <text x="764" y="176" text-anchor="middle" fill="#1c6b4e" font-size="15.5" font-weight="700">ФАЙЛ І РЯДОК</text>
+      <text x="764" y="200" text-anchor="middle" fill="#2e2f2b" font-size="14.5">клікабельне — веде прямо в код</text>
+      <text x="764" y="222" text-anchor="middle" fill="#55564f" font-size="14">починати завжди звідси</text>
+    </svg>
+    <div class="tip tm mt"><span class="tip-ico">🟥</span>
+      <div>Червоний рядок — <strong>найкраще, що може статися</strong>: відомо
+      <b>що</b> і відомо <b>де</b>. Гірше, коли червоного немає, а результат дивний.
+      Кілька червоних — читаємо <strong>перший</strong>, решта часто його наслідки.</div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lr">Тип 1</span>
+      <h2><span class="ic">SyntaxError</span> — написано не за правилами мови</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+        <div class="dp-code"><span class="sk">const</span> name = <span class="sf">prompt</span>(<span class="ss">'Ім\'я:'</span>;
+<span class="cm">// не закрита кругла дужка</span>
+
+<span class="sk">if</span> (age <span class="st">&gt;</span> <span class="sn">18</span> {
+<span class="cm">// не закрита дужка умови</span>
+
+<span class="sf">alert</span>(<span class="ss">'Привіт);
+</span><span class="cm">// не закрита лапка</span></div>
+      </div>
+      <div>
+        <div class="hbox hr"><b>Найважливіше:</b> при
+          <span class="ic">SyntaxError</span> не виконується
+          <strong>жоден рядок файлу</strong>. Навіть ті, що вище</div>
+        <div class="hbox hm">Ознака: сторінка «зовсім нічого не робить»,
+          хоча щойно працювала</div>
+        <div class="hbox hp">Номер рядка буває <b>наступним</b>
+          після справжньої помилки. Дивись і на рядок вище</div>
+      </div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🔤</span>
+      <div>Майже завжди одне з трьох: <strong>незакрита дужка,
+      незакрита лапка, пропущена або зайва кома</strong>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">👻</div><div>
+      <span class="label lr">Тип 2</span>
+      <h2><span class="ic">ReferenceError</span> — такої змінної немає</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+          <div class="dp-code"><span class="sf">console</span>.<span class="sf">log</span>(<span class="ss">'старт'</span>);
+<span class="sk">const</span> name = <span class="ss">'Марія'</span>;
+<span class="sf">alert</span>(nmae);
+<span class="cm">// ReferenceError: nmae is not defined</span></div>
+        </div>
+        <div class="hbox hr mt">Три причини: <b>одруківка</b> ·
+          <b>забув оголосити</b> · <b>звернувся раніше, ніж оголосив</b></div>
+      </div>
+      <div class="card cr"><h3>Не те саме, що SyntaxError</h3>
+        <p>Файл <b>почав виконуватись</b>. Усе, що було до цього рядка,
+           уже спрацювало — «старт» у консолі є.</p>
+        <p class="mt">Зупинка — рівно на рядку з помилкою.
+           Усе, що нижче, <b>не виконалось</b>.</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🧩</div><div>
+      <span class="label lr">Тип 3</span>
+      <h2><span class="ic">TypeError</span> — з цим значенням так не можна</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+        <div class="dp-code"><span class="sk">const</span> price = <span class="sn">499</span>;
+price = <span class="sn">399</span>;
+<span class="cm">// TypeError: Assignment to
+//   constant variable</span>
+
+<span class="sk">const</span> name = <span class="sf">prompt</span>(<span class="ss">'Ім\'я:'</span>);
+<span class="sf">console</span>.<span class="sf">log</span>(name.length);
+<span class="cm">// натиснули Скасувати
+// TypeError: Cannot read
+//   properties of null</span></div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Що не так у кожному?</h3>
+        <p class="rv-hint">Поясни обидва, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>Перший:</b> <span class="ic">const</span> не можна
+             переприсвоїти. Змінна, яка змінюється, — це
+             <span class="ic">let</span></p>
+          <p class="mt"><b>Другий:</b> Скасувати дає
+             <span class="ic">null</span> — «навмисно порожньо».
+             У порожнечі немає <b>нічого</b>, зокрема довжини</p>
+          <p class="mt" style="color:var(--brand)">Другий зустрічатиметься
+             найчастіше. Від нього рятує перевірка
+             <span class="ic">raw === null</span> з уроку 3.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Читаємо помилку</span><span class="tmr">6 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — ламаємо навмисно</span>
+        <div class="mono">alert(nmae);            // ReferenceError
+const x = (2 + 3;       // SyntaxError
+const p = 1; p = 2;     // TypeError</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Викликати <b>всі три</b> помилки у своєму <span class="ic">script.js</span> — по одній, по черзі</li>
+          <li>Для кожної дописати коментар у коді: <b>тип · що каже · який рядок</b></li>
+          <li>Клацнути по <span class="ic">script.js:N</span> праворуч у консолі — чи потрапив у той рядок?</li>
+          <li>Полагодити всі три, поки консоль не стане <b>чистою</b></li>
+          <li>⭐⭐ <span class="ic">console.log('старт')</span> першим рядком, <span class="ic">SyntaxError</span> — останнім. Чи є «старт»?</li>
+          <li>⭐⭐⭐ Те саме з <span class="ic">ReferenceError</span>. Чому тепер «старт» є? Відповідь — коментарем</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🕵️</div><div>
+      <span class="label lo">Четверта біда</span>
+      <h2>Помилки немає, а результат безглуздий</h2>
+    </div></div>
+    <p>Це <strong>логічна помилка</strong>: код написаний за правилами мови,
+       браузер його виконує — але робить він не те, що задумано.
+       Ви вже зустрічали її тричі.</p>
+    <div class="three mt">
+      <div class="card cr"><h3>Урок 1</h3>
+        <p><span class="ic">'499' + 3</span> дало <span class="ic">'4993'</span> —
+           плюс склеїв рядок</p></div>
+      <div class="card cr"><h3>Урок 3</h3>
+        <p><span class="ic">if (age = 18)</span> — одне <span class="ic">=</span>,
+           умова істинна завжди</p></div>
+      <div class="card cr"><h3>Урок 3</h3>
+        <p>Широка гілка вгорі — вузька <b>не спрацьовує ніколи</b></p></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🧭</span>
+      <div>Проти логічних помилок — інструменти, які <strong>показують, що
+      насправді лежить у змінних</strong>: <span class="ic">console.log</span>,
+      breakpoint і <span class="ic">debugger</span>. Усі три — сьогодні.</div></div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🔍</div><div>
+      <span class="label lm">Інструмент 1</span>
+      <h2><span class="ic">console.log</span> — не для виводу, а для перевірки</h2>
+    </div></div>
+    <div class="dp">
+      <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+        <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+      <div class="dp-code"><span class="sk">const</span> raw = <span class="sf">prompt</span>(<span class="ss">'Вік:'</span>);
+<span class="sf">console</span>.<span class="sf">log</span>(<span class="ss">'raw ='</span>, raw, <span class="sk">typeof</span> raw);   <span class="cm">// raw = 12 string</span>
+<span class="sk">const</span> age = <span class="sf">Number</span>(raw);
+<span class="sf">console</span>.<span class="sf">log</span>(<span class="ss">'age ='</span>, age, <span class="sk">typeof</span> age);   <span class="cm">// age = 12 number</span></div>
+    </div>
+    <div class="pair mt">
+      <div class="wrong"><span class="lbl">Плюсом — бреше</span>
+        <div class="mono">console.log('age = ' + age);
+// age = 12 — рядок чи число? не видно</div></div>
+      <div class="right"><span class="lbl">Комою — правда</span>
+        <div class="mono">console.log('age =', age);
+// рядок і число консоль показує по-різному</div></div>
+    </div>
+    <div class="three mt">
+      <div class="hbox hm"><b>Назва змінної</b> — у тексті, щоб знати, чий це рядок</div>
+      <div class="hbox hp"><b><span class="ic">typeof</span></b> — половина бід саме про тип</div>
+      <div class="hbox hr">У <span class="ic">console.log</span> — <b>кома</b>, не плюс</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">📍</div><div>
+      <span class="label lo">Метод</span>
+      <h2>Чотири місця для <span class="ic">console.log</span></h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t"><b>Одразу після</b> <span class="ic">prompt</span> —
+            що прийшло</span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t"><b>Після</b> <span class="ic">Number()</span> —
+            чи перетворилось</span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t"><b>У кожній гілці</b> <span class="ic">if</span> —
+            яка спрацювала</span></div>
+        <div class="step"><span class="step-n">4</span>
+          <span class="step-t"><b>Перед результатом</b> — чи збігається
+            з очікуваним</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code" style="font-size:15.5px;line-height:1.6"><span class="sk">const</span> raw = <span class="sf">prompt</span>(<span class="ss">'Вік:'</span>);
+<span class="sf">console</span>.<span class="sf">log</span>(<span class="ss">'1 raw ='</span>, raw);
+<span class="sk">const</span> age = <span class="sf">Number</span>(raw);
+<span class="sf">console</span>.<span class="sf">log</span>(<span class="ss">'2 age ='</span>, age);
+<span class="sk">let</span> price;
+<span class="sk">if</span> (age <span class="st">&lt;</span> <span class="sn">18</span>) {
+  <span class="sf">console</span>.<span class="sf">log</span>(<span class="ss">'3 гілка: дитячий'</span>);
+  price = <span class="sn">80</span>;
+} <span class="sk">else</span> {
+  <span class="sf">console</span>.<span class="sf">log</span>(<span class="ss">'3 гілка: дорослий'</span>);
+  price = <span class="sn">150</span>;
+}
+<span class="sf">console</span>.<span class="sf">log</span>(<span class="ss">'4 price ='</span>, price);</div>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🧹</span>
+      <div>Полагодили — <strong>приберіть</strong> службові
+      <span class="ic">console.log</span>. Вони свою роботу зробили.</div></div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ЗНАЙДИ ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Знайди</span>
+      <h2>Помилки немає. Але порожнє поле дає «Малюк»</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+        <div class="dp-code"><span class="sk">const</span> age = <span class="sf">prompt</span>(<span class="ss">'Вік:'</span>);
+
+<span class="sk">if</span> (age <span class="st">&lt;</span> <span class="sn">6</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Малюк'</span>);
+} <span class="sk">else if</span> (age <span class="st">&lt;</span> <span class="sn">18</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Дитячий'</span>);
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">'Дорослий'</span>);
+}
+<span class="cm">// натиснули OK з порожнім полем</span></div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Чому людина без віку стала малюком?</h3>
+        <p class="rv-hint">Знайди причину, потім клацни.</p>
+        <div class="rv-body">
+          <p>Порожнє поле дає <b>порожній рядок</b> <span class="ic">''</span>.</p>
+          <p class="mt"><span class="ic">&lt;</span> сам перетворює рядок на число,
+             а <span class="ic">Number('')</span> — це <b><span class="ic">0</span></b>.
+             Перевіряється <span class="ic">0 &lt; 6</span> → <span class="ic">true</span>.</p>
+          <p class="mt" style="color:var(--brand)"><b>Жодної помилки в консолі.</b>
+             Видно тільки так: <span class="ic">console.log('age =', age, typeof age)</span>
+             — порожні лапки й слово <b>string</b>.</p>
+          <p class="mt">Лікується перевіркою вводу з уроку 3:
+             <span class="ic">if (raw === '')</span>.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t"><span class="ic">console.log</span> як інструмент</span><span class="tmr">7 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — чотири точки перевірки</span>
+        <div class="mono">console.log('raw =', raw, typeof raw);
+console.log('age =', age, typeof age);
+console.log('гілка: дитячий');
+console.log('price =', price);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Відкрити свій «Квиток у кіно» з уроку 3. Немає — набрати код зі слайда 12</li>
+          <li>Поставити <span class="ic">console.log</span> у <b>всі чотири</b> місця</li>
+          <li>Прогнати на віках 3, 12, 30, 70 — <b>по консолі</b> назвати гілку, не дивлячись на вікно</li>
+          <li>Навмисно прибрати <span class="ic">Number()</span>. Що змінилось <b>у логах</b>? А ціна? Повернути</li>
+          <li>⭐⭐ Скасувати й порожнє OK — що показують логи кожного разу? Чим відрізняються?</li>
+          <li>⭐⭐⭐ Показати вік у логах і плюсом, і комою. Де видно, що це рядок? Потім прибрати всі логи</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">⏯️</div><div>
+      <span class="label lp">Інструмент 2</span>
+      <h2><span class="ic">breakpoint</span> — зупинити програму посеред роботи</h2>
+    </div></div>
+    <p><span class="ic">console.log</span> показує <b>окремі точки</b>.
+       Breakpoint дає більше: <strong>програма стає на паузу, і видно ВСІ змінні
+       одразу</strong> — а далі можна йти по одному рядку.</p>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><span class="ic">F12</span> → вкладка
+          <b>Sources</b> → зліва вибрати <span class="ic">script.js</span></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t">Клацнути <b>по номеру рядка</b> — з'явиться синя мітка</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t">Оновити сторінку (<span class="ic">F5</span>). Виконання
+          <b>зупиниться</b> саме там, рядок підсвітиться</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">👁️</div><div>
+      <span class="label lp">Що видно на паузі</span>
+      <h2>Права панель і дві клавіші</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox hp"><b>Scope</b> — усі змінні, які зараз існують,
+          і що в кожній. Нічого не треба логувати</div>
+        <div class="hbox hm"><b>Навести мишею</b> на змінну в коді —
+          спливе її значення</div>
+        <div class="card cp mt"><h3>Дві клавіші</h3>
+          <p><b>↷ Step over</b> <span class="ic">F10</span> — виконати
+             <b>один рядок</b> і знову стати</p>
+          <p class="mt"><b>▶ Resume</b> <span class="ic">F8</span> — бігти далі
+             до наступної мітки</p></div>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-n">▸</span>
+          <span class="step-t"><b>Мітка не спрацювала</b> — поставили
+            після завантаження. Оновити сторінку</span></div>
+        <div class="step"><span class="step-n">▸</span>
+          <span class="step-t"><b>Мітка зникла</b> після оновлення —
+            Chrome іноді губить її. Поставити ще раз</span></div>
+        <div class="step"><span class="step-n">▸</span>
+          <span class="step-t"><b>Сторінка «зависла»</b> — вона на паузі.
+            <span class="ic">F8</span></span></div>
+        <div class="step"><span class="step-n">▸</span>
+          <span class="step-t"><b>Прибрати мітку</b> — клацнути по ній ще раз.
+            У файлі її <b>немає</b></span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🛑</div><div>
+      <span class="label lp">Інструмент 3</span>
+      <h2><span class="ic">debugger;</span> — мітка прямо в коді</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+          <div class="dp-code"><span class="sk">const</span> age = <span class="sf">Number</span>(<span class="sf">prompt</span>(<span class="ss">'Вік:'</span>));
+<span class="sk">debugger</span>;
+<span class="sk">if</span> (age <span class="st">&lt;</span> <span class="sn">6</span>) { … }</div>
+        </div>
+        <div class="hbox hm mt">Спрацьовує, <b>тільки коли F12 відкрито</b>.
+          Закрите — рядок просто пропускається</div>
+        <div class="hbox hr">Це рядок <b>у файлі</b>. Полагодили —
+          <b>стерти</b></div>
+      </div>
+      <table class="ops">
+        <tr><th>Інструмент</th><th>Коли брати</th></tr>
+        <tr><td class="o" style="width:150px">console.log</td><td>знаєш приблизно, де шукати; видно <b>історію</b> значень</td></tr>
+        <tr><td class="o">breakpoint</td><td>не розумієш, <b>куди йде</b> виконання; змінних багато</td></tr>
+        <tr><td class="o">debugger</td><td>те саме, що breakpoint, але <b>не губиться</b> після оновлення</td></tr>
+      </table>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ</span>
+      <h2>Три рядки — три різні типи</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+        <div class="dp-code"><span class="cm">// 1</span>
+<span class="sk">const</span> a = <span class="sf">Number</span>(<span class="sf">prompt</span>(<span class="ss">'Число:'</span>);
+
+<span class="cm">// 2</span>
+<span class="sf">alert</span>(<span class="ss">`Вітаю, ${user}`</span>);
+
+<span class="cm">// 3</span>
+<span class="sk">const</span> total = <span class="sn">0</span>;
+total <span class="st">=</span> total <span class="st">+</span> <span class="sn">5</span>;</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Назви тип кожної й полагодь</h3>
+        <p class="rv-hint">Розбери всі три, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>1 · SyntaxError.</b> Бракує другої <span class="ic">)</span>
+             після <span class="ic">Number(</span>. Жоден рядок файлу не виконається</p>
+          <p class="mt"><b>2 · ReferenceError.</b> Змінної
+             <span class="ic">user</span> ніде немає</p>
+          <p class="mt"><b>3 · TypeError.</b> <span class="ic">const</span>
+             не змінюється — потрібен <span class="ic">let</span></p>
+          <p class="mt" style="color:var(--brand)">Лагодимо <b>згори вниз</b>:
+             поки зламаний синтаксис, решти помилок навіть не видно.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">Пауза в Sources</span><span class="tmr">6 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — робимо разом</span>
+        <div class="mono">F12 → Sources → script.js → клац по номеру рядка
+F5 — пауза · F10 — крок · F8 — далі</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Мітка на першому <span class="ic">prompt</span> «Квитка». Оновити сторінку</li>
+          <li>Пройти <b>увесь</b> код по <span class="ic">F10</span>, до кінця</li>
+          <li>На кожному кроці — <b>Scope</b>: які змінні з'явились і що в них</li>
+          <li>Для віку 12 і 70 назвати, <b>у яку гілку</b> заходить виконання</li>
+          <li>⭐⭐ Замість мітки — рядок <span class="ic">debugger;</span>. Те саме. Потім стерти</li>
+          <li>⭐⭐⭐ Навмисно зламати синтаксис у кінці файлу. Чому пауза на першому рядку <b>не настає</b>? Повернути</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🧮</div><div>
+      <span class="label lm">Нове в коді</span>
+      <h2><span class="ic">+=</span> — додати до того, що вже є</h2>
+    </div></div>
+    <div class="pair">
+      <div class="right" style="border-color:var(--brand)"><span class="lbl" style="color:var(--brand)">довго</span>
+        <div class="mono">let score = 0;
+score = score + 1;
+score = score + 1;   // 2</div></div>
+      <div class="right"><span class="lbl">коротко — те саме</span>
+        <div class="mono">let score = 0;
+score += 1;
+score += 1;          // 2</div></div>
+    </div>
+    <div class="three mt">
+      <div class="hbox hm"><span class="ic">score += 1</span> — «збільш
+        <span class="ic">score</span> на 1»</div>
+      <div class="hbox hp">Так само <span class="ic">-=</span> і <span class="ic">*=</span>.
+        З рядком <span class="ic">+=</span> <b>доклеює</b> текст</div>
+      <div class="hbox hr">Тільки <span class="ic">let</span>. З <span class="ic">const</span>
+        — <span class="ic">TypeError</span></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🧠</span>
+      <div><span class="ic">=</span> означає не «дорівнює», а <strong>«поклади праве
+      в ліве»</strong>. Спершу рахується правий бік, потім результат іде в змінну.</div></div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🏆</div><div>
+      <span class="label lo">Задача уроку</span>
+      <h2>Вікторина на три питання</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code" style="font-size:16px;line-height:1.6"><span class="sk">let</span> score = <span class="sn">0</span>;
+
+<span class="sk">const</span> a1 = <span class="sf">prompt</span>(<span class="ss">'Столиця України?'</span>);
+<span class="sk">if</span> (a1 <span class="st">===</span> <span class="ss">'Київ'</span>) {
+  score <span class="st">+=</span> <span class="sn">1</span>;
+}
+
+<span class="sk">const</span> a2 = <span class="sf">Number</span>(<span class="sf">prompt</span>(<span class="ss">'5 × 6 = ?'</span>));
+<span class="sk">if</span> (a2 <span class="st">===</span> <span class="sn">30</span>) {
+  score <span class="st">+=</span> <span class="sn">1</span>;
+}
+
+<span class="cm">// третє питання так само</span>
+
+<span class="sf">alert</span>(<span class="ss">`Ваш результат: ${score} з 3`</span>);</div>
+      </div>
+      <div>
+        <div class="hbox hm">Усе вже знайоме: <span class="ic">prompt</span>,
+          <span class="ic">Number()</span>, <span class="ic">if</span>,
+          шаблонний рядок. Нове тільки <span class="ic">+=</span></div>
+        <div class="hbox hp">Три питання — <b>три окремі блоки</b>.
+          Коротше можна циклом, але цикли — у листопаді</div>
+        <div class="hbox ho">Числова відповідь — через
+          <span class="ic">Number()</span>. Текстова — рядком, і тут
+          чатує пастка</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🪤</div><div>
+      <span class="label lr">Пастка вікторини</span>
+      <h2>«київ» — це не «Київ»</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">консоль</span></div>
+        <div class="dp-code"><span class="ss">'київ'</span>  <span class="st">===</span> <span class="ss">'Київ'</span>   <span class="cm">// false</span>
+<span class="ss">'Київ '</span> <span class="st">===</span> <span class="ss">'Київ'</span>   <span class="cm">// false — пробіл!</span>
+<span class="ss">'КИЇВ'</span>  <span class="st">===</span> <span class="ss">'Київ'</span>   <span class="cm">// false</span>
+
+<span class="ss">' КИЇВ '</span>.<span class="sf">trim</span>().<span class="sf">toLowerCase</span>()
+<span class="cm">// 'київ'</span></div>
+      </div>
+      <div>
+        <div class="hbox hr"><span class="ic">===</span> порівнює рядки
+          <b>посимвольно</b>. Велика й маленька літера — <b>різні</b> символи</div>
+        <div class="hbox hm"><span class="ic">.toLowerCase()</span> — усе
+          маленькими літерами</div>
+        <div class="hbox hp"><span class="ic">.trim()</span> — прибрати
+          пробіли з країв</div>
+        <div class="hbox ho">Разом: <span class="ic">a1.trim().toLowerCase() === 'київ'</span>
+          — порівнюємо з <b>маленькими</b></div>
+      </div>
+    </div>
+    <div class="tip tr mt"><span class="tip-ico">💀</span>
+      <div>Скасувати → <span class="ic">a1</span> дорівнює <span class="ic">null</span> →
+      <span class="ic">null.trim()</span> → <strong><span class="ic">TypeError</span></strong>.
+      Той самий, що на слайді 7.</div></div>
+  </div></section>
+
+  <!-- ══════════ 22 ── ЗНАЙДИ ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Знайди</span>
+      <h2>Вікторина дає 0 балів завжди. Чому?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+        <div class="dp-code"><span class="sk">let</span> score = <span class="sn">0</span>;
+
+<span class="sk">const</span> a1 = <span class="sf">prompt</span>(<span class="ss">'2 + 2 = ?'</span>);
+<span class="sk">if</span> (a1 <span class="st">===</span> <span class="sn">4</span>) {
+  score <span class="st">+=</span> <span class="sn">1</span>;
+}
+
+<span class="sf">alert</span>(<span class="ss">`Результат: ${score}`</span>);
+<span class="cm">// ввели 4, а балів 0</span></div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Помилки в консолі немає. Де біда?</h3>
+        <p class="rv-hint">Знайди сам, потім клацни.</p>
+        <div class="rv-body">
+          <p><span class="ic">prompt</span> повертає <b>рядок</b>
+             <span class="ic">'4'</span>, а порівнюємо з <b>числом</b>
+             <span class="ic">4</span>. <span class="ic">'4' === 4</span> →
+             <span class="ic">false</span>.</p>
+          <p class="mt"><b>Два способи полагодити:</b></p>
+          <p><span class="ic">if (Number(a1) === 4)</span> — перетворити</p>
+          <p><span class="ic">if (a1 === '4')</span> — порівняти з рядком</p>
+          <p class="mt" style="color:var(--brand)">Як знайти самому:
+             <span class="ic">console.log('a1 =', a1, typeof a1)</span> →
+             <span class="ic">a1 = 4 string</span>. Слово <b>string</b> і є відповідь.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 23 ── ПРАКТИКА 4 ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 4</span>
+        <span class="t">Вікторина на три питання</span><span class="tmr">9 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — один блок, далі за аналогією</span>
+        <div class="mono">// Рівень ⭐ · Прізвище Ім'я
+let score = 0;
+const a1 = prompt('Столиця України?');
+if (a1.trim().toLowerCase() === 'київ') { score += 1; }
+// ще два питання так само
+alert(`Ваш результат: ${score} з 3`);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Першим рядком — <b>свій рівень і прізвище</b>, як у прикладі</li>
+          <li>Три питання на свою тему. Одне — з <b>числовою</b> відповіддю й <span class="ic">Number()</span></li>
+          <li>У кінці — оцінка словами: 3 — «Відмінно», 2 — «Добре», решта — «Спробуй ще»</li>
+          <li>Навмисно прибрати <span class="ic">.toLowerCase()</span>, ввести «КИЇВ». Знайти причину нуля через <span class="ic">console.log</span>. Повернути</li>
+          <li>⭐⭐ Після кожного питання — «Правильно!» або «Ні, правильна відповідь: …»</li>
+          <li>⭐⭐⭐ Захист від Скасувати: жодного <span class="ic">TypeError</span> на <span class="ic">null</span></li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh"><div class="si">🧭</div><div>
+      <span class="label lp">Метод</span>
+      <h2>Порядок лагодження — і перед «готово»</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t"><b>Відкрий консоль.</b> Є червоне? Читай <b>перший</b> рядок</span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t"><b>Клац по номеру рядка</b> — прямо в потрібне місце</span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t">Червоного немає — <span class="ic">console.log</span> у <b>чотирьох</b> місцях</span></div>
+        <div class="step"><span class="step-n">4</span>
+          <span class="step-t">Досі незрозуміло — <b>пауза</b> і <span class="ic">F10</span> по кроках</span></div>
+        <div class="step"><span class="step-n">5</span>
+          <span class="step-t"><b>Полагодив — прибери</b> логи, <span class="ic">debugger;</span>, мітки</span></div>
+      </div>
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+          <div class="dp-code"><span class="cm">// Рівень ⭐⭐ · Прізвище Ім'я</span>
+<span class="sk">let</span> score = <span class="sn">0</span>;
+…</div>
+        </div>
+        <div class="hbox hm mt">Перед «готово»: консоль <b>чиста</b>, службові логи
+          <b>прибрано</b>, рівень і прізвище — <b>першим рядком</b>
+          <span class="ic">script.js</span>. Потім <span class="ic">Ctrl+S</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 25 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — тримаємо на дошці</span>
+      <h2>Помилки й інструменти на одному екрані</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>SyntaxError</h4><pre>не за правилами мови
+НЕ ПРАЦЮЄ ЖОДЕН РЯДОК
+дужка · лапка · кома</pre></div>
+      <div class="rf-c"><h4>ReferenceError</h4><pre>x is not defined
+одруківка в імені
+або не оголосив</pre></div>
+      <div class="rf-c"><h4>TypeError</h4><pre>const p = 1; p = 2;
+null.length
+// Скасувати → null</pre></div>
+      <div class="rf-c"><h4>console.log</h4><pre>console.log('x =', x,
+            typeof x);
+// кома, не плюс</pre></div>
+      <div class="rf-c"><h4>пауза</h4><pre>F12 → Sources →
+клац по номеру рядка
+F5 · F10 крок · F8 далі</pre></div>
+      <div class="rf-c"><h4>debugger</h4><pre>debugger;
+// пауза, якщо F12 відкрито
+// потім стерти</pre></div>
+    </div>
+    <div class="two" style="margin-top:11px;grid-template-columns:1fr 1.15fr;gap:11px">
+      <div class="rf-c"><h4>порядок лагодження</h4><pre>1 перший червоний рядок
+2 клац по номеру рядка
+3 console.log у 4 місцях
+4 пауза і F10 · 5 прибрати</pre></div>
+      <div class="rf-c"><h4>вікторина</h4><pre>let score = 0;
+score += 1;
+a.trim().toLowerCase() === 'київ'
+Number(a) === 30</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 26 ── БАНК ══════════ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>П'ять питань.</b> Вікторина на 5 питань і відсоток
+        правильних у кінці</div>
+      <div class="bk"><b>Дві спроби.</b> Помилився — питаємо ще раз,
+        але за півбала: <span class="ic">score += 0.5</span></div>
+      <div class="bk"><b>Оцінка через switch.</b> Бали 0–3 → слово;
+        <span class="ic">default</span> — «Щось пішло не так»</div>
+      <div class="bk"><b>Лічильник помилок.</b> Окрема змінна
+        <span class="ic">mistakes</span> — скільки разів відповіли неправильно</div>
+      <div class="bk"><b>Чесне числове питання.</b> Скасувати, порожнє поле
+        й не число — три різні повідомлення</div>
+      <div class="bk"><b>Своя пастка.</b> Код, який працює неправильно
+        <b>без жодного</b> червоного рядка. Покажи сусідові на екрані</div>
+      <div class="bk"><b>Зламай сусідові.</b> У його копії коду — по одній помилці
+        кожного типу. Хай шукає по консолі</div>
+      <div class="bk"><b>Полагодь наосліп.</b> Зламаний код сусіда — лагодити
+        <b>тільки</b> за консоллю, не читаючи все підряд</div>
+    </div>
+    <div class="hbox hm mt">Усі вісім робляться <b>тільки тим, що було сьогодні й раніше</b>.
+      Циклів не треба</div>
+  </div></section>
+
+  <!-- ══════════ 27 ══════════ -->
+  <section class="slide" id="s26"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Словник</span>
+      <h2>Слова, які лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="ic">bug</span> — помилка в програмі, «жучок»</div>
+        <div class="hbox hm"><span class="ic">debug</span> — шукати й усувати помилки</div>
+        <div class="hbox hp"><span class="ic">syntax</span> — правила запису мови</div>
+        <div class="hbox hr"><span class="ic">uncaught</span> — не перехоплена, «ніхто не спіймав»</div>
+      </div>
+      <div>
+        <div class="hbox ho"><span class="ic">breakpoint</span> — точка зупинки</div>
+        <div class="hbox"><span class="ic">step over</span> — виконати один рядок</div>
+        <div class="hbox hm"><span class="ic">scope</span> — які змінні зараз існують</div>
+        <div class="hbox hp"><span class="ic">not defined</span> — не оголошено</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 28 ══════════ -->
+  <section class="slide" id="s27"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Після уроку 4 у вас є</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>У коді</h3><ul>
+        <li>три типи помилок — і як їх розрізняти</li>
+        <li><span class="ic">console.log</span> із комою і <span class="ic">typeof</span></li>
+        <li>пауза в Sources, <span class="ic">F10</span>, Scope, <span class="ic">debugger;</span></li>
+        <li><span class="ic">+=</span> і робоча вікторина</li>
+      </ul></div>
+      <div class="card cp"><h3>У голові</h3><ul>
+        <li>червоний рядок — <b>підказка</b>, а не вирок</li>
+        <li>при <span class="ic">SyntaxError</span> не працює <b>нічого</b></li>
+        <li>порядок лагодження з п'яти кроків</li>
+        <li>полагодив — прибери сміття</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання — на наступному слайді.</strong></div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 5 · 5 жовтня · Практична № 1 «Калькулятор у prompt»</p>
+  </div></section>
+
+  <!-- ══════════ 29 ── ДОМАШНЄ ЗАВДАННЯ ══════════ -->
+  <section class="slide" id="s28"><div class="slide-inner">
+    <div class="sh"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>Полагодь зламану вікторину</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">На <strong>codepen.io</strong> (панель JS, помилки — кнопка <b>Console</b>)
+      або у VS Code. Код — <strong>повідомленням на платформі</strong> до <strong>5 жовтня</strong>.</div>
+    <div class="two" style="grid-template-columns:1.25fr 1fr;gap:16px;margin-top:10px">
+      <div class="steps" style="gap:9px">
+        <div class="step" style="padding:10px 16px"><span class="step-n">1</span><span class="step-t">
+          <b>Спершу вгадай</b> три червоні помилки (Syntax, Reference, Type)
+          і дві логічні. Здогадки — коментарями</span></div>
+        <div class="step" style="padding:10px 16px"><span class="step-n">2</span><span class="step-t">
+          Лагодь <b>по одній</b> — щоразу перший червоний рядок</span></div>
+        <div class="step" style="padding:10px 16px"><span class="step-n">3</span><span class="step-t">
+          Червоного немає, а не «2 з 2»? <span class="ic">console.log</span> із
+          <span class="ic">typeof</span> для <span class="ic">a1</span> і <span class="ic">a2</span></span></div>
+        <div class="step" style="padding:10px 16px"><span class="step-n">4</span><span class="step-t">
+          Першим рядком — коментар із прізвищем. Логи прибрати</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+        <div class="dp-code" style="font-size:15.5px;line-height:1.5"><span class="sk">const</span> a1 = <span class="ss">'4'</span>;      <span class="cm">// ніби ввели 4</span>
+<span class="sk">const</span> a2 = <span class="ss">'Київ '</span>;  <span class="cm">// ніби ввели з пробілом</span>
+<span class="sk">const</span> score = <span class="sn">0</span>;
+<span class="sk">if</span> (a1 <span class="st">===</span> <span class="sn">4</span> {
+  score <span class="st">+=</span> <span class="sn">1</span>;
+}
+<span class="sk">if</span> (a2 <span class="st">===</span> <span class="ss">'київ'</span>) {
+  score <span class="st">+=</span> <span class="sn">1</span>;
+}
+<span class="sf">console</span>.<span class="sf">log</span>(<span class="ss">`Результат: ${scor} з 2`</span>);</div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

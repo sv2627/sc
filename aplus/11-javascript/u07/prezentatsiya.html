@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Міні-проєкт I «Текстовий квест» · JavaScript · 11 клас · Урок 7</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (основа мови)
+  Клас          11 (16–17 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум)
+  Урок          7 з 35 · 28.09.2026 · ПОНЕДІЛОК
+  Тема          Міні-проєкт I «Текстовий квест» — завершення і показ
+                (тема 1.8 плану; старт — урок 6, 23.09)
+  Тривалість    45 хв — показ ~12 · практика ~29 · показ класу ~3 · збереження 1
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       33
+  ────────────────────────────────────────────────────────────────
+  СПИРАЄТЬСЯ НА урок 6: дерево квесту · prompt + if · вкладена розвилка ·
+     null першим · else як кінцівка · let health · -= · кінцівка за станом ·
+     && / || · switch · ? :   і урок 4: .trim().toLowerCase() · +=
+  НОВЕ          висяча гілка й як її знайти · очищення вводу в let ·
+                синоніми через || · друга спроба · confirm() → true/false ·
+                confirm як розвилка · лічильник очок · location.reload() ·
+                тест сусіда
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  ЗАГОТОВКА ⭐  сл. 7 — для тих, у кого після уроку 6 немає коду
+  ПРАКТИКА 1    сл. 8  — дописати гілки й кінцівки, 10 хв
+  ПРАКТИКА 2    сл. 13 — перевірка вводу, 7 хв
+  ПРАКТИКА 3    сл. 21 — confirm, очки, «ще раз», 7 хв
+  ПРАКТИКА 4    сл. 26 — граємо в квест сусіда, 5 хв
+  ДОВІДНИК      сл. 20 — тримати на дошці під час практик 2–4
+  ПЕРЕДБАЧ / ВИПРАВ  сл. 4 · 6 · 10 · 16 · 22 — відповідь на тому ж слайді
+  БАНК          сл. 28 — вісім завдань для тих, хто закінчив раніше
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО РІЗАТИ ПЕРШИМ (показ, не практика): сл. 12 (друга спроба) —
+     одним реченням для ⭐⭐; сл. 18 (прихована кінцівка — повтор уроку 6);
+     сл. 23 (діагностика); сл. 30 (словник).
+  ⚠️ Оцінювання міні-проєкту — ТІЛЬКИ в конспекті, на екрані його немає.
+     Рівні ⭐ / ⭐⭐ / ⭐⭐⭐ на слайдах — інструкція до роботи, без балів.
+  ⚠️ Git не згадується: 11 клас його не вивчав. Здача — підпис рівня
+     коментарем першим рядком script.js.
+  ────────────────────────────────────────────────────────────────
+  План          office/plany/05-javascript-8.md, тема 1.8, розділ 7
+  Для сховища   rozdatka.html — 1 сторінка A4; у класі не видається
+  Конспект      2026-27-teacher/aplus/11-javascript/u07/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:96px}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6 ─── */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.tree{font-family:var(--f-mono);font-size:16px;line-height:1.6;white-space:pre;color:var(--ink)}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+.ic{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ── ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Текстовий квест</h1>
+      <p class="title-sub">Міні-проєкт I: дописати, перевірити, показати<br>
+        JavaScript · 11 клас · Урок 7 з 35 · 28 вересня</p>
+      <div class="chips">
+        <span class="chip">висяча гілка</span>
+        <span class="chip">trim + toLowerCase</span>
+        <span class="chip">||</span>
+        <span class="chip">confirm</span>
+        <span class="chip">score</span>
+        <span class="chip">location.reload()</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lm">Урок 6 → урок 7</span>
+      <h2>Каркас є — сьогодні з нього стає гра</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Вже є після уроку 6</h3><ul>
+        <li>дерево квесту на папері</li>
+        <li>розвилки: <span class="ic">prompt</span> + <span class="ic">if</span>, вкладені</li>
+        <li><span class="ic">null</span> першим, <span class="ic">else</span> — ще одна кінцівка</li>
+        <li><span class="ic">let health</span>, <span class="ic">-=</span>, кінцівка за станом</li>
+      </ul></div>
+      <div class="card cp"><h3>Сьогодні</h3>
+        <div class="steps">
+          <div class="step"><span class="step-n">1</span><span class="step-t">кожна дорога — до кінцівки</span></div>
+          <div class="step"><span class="step-n">2</span><span class="step-t">ввід без сюрпризів</span></div>
+          <div class="step"><span class="step-n">3</span><span class="step-t"><span class="ic">confirm</span>, очки, «зіграти ще раз»</span></div>
+          <div class="step"><span class="step-n">4</span><span class="step-t">граємо в квест сусіда й показуємо</span></div>
+        </div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🪜</div><div>
+      <span class="label lo">Міні-проєкт I</span>
+      <h2>Три рівні — кожен наступний містить попередній</h2>
+    </div></div>
+    <div class="lvl">
+      <div class="lv"><span class="lv-s">⭐</span>
+        <span class="lv-t"><b>Грається.</b> 3 розвилки, 2+ кінцівки,
+          <span class="ic">prompt</span> + <span class="ic">if</span> / <span class="ic">else</span>. Кожна дорога закінчується</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐</span>
+        <span class="lv-t"><b>Живе.</b> 5+ розвилок, <b>змінна стану</b> (здоровʼя або золото),
+          на чужу відповідь, пробіли й Скасувати гра не мовчить і не падає</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+        <span class="lv-t"><b>Має секрет.</b> + <b>лічильник очок</b>, прихована кінцівка
+          за умовою з <span class="ic">&amp;&amp;</span> або <span class="ic">||</span>,
+          «зіграти ще раз» через <span class="ic">confirm</span></span></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🧱</span>
+      <div>Спершу — робочий ⭐ від початку до кожної кінцівки. Недороблений ⭐⭐⭐
+      гірший за готовий ⭐⭐.</div></div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🔮</div><div>
+      <span class="label lo">Розминка · передбач</span>
+      <h2>Що покаже гра?</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.45fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code"><span class="sk">let</span> health = <span class="sn">2</span>;
+<span class="sk">const</span> c1 = <span class="sf">prompt</span>(<span class="ss">'1 — болото, 2 — стежка'</span>);
+<span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'1'</span>) {
+  health <span class="st">-=</span> <span class="sn">1</span>;
+  <span class="sk">const</span> c2 = <span class="sf">prompt</span>(<span class="ss">'1 — вплав, 2 — назад'</span>);
+  <span class="sk">if</span> (c2 <span class="st">===</span> <span class="ss">'1'</span>) { health <span class="st">-=</span> <span class="sn">1</span>; }
+} <span class="sk">else</span> <span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'2'</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Стежка вивела до хати.'</span>);
+}
+<span class="sk">if</span> (health <span class="st">&lt;=</span> <span class="sn">0</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Сили скінчились. КІНЕЦЬ'</span>);
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">`Ти вибрався. Здоровʼя: ${health}`</span>);
+}</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3>Ввели 1, потім 1</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>2 − 1 − 1 = 0 → «Сили скінчились. КІНЕЦЬ»</p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3>Ввели 1, потім 2</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>«Ти вибрався. Здоровʼя: 1»</p></div></div>
+        <div class="card cr reveal" onclick="this.classList.toggle('open')"><h3>Ввели 2 — скільки вікон?</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p><b>Два:</b> «Стежка вивела до хати.», потім
+            «Ти вибрався. Здоровʼя: 2» — перевірка стану стоїть <b>після</b> всіх розвилок</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🍂</div><div>
+      <span class="label lr">Головна біда квестів</span>
+      <h2>Висяча гілка: гра просто замовкла</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1.1fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">На дереві — стрілка в нікуди</span>
+        <div class="tree">Вхід у печеру
+├─ 1 зайти → Темно
+│    ├─ 1 факел → СКАРБ ✓
+│    └─ 2 наосліп → <b>???</b>
+└─ 2 до річки → СЕЛО ✓</div></div>
+      <div>
+        <div class="hbox hr">Гравець відповів — і <b>нічого</b>: ні вікна, ні помилки.
+          Він не знає, що гра скінчилась</div>
+        <div class="hbox hm">Червоного в консолі <b>немає</b>. Таку біду знаходить
+          тільки людина, яка пройшла цю дорогу</div>
+        <div class="hbox hp">Правило: <b>кожен <span class="ic">if</span> з <span class="ic">prompt</span>
+          має свій <span class="ic">else</span></b>, і кожна гілка закінчується
+          або розвилкою, або <span class="ic">alert</span>-кінцівкою</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ</span>
+      <h2>Де гра мовчить?</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · висячі гілки</span></div>
+        <div class="dp-code"><span class="sk">const</span> c1 = <span class="sf">prompt</span>(<span class="ss">'1 — печера, 2 — ліс'</span>);
+<span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'1'</span>) {
+  <span class="sk">const</span> c2 = <span class="sf">prompt</span>(<span class="ss">'1 — факел, 2 — наосліп'</span>);
+  <span class="sk">if</span> (c2 <span class="st">===</span> <span class="ss">'1'</span>) {
+    <span class="sf">alert</span>(<span class="ss">'Скарб! ПЕРЕМОГА'</span>);
+  }
+} <span class="sk">else</span> <span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'2'</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Ліс вивів до села. КІНЕЦЬ'</span>);
+}</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3>Які відповіді дають тишу?</h3>
+          <p class="rv-hint">назви три, потім клацни</p><div class="rv-body"><p><b>1, потім 2</b> (або будь-що, крім 1) ·
+            <b>3</b> на першому питанні · <b>Скасувати</b> на першому</p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3>Що дописати?</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>Два <span class="ic">else</span>: внутрішній —
+            «Ти впав у яму. КІНЕЦЬ», зовнішній — «Такої дороги немає. КІНЕЦЬ»</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ЗАГОТОВКА ⭐ ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🧩</div><div>
+      <span class="label lb">Коду з уроку 6 немає?</span>
+      <h2>Заготовка ⭐ — три розвилки, пʼять кінцівок</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.55fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">js-11/kvest/script.js</span></div>
+        <div class="dp-code" style="font-size:15.5px;line-height:1.6"><span class="sf">alert</span>(<span class="ss">'Ти прокинувся в покинутій бібліотеці.'</span>);
+<span class="sk">const</span> c1 = <span class="sf">prompt</span>(<span class="ss">'1 — сходи вгору, 2 — двері в підвал'</span>);
+<span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'1'</span>) {
+  <span class="sk">const</span> c2 = <span class="sf">prompt</span>(<span class="ss">'Горище. 1 — вікно, 2 — скриня'</span>);
+  <span class="sk">if</span> (c2 <span class="st">===</span> <span class="ss">'1'</span>) { <span class="sf">alert</span>(<span class="ss">'Ти вибрався на дах. ПЕРЕМОГА'</span>); }
+  <span class="sk">else</span> { <span class="sf">alert</span>(<span class="ss">'Скриня зачинилась. КІНЕЦЬ'</span>); }
+} <span class="sk">else</span> <span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'2'</span>) {
+  <span class="sk">const</span> c3 = <span class="sf">prompt</span>(<span class="ss">'Темно. 1 — світло, 2 — навпомацки'</span>);
+  <span class="sk">if</span> (c3 <span class="st">===</span> <span class="ss">'1'</span>) { <span class="sf">alert</span>(<span class="ss">'Таємний хід! ПЕРЕМОГА'</span>); }
+  <span class="sk">else</span> { <span class="sf">alert</span>(<span class="ss">'Ти заблукав. КІНЕЦЬ'</span>); }
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">'Ти заснув знову. КІНЕЦЬ'</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm">Це вже <b>рівень ⭐</b>: жодна дорога не висить</div>
+        <div class="hbox hp">Тема — <b>своя</b>. Заміни всі тексти, структуру лиши</div>
+        <div class="hbox ho">Далі — як усі: очищення вводу, стан, <span class="ic">confirm</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Кожна дорога — до кінцівки</span><span class="tmr">10 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.15fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — закрити висячі гілки</span>
+        <div class="mono">if (c2 === '1') {
+  alert('Скарб! ПЕРЕМОГА');
+} else {
+  alert('Ти впав у яму. КІНЕЦЬ');
+}
+// ... і в самому низу:
+} else {
+  alert('Такої дороги немає. КІНЕЦЬ');
+}</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у свій квест</span>
+        <ul>
+          <li>Відкрий <span class="ic">js-11/kvest</span>. Порахуй кінцівки на дереві й <span class="ic">alert</span>-кінцівки в коді — збігаються?</li>
+          <li>Кожен <span class="ic">if</span> з <span class="ic">prompt</span> отримує свій <span class="ic">else</span></li>
+          <li>Доведи квест до ⭐: 3 розвилки, 2+ кінцівки</li>
+          <li>Прибери один <span class="ic">else</span>, введи чуже — почуй тишу. Поверни</li>
+          <li>⭐⭐ 5 розвилок; <span class="ic">health</span> забирають хоч дві гілки</li>
+          <li>⭐⭐⭐ Після кожного <span class="ic">health -= …</span> — перевірка: на нулі гра далі не питає</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">⌨️</div><div>
+      <span class="label lr">Гравці непередбачувані</span>
+      <h2>Що насправді вводить людина</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Людина ввела</th><th>У змінній</th><th>Гілка <span style="text-transform:none">c1 === '1'</span>?</th></tr>
+      <tr><td>1</td><td class="r">'1'</td><td>так ✓</td></tr>
+      <tr><td>пробіл і 1</td><td class="r">' 1'</td><td>ні — пробіл теж символ</td></tr>
+      <tr><td>ліс (замість цифри)</td><td class="r">'ліс'</td><td>ні — чекали цифру</td></tr>
+      <tr><td>Ліс з великої</td><td class="r">'Ліс'</td><td>ні — навіть проти <span class="ic">'ліс'</span></td></tr>
+      <tr><td>нічого, OK</td><td class="r">''</td><td>ні → <span class="ic">else</span></td></tr>
+      <tr><td>Скасувати</td><td class="r">null</td><td>ні, а <span class="ic">null.trim()</span> → <strong>TypeError</strong></td></tr>
+    </table>
+    <div class="tip tm mt"><span class="tip-ico">🧽</span>
+      <div>Рішення з уроку 4: <span class="ic">.trim().toLowerCase()</span> прибирає пробіли й великі літери.
+      Але тільки коли там <b>не <span class="ic">null</span></b>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🧽</div><div>
+      <span class="label lm">Ввід без сюрпризів</span>
+      <h2>Спершу очистити, потім розвилка</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.45fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code" style="font-size:16px;line-height:1.65"><span class="sk">let</span> c1 = <span class="sf">prompt</span>(<span class="ss">'1 — ліс, 2 — гори'</span>);
+<span class="sk">if</span> (c1 <span class="st">!==</span> <span class="sk">null</span>) {
+  c1 = c1.<span class="sf">trim</span>().<span class="sf">toLowerCase</span>();
+}
+<span class="sk">if</span> (c1 <span class="st">===</span> <span class="sk">null</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Гру перервано.'</span>);
+} <span class="sk">else</span> <span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'1'</span> <span class="st">||</span> c1 <span class="st">===</span> <span class="ss">'ліс'</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Ліс густий і тихий.'</span>);
+} <span class="sk">else</span> <span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'2'</span> <span class="st">||</span> c1 <span class="st">===</span> <span class="ss">'гори'</span>) {
+  <span class="sf">alert</span>(<span class="ss">'У горах холодний вітер.'</span>);
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">'Ти вагався до темряви. КІНЕЦЬ'</span>);
+}</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3>Ввели «&nbsp;2&nbsp;» з пробілами</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>«У горах холодний вітер.» — <span class="ic">trim</span> прибрав пробіли</p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3>Ввели ЛІС</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>«Ліс густий і тихий.» — <span class="ic">'ЛІС'</span> став <span class="ic">'ліс'</span></p></div></div>
+        <div class="card cr reveal" onclick="this.classList.toggle('open')"><h3>Натиснули Скасувати</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>«Гру перервано.» Перший <span class="ic">if</span> обійшов <span class="ic">trim</span> — помилки немає</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🔀</div><div>
+      <span class="label lb">Цифра або слово</span>
+      <h2>|| — і обидва порівняння повністю</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">пастка — будь-що веде в ліс</span>
+        <div class="mono">if (c1 === '1' || 'ліс') {
+  alert('Ліс.');
+}</div>
+        <p class="mt" style="font-size:17px">Праворуч від <span class="ic">||</span> стоїть просто рядок <span class="ic">'ліс'</span>.
+          Непорожній рядок — завжди «так». Умова істинна <b>на будь-який ввід</b></p></div>
+      <div class="right"><span class="lbl">правильно — два порівняння</span>
+        <div class="mono">if (c1 === '1' || c1 === 'ліс') {
+  alert('Ліс.');
+}</div>
+        <p class="mt" style="font-size:17px">Кожна половина — окреме питання
+          «<span class="ic">c1</span> дорівнює …?»</p></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><span class="ic">let c1</span>, а не <span class="ic">const</span>: після <span class="ic">prompt</span> ми <b>перезаписуємо</b> його очищеним</div>
+      <div class="hbox hp">Слово в підказці пиши <b>малими</b>: після <span class="ic">toLowerCase</span> великих літер уже немає</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔁</div><div>
+      <span class="label lp">⭐⭐ Друга спроба</span>
+      <h2>Не зрозумів — спитай ще раз, але один</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.45fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code"><span class="sk">let</span> c1 = <span class="sf">prompt</span>(<span class="ss">'1 — ліс, 2 — гори'</span>);
+
+<span class="sk">if</span> (c1 <span class="st">!==</span> <span class="sk">null</span> <span class="st">&amp;&amp;</span> c1 <span class="st">!==</span> <span class="ss">'1'</span> <span class="st">&amp;&amp;</span> c1 <span class="st">!==</span> <span class="ss">'2'</span>) {
+  c1 = <span class="sf">prompt</span>(<span class="ss">'Лише 1 або 2. Остання спроба:'</span>);
+}
+
+<span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'1'</span>) { <span class="cm">/* ліс */</span> }
+<span class="sk">else</span> <span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'2'</span>) { <span class="cm">/* гори */</span> }
+<span class="sk">else</span> { <span class="sf">alert</span>(<span class="ss">'Ти так і не вирішив. КІНЕЦЬ'</span>); }</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">&amp;&amp;</span> тричі: «не скасував, <b>і</b> не 1,
+          <b>і</b> не 2» — тобто ввів щось чуже</div>
+        <div class="hbox hp">Скасувати другої спроби не просимо:
+          хто скасував, той хоче вийти</div>
+        <div class="hbox ho">Спроба <b>одна</b>. «Питати, поки не відповість» —
+          це вже цикл, урок 8</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">Ввід без сюрпризів</span><span class="tmr">7 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.15fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — одна розвилка</span>
+        <div class="mono">let c1 = prompt('1 — міст, 2 — брід');
+if (c1 !== null) {
+  c1 = c1.trim().toLowerCase();
+}
+if (c1 === null) { … }
+else if (c1 === '1' || c1 === 'міст') { … }</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у свій квест</span>
+        <ul>
+          <li>Першу розвилку — на <span class="ic">let</span> і очищення, як у прикладі</li>
+          <li>До кожної цифри — слово через <span class="ic">||</span>; слово видно в тексті питання</li>
+          <li>Перевір: «&nbsp;1&nbsp;», велике слово, порожнє поле, Скасувати</li>
+          <li>Напиши <span class="ic">c1 === '1' || 'міст'</span> і введи 2 — побач пастку. Поверни</li>
+          <li>⭐⭐ Так само — усі розвилки; в одній — друга спроба</li>
+          <li>⭐⭐⭐ Загадка словом із двома правильними відповідями</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">💬</div><div>
+      <span class="label lb">Нове: третє вікно</span>
+      <h2>alert, prompt і confirm</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Виклик</th><th>Що бачить людина</th><th>Що повертає</th></tr>
+      <tr><td class="o" style="width:auto">alert('…')</td><td>текст і <b>OK</b></td><td>нічого не повертає</td></tr>
+      <tr><td class="o" style="width:auto">prompt('…')</td><td>текст, <b>поле</b>, OK, Скасувати</td><td>рядок або <span class="ic">null</span></td></tr>
+      <tr><td class="o" style="width:auto">confirm('…')</td><td>текст, <b>OK</b>, <b>Скасувати</b> — поля немає</td><td><span class="ic">true</span> або <span class="ic">false</span></td></tr>
+    </table>
+    <div class="two mt">
+      <div class="hbox hm"><span class="ic">confirm</span> — для питань <b>«так чи ні»</b>:
+        відчинити? битися? зіграти ще раз?</div>
+      <div class="hbox hp">Три варіанти й більше — як і раніше <span class="ic">prompt</span>
+        з цифрами</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🗝️</div><div>
+      <span class="label lm">confirm як розвилка</span>
+      <h2>Так / ні — без цифр і без одруківок</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code"><span class="sk">let</span> gold = <span class="sn">0</span>;
+
+<span class="sk">const</span> agree = <span class="sf">confirm</span>(<span class="ss">'Тут скриня. Відчинити?'</span>);
+<span class="sk">if</span> (agree) {
+  gold <span class="st">+=</span> <span class="sn">5</span>;
+  <span class="sf">alert</span>(<span class="ss">`Монети! Золото: ${gold}`</span>);
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">'Ти пройшов повз.'</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">if (agree)</span> — без <span class="ic">=== true</span>:
+          там і так <span class="ic">true</span> чи <span class="ic">false</span></div>
+        <div class="hbox hp">Скасувати тут — не вихід із гри, а відповідь <b>«ні»</b></div>
+        <div class="hbox ho">Коротше: <span class="ic">if (confirm('Відчинити?'))</span> —
+          без змінної</div>
+        <div class="hbox hr">Очищати нічого не треба: людина нічого не вводить</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Скасувати в confirm і в prompt — одне й те саме?</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code"><span class="sk">const</span> a = <span class="sf">confirm</span>(<span class="ss">'Стрибати?'</span>);
+<span class="sk">const</span> b = <span class="sf">prompt</span>(<span class="ss">'Куди? 1 або 2'</span>);
+
+<span class="sk">if</span> (a <span class="st">===</span> <span class="sk">null</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Вихід із гри'</span>);
+}</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3>Скасувати в confirm — що в a?</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p><span class="ic">false</span></p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3>Скасувати в prompt — що в b?</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p><span class="ic">null</span></p></div></div>
+        <div class="card cr reveal" onclick="this.classList.toggle('open')"><h3>Коли спрацює «Вихід із гри»?</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p><b>Ніколи.</b> <span class="ic">confirm</span> не дає <span class="ic">null</span> —
+            тільки <span class="ic">true</span> або <span class="ic">false</span></p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏆</div><div>
+      <span class="label lp">⭐⭐⭐ Лічильник очок</span>
+      <h2>score росте — health падає</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.45fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code"><span class="sk">let</span> score = <span class="sn">0</span>;   <span class="cm">// вгорі, поруч із health</span>
+
+<span class="cm">// у гілці зі скринею:</span>
+score <span class="st">+=</span> <span class="sn">10</span>;
+<span class="cm">// у гілці із загадкою:</span>
+score <span class="st">+=</span> <span class="sn">25</span>;
+
+<span class="cm">// у самому кінці:</span>
+<span class="sk">const</span> rank = score <span class="st">&gt;=</span> <span class="sn">30</span> ? <span class="ss">'легенда'</span> : <span class="ss">'мандрівник'</span>;
+<span class="sf">alert</span>(<span class="ss">`Очки: ${score}. Звання: ${rank}`</span>);</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">health</span> вирішує, <b>чи</b> ти дійшов.
+          <span class="ic">score</span> — <b>як добре</b> ти пройшов</div>
+        <div class="hbox hp">Очки дають за вибір: відчинив скриню,
+          розгадав загадку, не поліз у болото</div>
+        <div class="hbox ho">Звання — через <span class="ic">? :</span> з уроку 6.
+          Три звання — через <span class="ic">if</span> / <span class="ic">else if</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🚪</div><div>
+      <span class="label lp">⭐⭐⭐ Секрет</span>
+      <h2>Прихована кінцівка — вужча умова першою</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · кінець файлу</span></div>
+        <div class="dp-code"><span class="sk">if</span> (health <span class="st">&lt;=</span> <span class="sn">0</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Сили скінчились. КІНЕЦЬ'</span>);
+} <span class="sk">else</span> <span class="sk">if</span> (hasKey <span class="st">&amp;&amp;</span> score <span class="st">&gt;=</span> <span class="sn">30</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Таємна зала! ПРИХОВАНА КІНЦІВКА'</span>);
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">`ПЕРЕМОГА. Очки: ${score}`</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hr">Спершу — поразка: хто без сил, тому не до таємниць</div>
+        <div class="hbox hm">Потім секрет: <span class="ic">&amp;&amp;</span> — треба <b>і</b> ключ,
+          <b>і</b> очки</div>
+        <div class="hbox hp">Про секрет не пишуть у варіантах. Його знаходить
+          уважний гравець</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">♻️</div><div>
+      <span class="label lm">⭐⭐⭐ Зіграти ще раз</span>
+      <h2>confirm у кінці + перезапуск сторінки</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · останні рядки</span></div>
+        <div class="dp-code"><span class="cm">// ... уся гра: розвилки й кінцівки</span>
+
+<span class="sf">alert</span>(<span class="ss">`Очки: ${score}`</span>);
+
+<span class="sk">if</span> (<span class="sf">confirm</span>(<span class="ss">'Зіграти ще раз?'</span>)) {
+  location.<span class="sf">reload</span>();
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">location.reload()</span> перезавантажує сторінку:
+          скрипт іде з <b>першого рядка</b>, <span class="ic">health</span> і <span class="ic">score</span> — знову стартові</div>
+        <div class="hbox hp">Місце одне — <b>самий кінець файлу</b>, після всіх розвилок.
+          Туди приходить кожна дорога</div>
+        <div class="hbox hr">Дужки <span class="ic">()</span> обовʼязкові. Без них —
+          ні перезапуску, ні помилки</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Усе для квесту на одному екрані</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>очистити ввід</h4><pre>let c = prompt('…');
+if (c !== null) {
+  c = c.trim().toLowerCase();
+}</pre></div>
+      <div class="rf-c"><h4>цифра або слово</h4><pre>if (c === '1' || c === 'ліс')</pre></div>
+      <div class="rf-c"><h4>друга спроба</h4><pre>if (c !== null &amp;&amp; c !== '1'
+    &amp;&amp; c !== '2') {
+  c = prompt('Ще раз:');
+}</pre></div>
+      <div class="rf-c"><h4>так / ні</h4><pre>if (confirm('Відчинити?')) { … }
+else { … }</pre></div>
+      <div class="rf-c"><h4>що повертає</h4><pre>prompt  → рядок | null
+confirm → true | false
+alert   → нічого</pre></div>
+      <div class="rf-c"><h4>кожна гілка</h4><pre>} else {
+  alert('… КІНЕЦЬ');
+}</pre></div>
+      <div class="rf-c"><h4>очки</h4><pre>let score = 0; // вгорі
+score += 10;</pre></div>
+      <div class="rf-c"><h4>секрет</h4><pre>else if (hasKey &amp;&amp; score &gt;= 30)</pre></div>
+      <div class="rf-c"><h4>ще раз</h4><pre>if (confirm('Ще раз?')) {
+  location.reload();
+}</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">confirm, очки, «ще раз»</span><span class="tmr">7 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.15fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — від початку до кінця файлу</span>
+        <div class="mono">let score = 0;
+if (confirm('Відчинити скриню?')) {
+  score += 10;
+}
+// ... у самому кінці:
+alert(`Очки: ${score}`);
+if (confirm('Зіграти ще раз?')) {
+  location.reload();
+}</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у свій квест</span>
+        <ul>
+          <li>Одну розвилку «так / ні» перепиши на <span class="ic">confirm</span></li>
+          <li>Вгорі — <span class="ic">let score = 0</span>; у дві-три гілки — <span class="ic">score += …</span></li>
+          <li>У кінці — очки в <span class="ic">alert</span> і «Зіграти ще раз?»</li>
+          <li>Прибери <span class="ic">()</span> після <span class="ic">reload</span> — гра не почнеться знову, червоного немає. Поверни</li>
+          <li>⭐⭐ Звання за очками: <span class="ic">? :</span> або три через <span class="ic">else if</span></li>
+          <li>⭐⭐⭐ Прихована кінцівка з <span class="ic">&amp;&amp;</span> або <span class="ic">||</span> — перед звичайною перемогою</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ</span>
+      <h2>Три біди — і лише одна червона</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.25fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+        <div class="dp-code" style="font-size:16px;line-height:1.65"><span class="sk">let</span> score = <span class="sn">0</span>;
+<span class="sk">const</span> agree = <span class="sf">confirm</span>(<span class="ss">'Відчинити двері?'</span>);
+<span class="sk">if</span> (agree <span class="st">===</span> <span class="ss">'true'</span>) {
+  score <span class="st">+=</span> <span class="sn">10</span>;
+}
+<span class="sk">let</span> c1 = <span class="sf">prompt</span>(<span class="ss">'1 — вліво, 2 — вправо'</span>);
+c1 = c1.<span class="sf">trim</span>();
+<span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'1'</span>) { <span class="sf">alert</span>(<span class="ss">'Ліворуч — сад.'</span>); }
+<span class="sk">else</span> { <span class="sf">alert</span>(<span class="ss">'Праворуч — брама.'</span>); }
+<span class="sk">if</span> (<span class="sf">confirm</span>(<span class="ss">'Ще раз?'</span>)) {
+  location.reload;
+}</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Знайди всі три</h3>
+        <p class="rv-hint">спершу скажи, яка з них червона, потім клацни</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">agree === 'true'</span> — рядок. <span class="ic">confirm</span> дає
+             <span class="ic">true</span> без лапок, очки <b>не додаються ніколи</b>. Треба <span class="ic">if (agree)</span></p>
+          <p><b>2.</b> Скасувати → <span class="ic">null.trim()</span> → <strong>TypeError</strong>. Це і є червона.
+             Спершу <span class="ic">if (c1 !== null)</span></p>
+          <p><b>3.</b> <span class="ic">location.reload</span> без <span class="ic">()</span> — функцію названо,
+             але не викликано</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 23 ── ДІАГНОСТИКА ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="sh"><div class="si">🩺</div><div>
+      <span class="label lr">Діагностика</span>
+      <h2>Шість бід сьогоднішнього уроку</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox hr"><b>Гра замовкла</b> після відповіді — висяча гілка, бракує <span class="ic">else</span></div>
+        <div class="hbox hr"><span class="ic">Cannot read properties of null (reading 'trim')</span> —
+          <span class="ic">trim</span> до перевірки на <span class="ic">null</span></div>
+        <div class="hbox hp"><b>Будь-яке слово веде в одну гілку</b> — <span class="ic">c1 === '1' || 'ліс'</span></div>
+      </div>
+      <div>
+        <div class="hbox ho"><b>Слово не впізнається</b> — у порівнянні <span class="ic">'Ліс'</span> з великої, а ввід уже малими</div>
+        <div class="hbox hm"><b>Гілка confirm не спрацьовує</b> — порівняння з <span class="ic">'true'</span> або з <span class="ic">null</span></div>
+        <div class="hbox hp"><b>Очки завжди 0</b> — <span class="ic">score + 10;</span> без <span class="ic">=</span> нічого не змінює</div>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🔦</span>
+      <div>Гілка не та? <span class="ic">console.log('[' + c1 + ']', typeof c1)</span> одразу після очищення
+      покаже і пробіли, і регістр, і <span class="ic">null</span>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 24 ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lm">Перед показом</span>
+      <h2>Пройди свій квест як чужий</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t">Кожна кінцівка з дерева <b>зʼявилась хоч раз</b></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">У кожній розвилці: «&nbsp;1&nbsp;», слово великими, <span class="ic">7</span>, порожнє поле — гра відповідає</span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t"><b>Скасувати</b> на першому і на останньому питанні — без червоного</span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t">«Зіграти ще раз» — гра з нуля, очки знову <span class="ic">0</span></span></div>
+      <div class="step"><span class="step-n">5</span><span class="step-t">Консоль чиста, службові <span class="ic">console.log</span> прибрано, перший рядок — підпис рівня</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 25 ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh"><div class="si">🕹️</div><div>
+      <span class="label lb">Тест сусіда</span>
+      <h2>Як грати в чужий квест</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t">Граєш <b>як гравець</b> — у код не дивишся</span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t">Проходиш <b>три різні дороги</b></span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t">Вводиш чуже й тиснеш Скасувати</span></div>
+        <div class="step"><span class="step-n">4</span><span class="step-t">Шукаєш висячу гілку й секрет</span></div>
+      </div>
+      <div>
+        <div class="pair" style="grid-template-columns:1fr">
+          <div class="wrong"><span class="lbl">так нічого не зрозуміло</span>
+            <p style="font-size:17px">«Не працює»</p></div>
+          <div class="right"><span class="lbl">так автор полагодить за хвилину</span>
+            <p style="font-size:17px">«Печера → наосліп — гра замовкла»<br>
+              «На &nbsp;ЛІС&nbsp; великими — “такої дороги немає”»</p></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 26 ── ПРАКТИКА 4 ══════════ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 4</span>
+        <span class="t">Граємо в квест сусіда</span><span class="tmr">5 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.15fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — що сказати автору</span>
+        <div class="mono">✓ Секрет знайшов: ключ + 30 очок
+✗ Розвилка 2, ввів «3» — тиша
+✗ Скасувати на мосту — червоне
+  в консолі, рядок 18</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — за екраном сусіда</span>
+        <ul>
+          <li>Повернись до сусіда праворуч і запусти його квест</li>
+          <li>Пройди три різні дороги до трьох різних кінцівок</li>
+          <li>У двох розвилках введи чуже, в одній — Скасувати</li>
+          <li>Скажи автору вголос: одне «працює» і одне «полагодь» — з номером розвилки</li>
+          <li>Повернись до себе й полагодь те, що знайшли в тебе</li>
+          <li>⭐⭐ Знайди приховану кінцівку, не дивлячись у код ⭐⭐⭐ Знайди ввід, якого автор не передбачив</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 27 ══════════ -->
+  <section class="slide" id="s26"><div class="slide-inner">
+    <div class="sh"><div class="si">🎤</div><div>
+      <span class="label lo">Показ</span>
+      <h2>Один квест — одна хвилина</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t"><b>Назва й перша фраза</b> гри — вголос</span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t"><b>Одна дорога</b> на екрані від старту до кінцівки. Відповіді підказує клас</span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t"><b>Одна річ у коді</b>, якою пишаєшся: очищення, стан, секрет, «ще раз»</span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t">Секрет <b>не розкриваєш</b> — хай шукають</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 28 ── БАНК ══════════ -->
+  <section class="slide" id="s27"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Імʼя героя.</b> <span class="ic">prompt</span> на старті, далі <span class="ic">${hero}</span> у кожному <span class="ic">alert</span>. Скасувати — «Мандрівник»</div>
+      <div class="bk"><b>Інвентар.</b> <span class="ic">let bag = ''</span>; знайшов — <span class="ic">bag += 'факел, '</span>; у фіналі показати</div>
+      <div class="bk"><b>Клас героя.</b> <span class="ic">confirm('Ти маг?')</span>: маг — 2 здоровʼя й 10 золота, воїн — 4 і 0</div>
+      <div class="bk"><b>Ходи.</b> <span class="ic">steps += 1</span> після кожного питання; менше ходів — більше очок</div>
+      <div class="bk"><b>Три звання.</b> За очками через <span class="ic">if</span> / <span class="ic">else if</span> / <span class="ic">else</span></div>
+      <div class="bk"><b>Загадка.</b> Дві правильні відповіді через <span class="ic">||</span>, друга спроба з підказкою</div>
+      <div class="bk"><b>Пасхалка.</b> Секретна цифра <span class="ic">0</span> у першій розвилці — одразу прихована кінцівка</div>
+      <div class="bk"><b>Злам сусіда.</b> Знайди у трьох чужих квестах ввід, що ламає гру</div>
+    </div>
+    <div class="hbox hm mt">Усі вісім — тільки тим, що вже було. Циклів не треба</div>
+  </div></section>
+
+  <!-- ══════════ 29 ══════════ -->
+  <section class="slide" id="s28"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Підписати рівень і зберегти</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · перші рядки</span></div>
+        <div class="dp-code"><span class="cm">// Квест «Бібліотека» · урок 7
+// Прізвище Імʼя · рівень ⭐⭐
+// є: 5 розвилок, health, очищення вводу</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Рівень — той, що <b>працює повністю</b>, не той, що почато</div>
+        <div class="hbox hp">Рядок «є:» — що саме зроблено. Три-пʼять слів</div>
+        <div class="hbox ho"><b>Ctrl+S</b> — і ще раз запусти, щоб переконатися</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 30 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s29"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Словник</span>
+      <h2>Слова, які лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="ic">confirm</span> — підтвердити</div>
+        <div class="hbox hm"><span class="ic">cancel</span> — скасувати</div>
+        <div class="hbox hp"><span class="ic">input validation</span> — перевірка вводу</div>
+      </div>
+      <div>
+        <div class="hbox hr"><span class="ic">score</span> — рахунок, очки</div>
+        <div class="hbox ho"><span class="ic">reload</span> — перезавантажити</div>
+        <div class="hbox"><span class="ic">playtest</span> — тестова гра: пройти чужу гру, щоб знайти біди</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 31 ══════════ -->
+  <section class="slide" id="s30"><div class="slide-inner">
+    <div class="sh"><div class="si">🔭</div><div>
+      <span class="label lb">Урок 8 · середа 30.09</span>
+      <h2>Що зробить цикл із нашим квестом</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong" style="border-color:var(--border)"><span class="lbl" style="color:var(--dim)">сьогодні</span>
+        <p style="font-size:17px">друга спроба — <b>одна</b></p>
+        <p style="font-size:17px">«ще раз» — перезавантаження <b>всієї сторінки</b></p></div>
+      <div class="right"><span class="lbl">з циклом</span>
+        <p style="font-size:17px">питати, <b>поки</b> не відповість 1 або 2</p>
+        <p style="font-size:17px">грати раунд за раундом, <b>поки</b> гравець не скаже «досить»</p></div>
+    </div>
+    <div class="hbox hm mt">Код квесту не викидайте: у середу він стане першим прикладом</div>
+  </div></section>
+
+  <!-- ══════════ 32 ══════════ -->
+  <section class="slide" id="s31"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Після уроку 7 у вас є</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>У коді</h3><ul>
+        <li>гра без висячих гілок</li>
+        <li>очищення вводу: <span class="ic">null</span> → <span class="ic">trim</span> → <span class="ic">toLowerCase</span></li>
+        <li>цифра або слово через <span class="ic">||</span></li>
+        <li><span class="ic">confirm</span> → <span class="ic">true</span> / <span class="ic">false</span></li>
+        <li>очки й <span class="ic">location.reload()</span></li>
+      </ul></div>
+      <div class="card cp"><h3>У руках</h3><ul>
+        <li>готовий квест, у який грав інший</li>
+        <li>список того, що знайшов сусід</li>
+        <li>підписаний рівень у <span class="ic">script.js</span></li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання</strong> — на наступному слайді.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 8 · середа 30 вересня · Цикли</p>
+  </div></section>
+
+  <!-- ══════════ 33 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s32"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏠</div><div>
+      <span class="label lo">Homework</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">На <strong>codepen.io</strong>, панель <b>JS</b> · код — <strong>повідомленням на платформі</strong> до <strong>30 вересня</strong></div>
+    <div class="two" style="grid-template-columns:1fr 1.1fr">
+      <div class="steps" style="gap:9px">
+        <div class="step" style="padding:10px 15px"><span class="step-n">1</span><div class="step-t" style="font-size:17px">
+          Вгадай, що покаже код праворуч на «&nbsp;2&nbsp;», <b>МІСТ</b>, <b>так</b>, Скасувати —
+          коментарем угорі. Потім запусти.</div></div>
+        <div class="step" style="padding:10px 15px"><span class="step-n">2</span><div class="step-t" style="font-size:17px">
+          Додай третю дорогу: <span class="ic">3</span> або <span class="ic">човен</span>.</div></div>
+        <div class="step" style="padding:10px 15px"><span class="step-n">3</span><div class="step-t" style="font-size:17px">
+          Розвилка через <span class="ic">confirm</span> і <span class="ic">let score = 0</span> —
+          очки в двох гілках.</div></div>
+        <div class="step" style="padding:10px 15px"><span class="step-n">4</span><div class="step-t" style="font-size:17px">
+          У кінці — очки в <span class="ic">alert</span> і «Зіграти ще раз?» з <span class="ic">location.reload()</span>.</div></div>
+        <div class="tip to" style="margin:0;font-size:15.5px;padding:9px 13px"><span class="tip-ico">⚙️</span>
+          <div><b>Settings → Behavior</b>: вимкни Auto-Updating Preview, запускай кнопкою <b>Run</b></div></div>
+      </div>
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">до пункту 1</span></div>
+          <div class="dp-code" style="font-size:15px;line-height:1.55;padding:12px 16px"><span class="sk">let</span> c = <span class="sf">prompt</span>(<span class="ss">'1 — міст, 2 — брід'</span>);
+<span class="sk">if</span> (c <span class="st">!==</span> <span class="sk">null</span>) {
+  c = c.<span class="sf">trim</span>().<span class="sf">toLowerCase</span>();
+}
+<span class="sk">if</span> (c <span class="st">===</span> <span class="ss">'1'</span> <span class="st">||</span> c <span class="st">===</span> <span class="ss">'міст'</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Міст рипить, але тримає.'</span>);
+} <span class="sk">else</span> <span class="sk">if</span> (c <span class="st">===</span> <span class="ss">'2'</span> <span class="st">||</span> c <span class="st">===</span> <span class="ss">'брід'</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Вода по коліна.'</span>);
+} <span class="sk">else</span> <span class="sk">if</span> (c <span class="st">===</span> <span class="sk">null</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Гру перервано.'</span>);
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">'Ти лишився на березі. КІНЕЦЬ'</span>);
+}</div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

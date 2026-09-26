@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Цикли · JavaScript · 11 клас · Урок 8</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (основа мови)
+  Клас          11 (16–17 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум)
+  Урок          8 з 35 · 30.09.2026 · СЕРЕДА · перший урок II періоду
+  Тема          Цикли (тема 2.9 плану)
+  Тривалість    45 хв — показ ~14 · практика ~30 · збереження 1
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       34
+  ────────────────────────────────────────────────────────────────
+  СПИРАЄТЬСЯ НА уроки 1–7: let / const · prompt · Number() · null ·
+     шаблонні рядки · if / else if / else · === !== · && || · % ·
+     += -= · switch і break (урок 6) · confirm і location.reload (урок 7)
+  НОВЕ          for · i++ i-- · накопичувач і лічильник · вкладений цикл ·
+                while · нескінченний цикл · do...while · break · continue ·
+                for...of по рядку (анонс: масиви — урок 9) ·
+                Math.floor(Math.random() * N) + 1 як готовий рецепт
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  ПРАКТИКА 1    сл. 9  — for: лічба, таблиця множення, лічильник, 10 хв
+  ПРАКТИКА 2    сл. 17 — while: «Вгадай число», 10 хв
+  ПРАКТИКА 3    сл. 27 — do...while, break, continue, for...of, 10 хв
+  ДОВІДНИК      сл. 26 — тримати на дошці під час практики 3
+                (під час практик 1–2 — сл. 4 і сл. 16)
+  ПЕРЕДБАЧ / ВИПРАВ  сл. 6 · 10 · 19 · 22 · 25 · 28 — відповідь на тому ж слайді
+  БАНК          сл. 30 — вісім завдань для тих, хто закінчив раніше
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО РІЗАТИ ПЕРШИМ (показ, не практика): сл. 10 (вкладений цикл —
+     лишається в банку); сл. 12 (подвоєння); сл. 24–25 (три цикли /
+     який цикл); сл. 19 (while проти do...while); сл. 15 (таблиця
+     Math.random — лишити тільки рецепт зі сл. 16).
+  ⚠️ Нескінченний цикл вішає вкладку. На слайдах немає жодного
+     завдання «запусти й подивись, як зависне» — поломки в практиках
+     безпечні: зайва крапка з комою, === замість !==, прибраний break.
+  ⚠️ ДЗ — CodePen, лише console.log, БЕЗ prompt: CodePen перезапускає
+     код на кожну набрану літеру, і prompt вискакував би безперервно.
+  ⚠️ Оцінювання — у конспекті, не на екрані. Git не згадується.
+  ────────────────────────────────────────────────────────────────
+  План          office/plany/05-javascript-8.md, тема 2.9
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/11-javascript/u08/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:96px}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6 ─── */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.tree{font-family:var(--f-mono);font-size:16px;line-height:1.6;white-space:pre;color:var(--ink)}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8 ─── */
+.dp-out.con{font-family:var(--f-mono);font-size:16px;line-height:1.55;white-space:pre-wrap;padding:10px 19px}
+.dp-out.con b{color:var(--faint);font-family:var(--f-body);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+.three .mono{font-size:15.5px;line-height:1.55;margin-bottom:6px}
+table.ops td.c{text-align:center;font-family:var(--f-mono)}
+.ic{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ── ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Цикли</h1>
+      <p class="title-sub">Повторити стільки разів, скільки треба<br>
+        JavaScript · 11 клас · Урок 8 з 35 · 30 вересня</p>
+      <div class="chips">
+        <span class="chip">for</span>
+        <span class="chip">while</span>
+        <span class="chip">do...while</span>
+        <span class="chip">break</span>
+        <span class="chip">continue</span>
+        <span class="chip">for...of</span>
+        <span class="chip">Вгадай число</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lm">Після квесту</span>
+      <h2>«Зіграти ще раз» без перезавантаження сторінки</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">без циклу — рядок на кожен раз</span>
+        <div class="mono">console.log(1);
+console.log(2);
+console.log(3);
+console.log(4);
+console.log(5);
+// а якщо до 1000?</div></div>
+      <div class="right"><span class="lbl">з циклом — три рядки на будь-яке число</span>
+        <div class="mono">for (let i = 1; i &lt;= 5; i++) {
+  console.log(i);
+}</div>
+        <p class="mt" style="font-size:17px">Змінив <span class="ic">5</span> на <span class="ic">1000</span> — і все</p></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><b>Цикл</b> повторює блок <span class="ic">{ }</span>, поки умова істинна</div>
+      <div class="hbox hp">У квесті: питати, <b>поки</b> не введуть 1 або 2; грати, <b>поки</b> гравець не скаже «досить»</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ОГЛЯД ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🗂️</div><div>
+      <span class="label lb">Уся родина</span>
+      <h2>Чотири цикли і дві команди керування</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Що</th><th>Коли беремо</th><th>Як виглядає</th></tr>
+      <tr><td class="o">for</td><td>знаємо, <b>скільки разів</b></td><td><span class="ic">for (let i = 1; i &lt;= 5; i++)</span></td></tr>
+      <tr><td class="o">while</td><td>знаємо, <b>коли зупинитись</b></td><td><span class="ic">while (guess !== secret)</span></td></tr>
+      <tr><td class="o">do...while</td><td>хоча б <b>один раз</b>, потім перевірка</td><td><span class="ic">do { … } while (again);</span></td></tr>
+      <tr><td class="o">for...of</td><td>по кожній <b>літері рядка</b> (урок 9 — масиву)</td><td><span class="ic">for (const ch of word)</span></td></tr>
+      <tr><td class="o">break</td><td>вийти з циклу <b>зараз</b></td><td><span class="ic">if (…) break;</span></td></tr>
+      <tr><td class="o">continue</td><td>пропустити <b>цей крок</b>, іти до наступного</td><td><span class="ic">if (…) continue;</span></td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 4 ── FOR ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔢</div><div>
+      <span class="label lm">for</span>
+      <h2>Три частини в дужках</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.1fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;=</span> <span class="sn">5</span>; i<span class="st">++</span>) {
+  console.<span class="sf">log</span>(i);
+}</div>
+        <div class="dp-out con"><b>Консоль</b>1
+2
+3
+4
+5</div>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t"><span class="ic">let i = 1</span> — <b>старт</b>. Один раз, на самому початку</span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t"><span class="ic">i &lt;= 5</span> — <b>умова</b>. Перед кожним проходом; <span class="ic">false</span> → вихід</span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t"><span class="ic">i++</span> — <b>крок</b>. Після кожного проходу</span></div>
+        <div class="hbox hp" style="margin:0"><span class="ic">i++</span> = <span class="ic">i += 1</span> · <span class="ic">i--</span> = <span class="ic">i -= 1</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ── ТРАСУВАННЯ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🐾</div><div>
+      <span class="label lb">Крок за кроком</span>
+      <h2>Що робить for насправді</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1.25fr">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;=</span> <span class="sn">3</span>; i<span class="st">++</span>) {
+  console.<span class="sf">log</span>(i * <span class="sn">10</span>);
+}</div>
+        </div>
+        <div class="hbox hm">Умова перевіряється <b>4 рази</b>, тіло виконується <b>3</b></div>
+        <div class="hbox hr">Після <span class="ic">}</span> змінної <span class="ic">i</span> вже немає: <span class="ic">let</span> живе лише в циклі</div>
+      </div>
+      <table class="ops">
+        <tr><th>Прохід</th><th>i</th><th>i &lt;= 3</th><th>Виводить</th></tr>
+        <tr><td class="c">1</td><td class="c">1</td><td class="c">true</td><td class="c">10</td></tr>
+        <tr><td class="c">2</td><td class="c">2</td><td class="c">true</td><td class="c">20</td></tr>
+        <tr><td class="c">3</td><td class="c">3</td><td class="c">true</td><td class="c">30</td></tr>
+        <tr><td class="c">—</td><td class="c">4</td><td class="c"><b>false</b></td><td class="c">вихід</td></tr>
+      </table>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе кожен цикл?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">for (let i = 10; i &gt;= 1; i -= 3) {
+  console.log(i);
+}</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>10 7 4 1</b> — крок <span class="ic">-3</span>, наступне було б −2</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">for (let i = 0; i &lt; 5; i++) {
+  console.log(i);
+}</div>
+        <p class="rv-hint">Скільки чисел?</p>
+        <div class="rv-body"><p><b>0 1 2 3 4</b> — пʼять чисел, але <b>без 5</b>: знак <span class="ic">&lt;</span>, не <span class="ic">&lt;=</span></p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">for (let i = 2; i &lt;= 10; i += 2) {
+  console.log(i);
+}</div>
+        <p class="rv-hint">Яке останнє?</p>
+        <div class="rv-body"><p><b>2 4 6 8 10</b> — парні. <span class="ic">10 &lt;= 10</span> ще <span class="ic">true</span></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── НАКОПИЧУВАЧ ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🧺</div><div>
+      <span class="label lm">Накопичувач</span>
+      <h2>Сума від 1 до 100</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> n = <span class="sn">100</span>;
+<span class="sk">let</span> sum = <span class="sn">0</span>;               <span class="cm">// до циклу, з нуля</span>
+
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;=</span> n; i<span class="st">++</span>) {
+  sum <span class="st">+=</span> i;                <span class="cm">// додаємо кожне i</span>
+}
+
+console.<span class="sf">log</span>(<span class="ss">`Сума 1..${n} = ${sum}`</span>);</div>
+        <div class="dp-out con"><b>Консоль</b>Сума 1..100 = 5050</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">let sum = 0</span> — <b>до</b> циклу. Усередині він обнулявся б щоразу</div>
+        <div class="hbox hr"><span class="ic">let sum;</span> без нуля → <span class="ic">undefined + 1</span> → <b>NaN</b></div>
+        <div class="hbox hp"><span class="ic">console.log</span> <b>після</b> <span class="ic">}</span> — один рядок. Усередині — сто</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ЛІЧИЛЬНИК ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🧮</div><div>
+      <span class="label lm">Лічильник</span>
+      <h2>if всередині циклу — фільтр</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">let</span> count = <span class="sn">0</span>;
+
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;=</span> <span class="sn">100</span>; i<span class="st">++</span>) {
+  <span class="sk">if</span> (i % <span class="sn">7</span> <span class="st">===</span> <span class="sn">0</span>) {
+    count<span class="st">++</span>;
+  }
+}
+
+console.<span class="sf">log</span>(<span class="ss">'Кратних 7:'</span>, count);</div>
+        <div class="dp-out con"><b>Консоль</b>Кратних 7: 14</div>
+      </div>
+      <div>
+        <div class="hbox hm"><b>Накопичувач</b> додає значення: <span class="ic">sum += i</span></div>
+        <div class="hbox hp"><b>Лічильник</b> додає одиницю: <span class="ic">count++</span></div>
+        <div class="hbox ho"><span class="ic">i % 7 === 0</span> — ділиться на 7 без остачі. Знак <span class="ic">%</span> з уроку 5</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">for — лічба, таблиця, лічильник</span><span class="tmr">10 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.3fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — таблиця множення на 3</span>
+        <div class="mono">for (let i = 1; i &lt;= 10; i++) {
+  console.log(`3 × ${i} = ${3 * i}`);
+}</div>
+        <p class="mt" style="font-size:16px">Результат — у консолі: <b>F12 → Console</b></p></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у консоль</span>
+        <ul>
+          <li>Папка <span class="ic">js-11/cykly</span>: <span class="ic">index.html</span> + <span class="ic">script.js</span>. Виведи числа 1…20</li>
+          <li>Зворотний відлік 10…1, а після циклу — <b>«Старт!»</b></li>
+          <li>Таблиця множення на 7: від <span class="ic">7 × 1 = 7</span> до <span class="ic">7 × 10 = 70</span></li>
+          <li>Постав <span class="ic">;</span> одразу після <span class="ic">for (…)</span> — прочитай помилку, прибери</li>
+          <li>⭐⭐ Скільки чисел від 1 до 200 діляться на 3 <b>або</b> на 5? (має вийти 93)</li>
+          <li>⭐⭐⭐ Добуток 1 · 2 · … · 10 — накопичувач із <span class="ic">*=</span>, старт з <b>1</b></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ВКЛАДЕНИЙ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🪆</div><div>
+      <span class="label lp">Цикл у циклі</span>
+      <h2>Рядки й стовпчики</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">for</span> (<span class="sk">let</span> row = <span class="sn">1</span>; row <span class="st">&lt;=</span> <span class="sn">3</span>; row<span class="st">++</span>) {
+  <span class="sk">let</span> line = <span class="ss">''</span>;
+  <span class="sk">for</span> (<span class="sk">let</span> col = <span class="sn">1</span>; col <span class="st">&lt;=</span> <span class="sn">4</span>; col<span class="st">++</span>) {
+    line <span class="st">+=</span> row * col + <span class="ss">' '</span>;
+  }
+  console.<span class="sf">log</span>(line);
+}</div>
+        <div class="dp-out con"><b>Консоль</b>1 2 3 4
+2 4 6 8
+3 6 9 12</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')">
+          <h3>Скільки разів виконається line +=?</h3><p class="rv-hint">Порахуй, потім клацни</p>
+          <div class="rv-body"><p><b>12</b> = 3 рядки × 4 стовпчики. Внутрішній цикл проходить повністю на кожному кроці зовнішнього</p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')">
+          <h3>А console.log?</h3><p class="rv-hint">клацни</p>
+          <div class="rv-body"><p><b>3</b> — він у зовнішньому циклі, після внутрішнього</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── WHILE ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">⏳</div><div>
+      <span class="label lm">while</span>
+      <h2>Ті самі три частини — у різних рядках</h2>
+    </div></div>
+    <div class="pair">
+      <div class="right" style="border-color:var(--border)"><span class="lbl" style="color:var(--dim)">for</span>
+        <div class="mono">for (let i = 1; i &lt;= 5; i++) {
+  console.log(i);
+}</div></div>
+      <div class="right"><span class="lbl">while — те саме</span>
+        <div class="mono">let i = 1;          // старт — до циклу
+while (i &lt;= 5) {    // умова
+  console.log(i);
+  i++;              // крок — у кінці тіла
+}</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><span class="ic">while</span> — «поки». Поки умова <span class="ic">true</span>, тіло повторюється</div>
+      <div class="hbox hr">Забув <span class="ic">i++</span> — умова <b>ніколи</b> не стане <span class="ic">false</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── КОЛИ WHILE ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">📈</div><div>
+      <span class="label lb">Коли while</span>
+      <h2>Скільки кроків — невідомо, відома лише межа</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · подвоюємо, поки не більше 1000</span></div>
+<div class="dp-code"><span class="sk">let</span> n = <span class="sn">1</span>;
+<span class="sk">let</span> steps = <span class="sn">0</span>;
+
+<span class="sk">while</span> (n <span class="st">&lt;=</span> <span class="sn">1000</span>) {
+  n <span class="st">*=</span> <span class="sn">2</span>;         <span class="cm">// n = n * 2</span>
+  steps<span class="st">++</span>;
+}
+
+console.<span class="sf">log</span>(steps, n);</div>
+        <div class="dp-out con"><b>Консоль</b>10 1024</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">for</span> — «зроби 10 разів»</div>
+        <div class="hbox hp"><span class="ic">while</span> — «роби, <b>поки</b> не перевалить за 1000». Скільки це кроків, ми дізнались лише в кінці</div>
+        <div class="hbox ho"><span class="ic">*=</span> — родич <span class="ic">+=</span> і <span class="ic">-=</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── НЕСКІНЧЕННИЙ ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">♾️</div><div>
+      <span class="label lr">Небезпека</span>
+      <h2>Нескінченний цикл вішає вкладку</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">i не змінюється</span>
+        <div class="mono">let i = 1;
+while (i &lt;= 5) {
+  console.log(i);
+}                   // 1 1 1 1 1 1 …</div></div>
+      <div class="wrong"><span class="lbl">крок не в той бік</span>
+        <div class="mono">for (let i = 1; i &lt;= 5; i--) {
+  console.log(i);
+}                   // 1 0 -1 -2 …</div></div>
+    </div>
+    <div class="tip tr mt"><span class="tip-ico">🚑</span>
+      <div>Вкладка зависла? Закрий її. Не закривається — <strong>Shift + Esc</strong> у Chrome
+      (диспетчер завдань) → вкладка → <b>Завершити процес</b>. Виправ код і лише тоді відкривай знову.</div></div>
+    <div class="hbox hm">Перед запуском питання одне: <b>що в тілі циклу наближає умову до false?</b></div>
+  </div></section>
+
+  <!-- ══════════ 14 ── WHILE + PROMPT ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🚧</div><div>
+      <span class="label lm">while і квест</span>
+      <h2>Питати, поки не введуть 1 або 2</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.45fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">let</span> c = <span class="sf">prompt</span>(<span class="ss">'1 — міст, 2 — брід'</span>);
+
+<span class="sk">while</span> (c <span class="st">!==</span> <span class="ss">'1'</span> <span class="st">&amp;&amp;</span> c <span class="st">!==</span> <span class="ss">'2'</span> <span class="st">&amp;&amp;</span> c <span class="st">!==</span> <span class="sk">null</span>) {
+  c = <span class="sf">prompt</span>(<span class="ss">'Лише 1 або 2! 1 — міст, 2 — брід'</span>);
+}
+
+<span class="sk">if</span> (c <span class="st">===</span> <span class="sk">null</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Гру перервано.'</span>);
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">`Твій вибір: ${c}`</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm">Повторюємо, поки відповідь <b>не</b> 1, <b>і не</b> 2, <b>і не</b> Скасувати</div>
+        <div class="hbox hr">Без <span class="ic">c !== null</span> Скасувати не випустить із циклу — вікно вискакуватиме знову й знову</div>
+        <div class="hbox hp">Новий <span class="ic">prompt</span> <b>усередині</b> — це і є крок: <span class="ic">c</span> змінюється</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── MATH.RANDOM ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🎲</div><div>
+      <span class="label lo">Готовий рецепт</span>
+      <h2>Випадкове ціле від 1 до 100</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Запис</th><th>Що дає</th><th>Наприклад</th></tr>
+      <tr><td><span class="ic">Math.random()</span></td><td>дріб від 0 до 1 (1 — ніколи)</td><td class="r">0.7312</td></tr>
+      <tr><td><span class="ic">Math.random() * 100</span></td><td>дріб від 0 до 100</td><td class="r">73.12</td></tr>
+      <tr><td><span class="ic">Math.floor(…)</span></td><td>відкидає дробову частину</td><td class="r">73</td></tr>
+      <tr><td><span class="ic">… + 1</span></td><td>зсув: від 1 до 100, а не від 0 до 99</td><td class="r">74</td></tr>
+    </table>
+    <div class="hbox hm mt" style="font-family:var(--f-mono);font-size:19px">const secret = Math.floor(Math.random() * 100) + 1;</div>
+    <div class="tip to"><span class="tip-ico">🎯</span>
+      <div>Кубик: <span class="ic">* 6</span> замість <span class="ic">* 100</span>. Поки беремо рядок цілим, як рецепт; розберемо на уроці 13.</div></div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ВГАДАЙ ЧИСЛО ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🕹️</div><div>
+      <span class="label lm">Гра на while</span>
+      <h2>Вгадай число</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> secret = Math.<span class="sf">floor</span>(Math.<span class="sf">random</span>() * <span class="sn">100</span>) + <span class="sn">1</span>;
+<span class="sk">let</span> guess = <span class="sf">Number</span>(<span class="sf">prompt</span>(<span class="ss">'Я загадав 1–100. Твоя спроба?'</span>));
+
+<span class="sk">while</span> (guess <span class="st">!==</span> secret) {
+  <span class="sk">if</span> (guess <span class="st">&lt;</span> secret) {
+    guess = <span class="sf">Number</span>(<span class="sf">prompt</span>(<span class="ss">'Більше! Ще раз:'</span>));
+  } <span class="sk">else</span> {
+    guess = <span class="sf">Number</span>(<span class="sf">prompt</span>(<span class="ss">'Менше! Ще раз:'</span>));
+  }
+}
+
+<span class="sf">alert</span>(<span class="ss">'Вгадав!'</span>);</div>
+      </div>
+      <div>
+        <div class="hbox hm">Скільки буде спроб, не знає ніхто — тому <span class="ic">while</span></div>
+        <div class="hbox hr"><span class="ic">Number(…)</span> обовʼязково: <span class="ic">'42' !== 42</span> завжди, і гра не скінчиться ніколи</div>
+        <div class="hbox hp">Усередині циклу — звичайна розвилка з уроку 3</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">while — «Вгадай число»</span><span class="tmr">10 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.3fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — серце гри</span>
+        <div class="mono">while (guess !== secret) {
+  if (guess &lt; secret) {
+    guess = Number(prompt('Більше!'));
+  } else {
+    guess = Number(prompt('Менше!'));
+  }
+}
+alert('Вгадав!');</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у тій самій папці</span>
+        <ul>
+          <li>Код практики 1 закоментуй: виділи й <b>Ctrl + /</b></li>
+          <li>Гра «Вгадай число» 1–100 з підказками «більше / менше»</li>
+          <li>Лічильник <span class="ic">tries</span>: у фіналі «Вгадав за 6 спроб»</li>
+          <li>Заміни в умові <span class="ic">!==</span> на <span class="ic">===</span>. Чому гра одразу пише «Вгадав!»? Поверни</li>
+          <li>⭐⭐ Спершу складність: «1 — до 10, 2 — до 100» — питати, <b>поки</b> не введуть 1 або 2</li>
+          <li>⭐⭐⭐ Не більше 7 спроб: <span class="ic">guess !== secret &amp;&amp; tries &lt; 7</span>, після циклу — хто переміг</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── DO...WHILE ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔂</div><div>
+      <span class="label lm">do...while</span>
+      <h2>Спершу зроби, потім перевір</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">let</span> again;
+
+<span class="sk">do</span> {
+  <span class="sf">alert</span>(<span class="ss">'Раунд гри…'</span>);
+  again = <span class="sf">confirm</span>(<span class="ss">'Зіграти ще раз?'</span>);
+} <span class="sk">while</span> (again);
+
+<span class="sf">alert</span>(<span class="ss">'Дякую за гру!'</span>);</div>
+      </div>
+      <div>
+        <div class="hbox hm">Тіло виконується <b>хоча б один раз</b> — перевірка стоїть унизу</div>
+        <div class="hbox hp"><span class="ic">confirm</span> з уроку 7: OK → <span class="ic">true</span>, Скасувати → <span class="ic">false</span></div>
+        <div class="hbox ho">Раніше «ще раз» був <span class="ic">location.reload()</span>. Тепер гра не перезавантажує сторінку — і <b>памʼятає рахунок</b></div>
+        <div class="hbox hr">Після <span class="ic">while (again)</span> — крапка з комою</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── ПЕРЕДБАЧ WHILE / DO ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">⚖️</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Умова хибна з самого початку</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">let</span> n = <span class="sn">10</span>;
+<span class="sk">while</span> (n <span class="st">&lt;</span> <span class="sn">5</span>) {
+  console.<span class="sf">log</span>(<span class="ss">'while'</span>, n);
+  n<span class="st">++</span>;
+}
+
+<span class="sk">let</span> m = <span class="sn">10</span>;
+<span class="sk">do</span> {
+  console.<span class="sf">log</span>(<span class="ss">'do'</span>, m);
+  m<span class="st">++</span>;
+} <span class="sk">while</span> (m <span class="st">&lt;</span> <span class="sn">5</span>);</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3>Скільки рядків від while?</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p><b>Жодного.</b> <span class="ic">10 &lt; 5</span> — false ще до першого проходу</p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3>А від do?</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p><b>Один:</b> «do 10». Спершу тіло, потім перевірка</p></div></div>
+        <div class="card cr reveal" onclick="this.classList.toggle('open')"><h3>Де do...while доречний?</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>Там, де перший раз буде <b>завжди</b>: раунд гри, меню, перше питання</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ── BREAK ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🛑</div><div>
+      <span class="label lr">break</span>
+      <h2>Знайшли — далі шукати не треба</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · перше кратне 7 від 50</span></div>
+<div class="dp-code"><span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">50</span>; i <span class="st">&lt;=</span> <span class="sn">100</span>; i<span class="st">++</span>) {
+  <span class="sk">if</span> (i % <span class="sn">7</span> <span class="st">===</span> <span class="sn">0</span>) {
+    console.<span class="sf">log</span>(<span class="ss">'Перше кратне 7:'</span>, i);
+    <span class="sk">break</span>;
+  }
+}
+console.<span class="sf">log</span>(<span class="ss">'Пошук закінчено'</span>);</div>
+        <div class="dp-out con"><b>Консоль</b>Перше кратне 7: 56
+Пошук закінчено</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">break</span> виходить із циклу <b>негайно</b>. Далі — код після <span class="ic">}</span></div>
+        <div class="hbox hp">Слово знайоме: у <span class="ic">switch</span> (урок 6) воно робило те саме — «на цьому все»</div>
+        <div class="hbox ho">Без <span class="ic">break</span> цикл надрукував би ще 63, 70 … 98</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ── CONTINUE ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">⏭️</div><div>
+      <span class="label lb">continue</span>
+      <h2>Пропустити цей крок — і далі</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · 1…10 без кратних 3</span></div>
+<div class="dp-code"><span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;=</span> <span class="sn">10</span>; i<span class="st">++</span>) {
+  <span class="sk">if</span> (i % <span class="sn">3</span> <span class="st">===</span> <span class="sn">0</span>) {
+    <span class="sk">continue</span>;
+  }
+  console.<span class="sf">log</span>(i);
+}</div>
+        <div class="dp-out con"><b>Консоль</b>1 2 4 5 7 8 10</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">continue</span> — решту тіла пропустити, перейти до <b>наступного</b> проходу</div>
+        <div class="hbox hp">У <span class="ic">for</span> крок <span class="ic">i++</span> однаково виконається</div>
+        <div class="hbox hr">У <span class="ic">while</span> обережно: <span class="ic">continue</span> <b>перед</b> <span class="ic">i++</span> — і <span class="ic">i</span> більше не росте. Нескінченний цикл</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ── ПЕРЕДБАЧ BREAK / CONTINUE ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>break чи continue — різниця в одне слово</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">for (let i = 1; i &lt;= 10; i++) {
+  if (i === 4) break;
+  console.log(i);
+}</div>
+        <p class="rv-hint">клацни</p>
+        <div class="rv-body"><p><b>1 2 3</b> — на 4 цикл закінчився</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">for (let i = 1; i &lt;= 10; i++) {
+  if (i === 4) continue;
+  console.log(i);
+}</div>
+        <p class="rv-hint">клацни</p>
+        <div class="rv-body"><p><b>1 2 3 5 6 7 8 9 10</b> — лише 4 пропущено</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">let i = 0;
+while (i &lt; 5) {
+  i++;
+  if (i === 2) continue;
+  console.log(i);
+}</div>
+        <p class="rv-hint">клацни</p>
+        <div class="rv-body"><p><b>1 3 4 5</b> — тут <span class="ic">i++</span> стоїть <b>до</b> <span class="ic">continue</span>, тому цикл не завис</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 23 ── FOR...OF ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔤</div><div>
+      <span class="label lp">for...of · анонс уроку 9</span>
+      <h2>Для кожної літери рядка</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · скільки літер «а»</span></div>
+<div class="dp-code"><span class="sk">const</span> phrase = <span class="ss">'банан на балконі'</span>;
+<span class="sk">let</span> count = <span class="sn">0</span>;
+
+<span class="sk">for</span> (<span class="sk">const</span> ch <span class="sk">of</span> phrase) {
+  <span class="sk">if</span> (ch <span class="st">===</span> <span class="ss">'а'</span>) {
+    count<span class="st">++</span>;
+  }
+}
+
+console.<span class="sf">log</span>(<span class="ss">'Літер «а»:'</span>, count);</div>
+        <div class="dp-out con"><b>Консоль</b>Літер «а»: 4</div>
+      </div>
+      <div>
+        <div class="hbox hm">Ні старту, ні умови, ні кроку: <span class="ic">ch</span> по черзі стає кожною літерою</div>
+        <div class="hbox hp"><span class="ic">const</span> тут можна: на кожному проході — нова змінна</div>
+        <div class="hbox ho">Урок 9 — <b>масиви</b>: той самий <span class="ic">for...of</span> пройде по списку імен чи цін</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ── ТРИ ЦИКЛИ ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🧩</div><div>
+      <span class="label lb">Порівняння</span>
+      <h2>Одна задача — три записи: 3, 2, 1</h2>
+    </div></div>
+    <div class="three">
+      <div class="card"><h3>for</h3>
+        <div class="mono">for (let i = 3; i &gt;= 1; i--) {
+  console.log(i);
+}</div></div>
+      <div class="card cp"><h3>while</h3>
+        <div class="mono">let i = 3;
+while (i &gt;= 1) {
+  console.log(i);
+  i--;
+}</div></div>
+      <div class="card cr"><h3>do...while</h3>
+        <div class="mono">let i = 3;
+do {
+  console.log(i);
+  i--;
+} while (i &gt;= 1);</div></div>
+    </div>
+    <div class="hbox hm mt">Скрізь ті самі <b>старт · умова · крок</b>. Різниця — де вони стоять і коли перевіряється умова</div>
+  </div></section>
+
+  <!-- ══════════ 25 ── ЯКИЙ ЦИКЛ ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🤔</div><div>
+      <span class="label lo">Вибери</span>
+      <h2>Який цикл для якої задачі?</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk reveal" onclick="this.classList.toggle('open')"><b>1.</b> Вивести «Привіт» 20 разів
+        <span class="rv-hint">— ?</span><div class="rv-body"><b>for</b>: кількість відома</div></div>
+      <div class="bk reveal" onclick="this.classList.toggle('open')"><b>2.</b> Питати пароль, поки не введуть правильний
+        <span class="rv-hint">— ?</span><div class="rv-body"><b>while</b> (або <b>do...while</b>): скільки спроб — невідомо</div></div>
+      <div class="bk reveal" onclick="this.classList.toggle('open')"><b>3.</b> Раунд гри і «Зіграти ще раз?»
+        <span class="rv-hint">— ?</span><div class="rv-body"><b>do...while</b>: перший раунд буде завжди</div></div>
+      <div class="bk reveal" onclick="this.classList.toggle('open')"><b>4.</b> Порахувати пробіли у фразі
+        <span class="rv-hint">— ?</span><div class="rv-body"><b>for...of</b>: по кожній літері</div></div>
+      <div class="bk reveal" onclick="this.classList.toggle('open')"><b>5.</b> Перше число від 1000, що ділиться на 17
+        <span class="rv-hint">— ?</span><div class="rv-body"><b>for + break</b> (або <b>while</b>): знайшли — стоп</div></div>
+      <div class="bk reveal" onclick="this.classList.toggle('open')"><b>6.</b> Числа 1…50, крім кратних 5
+        <span class="rv-hint">— ?</span><div class="rv-body"><b>for + continue</b></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 26 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Усі цикли на одному екрані</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>for</h4><pre>for (let i = 1; i &lt;= 10; i++) {
+  …
+}</pre></div>
+      <div class="rf-c"><h4>while</h4><pre>let i = 1;
+while (i &lt;= 10) {
+  …
+  i++;
+}</pre></div>
+      <div class="rf-c"><h4>do...while</h4><pre>do {
+  …
+} while (again);</pre></div>
+      <div class="rf-c"><h4>for...of</h4><pre>for (const ch of word) {
+  …
+}</pre></div>
+      <div class="rf-c"><h4>break · continue</h4><pre>if (x === 0) break;
+if (x % 2) continue;</pre></div>
+      <div class="rf-c"><h4>накопичувач · лічильник</h4><pre>let sum = 0;   sum += i;
+let count = 0; count++;</pre></div>
+      <div class="rf-c"><h4>цикл у циклі</h4><pre>for (let r = 1; r &lt;= 3; r++) {
+  for (let c = 1; c &lt;= 4; c++) { … }
+}</pre></div>
+      <div class="rf-c"><h4>випадкове 1…N</h4><pre>Math.floor(Math.random() * N) + 1</pre></div>
+      <div class="rf-c"><h4>зависло?</h4><pre>Shift + Esc → завершити
+// що наближає умову
+// до false?</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 27 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s26"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">do...while, break, continue</span><span class="tmr">10 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.35fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — гра раунд за раундом</span>
+        <div class="mono">let again;
+do {
+  // тут уся «Вгадай число»,
+  // secret — всередині do
+  again = confirm('Ще раз?');
+} while (again);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Обгорни свою «Вгадай число» в <span class="ic">do...while</span> із «Зіграти ще раз?»</li>
+          <li>Виведи 1…30 без кратних 4 — через <span class="ic">continue</span></li>
+          <li>Перше число від 100 до 300, що ділиться і на 7, і на 9 — через <span class="ic">break</span></li>
+          <li>Прибери той <span class="ic">break</span> — скільки чисел тепер у консолі? Поверни</li>
+          <li>⭐⭐ Рахунок раундів і <b>рекорд</b> — найменше спроб; наприкінці — обидва в <span class="ic">alert</span></li>
+          <li>⭐⭐⭐ Голосні у фразі з <span class="ic">prompt</span>: <span class="ic">for...of</span> і <span class="ic">'аеєиіїоуюя'.includes(ch)</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 28 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s27"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ</span>
+      <h2>Має бути «Сума 1..10 = 55». Що не так?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+<div class="dp-code"><span class="sk">const</span> n = <span class="sn">10</span>;
+<span class="sk">let</span> sum;
+
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;</span> n; i<span class="st">++</span>) {
+  sum <span class="st">+=</span> i;
+  console.<span class="sf">log</span>(<span class="ss">'Сума 1..10 ='</span>, sum);
+}</div>
+        <div class="dp-out con"><b>Консоль</b>Сума 1..10 = NaN
+Сума 1..10 = NaN
+… ще 7 таких рядків</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Три біди, червоного рядка немає</h3>
+        <p class="rv-hint">Знайди всі три, потім клацни</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">let sum;</span> — без нуля. <span class="ic">undefined + 1</span> = <b>NaN</b>, і далі NaN назавжди</p>
+          <p><b>2.</b> <span class="ic">i &lt; n</span> — десятки не буде. Потрібно <span class="ic">i &lt;= n</span></p>
+          <p><b>3.</b> <span class="ic">console.log</span> всередині циклу — дев'ять рядків замість одного. Перенести за <span class="ic">}</span></p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 29 ── ДІАГНОСТИКА ══════════ -->
+  <section class="slide" id="s28"><div class="slide-inner">
+    <div class="sh"><div class="si">🩺</div><div>
+      <span class="label lr">Діагностика</span>
+      <h2>Шість бід циклу</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox hr"><b>Вкладка зависла</b> — крок не змінює лічильник або йде не в той бік. <b>Shift + Esc</b></div>
+        <div class="hbox hr"><b>NaN</b> замість суми — накопичувач без <span class="ic">= 0</span></div>
+        <div class="hbox hp"><b>Бракує останнього числа</b> — <span class="ic">&lt;</span> замість <span class="ic">&lt;=</span></div>
+      </div>
+      <div>
+        <div class="hbox ho"><span class="ic">i is not defined</span> — зайва <span class="ic">;</span> одразу після <span class="ic">for (…)</span></div>
+        <div class="hbox hm"><span class="ic">Assignment to constant variable</span> — <span class="ic">for (const i = 0; …; i++)</span>. Потрібен <span class="ic">let</span></div>
+        <div class="hbox hp"><b>Вгадав, а гра питає далі</b> — рядок порівнюється з числом. <span class="ic">Number(prompt(…))</span></div>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🔦</span>
+      <div><span class="ic">console.log('i =', i)</span> першим рядком тіла — і кожен прохід циклу видно в консолі.</div></div>
+  </div></section>
+
+  <!-- ══════════ 30 ── БАНК ══════════ -->
+  <section class="slide" id="s29"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Таблиця множення.</b> Уся, 1…9: цикл у циклі, один рядок консолі на число</div>
+      <div class="bk"><b>Сходинка.</b> <span class="ic">*</span>, <span class="ic">**</span>, <span class="ic">***</span> … до пʼяти зірочок: <span class="ic">row += '*'</span></div>
+      <div class="bk"><b>FizzBuzz.</b> 1…30: кратне 3 — Fizz, 5 — Buzz, обом — FizzBuzz</div>
+      <div class="bk"><b>Фібоначчі.</b> 1 1 2 3 5 8 … — усі, менші за 1000, через <span class="ic">while</span></div>
+      <div class="bk"><b>Сума цифр.</b> 2026 → 10: <span class="ic">n % 10</span> і <span class="ic">Math.floor(n / 10)</span> у <span class="ic">while</span></div>
+      <div class="bk"><b>Задом наперед.</b> <span class="ic">for...of</span> і <span class="ic">rev = ch + rev</span> — «кіт» стає «тік»</div>
+      <div class="bk"><b>Кубик.</b> Кидати, поки не випаде 6; вивести всі кидки й скільки їх було</div>
+      <div class="bk"><b>Квест.</b> У кожній розвилці свого квесту — «лише 1 або 2» через <span class="ic">while</span></div>
+    </div>
+    <div class="hbox hm mt">Усі вісім — тільки тим, що вже було. Масивів не треба</div>
+  </div></section>
+
+  <!-- ══════════ 31 ── ЗБЕРЕГТИ ══════════ -->
+  <section class="slide" id="s30"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Зберігаємо роботу уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="cm">// Цикли · урок 8</span>
+<span class="cm">// Прізвище Імʼя · рівень: ⭐⭐</span>
+<span class="cm">// зроблено: практики 1, 2, 3</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Коментар — <b>першим рядком</b> <span class="ic">script.js</span>, потім <b>Ctrl + S</b></div>
+        <div class="hbox hp">Папку <span class="ic">js-11/cykly</span> не видаляти: на уроці 9 тими самими циклами пройдемо по масиву</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 32 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s31"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Словник</span>
+      <h2>Слова, які лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="ic">loop</span> — цикл</div>
+        <div class="hbox hm"><span class="ic">iteration</span> — ітерація, один прохід циклу</div>
+        <div class="hbox hp"><span class="ic">counter</span> — лічильник</div>
+      </div>
+      <div>
+        <div class="hbox hr"><span class="ic">infinite loop</span> — нескінченний цикл</div>
+        <div class="hbox ho"><span class="ic">increment</span> — збільшити на 1: <span class="ic">i++</span></div>
+        <div class="hbox"><span class="ic">random</span> — випадковий</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 33 ── ПІДСУМОК ══════════ -->
+  <section class="slide" id="s32"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Після уроку 8 у вас є</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>У коді</h3><ul>
+        <li><span class="ic">for</span> · <span class="ic">while</span> · <span class="ic">do...while</span> · <span class="ic">for...of</span></li>
+        <li><span class="ic">break</span> і <span class="ic">continue</span></li>
+        <li>накопичувач <span class="ic">sum += i</span>, лічильник <span class="ic">count++</span></li>
+        <li>гра «Вгадай число»</li>
+      </ul></div>
+      <div class="card cp"><h3>У голові</h3><ul>
+        <li>знаємо скільки — <span class="ic">for</span>; знаємо коли — <span class="ic">while</span></li>
+        <li>хоч раз — <span class="ic">do...while</span></li>
+        <li>зависло — Shift + Esc і шукати крок</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання</strong> — на наступному слайді.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 9 · понеділок 5 жовтня · Масиви</p>
+  </div></section>
+
+  <!-- ══════════ 34 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s33"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>Чотири цикли в консолі</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">На <strong>codepen.io</strong>, панель <b>JS</b>, результат — кнопка <b>Console</b> · код — <strong>повідомленням на платформі</strong> до <strong>5 жовтня</strong></div>
+    <div class="two" style="grid-template-columns:1fr 1.05fr;gap:16px">
+      <div class="steps" style="gap:8px">
+        <div class="step" style="padding:9px 15px"><span class="step-n">1</span><span class="step-t" style="font-size:16.5px">
+          Вгадай, що виведе код праворуч, — коментарем угорі. Потім запусти й звір</span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">2</span><span class="step-t" style="font-size:16.5px">
+          <span class="ic">for</span>: таблиця множення на 9 — від <span class="ic">9 × 1 = 9</span> до <span class="ic">9 × 10 = 90</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">3</span><span class="step-t" style="font-size:16.5px">
+          <span class="ic">while</span>: скільки разів ділити 1000 навпіл, поки число більше за 1?</span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">4</span><span class="step-t" style="font-size:16.5px">
+          <span class="ic">for...of</span>: скільки літер «р» у фразі <span class="ic">'програмування — це повторення'</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">⭐</span><span class="step-t" style="font-size:16.5px">
+          ⭐⭐⭐ <span class="ic">do...while</span>: кидати кубик, поки не випаде 6; кожен кидок — у консоль</span></div>
+      </div>
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">до пункту 1</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.55;padding:12px 16px"><span class="sk">let</span> total = <span class="sn">0</span>;
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;=</span> <span class="sn">12</span>; i<span class="st">++</span>) {
+  <span class="sk">if</span> (i % <span class="sn">4</span> <span class="st">===</span> <span class="sn">0</span>) <span class="sk">continue</span>;
+  <span class="sk">if</span> (i <span class="st">&gt;</span> <span class="sn">10</span>) <span class="sk">break</span>;
+  total <span class="st">+=</span> i;
+}
+console.<span class="sf">log</span>(total);</div>
+        </div>
+        <div class="tip to" style="font-size:15.5px;padding:9px 13px"><span class="tip-ico">⚙️</span>
+          <div><span class="ic">prompt</span> не потрібен: CodePen перезапускає код на кожну набрану літеру. Першим рядком — коментар із прізвищем</div></div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

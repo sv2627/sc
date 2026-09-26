@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7.7 Bubble sort · IT-англійська · 11 клас · Урок 5</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge IGCSE & O Level Computer Science
+                0478 / 0984 / 2210)
+  Клас          11
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · пʼятниця
+  Урок          5 з 36 · 02.10.2026
+  Тема          7.7 Common algorithms: bubble sort (ACTIVITY 7.6,
+                SKILLS FOCUS 7.1 і 7.2)
+  Акцент        plum (#602857)
+  Тривалість    45 хв, тесту немає · 20 слайдів (s0–s19), останній — ДЗ
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — ТІЛЬКИ КНИЖКА. Нічого не вигадано.
+     Coursebook, розділ 7.7, с. 161–166 (+ Questions 18–20 зі с. 167,
+     Summary с. 192, Exam-style question 7 зі с. 194, checklist с. 195).
+     Скани: office/igcse-0478/rozdil-07-algorithm-design/s161…s167.jpeg, s194.jpeg
+     Дослівно взято:
+       • KEY WORD bubble sort (с. 161)                                    → s1
+       • «ascending numerical order or descending alphabetical order»
+         (с. 161) + «first identify the order required… the data item»
+         (SKILLS FOCUS 7.1, с. 163)                                       → s2
+       • як працює bubble sort + чому «bubble» (с. 161)                    → s3
+       • дві умови зупинки, XElements − 1, «not efficient» (с. 161)        → s4
+       • ACTIVITY 7.6 — сім кроків дослівно (с. 162)                       → s5
+       • SKILLS FOCUS 7.1: 6 2 5 1, критерії a/b, Pass 1 (с. 163)          → s6, s7
+       • Pass 2, Pass 3, «Should it stop?» (с. 164)                        → s8
+       • Questions 1–3 SKILLS FOCUS 7.1 (с. 165)                           → s9
+       • SKILLS FOCUS 7.2: z c f a h, Pass 1 (с. 165)                      → s11
+       • Pass 2–4 + Questions 1–2 (с. 165–166)                             → s12
+       • Version 1 (с. 162)                                                → s13
+       • Version 2 (с. 162–163) + Question 20 (с. 167)                     → s14
+       • Questions 18–19 (с. 167), Exam-style Q7 (с. 194)                  → s15
+       • Summary (с. 192), I can… (с. 195)                                 → s17, s18
+     Слова word bank (s10) і словника (s16) — з тексту с. 161–167.
+     Переклади — мої. Відповіді в reveal пораховано за алгоритмом книжки.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ДВІ ДРУКАРСЬКІ ПОМИЛКИ КНИЖКИ — на слайдах виправлено, позначено
+     • с. 166, Pass 4: надруковано «z f h c a», а Pass 3 (с. 165)
+       закінчився на «z h f c a». На s12 — z h f c a.
+     • с. 163, кінець Version 2: рядок надруковано обірвано —
+       «NumberPasses ENDWHILE». На s14 — окремими рядками
+       NumberPasses ← NumberPasses + 1 і ENDWHILE, з приміткою.
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • PROGRAMMING TASK 7.2 (с. 166) — це програма на компʼютері, а на
+       IT-англійській компʼютерів немає. Його «Getting started» 2 — те
+       саме, що ACTIVITY 7.6, воно на s5.
+     • Відео — для IT-англійської не вирішено, чи доречне
+  ────────────────────────────────────────────────────────────────
+  СЛОВНИК       тричі: s1 (KEY WORD + 3) · s10 (word bank, 10) · s16 (17 слів)
+  ПРИКЛАД → САМОСТІЙНО
+                s7 (Pass 1, приклад) → s8 (Pass 2–3 самі)
+                s11 (Pass 1, приклад) → s12 (Pass 2–4 самі)
+                s15 — Questions 18–19 + Exam-style Q7, рівні ⭐/⭐⭐/⭐⭐⭐
+  ПЕРЕДБАЧ      відповідь на ТОМУ Ж слайді (reveal): s8, s9, s12, s13, s14, s15
+  РІЗАТИ ПЕРШИМ s17 (Words in use), s9 (Questions SF 7.1), s2
+  НЕ РІЗАТИ     s5 (ACTIVITY 7.6), s8 (самостійний Pass 2–3), s15
+  ────────────────────────────────────────────────────────────────
+  Конспект      2026-27-teacher/aplus/11-it-english/u05/konspekt.md
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: IGCSE-англійська 10 і 11 класів іде на plum. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f4eef3; --border:#e3d7e0;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--plum);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(96,40,87,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(96,40,87,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(96,40,87,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:44%}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2rem}
+h3{font-weight:700;font-size:1.28rem}
+p{font-size:18.5px;line-height:1.72;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:18.5px;line-height:1.75;color:var(--ink);margin-bottom:6px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:2.9rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.28rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:18px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--surf2)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.two.wide-l{grid-template-columns:1.35fr 1fr}
+.two.wide-r{grid-template-columns:1fr 1.35fr}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:19px 21px;
+      box-shadow:0 1px 3px rgba(96,40,87,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.65;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cb h3{color:var(--blue)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:13px 17px;margin:10px 0;font-size:17.5px;color:var(--ink);line-height:1.65;
+      box-shadow:0 1px 3px rgba(96,40,87,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--surf2);
+     border:1.5px solid var(--border);border-radius:11px;padding:13px 16px;
+     margin:11px 0;font-size:17.5px;line-height:1.65;color:var(--ink)}
+.tip.tb2{background:var(--sky);border-color:#c6d2ee}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.35rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── псевдокод: світлий блок, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(96,40,87,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:9px 14px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-title{flex:1;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9fc;color:var(--ink);padding:15px 18px;font-size:16px;line-height:1.7;white-space:pre-wrap}
+/* підсвітка — усі пари перевірені на ≥5:1 щодо #fdf9fc */
+.sk{color:#591429;font-weight:700}  /* ключове слово псевдокоду */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* ідентифікатор */
+.cm{color:#6f6570;font-style:italic}/* коментар */
+.bad{color:#a01818;font-weight:700}
+.codes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.codes .dp-code{font-size:14.5px;line-height:1.6}
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:16.5px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--accent);background:var(--surf2);font-size:15.5px}
+.tb td.mono{font-family:var(--f-mono);font-weight:700}
+.tb td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+.tb tr:last-child td{border-bottom:0}
+
+.qs{display:flex;flex-direction:column;gap:10px}
+.qs .q{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--accent);
+       border-radius:0 10px 10px 0;padding:11px 16px;font-size:17px;line-height:1.55}
+.qs .q b{color:var(--accent)}
+
+.steps{display:flex;flex-direction:column;gap:11px}
+.step{display:flex;align-items:flex-start;gap:14px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:13px 17px}
+.step-n{width:32px;height:32px;border-radius:9px;background:var(--surf2);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:15px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:17.5px;line-height:1.55;color:var(--ink)}
+
+/* ─── практичний блок ─── */
+.prac{background:var(--surf2);border:2px solid #d9bfd2;border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--plum);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--plum)}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:16.5px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:5px 13px;flex-shrink:0}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--dim);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16.5px;flex-shrink:0;letter-spacing:1px;min-width:74px;
+      font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.lv-t{font-size:17px;line-height:1.6;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:11px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:15px}
+.note{font-size:16px;color:var(--faint);line-height:1.55}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.uk{color:var(--dim)}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:16.5px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16px;line-height:1.42}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.mw{background:var(--surface);border:2px solid #d9bfd2;border-radius:14px;padding:14px 18px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.35rem;color:var(--accent);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:16px;color:var(--dim);line-height:1.45}
+
+/* «я вмію» */
+.can{display:flex;flex-direction:column;gap:9px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:11px 16px;
+       font-size:17px;line-height:1.45}
+.can-b{width:22px;height:22px;border:2px solid var(--accent);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.72rem} h3{font-size:1.14rem}
+  .sh{margin-bottom:11px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:16.5px;line-height:1.55}
+  .card{padding:14px 16px} .card p,.card li{font-size:15.5px;line-height:1.5}
+  .hbox{font-size:16px;padding:10px 14px;margin:7px 0}
+  .tip{font-size:16px;padding:10px 13px;margin:8px 0}
+  .tip-ico{font-size:1.15rem}
+  .label{margin-bottom:7px}
+  .mt{margin-top:10px}
+  .two{gap:15px} .three{gap:11px}
+  .step{padding:10px 13px} .step-t{font-size:16px}
+  .step-n{width:28px;height:28px;font-size:14px}
+  .can-i{font-size:15.5px;padding:9px 13px}
+  .prac{padding:13px 16px} .lv{padding:9px 12px} .lv-t{font-size:15.5px}
+  .prac-lead{font-size:15.5px;margin-bottom:9px}
+  .ptime{font-size:14.5px;padding:4px 10px}
+  .mw{padding:11px 14px} .mw .w{font-size:1.15rem} .mw .t{font-size:14.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:15.5px} .vp .uk{font-size:15px}
+  .vg{gap:9px}
+  .tb th,.tb td{padding:6px 10px;font-size:15px}
+  .qs .q{font-size:15.5px;padding:9px 13px}
+  .dp-code{font-size:14px;line-height:1.55} .dp-bar{padding:6px 11px}
+  .codes .dp-code{font-size:13px;line-height:1.5}
+  .title-h1{font-size:2.3rem} .title-sub{font-size:1.12rem;margin-bottom:20px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 4: ряд «карт» для пошуку ═══ */
+.deck{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0}
+.cd{min-width:58px;height:74px;padding:0 8px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface);border:2px solid var(--plum);border-radius:9px;
+  font-family:var(--f-mono);font-weight:700;font-size:1.45rem;color:var(--ink);
+  box-shadow:0 2px 5px rgba(96,40,87,.08)}
+.deck.sm .cd{min-width:40px;height:50px;font-size:1.1rem;border-radius:7px}
+@media (max-height:800px){.cd{height:60px;min-width:50px;font-size:1.25rem}
+  .deck.sm .cd{height:42px;min-width:36px;font-size:1rem}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО: Words in use ─── */
+.wu{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px}
+.wu-i{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:8px 13px}
+.wu-w{display:block;font-family:var(--f-mono);font-weight:700;font-size:15.5px;
+      color:var(--accent);margin-bottom:3px}
+.wu-p{display:block;font-size:15px;line-height:1.34;margin-bottom:1px}
+.wu-p::before{content:"· ";color:var(--faint)}
+
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">7.7 Bubble sort</h1>
+      <p class="title-sub">Сортування бульбашкою · ACTIVITY 7.6 — колода карт · SKILLS FOCUS 7.1 і 7.2<br>
+        IT-англійська · 11 клас · Урок 5 з 36 · 2 жовтня · с. 161–166</p>
+      <div class="chips">
+        <span class="chip">bubble sort</span>
+        <span class="chip">swap</span>
+        <span class="chip">pass</span>
+        <span class="chip">Temp &#8592; DataArray[Index]</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── KEY WORD + MINI-VOCAB ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key word · с. 161</span>
+      <h2>Чотири слова, перш ніж почнемо</h2>
+    </div></div>
+    <div class="mini" style="grid-template-columns:1fr">
+      <div class="mw"><div class="w">bubble sort</div>
+        <div class="t">a sorting algorithm that moves through the list repeatedly swapping values in pairs</div></div>
+    </div>
+    <div class="mini mt" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="mw"><div class="w">swap</div>
+        <div class="t">поміняти місцями два значення</div></div>
+      <div class="mw"><div class="w">pass</div>
+        <div class="t">прохід: один раз через увесь список, від першої пари до останньої</div></div>
+      <div class="mw"><div class="w">ascending / descending</div>
+        <div class="t">за зростанням / за спаданням</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🔀</div><div>
+      <span class="label lp">Bubble sort · с. 161, 163</span>
+      <h2>Into a specific order</h2>
+    </div></div>
+    <p>«When writing a program you may need to sort a set of data into a specific order, for
+      example, <strong>ascending numerical order</strong> or <strong>descending alphabetical order</strong>.»</p>
+    <div class="two mt">
+      <div class="card"><h3>ascending numerical</h3>
+        <div class="deck sm"><span class="cd">1</span><span class="cd">2</span><span class="cd">5</span><span class="cd">6</span></div></div>
+      <div class="card"><h3>descending alphabetical</h3>
+        <div class="deck sm"><span class="cd">z</span><span class="cd">h</span><span class="cd">f</span><span class="cd">c</span><span class="cd">a</span></div></div>
+    </div>
+    <div class="hbox hm mt">SKILLS FOCUS 7.1: «first <b>identify the order</b> required, e.g. ascending or descending.
+      Then <b>identify the data item</b> being sorted, e.g. is it a number, a letter, a set of words, etc.»</div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🫧</div><div>
+      <span class="label lp">Bubble sort · с. 161</span>
+      <h2>Пара за парою</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t">«A bubble sort takes the first 2 values; value 1 and 2, and <b>compares</b> them.
+        If they are the wrong way around it <b>swaps</b> them.»</span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">«It then puts these back and takes values 2 and 3 and compares them.
+        If they are the wrong way around it swaps them.»</span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">«This repeats until it has worked all the way through the list once.»</span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t">«It then starts again with the first two values.»</span></div>
+    </div>
+    <div class="hbox hm mt">«It is called a bubble sort because it acts like a <b>bubble</b> moving across all the
+      elements to the end, then starting from the beginning.»</div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🛑</div><div>
+      <span class="label lr">When to stop · с. 161</span>
+      <h2>There are two ways to tell the algorithm when to stop</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>1 · XElements − 1 times</h3>
+        <p>«10 elements — the algorithm runs 9 times. 100 elements — it runs 99 times.»</p>
+        <p class="mt">«This is the easiest way to program it, but it is <b>not efficient</b>. All elements
+          might be in the correct order to begin with, but it is still going to run through the same
+          number of times.»</p></div>
+      <div class="card"><h3>2 · no changes</h3>
+        <p>«Either the algorithm has run through the list <span class="ic">XElements - 1</span> times,
+          <b>or</b> it has run through the list, checking all of the elements, and it has <b>not</b> made
+          any changes.»</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ACTIVITY 7.6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Activity 7.6</span>
+        <span class="t">Bubble sort with playing cards</span><span class="ptime">7 хвилин</span></div>
+      <p class="prac-lead">«Get a set of playing cards. Select 10 random cards and place them face down on the
+        table in a row. Perform a bubble sort to put the cards in ascending numerical order.» — с. 162</p>
+      <div class="two">
+        <div class="steps">
+          <div class="step"><span class="step-n">1</span><span class="step-t">Turn over the first two cards.</span></div>
+          <div class="step"><span class="step-n">2</span><span class="step-t">If the 1st is larger than the 2nd, swap them. Otherwise, do nothing.</span></div>
+          <div class="step"><span class="step-n">3</span><span class="step-t">Turn the cards back over.</span></div>
+          <div class="step"><span class="step-n">4</span><span class="step-t">Turn over the 2nd and 3rd cards.</span></div>
+        </div>
+        <div class="steps">
+          <div class="step"><span class="step-n">5</span><span class="step-t">Repeat step 2.</span></div>
+          <div class="step"><span class="step-n">6</span><span class="step-t">Repeat turning over the cards and swapping until you have been through all 10 cards once.</span></div>
+          <div class="step"><span class="step-n">7</span><span class="step-t">Did you make any swaps? If so, start again from step 1. If not, stop because the cards should be in order.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🃏</span>
+      <div>Кожен <span class="en">swap</span> — уголос: <i>«They are in the wrong order so swap them.»</i>
+        Рахуйте <span class="en">passes</span>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 7 ── SKILLS FOCUS 7.1 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🔢</div><div>
+      <span class="label lb">Skills focus 7.1 · с. 163</span>
+      <h2>Bubble sort of numerical data</h2>
+    </div></div>
+    <p>«For example: sort the numbers <span class="ic">6 2 5 1</span> into <strong>ascending numerical</strong> order.»</p>
+    <div class="deck mt"><span class="cd">6</span><span class="cd">2</span><span class="cd">5</span><span class="cd">1</span></div>
+    <p class="mt">«There are 4 numbers that need sorted into ascending numerical order. This means you keep on sorting until either:»</p>
+    <div class="two mt">
+      <div class="card"><h3>a</h3><p>you have passed through all numbers <b>3 times</b></p></div>
+      <div class="card"><h3>b</h3><p>you have passed through all the numbers once <b>without making any changes</b></p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПРИКЛАД ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">👀</div><div>
+      <span class="label lb">Приклад · Pass 1 · с. 163</span>
+      <h2>Work through the data items, comparing each pair in turn</h2>
+    </div></div>
+    <table class="tb">
+      <tr><th colspan="4">Data</th><th>Instructions</th></tr>
+      <tr><td class="c">6</td><td class="c">2</td><td class="c">5</td><td class="c">1</td><td></td></tr>
+      <tr><td class="c"><u>6</u></td><td class="c"><u>2</u></td><td class="c">5</td><td class="c">1</td><td>Compare the first two values.</td></tr>
+      <tr><td class="c"><b>2</b></td><td class="c"><b>6</b></td><td class="c">5</td><td class="c">1</td><td>They are in the wrong order so swap them.</td></tr>
+      <tr><td class="c">2</td><td class="c"><u>6</u></td><td class="c"><u>5</u></td><td class="c">1</td><td>Compare values 2 and 3.</td></tr>
+      <tr><td class="c">2</td><td class="c"><b>5</b></td><td class="c"><b>6</b></td><td class="c">1</td><td>They are in the wrong order so swap them.</td></tr>
+      <tr><td class="c">2</td><td class="c">5</td><td class="c"><u>6</u></td><td class="c"><u>1</u></td><td>Compare values 3 and 4.</td></tr>
+      <tr><td class="c">2</td><td class="c">5</td><td class="c"><b>1</b></td><td class="c"><b>6</b></td><td>They are in the wrong order so swap them.</td></tr>
+    </table>
+    <div class="hbox hm mt">«Now you have completed 1 pass, check if it should stop!» a — <b>False</b>, only 1 pass has been made ·
+      b — <b>False</b>, there has been at least one change.</div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ТЕПЕР САМОСТІЙНО ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Тепер самостійно</span>
+        <span class="t">Pass 2 і Pass 3 · с. 164</span><span class="ptime">5 хвилин</span></div>
+      <p class="prac-lead">Після Pass 1: <span class="ic">2 5 1 6</span>. У зошит — таблиця
+        <b>Data | Instructions</b>, як у прикладі. Після кожного проходу: <i>Should it stop?</i> — a і b.</p>
+      <div class="two">
+        <div class="card reveal">
+          <h3>Pass 2</h3>
+          <p class="rv-hint">Спершу зошит — потім клацни.</p>
+          <div class="rv-body">
+            <p><span class="ic">2 5</span> — in the correct order · <span class="ic">5 1</span> — wrong order, swap → <span class="ic">2 1 5 6</span> ·
+              <span class="ic">5 6</span> — correct order</p>
+            <p style="color:var(--accent)">a — False, only 2 passes · b — False, at least one change</p>
+          </div>
+        </div>
+        <div class="card reveal">
+          <h3>Pass 3</h3>
+          <p class="rv-hint">Спершу зошит — потім клацни.</p>
+          <div class="rv-body">
+            <p><span class="ic">2 1</span> — wrong order, swap → <span class="ic">1 2 5 6</span> ·
+              <span class="ic">2 5</span>, <span class="ic">5 6</span> — correct order</p>
+            <p style="color:var(--accent)">a — <b>True</b>, 3 passes have been made, so <b>stop</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── QUESTIONS SF 7.1 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">❔</div><div>
+      <span class="label lo">Skills focus 7.1 · Questions · с. 165</span>
+      <h2>6 2 5 1 → 1 2 5 6</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal"><h3>1 · How many swaps were made in this bubble sort?</h3>
+        <p class="rv-hint">Порахуй — потім клацни.</p>
+        <div class="rv-body"><p><b>5</b>: Pass 1 — 3 · Pass 2 — 1 · Pass 3 — 1</p></div></div>
+      <div class="card reveal"><h3>2 · Why did it stop after 3 passes?</h3>
+        <p class="rv-hint">Згадай критерії — потім клацни.</p>
+        <div class="rv-body"><p>4 numbers → it has passed through all numbers <b>3 times</b> (4 − 1). Criterion a.</p></div></div>
+      <div class="card cb reveal"><h3>3 · How would you change this process to put the data into descending numerical order?</h3>
+        <p class="rv-hint">Одне слово в кроці 2 — потім клацни.</p>
+        <div class="rv-body"><p>Swap if the 1st is <b>smaller</b> than the 2nd.</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── WORD BANK ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lo">Word bank · с. 161–166</span>
+      <h2>Робочі слова сортування</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">swap</span><span class="uk">поміняти місцями</span></div>
+      <div class="vp"><span class="en">pass</span><span class="uk">прохід через увесь список</span></div>
+      <div class="vp"><span class="en">in pairs</span><span class="uk">парами</span></div>
+      <div class="vp"><span class="en">repeatedly</span><span class="uk">раз за разом</span></div>
+      <div class="vp"><span class="en">in the wrong order</span><span class="uk">у неправильному порядку</span></div>
+      <div class="vp"><span class="en">in the correct order</span><span class="uk">у правильному порядку</span></div>
+      <div class="vp"><span class="en">numerical order</span><span class="uk">порядок чисел</span></div>
+      <div class="vp"><span class="en">alphabetical order</span><span class="uk">порядок абетки</span></div>
+      <div class="vp"><span class="en">criteria</span><span class="uk">критерії (однина — criterion)</span></div>
+      <div class="vp"><span class="en">changes</span><span class="uk">зміни: чи був хоч один swap</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── SKILLS FOCUS 7.2 · ПРИКЛАД ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lb">Skills focus 7.2 · Приклад · с. 165</span>
+      <h2>Bubble sort with characters into descending order</h2>
+    </div></div>
+    <p>«Put the characters <span class="ic">"z" "c" "f" "a" "h"</span> into descending alphabetical order.
+      First identify the data and method. This is <b>string data</b>, and into <b>descending alphabetical order</b>.»</p>
+    <p class="mt">Five characters → stop when: a — passed through all characters <b>4 times</b> · b — a pass without any changes.</p>
+    <table class="tb mt" style="max-width:640px">
+      <tr><th colspan="5">Pass 1 · «If the pair is in the incorrect order, swap them.»</th></tr>
+      <tr><td class="c">z</td><td class="c">c</td><td class="c">f</td><td class="c">a</td><td class="c">h</td></tr>
+      <tr><td class="c">z</td><td class="c"><b>f</b></td><td class="c"><b>c</b></td><td class="c">a</td><td class="c">h</td></tr>
+      <tr><td class="c">z</td><td class="c">f</td><td class="c">c</td><td class="c"><b>h</b></td><td class="c"><b>a</b></td></tr>
+    </table>
+    <div class="hbox hm mt">«Should it stop? It has not run 4 times. It has made changes. Repeat.»</div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ТЕПЕР САМОСТІЙНО ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Тепер самостійно</span>
+        <span class="t">Pass 2, 3, 4 · с. 165–166</span><span class="ptime">5 хвилин</span></div>
+      <p class="prac-lead">Після Pass 1: <span class="ic">z f c h a</span> · descending alphabetical.
+        У зошит — рядок після кожного проходу і <i>Should it stop?</i></p>
+      <div class="three">
+        <div class="card reveal"><h3>Pass 2</h3><p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p><span class="ic">z f h c a</span></p>
+            <p style="color:var(--accent)">Not 4 times, it made a change. Repeat.</p></div></div>
+        <div class="card reveal"><h3>Pass 3</h3><p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p><span class="ic">z h f c a</span></p>
+            <p style="color:var(--accent)">Not 4 times, it has made 1 change. Repeat.</p></div></div>
+        <div class="card cb reveal"><h3>Pass 4</h3><p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p><span class="ic">z h f c a</span></p>
+            <p style="color:var(--accent)">It has run 4 times — <b>stop</b>.</p></div></div>
+      </div>
+    </div>
+    <div class="two mt">
+      <div class="card reveal"><h3>1 · How many comparisons were made that did not result in swaps?</h3>
+        <p class="rv-hint">4 проходи × 4 порівняння — потім клацни.</p>
+        <div class="rv-body"><p>16 comparisons − 4 swaps = <b>12</b></p></div></div>
+      <div class="card reveal"><h3>2 · Strings instead of characters: 'zoo' 'farm' 'cat' 'horse' 'animal'?</h3>
+        <p class="rv-hint">Як порівняти два слова — потім клацни.</p>
+        <div class="rv-body"><p>Compare the first letters; if they are the same — the next letters. The swap rule does not change.</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── VERSION 1 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">⌨️</div><div>
+      <span class="label lb">Version 1 · с. 162</span>
+      <h2>Stopping only when it has run array length − 1 times</h2>
+    </div></div>
+    <div class="two wide-l">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">с. 162 · Version 1</span></div>
+        <div class="dp-code" style="font-size:14px;line-height:1.5"><span class="cm">//loop array length - 1 number of times</span>
+<span class="sk">FOR</span> <span class="sf">NumberPasses</span> &#8592; <span class="sn">0</span> <span class="sk">to</span> <span class="sk">LENGTH</span>(<span class="sf">DataArray</span>) - <span class="sn">1</span>
+    <span class="cm">//loop through each element in the array</span>
+    <span class="sk">FOR</span> <span class="sf">Index</span> &#8592; <span class="sn">0</span> <span class="sk">to</span> <span class="sk">LENGTH</span>(<span class="sf">DataArray</span>) - <span class="sn">1</span>
+        <span class="cm">//check if the data is in the correct order</span>
+        <span class="sk">IF</span> <span class="sf">DataArray</span>[<span class="sf">Index</span>] &gt; <span class="sf">DataArray</span>[<span class="sf">Index</span> + <span class="sn">1</span>] <span class="sk">THEN</span>
+            <span class="cm">//if not swap the items</span>
+            <span class="sf">Temp</span> &#8592; <span class="sf">DataArray</span>[<span class="sf">Index</span>]
+            <span class="sf">DataArray</span>[<span class="sf">Index</span>] &#8592; <span class="sf">DataArray</span>[<span class="sf">Index</span> + <span class="sn">1</span>]
+            <span class="sf">DataArray</span>[<span class="sf">Index</span> + <span class="sn">1</span>] &#8592; <span class="sf">Temp</span>
+        <span class="sk">ENDIF</span>
+    <span class="sk">NEXT</span> <span class="sf">Index</span>
+<span class="sk">NEXT</span> <span class="sf">NumberPasses</span></div>
+      </div>
+      <div>
+        <div class="card reveal"><h3>Swap через Temp</h3>
+          <p><span class="ic">DataArray = 6 2 5 1</span>, <span class="ic">Index = 0</span>.
+            Що в <span class="ic">Temp</span>, <span class="ic">DataArray[0]</span>, <span class="ic">DataArray[1]</span> після кожного з трьох рядків?</p>
+          <p class="rv-hint">Таблиця з трьох рядків у зошит — потім клацни.</p>
+          <div class="rv-body">
+            <table class="tb">
+              <tr><th>Рядок</th><th>Temp</th><th>[0]</th><th>[1]</th></tr>
+              <tr><td>Temp &#8592;</td><td class="c">6</td><td class="c">6</td><td class="c">2</td></tr>
+              <tr><td>[0] &#8592;</td><td class="c">6</td><td class="c">2</td><td class="c">2</td></tr>
+              <tr><td>[1] &#8592;</td><td class="c">6</td><td class="c">2</td><td class="c">6</td></tr>
+            </table>
+            <p style="color:var(--accent)">Без <span class="ic">Temp</span> шістка зникла б.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── VERSION 2 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">⏱️</div><div>
+      <span class="label lr">Version 2 · с. 162–163</span>
+      <h2>Stopping when there are no changes</h2>
+    </div></div>
+    <div class="two wide-l">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">Version 2 · коментарі скорочено · ° див. нижче</span></div>
+        <div class="dp-code" style="font-size:13.5px;line-height:1.45"><span class="sf">NumberPasses</span> &#8592; <span class="sn">0</span>
+<span class="cm">//continue until one pass has no changes (changes = false)</span>
+<span class="cm">//or it has looped array length - 1 times</span>
+<span class="sk">WHILE</span> <span class="sf">Changes</span> = <span class="sk">TRUE</span> <span class="sk">and</span> <span class="sf">NumberPasses</span> &lt;= <span class="sk">LENGTH</span>(<span class="sf">DataArray</span>) - <span class="sn">1</span> <span class="sk">DO</span>
+    <span class="cm">//reset changes each time a new pass starts</span>
+    <span class="sf">Changes</span> &#8592; <span class="sk">FALSE</span>
+    <span class="sk">FOR</span> <span class="sf">Index</span> &#8592; <span class="sn">0</span> <span class="sk">to</span> <span class="sk">LENGTH</span>(<span class="sf">DataArray</span>) - <span class="sn">1</span>
+        <span class="sk">IF</span> <span class="sf">DataArray</span>[<span class="sf">Index</span>] &gt; <span class="sf">DataArray</span>[<span class="sf">Index</span> + <span class="sn">1</span>] <span class="sk">THEN</span>
+            <span class="sf">Temp</span> &#8592; <span class="sf">DataArray</span>[<span class="sf">Index</span>]
+            <span class="sf">DataArray</span>[<span class="sf">Index</span>] &#8592; <span class="sf">DataArray</span>[<span class="sf">Index</span> + <span class="sn">1</span>]
+            <span class="sf">DataArray</span>[<span class="sf">Index</span> + <span class="sn">1</span>] &#8592; <span class="sf">Temp</span>
+            <span class="sf">Changes</span> &#8592; <span class="sk">TRUE</span>
+        <span class="sk">ENDIF</span>
+    <span class="sk">NEXT</span> <span class="sf">Index</span>
+    <span class="sf">NumberPasses</span> &#8592; <span class="sf">NumberPasses</span> + <span class="sn">1</span>°
+<span class="sk">ENDWHILE</span></div>
+      </div>
+      <div>
+        <div class="card reveal"><h3>Question 20 · с. 167</h3>
+          <p>Explain the difference in efficiency between the two different bubble sort algorithms.</p>
+          <p class="rv-hint">Дві умови зупинки — потім клацни.</p>
+          <div class="rv-body"><p>Version 1 always runs length − 1 passes, even if the data is already in order.
+            Version 2 stops after a pass with <b>no changes</b> → fewer passes and comparisons → <b>more efficient</b>.</p></div>
+        </div>
+        <p class="note mt">° У книжці цей рядок надруковано обірвано: «NumberPasses ENDWHILE».</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ПРАКТИКА ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Тепер самостійно</span>
+        <span class="t">Perform a bubble sort · с. 167, 194</span><span class="ptime">6 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span><span class="lv-t"><b>Q18</b> · ascending numerical ·
+          <span class="ic">1 5 6 2 9 0 1</span> — лише Pass 1.</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t"><b>Q18</b> до кінця, потім <b>Q19</b> · descending numerical ·
+          <span class="ic">60 2 40 52 3 5</span>. Коли зупинить Version 2?</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t"><b>Exam-style Q7</b> · <b>Show</b> the stages · ascending alphabetical ·
+          <span class="ic">apple pear banana pineapple orange peach</span> <b>[5]</b></span></div>
+      </div>
+    </div>
+    <div class="three mt">
+      <div class="card reveal"><h3>Q18</h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p style="font-family:var(--f-mono);font-size:14px;line-height:1.5">P1 1 5 2 6 0 1 9<br>P2 1 2 5 0 1 6 9<br>P3 1 2 0 1 5 6 9<br>P4 1 0 1 2 5 6 9<br>P5 0 1 1 2 5 6 9<br>P6 — no changes</p></div></div>
+      <div class="card reveal"><h3>Q19</h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p style="font-family:var(--f-mono);font-size:14px;line-height:1.5">P1 60 40 52 3 5 2<br>P2 60 52 40 5 3 2<br>P3 — no changes → stop</p></div></div>
+      <div class="card cb reveal"><h3>Exam Q7</h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p style="font-size:14.5px;line-height:1.45">P1 apple banana pear orange peach pineapple<br>
+          P2 apple banana orange peach pear pineapple<br>P3 no changes → stop</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key vocabulary</span>
+      <h2>Слова уроку</h2>
+    </div></div>
+    <div class="vg" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="vp"><span class="en">bubble sort</span><span class="uk">сортування бульбашкою</span></div>
+      <div class="vp"><span class="en">sorting algorithm</span><span class="uk">алгоритм сортування</span></div>
+      <div class="vp"><span class="en">swap</span><span class="uk">поміняти місцями</span></div>
+      <div class="vp"><span class="en">pass</span><span class="uk">прохід</span></div>
+      <div class="vp"><span class="en">in pairs</span><span class="uk">парами</span></div>
+      <div class="vp"><span class="en">repeatedly</span><span class="uk">раз за разом</span></div>
+      <div class="vp"><span class="en">ascending</span><span class="uk">за зростанням</span></div>
+      <div class="vp"><span class="en">descending</span><span class="uk">за спаданням</span></div>
+      <div class="vp"><span class="en">numerical order</span><span class="uk">порядок чисел</span></div>
+      <div class="vp"><span class="en">alphabetical order</span><span class="uk">порядок абетки</span></div>
+      <div class="vp"><span class="en">wrong / correct order</span><span class="uk">неправильний / правильний порядок</span></div>
+      <div class="vp"><span class="en">criteria</span><span class="uk">критерії</span></div>
+      <div class="vp"><span class="en">comparison</span><span class="uk">порівняння</span></div>
+      <div class="vp"><span class="en">changes</span><span class="uk">зміни</span></div>
+      <div class="vp"><span class="en">string data</span><span class="uk">рядкові дані</span></div>
+      <div class="vp"><span class="en">character</span><span class="uk">символ</span></div>
+      <div class="vp"><span class="en">not efficient</span><span class="uk">неощадливий</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── WORDS IN USE ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">💬</div><div>
+      <span class="label lo">Словник · як це вживати</span>
+      <h2>Words in use</h2>
+    </div></div>
+    <div class="wu">
+      <div class="wu-i"><span class="wu-w">bubble sort</span>
+        <span class="wu-p">A bubble sort compares the items in pairs repeatedly.</span>
+        <span class="wu-p">Perform a bubble sort to put the following data into ascending numerical order.</span></div>
+      <div class="wu-i"><span class="wu-w">swap</span>
+        <span class="wu-p">If they are the wrong way around it swaps them.</span>
+        <span class="wu-p">They are in the wrong order so swap them.</span></div>
+      <div class="wu-i"><span class="wu-w">pass</span>
+        <span class="wu-p">Now you have completed 1 pass, check if it should stop!</span>
+        <span class="wu-p">You have passed through all numbers 3 times.</span></div>
+      <div class="wu-i"><span class="wu-w">ascending / descending</span>
+        <span class="wu-p">…ascending numerical order or descending alphabetical order.</span>
+        <span class="wu-p">First identify the order required.</span></div>
+      <div class="wu-i"><span class="wu-w">criteria</span>
+        <span class="wu-p">Compare to the two criteria.</span>
+        <span class="wu-p">There are two ways to tell the algorithm when to stop.</span></div>
+      <div class="wu-i"><span class="wu-w">changes</span>
+        <span class="wu-p">It has not run 4 times. It has made changes. Repeat.</span>
+        <span class="wu-p">…continue until one pass has no changes.</span></div>
+      <div class="wu-i"><span class="wu-w">efficient</span>
+        <span class="wu-p">This is the easiest way to program it, but it is not efficient.</span>
+        <span class="wu-p">Explain the difference in efficiency between the two algorithms.</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">☑️</div><div>
+      <span class="label lr">I can…</span>
+      <h2>Чек-лист уроку</h2>
+    </div></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div><div>I can explain how a
+        <span class="en">bubble sort</span> works.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can show the stages of a bubble sort — pass by pass —
+        in <span class="en">ascending</span> or <span class="en">descending</span> order.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can check the two <span class="en">criteria</span> after each pass:
+        should it stop?</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can explain why Version 2 is more
+        <span class="en">efficient</span> than Version 1.</div></div>
+    </div>
+    <div class="hbox hm mt">Summary, с. 192: «A linear search checks each item of data in turn. A bubble sort compares the items in pairs repeatedly.»</div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 6 · 9 жовтня · Validation</p>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🏠</div><div>
+      <span class="label lo">Homework</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox hm">Письмово, від руки — олівцем або ручкою. Комп'ютер не потрібен.
+      Приносимо на урок 6, <strong>9 жовтня</strong>.</div>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span><div class="step-t">
+        <span class="ic">6 2 5 1</span> — у <span class="en">descending numerical order</span>.
+        Рядок після кожного <span class="en">pass</span>. Після якого проходу зупиниться Version 2 і чому?</div></div>
+      <div class="step"><span class="step-n">2</span><div class="step-t">
+        <span class="ic">zoo farm cat horse animal</span> (с. 166) — у <span class="en">ascending alphabetical order</span>.
+        Рядок після кожного <span class="en">pass</span>. Скільки <span class="en">swaps</span> разом?</div></div>
+      <div class="step"><span class="step-n">3</span><div class="step-t">
+        Version 1, <span class="ic">DataArray = 2 5 1 6</span>, <span class="ic">Index = 1</span>. Що в
+        <span class="ic">Temp</span>, <span class="ic">DataArray[1]</span>, <span class="ic">DataArray[2]</span>
+        після кожного з трьох рядків swap?</div></div>
+      <div class="step"><span class="step-n">4</span><div class="step-t">
+        <span class="en">Translate:</span> <span class="en">swap</span> · <span class="en">pass</span> ·
+        <span class="en">in pairs</span> · <span class="en">repeatedly</span> · <span class="en">criteria</span> ·
+        <span class="en">descending</span>.</div></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
