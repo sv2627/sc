@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · Front-end II · 7 клас · Урок 6</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  АРКУШ ДЛЯ СХОВИЩА · 80 % площі — робота олівцем
+  Курс          Front-end II
+  Клас          7
+  Урок          6 / 36 · 07.10.2026 · середа
+  Тема          Практична робота №1. Сторінка-каталог
+  ────────────────────────────────────────────────────────────────
+  ⚠️ У КЛАСІ НЕ РОЗДАЄТЬСЯ (урок із ноутбуками, правило 24.09.2026).
+     Друкується на випадок тривоги. Слайди на аркуш не посилаються.
+  ⚠️ ЦЕ НЕ ТЕКСТ ПРАКТИЧНОЇ. Практична робиться на машині й
+     оцінюється за критеріями з конспекту. Аркуш — паперове
+     повторення тих самих тем (каркас, Grid, rem і %), якщо урок
+     обірвала тривога. Помилки тут — інші, ніж на слайді 14.
+  ⚠️ Відповіді — у конспекті, розділ «Аркуш — відповіді».
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок.
+  ОБСЯГ         Рівно одна сторінка A4.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+/* ─── довідка: єдиний стиснутий блок ─── */
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+/* ─── завдання ─── */
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b h2 .tag{float:right; margin-left:4mm; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.4fr 1fr}
+.two.k46{grid-template-columns:1fr 1.4fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+/* лінійки для письма */
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7.2mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:10pt; font-weight:700; padding-bottom:.4mm}
+.sl.wide span{min-width:52mm}
+
+/* рамка для запису */
+.wb{border:var(--line); min-height:16mm; padding:1.4mm 2mm}
+.wb .cap{font-family:var(--fm); font-size:9pt; font-weight:700; text-transform:uppercase;
+  letter-spacing:.6px}
+
+/* схема з пропусками */
+.flow{display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:2mm; align-items:center}
+.fl-b{border:var(--line); min-height:17mm; padding:1.2mm 1.8mm; font-size:10pt; line-height:1.18}
+.fl-a{font-family:var(--fm); font-size:13pt; font-weight:800; text-align:center}
+
+/* таблиця «постав букву» */
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.8mm 1.8mm; font-size:10.5pt; text-align:left}
+table.t th{font-size:9.5pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:22mm; text-align:center}
+table.t td.b2{width:34mm}
+
+/* словник із порожньою колонкою */
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.5mm 0; font-size:11pt; vertical-align:bottom}
+table.voc td.en{width:44%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+pre.c{font-family:var(--fm); font-size:10.5pt; line-height:1.32; border:var(--line);
+  padding:1.6mm 2.2mm; white-space:pre-wrap; font-weight:700}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4 (використовується й тут) ─── */
+table.t td.m{font-family:var(--fm); font-weight:700; font-size:9.8pt}
+/* мініатюра сітки для «напиши правило за малюнком» — тільки чорні рамки */
+.gp{display:grid; gap:1.4mm; border:var(--line); padding:1.4mm; height:13mm}
+.gp span{border:1.5px solid #000; font-family:var(--fm); font-size:8.5pt; font-weight:700;
+  display:flex; align-items:center; justify-content:center}
+.pics{display:grid; grid-template-columns:1fr 1fr 1fr; gap:4mm}
+.pics .cap{font-family:var(--fm); font-size:9pt; font-weight:700; margin-bottom:.6mm}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 5 ─── */
+.pics.p4{grid-template-columns:1fr 1fr 1fr 1fr}
+.gp.t{height:17mm}
+.gp span.w{background:#000; color:#fff}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6: схема сторінки з номерами частин ─── */
+.wf{border:var(--line); padding:1.4mm; font-size:9.6pt; font-weight:700}
+.wf .z{border:1.5px solid #000; padding:.7mm 1.6mm; margin-top:1mm}
+.wf .z:first-child{margin-top:0}
+.wf .n{display:inline-block; background:#000; color:#fff; font-family:var(--fm); font-size:9pt;
+  padding:0 1.4mm; margin-right:1.6mm}
+.wf .zl{display:flex; justify-content:space-between; align-items:flex-end; gap:2mm}
+.wf .bl{flex:0 0 24mm; border-bottom:var(--thin); height:5mm}
+.wf .row{display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.4mm}
+.tri{display:grid; grid-template-columns:1fr 1fr 1fr; gap:4mm; align-items:start}
+.wf .in{display:flex; align-items:flex-end; gap:2.4mm}
+.wf .in .z{margin-top:0; padding:.3mm 1.6mm}
+.wf .in b{font-family:var(--fm); font-size:9pt}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>Front-end II &#183; 7 клас &#183; Урок 6 / 36 &#183; 7 жовтня</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Практична робота №1. Сторінка-каталог</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Каркас</p>
+        <p><code>header</code> &#8212; назва й <code>nav</code></p>
+        <p><code>main</code> &#8212; один, у ньому один <code>h1</code></p>
+        <p><code>section</code> + <code>h2</code> &#183; картка &#8212; <code>article</code></p>
+      </div>
+      <div>
+        <p class="rh">Grid &#8212; батькові</p>
+        <p><code>display: grid;</code></p>
+        <p><code>grid-template-columns: repeat(3, 1fr);</code></p>
+        <p><code>gap: 1rem;</code> &#183; картці: <code>span 2</code></p>
+      </div>
+      <div>
+        <p class="rh">Одиниці</p>
+        <p><code>1rem</code> = 16px &#8212; текст і відступи</p>
+        <p><code>80%</code> &#8212; від ширини батька</p>
+        <p><code>margin: 0 auto;</code> &#8212; по центру</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b">
+    <h2>1 &#183; Підпиши частини сторінки<span class="tag">кожна рамка &#8212; тег; впиши його</span></h2>
+    <div class="wf">
+      <div class="z"><div class="zl"><span class="in"><span><span class="n">1</span>BOOKSHOP</span>
+          <span class="z"><span class="n">2</span>Головна &#183; Каталог &#183; Контакти</span></span>
+        <span class="in"><b>1</b><span class="bl"></span><b>2</b><span class="bl"></span></span></div></div>
+      <div class="z"><div class="zl"><span class="in"><span><span class="n">3</span>усе між шапкою й підвалом</span>
+          <span class="z"><span class="n">4</span>Каталог книжок &#8212; назва сторінки</span></span>
+        <span class="in"><b>3</b><span class="bl"></span><b>4</b><span class="bl"></span></span></div>
+        <div class="z"><div class="zl"><span><span class="n">5</span>Фентезі &#8212; розділ із заголовком</span><span class="in"><b>5</b><span class="bl"></span></span></div>
+          <div class="row" style="margin-top:1mm">
+            <div class="z"><span class="n">6</span>Гобіт &#183; 320 грн</div>
+            <div class="z"><span class="n">6</span>Дюна &#183; 410 грн</div>
+            <div class="z"><span class="n">6</span>Відьмак &#183; 380 грн</div></div>
+          <div class="zl" style="margin-top:.8mm"><span>Кожна рамка 6 &#8212; однаковий тег:</span><span class="in"><b>6</b><span class="bl"></span></span></div></div></div>
+      <div class="z"><div class="zl"><span><span class="n">7</span>&#169; 2026 BookShop</span><span class="in"><b>7</b><span class="bl"></span></span></div></div>
+    </div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>2 &#183; Намалюй сітку<span class="tag">пронумеруй картки</span></h2>
+      <pre class="c">/* repeat(4, 1fr); 7 карток */
+/* картка 1: */ grid-column: span 2;</pre>
+      <div class="wb" style="margin-top:1.2mm;min-height:24mm"></div>
+    </div>
+    <div>
+      <h2>3 &#183; Переведи в rem<span class="tag">1rem = 16px</span></h2>
+      <table class="t">
+        <tr><th>px</th><th>rem</th></tr>
+        <tr><td>32px &#8212; заголовок h1</td><td class="b2"></td></tr>
+        <tr><td>24px &#8212; заголовок h2</td><td class="b2"></td></tr>
+        <tr><td>16px &#8212; текст</td><td class="b2"></td></tr>
+        <tr><td>8px &#8212; малий відступ</td><td class="b2"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>4 &#183; Що не так?<span class="tag">напиши, як виправити</span></h2>
+    <div class="tri">
+      <div>
+        <pre class="c">.gallery {
+  display: grid;
+  gap: 1rem; }
+/* одна колонка */</pre>
+        <div class="ln s"></div><div class="ln s"></div>
+      </div>
+      <div>
+        <pre class="c">main {
+  width: 80%;
+  margin: auto 0; }
+/* не по центру */</pre>
+        <div class="ln s"></div><div class="ln s"></div>
+      </div>
+      <div>
+        <pre class="c">&lt;main&gt;
+ &lt;h1&gt;Книжки&lt;/h1&gt;
+ &lt;section&gt;
+  &lt;h1&gt;Фентезі&lt;/h1&gt;</pre>
+        <div class="ln s"></div><div class="ln s"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="b two k64">
+    <div>
+      <h2>5 &#183; Напиши CSS<span class="tag">за описом</span></h2>
+      <p class="q"><b>а)</b> <code>.gallery</code> &#8212; сітка з трьох однакових колонок, проміжок 1rem</p>
+      <div class="ln s"></div><div class="ln s"></div><div class="ln s"></div>
+      <p class="q" style="margin-top:1mm"><b>б)</b> <code>main</code> &#8212; 80 % ширини, по центру</p>
+      <div class="ln s"></div><div class="ln s"></div>
+    </div>
+    <div>
+      <h2>6 &#183; Словник</h2>
+      <table class="voc">
+        <tr><td class="en">catalog</td><td></td></tr>
+        <tr><td class="en">gallery</td><td></td></tr>
+        <tr><td class="en">card</td><td></td></tr>
+        <tr><td class="en">price</td><td></td></tr>
+        <tr><td class="en">layout</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>Front-end II &#183; 7 клас</span>
+    <span>Урок 6 &#183; 07.10.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

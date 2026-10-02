@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Клас і обʼєкт · Мобільна розробка Flutter · 10 клас · Урок 8</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Мобільна розробка Flutter (Flutter I + II за рік)
+  Клас          10
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · середа 15:20, Медіатека
+  Урок          8 з 68 · 07.10.2026
+  Тема          Клас і обʼєкт
+  Тривалість    45 хв — розминка 2 хв + показ ~16 хв + практика 26 хв
+                (три блоки «приклад → самостійно» по 6 хв, практика 8 хв)
+  Акцент        blue (#0253b3)
+  Слайдів       25
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. DartPad у браузері, як на уроках 1–7.
+  ────────────────────────────────────────────────────────────────
+  ПЛАН          office/plany/06-flutter-10.md, розділ 6, урок 8
+                ЗМІНЕНО 02.10.2026 на запит: уроки 8 і 9 помінялись
+                місцями. Урок 8 — «Клас і обʼєкт» (було 9-м:
+                «Навіщо клас, коли є Map. class Game, поля, метод,
+                this»), урок 9 — міні-проєкт I уже на класах.
+                Приклад — не Game, а Fighter: продовжуємо бій з уроку 7.
+  Місток        з уроку 7: боєць як Map {'imia', 'hp', 'ataka'},
+                attack(a, b), бій while. Тут — той самий бій на класі
+                (слайд 16), ті самі числа 30/12 проти 40/9.
+                Далі: урок 9 (чт 08.10) — міні-проєкт I «Симуляція
+                бою» на класі Fighter з цього уроку.
+  ────────────────────────────────────────────────────────────────
+  ➕ ДОДАНО ПОНАД ПЛАН (на запит 02.10.2026 + «повна родина»):
+     • конструктор Fighter(this.name, this.hp, this.attack) — без
+       нього клас із ненульовими полями не створити; іменовані
+       параметри, toString — урок 10, як у плані
+     • усі види методів на одному слайді (12): void, що міняє інший
+       обʼєкт / свій; =>; повертає bool / String / int
+     • обʼєкт приходить у функцію тим самим (слайд 7) — як Map на 7
+     • правило «сутність → class, словник → Map» (слайд 17) — Map
+       НЕ виганяємо, показуємо, де він доречний (перемоги за іменем)
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ФОРМАТ «ПРИКЛАД → ТЕПЕР САМОСТІЙНО». Практика 26 хв із 45.
+     слайд 8  (6 хв)  перший клас, поля, створення обʼєктів
+     слайд 13 (6 хв)  методи isAlive, info, hit, heal
+     слайд 15 (6 хв)  команда List<Fighter>, totalHp, strongest
+     слайди 19–20 (8 хв) бій з уроку 7 на класах ⭐ / ⭐⭐ / ⭐⭐⭐
+                      + банк (слайд 21)
+     слайд 25 — домашнє: DartPad, код повідомленням на платформі
+       до 08.10 (урок 9); відповіді в конспекті
+     ⛔ НЕ РІЗАТИ слайд 18 (довідник) і слайди 19–20 (практика).
+     ЯКЩО НЕ ВСТИГАЄТЕ — ріжеться показ, НЕ практика. Знімати:
+       слайд 5 (анатомія — сказати по коду слайда 4),
+       слайд 12 (види методів — таблиця є в довіднику),
+       слайди 22–23 (пастки й словник — усно під час практики).
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ГОЛОВНА ДУМКА: клас — опис сутності, обʼєкт — конкретний
+     екземпляр. Ключі Map стають полями з типами: помилку в назві
+     видно до запуску, редактор підказує поля, дії живуть поруч
+     із даними (методи). Map лишається для справжніх словників.
+  ⚠️ ЩО ПЛУТАЮТЬ — слайд 22 і конспект.
+  ⚠️ КОД НА СЛАЙДАХ — ASCII У РЯДКАХ (копіювання з PDF у DartPad):
+     імена латиницею, лог англійською. Кирилиця лише в коментарях.
+  ⚠️ ЕТАЛОННИЙ БІЙ (слайди 16, 19) — без Random:
+     Andrii 30/12 (бʼє першим) проти Bohdan 40/9 → 4 раунди,
+     Winner: Andrii, 3 hp. Ті самі числа, що Lytsar/Ork на уроці 7.
+  ⛔ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • іменовані параметри конструктора, toString — урок 10
+     • sort з compareTo — урок 11 (тут лише ⭐⭐ з готовою формулою)
+     • ?, ??, !, late — урок 12; extends — урок 13
+     • Оцінювання — у конспекті
+  ✅ КОД ПЕРЕВІРЕНО: Dart SDK 3.13.4 (та сама версія, що DartPad
+     02.10.2026) — dart analyze + dart run, вивід на слайдах
+     скопійовано з реального запуску.
+  ────────────────────────────────────────────────────────────────
+  Аркуш         rozdatka.html — 1 сторінка A4, для сховища
+  Конспект      2026-27-teacher/aplus/10-flutter/u08/konspekt.md
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: акцент курсу — синій із палітри. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#eef1f8; --border:#dcdfe9;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(2,83,179,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lr{background:#fae7e8;color:var(--rose)}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(2,83,179,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#f9fbfd;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:14px 19px;font-family:var(--f-mono);
+        font-size:16px;border-top:1.5px solid var(--border);white-space:pre-wrap}
+.dp-out .lbl{font-family:var(--f-body);font-size:13px;color:var(--faint);
+             text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:6px}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #f9fbfd */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#6b6a72;font-style:italic}/* коментар */
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--blue);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid #b9c8e6;border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--blue);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--blue)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+.uk{color:var(--dim)}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--blue);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .dp-out{font-size:14.5px;padding:11px 15px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .demo,.solo{padding:10px 13px}
+  .demo .dp-code,.solo .dp-code{font-size:14.5px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .bank{gap:8px} .bk{padding:9px 12px;font-size:15px}
+  .refg{gap:6px} .rf{padding:6px 9px}
+  .rf .rt{font-size:13px;flex-basis:110px} .rf .rc{font-size:13px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+.demo .dp-code{border:1px solid var(--border);border-radius:9px;padding:11px 14px;
+  font-size:16px;line-height:1.65}
+
+/* довідник конструкцій — слайд 18 */
+.refg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rf{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+    padding:8px 12px;display:flex;align-items:baseline;gap:10px}
+.rf .rt{font-size:14.5px;color:var(--dim);flex:0 0 128px;line-height:1.3}
+.rf .rc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--brand);
+        line-height:1.35;flex:1}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4 ─── */
+.rv-body .mono{font-family:var(--f-mono);white-space:pre-wrap}
+.hbox.hp{border-color:var(--plum)}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Клас і обʼєкт</h1>
+      <p class="title-sub">Боєць з уроку 7 — тепер не Map, а клас: поля, конструктор, методи, <span class="en">this</span>, список обʼєктів<br>Мобільна розробка Flutter · 10 клас · Урок 8 з 68 · 7 жовтня</p>
+      <div class="chips">
+        <span class="chip">class Fighter</span>
+        <span class="chip">поля</span>
+        <span class="chip">конструктор</span>
+        <span class="chip">this</span>
+        <span class="chip">методи</span>
+        <span class="chip">List&lt;Fighter&gt;</span>
+        <span class="chip">class чи Map</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔥</div><div>
+      <span class="label lb">Розминка · 2 хв</span>
+      <h2>З уроку 7: боєць як Map</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+<div class="dp-code"><span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt; a = {<span class="ss">'imia'</span>: <span class="ss">'Andrii'</span>, <span class="ss">'hp'</span>: <span class="sn">30</span>, <span class="ss">'ataka'</span>: <span class="sn">12</span>};
+<span class="sf">print</span>(a[<span class="ss">'ataka'</span>]);
+<span class="sf">print</span>(a[<span class="ss">'atak'</span>]);
+<span class="sf">print</span>(a[<span class="ss">'hp'</span>] - a[<span class="ss">'ataka'</span>]);
+a[<span class="ss">'hp'</span>] = <span class="ss">'sto'</span>;
+<span class="sf">print</span>(a[<span class="ss">'hp'</span>]);</div>
+</div>
+<div class="card cm reveal">
+  <h3>Відповідь</h3>
+  <p class="rv-hint">Спершу скажи сам, потім клацни.</p>
+  <div class="rv-body">
+      <p class="mono">12
+null
+18
+sto</p>
+      <p class="mt">Ключ <span class="en">'atak'</span> з помилкою — Dart <b>мовчить</b> і дає
+        <span class="en">null</span>. Текст <span class="en">'sto'</span> замість числа — теж пройшло</p>
+  </div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🧩</div><div>
+      <span class="label lm">Навіщо</span>
+      <h2>Map для бійця: де він підводить</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.25fr 1fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+<div class="dp-code"><span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt; a = {<span class="ss">'imia'</span>: <span class="ss">'Andrii'</span>, <span class="ss">'hp'</span>: <span class="sn">30</span>, <span class="ss">'ataka'</span>: <span class="sn">12</span>};
+<span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">dynamic</span>&gt; b = {<span class="ss">'imia'</span>: <span class="ss">'Bohdan'</span>, <span class="ss">'hp'</span>: <span class="sn">40</span>, <span class="ss">'ataka'</span>: <span class="sn">9</span>};
+
+b[<span class="ss">'hp'</span>] = b[<span class="ss">'hp'</span>] - a[<span class="ss">'atak'</span>];   <span class="cm">// одна літера</span></div>
+<div class="dp-out"><span class="lbl">Вивід</span>Unhandled exception:
+type 'Null' is not a subtype of type 'num'</div>
+</div>
+      <div>
+        <div class="hbox hm"><b>1 · Помилка в ключі</b> видна лише після запуску. До запуску
+          редактор нічого не підкреслює</div>
+        <div class="hbox"><b>2 · Немає підказок.</b> Після <span class="en">a['</span> редактор не знає, які ключі
+          є в бійця</div>
+        <div class="hbox ho"><b>3 · Тип dynamic.</b> У <span class="en">hp</span> можна покласти текст</div>
+        <div class="hbox hp"><b>4 · Дані окремо, дії окремо.</b> <span class="en">attack(a, b)</span> лежить
+          десь у файлі, не поруч із бійцем</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">📐</div><div>
+      <span class="label lb">Нове</span>
+      <h2>Клас — опис. Обʼєкт — конкретний боєць</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+<div class="dp-code"><span class="sk">class</span> <span class="sk">Fighter</span> {
+  <span class="sk">String</span> name;
+  <span class="sk">int</span> hp;
+  <span class="sk">int</span> attack;
+
+  <span class="sk">Fighter</span>(<span class="sk">this</span>.name, <span class="sk">this</span>.hp, <span class="sk">this</span>.attack);
+}
+
+<span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">Fighter</span> a = <span class="sk">Fighter</span>(<span class="ss">'Andrii'</span>, <span class="sn">30</span>, <span class="sn">12</span>);
+  <span class="sk">Fighter</span> b = <span class="sk">Fighter</span>(<span class="ss">'Bohdan'</span>, <span class="sn">40</span>, <span class="sn">9</span>);
+  <span class="sf">print</span>(a.name);
+  <span class="sf">print</span>(b.hp - a.attack);
+}</div>
+<div class="dp-out"><span class="lbl">Вивід</span>Andrii
+28</div>
+</div>
+      <table class="tb">
+        <tr><th>Слово</th><th>Що це</th></tr>
+        <tr><td class="mono">class</td><td>опис: які поля є в кожного бійця</td></tr>
+        <tr><td class="mono">object</td><td>конкретний боєць, створений за описом</td></tr>
+        <tr><td class="mono">field</td><td>поле: <span class="en">name</span>, <span class="en">hp</span>, <span class="en">attack</span></td></tr>
+        <tr><td class="mono">constructor</td><td>створює обʼєкт і заповнює поля</td></tr>
+        <tr><td class="mono">a.hp</td><td>поле обʼєкта <span class="en">a</span> через крапку</td></tr>
+      </table>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🔍</div><div>
+      <span class="label lb">Рядок за рядком</span>
+      <h2>Що означає кожен рядок класу</h2>
+    </div></div>
+
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><span class="en">class Fighter {</span> — назва класу з <b>великої</b>
+          літери, одним словом. Це новий тип, як <span class="en">int</span> чи <span class="en">String</span></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><span class="en">String name; int hp; int attack;</span> — <b>поля</b>: тип і
+          назва. Вони є в кожного обʼєкта цього класу</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><span class="en">Fighter(this.name, this.hp, this.attack);</span> —
+          <b>конструктор</b>, назва така сама, як у класу. <span class="en">this.name</span> — «перший
+          аргумент поклади в поле <span class="en">name</span> цього обʼєкта»</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><span class="en">Fighter('Andrii', 30, 12)</span> — створення обʼєкта.
+          Аргументи йдуть <b>у тому ж порядку</b>, що й у конструкторі</span></div>
+      <div class="step"><span class="step-n">5</span>
+        <span class="step-t"><span class="en">a.hp</span> — поле конкретного обʼєкта. Його можна
+          читати й міняти: <span class="en">a.hp = a.hp - 9;</span></span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lb">Було → стало</span>
+      <h2>Той самий боєць: Map і клас</h2>
+    </div></div>
+
+    <table class="tb">
+      <tr><th>Map (урок 7)</th><th>Клас (сьогодні)</th></tr>
+      <tr><td class="mono">Map&lt;String, dynamic&gt; h = {'imia': 'Andrii', 'hp': 30, 'ataka': 12};</td>
+          <td class="mono">Fighter a = Fighter('Andrii', 30, 12);</td></tr>
+      <tr><td class="mono">h['hp']</td><td class="mono">a.hp</td></tr>
+      <tr><td class="mono">h['hp'] = h['hp'] - 9;</td><td class="mono">a.hp = a.hp - 9;</td></tr>
+      <tr><td class="mono">h['atak'] → null, падає під час запуску</td>
+          <td class="mono">a.atack → підкреслено ще до запуску</td></tr>
+      <tr><td class="mono">h['hp'] = 'sto'; → пройде</td>
+          <td class="mono">a.hp = 'sto'; → помилка типу</td></tr>
+      <tr><td class="mono">List&lt;Map&lt;String, dynamic&gt;&gt;</td><td class="mono">List&lt;Fighter&gt;</td></tr>
+    </table>
+    <div class="hbox hm mt">Ключі Map стали <b>полями</b> класу. Тип кожного поля записаний один раз —
+      у класі, а не в кожній функції</div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Копія чи той самий?</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">main.dart · клас Fighter — вище</span></div>
+<div class="dp-code"><span class="sk">void</span> <span class="sf">poison</span>(<span class="sk">Fighter</span> f) {
+  f.hp = f.hp - <span class="sn">5</span>;
+}
+
+<span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">Fighter</span> a = <span class="sk">Fighter</span>(<span class="ss">'Andrii'</span>, <span class="sn">30</span>, <span class="sn">12</span>);
+  <span class="sk">Fighter</span> b = <span class="sk">Fighter</span>(<span class="ss">'Bohdan'</span>, <span class="sn">40</span>, <span class="sn">9</span>);
+  <span class="sk">Fighter</span> c = a;
+  c.hp = <span class="sn">20</span>;
+  b.hp = b.hp - a.attack;
+  <span class="sf">poison</span>(b);
+  <span class="sf">print</span>(a.hp);
+  <span class="sf">print</span>(b.hp);
+  <span class="sf">print</span>(c.name);
+}</div>
+</div>
+<div class="card cm reveal">
+  <h3>Відповідь</h3>
+  <p class="rv-hint">Спершу скажи сам, потім клацни.</p>
+  <div class="rv-body">
+      <p class="mono">20
+23
+Andrii</p>
+      <p class="mt"><span class="en">c = a</span> — не копія, а <b>друге імʼя</b> того самого бійця.
+        Змінили <span class="en">c.hp</span> — змінилось і <span class="en">a.hp</span></p>
+      <p class="mt">У функцію обʼєкт приходить <b>той самий</b>, як Map на уроці 7:
+        40 − 12 − 5 = 23</p>
+  </div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">За компʼютером · 6 хв</span>
+      <h2>Приклад — і самостійно: перший клас</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.15fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · набираємо разом</span>
+<div class="dp-code"><span class="sk">class</span> <span class="sk">Fighter</span> {
+  <span class="sk">String</span> name;
+  <span class="sk">int</span> hp;
+  <span class="sk">int</span> attack;
+
+  <span class="sk">Fighter</span>(<span class="sk">this</span>.name, <span class="sk">this</span>.hp, <span class="sk">this</span>.attack);
+}
+
+<span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">Fighter</span> a = <span class="sk">Fighter</span>(<span class="ss">'Andrii'</span>, <span class="sn">30</span>, <span class="sn">12</span>);
+  <span class="sf">print</span>(<span class="ss">'${a.name}: hp ${a.hp}'</span>);
+}</div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно · той самий файл</span>
+        <ul>
+          <li>Створи <span class="en">b</span>: <span class="en">'Bohdan', 40, 9</span>. Виведи рядком <span class="en">Bohdan: hp 40, attack 9</span></li>
+          <li>Удар вручну: <span class="en">b.hp = b.hp - a.attack;</span> Виведи <span class="en">b.hp</span> — має бути 28</li>
+          <li>Третій боєць — своє імʼя й числа</li>
+          <li><b>Зверни в помилку:</b> напиши <span class="en">a.atack</span>. Прочитай підкреслення, поверни</li>
+          <li><b>Зверни в помилку:</b> <span class="en">Fighter('Olha', 35)</span> — без одного аргументу</li>
+          <li>⭐⭐ <span class="en">Fighter('Olha', 14, 35)</span> — hp і attack місцями. Помилки немає. Чому?</li>
+          <li>⭐⭐⭐ Другий клас для іншої сутності: <span class="en">Book</span> (title, pages) — два обʼєкти й вивід</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">⚙️</div><div>
+      <span class="label lb">Нове</span>
+      <h2>Метод — дія, що живе в класі</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.55fr 1fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+<div class="dp-code"><span class="sk">class</span> <span class="sk">Fighter</span> {
+  <span class="sk">String</span> name;
+  <span class="sk">int</span> hp;
+  <span class="sk">int</span> attack;
+
+  <span class="sk">Fighter</span>(<span class="sk">this</span>.name, <span class="sk">this</span>.hp, <span class="sk">this</span>.attack);
+
+  <span class="sk">bool</span> <span class="sf">isAlive</span>() =&gt; hp &gt; <span class="sn">0</span>;
+
+  <span class="sk">String</span> <span class="sf">info</span>() =&gt; <span class="ss">'$name: hp $hp, attack $attack'</span>;
+
+  <span class="sk">void</span> <span class="sf">hit</span>(<span class="sk">Fighter</span> other) {
+    other.hp = other.hp - attack;
+    <span class="sk">if</span> (other.hp &lt; <span class="sn">0</span>) other.hp = <span class="sn">0</span>;
+    <span class="sf">print</span>(<span class="ss">'$name hits ${other.name} for $attack. ${other.name}: ${other.hp} hp'</span>);
+  }
+}</div>
+</div>
+      <div>
+        <div class="hbox hm">Усередині методу поля — <b>просто за назвою</b>: <span class="en">hp</span>,
+          <span class="en">attack</span>, <span class="en">name</span>. Це поля того бійця, чий метод викликали</div>
+        <div class="hbox"><span class="en">other</span> — інший боєць. Його поля — через крапку: <span class="en">other.hp</span></div>
+        <div class="hbox ho">Виклик: <span class="en">a.hit(b);</span> — читається як речення «a бʼє b».
+          <span class="en">a.isAlive()</span> — «a живий?»</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">👉</div><div>
+      <span class="label lb">Нове</span>
+      <h2>this — «цей обʼєкт»</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+      <div>
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">class Fighter · фрагменти</span></div>
+<div class="dp-code"><span class="cm">// у конструкторі: поклади аргумент у поле</span>
+<span class="sk">Fighter</span>(<span class="sk">this</span>.name, <span class="sk">this</span>.hp, <span class="sk">this</span>.attack);
+
+<span class="cm">// у методі: параметр має таку саму назву, як поле</span>
+<span class="sk">void</span> <span class="sf">heal</span>(<span class="sk">int</span> hp) {
+  <span class="sk">this</span>.hp = <span class="sk">this</span>.hp + hp;
+}</div>
+</div>
+        <table class="tb mt">
+          <tr><th>Виклик</th><th>this — це</th><th>other — це</th></tr>
+          <tr><td class="mono">a.hit(b);</td><td class="mono">a</td><td class="mono">b</td></tr>
+          <tr><td class="mono">b.hit(a);</td><td class="mono">b</td><td class="mono">a</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="en">this</span> — той обʼєкт, чий метод зараз працює. Стоїть перед
+          крапкою у виклику</div>
+        <div class="hbox"><span class="en">this.hp</span> — <b>поле</b>. Просто <span class="en">hp</span> у <span class="en">heal</span> —
+          <b>параметр</b>, бо він ближче</div>
+        <div class="hbox ho">Коли назви не збігаються, <span class="en">this</span> можна не писати:
+          <span class="en">attack</span> у <span class="en">hit</span> — це вже поле</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lo">Передбач · у зошит</span>
+      <h2>Три удари і лікування</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">main.dart · клас Fighter з попередніх слайдів</span></div>
+<div class="dp-code"><span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">Fighter</span> a = <span class="sk">Fighter</span>(<span class="ss">'Andrii'</span>, <span class="sn">30</span>, <span class="sn">12</span>);
+  <span class="sk">Fighter</span> b = <span class="sk">Fighter</span>(<span class="ss">'Bohdan'</span>, <span class="sn">40</span>, <span class="sn">9</span>);
+  a.<span class="sf">hit</span>(b);
+  b.<span class="sf">hit</span>(a);
+  b.<span class="sf">hit</span>(a);
+  <span class="sf">print</span>(a.<span class="sf">info</span>());
+  a.<span class="sf">heal</span>(<span class="sn">10</span>);
+  <span class="sf">print</span>(a.hp);
+  <span class="sf">print</span>(b.<span class="sf">isAlive</span>());
+}</div>
+</div>
+<div class="card cm reveal">
+  <h3>Відповідь</h3>
+  <p class="rv-hint">Спершу запиши всі шість рядків, потім клацни.</p>
+  <div class="rv-body">
+      <p class="mono">Andrii hits Bohdan for 12. Bohdan: 28 hp
+Bohdan hits Andrii for 9. Andrii: 21 hp
+Bohdan hits Andrii for 9. Andrii: 12 hp
+Andrii: hp 12, attack 12
+22
+true</p>
+      <p class="mt">Перші три рядки друкує сам <span class="en">hit</span>.
+        <span class="en">heal(10)</span>: 12 + 10 = 22</p>
+  </div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lp">Усі види методів</span>
+      <h2>Функція з уроку 7 → метод</h2>
+    </div></div>
+
+    <table class="tb">
+      <tr><th>Що робить</th><th>Як оголосити</th><th>Як викликати</th></tr>
+      <tr><td>міняє інший обʼєкт</td><td class="mono">void hit(Fighter other) {...}</td><td class="mono">a.hit(b);</td></tr>
+      <tr><td>міняє свій обʼєкт</td><td class="mono">void heal(int amount) {...}</td><td class="mono">a.heal(10);</td></tr>
+      <tr><td>повертає bool</td><td class="mono">bool isAlive() =&gt; hp &gt; 0;</td><td class="mono">if (a.isAlive()) ...</td></tr>
+      <tr><td>повертає рядок</td><td class="mono">String info() =&gt; '$name: hp $hp';</td><td class="mono">print(a.info());</td></tr>
+      <tr><td>повертає число</td><td class="mono">int power() { return hp + attack; }</td><td class="mono">int p = a.power();</td></tr>
+    </table>
+    <div class="two mt">
+      <div class="hbox hm" style="margin:0">Урок 7: <span class="en">attack(a, b)</span> — функція
+        десь у файлі, бере два Map</div>
+      <div class="hbox" style="margin:0">Сьогодні: <span class="en">a.hit(b)</span> — метод
+        у класі, одного бійця передаємо, другий — «цей»</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">За компʼютером · 6 хв</span>
+      <h2>Приклад — і самостійно: методи</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.05fr 1fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · дописуємо в клас</span>
+<div class="dp-code"><span class="sk">void</span> <span class="sf">hit</span>(<span class="sk">Fighter</span> other) {
+  other.hp = other.hp - attack;
+  <span class="sk">if</span> (other.hp &lt; <span class="sn">0</span>) other.hp = <span class="sn">0</span>;
+  <span class="sf">print</span>(<span class="ss">'$name hits ${other.name}. ${other.name}: ${other.hp} hp'</span>);
+}
+
+<span class="cm">// у main:</span>
+a.<span class="sf">hit</span>(b);</div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно · той самий клас</span>
+        <ul>
+          <li>Додай <span class="en">isAlive()</span> і <span class="en">info()</span>. Виведи обох бійців через <span class="en">info()</span></li>
+          <li><span class="en">a.hit(b)</span> тричі. Скільки hp у Bohdan? Звір: 4</li>
+          <li><span class="en">void heal(int amount)</span> — лікує, але <b>не вище 100</b></li>
+          <li><b>Зверни в помилку:</b> <span class="en">if (a.isAlive) print('ok');</span> — без дужок. Прочитай, поверни</li>
+          <li><b>Зверни в помилку:</b> у <span class="en">heal(int hp)</span> напиши <span class="en">hp = hp + hp;</span> без
+            <span class="en">this</span>. Помилки немає, а hp той самий. Чому?</li>
+          <li>⭐⭐ <span class="en">bool isStronger(Fighter other)</span> — у кого більша атака</li>
+          <li>⭐⭐⭐ <span class="en">String bar()</span> — <span class="en">#</span> на кожні повні 10 hp: <span class="en">### (34 hp)</span></li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">📚</div><div>
+      <span class="label lo">Список обʼєктів · передбач</span>
+      <h2>List&lt;Fighter&gt; замість List&lt;Map&gt;</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.45fr 1fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">main.dart</span></div>
+<div class="dp-code"><span class="sk">Fighter</span> <span class="sf">strongest</span>(<span class="sk">List</span>&lt;<span class="sk">Fighter</span>&gt; team) {
+  <span class="sk">Fighter</span> best = team[<span class="sn">0</span>];
+  <span class="sk">for</span> (<span class="sk">Fighter</span> f <span class="sk">in</span> team) <span class="sk">if</span> (f.attack &gt; best.attack) best = f;
+  <span class="sk">return</span> best;
+}
+
+<span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sk">List</span>&lt;<span class="sk">Fighter</span>&gt; team = [
+    <span class="sk">Fighter</span>(<span class="ss">'Andrii'</span>, <span class="sn">30</span>, <span class="sn">12</span>),
+    <span class="sk">Fighter</span>(<span class="ss">'Bohdan'</span>, <span class="sn">40</span>, <span class="sn">9</span>),
+    <span class="sk">Fighter</span>(<span class="ss">'Olha'</span>, <span class="sn">35</span>, <span class="sn">14</span>),
+    <span class="sk">Fighter</span>(<span class="ss">'Daryna'</span>, <span class="sn">0</span>, <span class="sn">11</span>),
+  ];
+  <span class="sf">print</span>(team[<span class="sn">2</span>].name);
+  <span class="sf">print</span>(team.<span class="sf">where</span>((f) =&gt; f.<span class="sf">isAlive</span>()).length);
+  <span class="sf">print</span>(<span class="sf">strongest</span>(team).name);
+}</div>
+</div>
+<div class="card cm reveal">
+  <h3>Відповідь</h3>
+  <p class="rv-hint">Спершу три рядки в зошит, потім клацни.</p>
+  <div class="rv-body">
+      <p class="mono">Olha
+3
+Olha</p>
+      <p class="mt">Тип списку — <b>назва класу</b>: <span class="en">List&lt;Fighter&gt;</span>.
+        У <span class="en">where</span> кожен боєць відповідає на <span class="en">isAlive()</span></p>
+      <p class="mt">Функція повертає <b>цілого бійця</b> — тип <span class="en">Fighter</span></p>
+  </div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">За компʼютером · 6 хв</span>
+      <h2>Приклад — і самостійно: команда</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.15fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · у main</span>
+<div class="dp-code"><span class="sk">List</span>&lt;<span class="sk">Fighter</span>&gt; team = [
+  <span class="sk">Fighter</span>(<span class="ss">'Andrii'</span>, <span class="sn">30</span>, <span class="sn">12</span>),
+  <span class="sk">Fighter</span>(<span class="ss">'Bohdan'</span>, <span class="sn">40</span>, <span class="sn">9</span>),
+];
+<span class="sk">for</span> (<span class="sk">Fighter</span> f <span class="sk">in</span> team) {
+  <span class="sf">print</span>(f.<span class="sf">info</span>());
+}</div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Команда з <b>чотирьох</b> бійців: звичайні імена, свої числа</li>
+          <li><span class="en">int totalHp(List&lt;Fighter&gt; team)</span> — сума hp, з <span class="en">return</span></li>
+          <li><span class="en">Fighter strongest(team)</span> — боєць із найбільшою атакою</li>
+          <li>Скільки живих: <span class="en">where</span> + <span class="en">isAlive()</span></li>
+          <li><b>Зверни в помилку:</b> <span class="en">List&lt;Fighter&gt; team = [Fighter('X', 1, 1), 'Y'];</span></li>
+          <li>⭐⭐ Сортування за hp, найбільше першим: <span class="en">team.sort((x, y) =&gt; y.hp - x.hp);</span></li>
+          <li>⭐⭐⭐ Бій перших двох: <span class="en">while (a.isAlive() &amp;&amp; b.isAlive())</span>, удари через <span class="en">hit</span></li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">⚔️</div><div>
+      <span class="label lm">Було → стало</span>
+      <h2>Бій з уроку 7 на класах</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1fr">
+      <div>
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">урок 7</span></div>
+<div class="dp-code"><span class="cm">// урок 7: Map і функція</span>
+<span class="sk">while</span> (a[<span class="ss">'hp'</span>] &gt; <span class="sn">0</span> &amp;&amp; b[<span class="ss">'hp'</span>] &gt; <span class="sn">0</span>) {
+  raund++;
+  <span class="sf">attack</span>(a, b);
+  <span class="sk">if</span> (b[<span class="ss">'hp'</span>] &gt; <span class="sn">0</span>) <span class="sf">attack</span>(b, a);
+}
+<span class="sk">var</span> p = a[<span class="ss">'hp'</span>] &gt; <span class="sn">0</span> ? a : b;</div>
+</div>
+      </div>
+      <div>
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">урок 8</span></div>
+<div class="dp-code"><span class="cm">// сьогодні: клас і методи</span>
+<span class="sk">while</span> (a.<span class="sf">isAlive</span>() &amp;&amp; b.<span class="sf">isAlive</span>()) {
+  round++;
+  a.<span class="sf">hit</span>(b);
+  <span class="sk">if</span> (b.<span class="sf">isAlive</span>()) b.<span class="sf">hit</span>(a);
+}
+<span class="sk">Fighter</span> winner = a.<span class="sf">isAlive</span>() ? a : b;</div>
+<div class="dp-out"><span class="lbl">Вивід</span>--- Round 4 ---
+Andrii hits Bohdan for 12. Bohdan: 0 hp
+Winner: Andrii, 3 hp</div>
+</div>
+      </div>
+    </div>
+    <div class="hbox hm mt">Логіка та сама. Код читається як опис бою: «поки обидва живі —
+      a бʼє b, і якщо b живий, b бʼє a»</div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">⚖️</div><div>
+      <span class="label lm">Правило</span>
+      <h2>Сутність → class. Словник → Map</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1fr">
+      <div>
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">class</span></div>
+<div class="dp-code"><span class="cm">// сутність: у кожного ті самі поля і дії</span>
+<span class="sk">Fighter</span> a = <span class="sk">Fighter</span>(<span class="ss">'Andrii'</span>, <span class="sn">30</span>, <span class="sn">12</span>);
+a.<span class="sf">hit</span>(b);</div>
+</div>
+        <div class="hbox mt">Боєць, товар, учень, книжка — <b>class</b>. Поля відомі заздалегідь,
+          у кожного свій тип, є дії</div>
+      </div>
+      <div>
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">Map</span></div>
+<div class="dp-code"><span class="cm">// словник: імʼя → кількість перемог</span>
+<span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">int</span>&gt; wins = {<span class="ss">'Andrii'</span>: <span class="sn">2</span>, <span class="ss">'Bohdan'</span>: <span class="sn">1</span>};
+wins.<span class="sf">update</span>(<span class="ss">'Bohdan'</span>, (v) =&gt; v + <span class="sn">1</span>);
+wins[<span class="ss">'Olha'</span>] = <span class="sn">0</span>;
+<span class="sf">print</span>(wins);</div>
+<div class="dp-out"><span class="lbl">Вивід</span>{Andrii: 2, Bohdan: 2, Olha: 0}</div>
+</div>
+        <div class="hbox hm mt">Перемоги за іменем, кількість за типом, переклад слів —
+          <b>Map</b>. Ключі додаються під час роботи, значення одного типу</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lp">Тримати відкритим</span>
+      <h2>Клас і обʼєкт на одному екрані</h2>
+    </div></div>
+
+    <div class="refg">
+      <div class="rf"><span class="rt">клас</span><span class="rc">class Fighter { ... }</span></div>
+      <div class="rf"><span class="rt">поля</span><span class="rc">String name; int hp; int attack;</span></div>
+      <div class="rf"><span class="rt">конструктор</span><span class="rc">Fighter(this.name, this.hp, this.attack);</span></div>
+      <div class="rf"><span class="rt">створити</span><span class="rc">Fighter a = Fighter('Andrii', 30, 12);</span></div>
+      <div class="rf"><span class="rt">поле</span><span class="rc">a.hp · a.hp = a.hp - 9;</span></div>
+      <div class="rf"><span class="rt">метод void</span><span class="rc">void hit(Fighter other) {...}</span></div>
+      <div class="rf"><span class="rt">метод =&gt;</span><span class="rc">bool isAlive() =&gt; hp &gt; 0;</span></div>
+      <div class="rf"><span class="rt">виклик</span><span class="rc">a.hit(b); · a.isAlive()</span></div>
+      <div class="rf"><span class="rt">this</span><span class="rc">this.hp = this.hp + hp;</span></div>
+      <div class="rf"><span class="rt">список</span><span class="rc">List&lt;Fighter&gt; team = [a, b];</span></div>
+      <div class="rf"><span class="rt">перебір</span><span class="rc">for (Fighter f in team) {...}</span></div>
+      <div class="rf"><span class="rt">фільтр</span><span class="rc">team.where((f) =&gt; f.isAlive())</span></div>
+      <div class="rf"><span class="rt">бій</span><span class="rc">while (a.isAlive() &amp;&amp; b.isAlive())</span></div>
+      <div class="rf"><span class="rt">словник</span><span class="rc">Map&lt;String, int&gt; wins = {};</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lo">Практика · 8 хв · рівень ⭐</span>
+      <h2>Твій бій з уроку 7 — на класах</h2>
+    </div></div>
+
+    <div class="two">
+      <div>
+        <div class="hbox hm" style="margin-top:0"><b>1 · Клас.</b> <span class="en">Fighter</span>: поля, конструктор,
+          <span class="en">isAlive</span>, <span class="en">info</span>, <span class="en">hit</span></div>
+        <div class="hbox"><b>2 · Команда.</b> <span class="en">List&lt;Fighter&gt;</span> із чотирьох, вивід через <span class="en">info()</span></div>
+        <div class="hbox"><b>3 · Бій.</b> Перші двоє бʼються до кінця: раунди в лозі, мертвий не бʼє,
+          переможець через <span class="en">? :</span></div>
+        <div class="hbox"><b>4 · Перевірка.</b> Map у коді бійця не лишилось</div>
+      </div>
+      <div>
+<div class="card reveal">
+  <h3>Перевір себе</h3>
+  <p class="rv-hint">Andrii 30/12 б&#700;є першим, Bohdan 40/9 — клацни.</p>
+  <div class="rv-body">
+      <p class="mono">--- Round 1 ---
+Andrii hits Bohdan for 12. Bohdan: 28 hp
+Bohdan hits Andrii for 9. Andrii: 21 hp
+...
+--- Round 4 ---
+Andrii hits Bohdan for 12. Bohdan: 0 hp
+Winner: Andrii, 3 hp</p>
+  </div>
+</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🚀</div><div>
+      <span class="label lo">Практика · далі</span>
+      <h2>Кому мало</h2>
+    </div></div>
+
+    <div class="lvl">
+      <div class="lv"><span class="lv-s">⭐⭐</span>
+        <span class="lv-t"><b>Випадковість:</b> <span class="en">import 'dart:math';</span> першим рядком, у <span class="en">hit</span>
+          удар <span class="en">attack + Random().nextInt(6)</span>, у лозі — справжній удар.<br>
+          <b>Бій — функція</b> <span class="en">Fighter fight(Fighter a, Fighter b)</span>, що повертає переможця</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+        <span class="lv-t"><b>Повторні бої:</b> поле <span class="en">int maxHp = 0;</span>, у конструкторі
+          <span class="en">{ maxHp = hp; }</span>, метод <span class="en">restore()</span> повертає hp.<br>
+          <b>Три бої</b> випадкових пар (<span class="en">shuffle</span>), перемоги — у
+          <span class="en">Map&lt;String, int&gt; wins</span> через <span class="en">update</span></span></div>
+    </div>
+    <div class="hbox ho mt">Наступний урок — міні-проєкт «Симуляція бою» на цьому класі.
+      Код уроку збережи</div>
+  </div></section>
+
+  <!-- ══════════ 21 ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🏦</div><div>
+      <span class="label lp">Банк завдань · для тих, хто закінчив</span>
+      <h2>Вісім класів для інших сутностей</h2>
+    </div></div>
+
+    <div class="bank">
+      <div class="bk"><b>1.</b> <span class="en">Product</span>: name, price, count;
+        <span class="en">int total()</span>. Кошик із трьох товарів і сума</div>
+      <div class="bk"><b>2.</b> <span class="en">Rectangle</span>: width, height;
+        <span class="en">area()</span>, <span class="en">perimeter()</span>, <span class="en">isSquare()</span></div>
+      <div class="bk"><b>3.</b> <span class="en">Account</span>: owner, balance;
+        <span class="en">deposit(int)</span> і <span class="en">bool withdraw(int)</span> — у мінус не пускає</div>
+      <div class="bk"><b>4.</b> <span class="en">Student</span>: name, <span class="en">List&lt;int&gt; grades</span>;
+        <span class="en">double average()</span>. Найкращий у списку з трьох</div>
+      <div class="bk"><b>5.</b> <span class="en">Book</span>: title, pages, read;
+        <span class="en">readPages(int)</span>, <span class="en">bool isFinished()</span></div>
+      <div class="bk"><b>6.</b> <span class="en">Lamp</span>: <span class="en">bool on</span>;
+        <span class="en">toggle()</span> перемикає. Виклич пʼять разів — увімкнена?</div>
+      <div class="bk"><b>7.</b> Хто скільки разів переміг:
+        <span class="en">['Olha', 'Ivan', 'Olha']</span> → <span class="en">Map&lt;String, int&gt;</span></div>
+      <div class="bk"><b>8.</b> Найслабший <b>живий</b> боєць команди — функція, що повертає
+        <span class="en">Fighter</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh"><div class="si">⚠️</div><div>
+      <span class="label lo">Пастки</span>
+      <h2>На чому спотикаються всі</h2>
+    </div></div>
+
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t"><b><span class="en">print(a)</span></b>
+        друкує <span class="en">Instance of 'Fighter'</span>. Виводь поля або <span class="en">a.info()</span></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t"><b>Порядок аргументів.</b>
+        <span class="en">Fighter('Olha', 14, 35)</span> — обидва <span class="en">int</span>, помилки немає,
+        а hp і attack переплутані</span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t"><b>Без <span class="en">this.</span>
+        у конструкторі</b> — <span class="en">Fighter(name, hp, attack);</span> поля лишаються порожні,
+        Dart не дасть запустити</span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t"><b>Метод без дужок.</b>
+        <span class="en">if (a.isAlive)</span> — помилка. Треба <span class="en">a.isAlive()</span></span></div>
+      <div class="step"><span class="step-n">5</span><span class="step-t"><b>Параметр з назвою поля.</b>
+        <span class="en">hp = hp + hp;</span> міняє параметр, не поле. Пиши <span class="en">this.hp</span></span></div>
+      <div class="step"><span class="step-n">6</span><span class="step-t"><b>Мала літера.</b>
+        <span class="en">fighter a = ...</span> — такого типу немає. Клас — з великої</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 23 ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Словник уроку</span>
+      <h2>Слова з коду</h2>
+    </div></div>
+
+    <div class="refg">
+      <div class="rf"><span class="rt">class</span><span class="rc">клас — опис сутності</span></div>
+      <div class="rf"><span class="rt">object</span><span class="rc">обʼєкт — конкретний екземпляр</span></div>
+      <div class="rf"><span class="rt">instance</span><span class="rc">екземпляр класу</span></div>
+      <div class="rf"><span class="rt">field</span><span class="rc">поле</span></div>
+      <div class="rf"><span class="rt">method</span><span class="rc">метод — функція в класі</span></div>
+      <div class="rf"><span class="rt">constructor</span><span class="rc">конструктор</span></div>
+      <div class="rf"><span class="rt">this</span><span class="rc">цей обʼєкт</span></div>
+      <div class="rf"><span class="rt">entity</span><span class="rc">сутність</span></div>
+      <div class="rf"><span class="rt">fighter</span><span class="rc">боєць</span></div>
+      <div class="rf"><span class="rt">hit · heal</span><span class="rc">вдарити · лікувати</span></div>
+      <div class="rf"><span class="rt">alive</span><span class="rc">живий</span></div>
+      <div class="rf"><span class="rt">wins</span><span class="rc">перемоги</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Що є після восьмого уроку</h2>
+    </div></div>
+
+    <div class="two">
+      <div class="card">
+        <h3>Уміємо</h3>
+        <p>описати сутність класом: поля, конструктор, методи · створювати обʼєкти й міняти їхні
+          поля · викликати методи через крапку · розуміти <span class="en">this</span> · тримати
+          обʼєкти в <span class="en">List&lt;Fighter&gt;</span> · вибирати між class і Map</p>
+      </div>
+      <div class="card cm">
+        <h3>Наступного разу</h3>
+        <p><b>Міні-проєкт I: симуляція бою.</b> Два бійці-обʼєкти, бій із
+          <span class="en">Random</span>, лог раундів, переможець. Далі — турнір і статистика.
+          Показ — хвилина на кожного</p>
+      </div>
+    </div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 9 · 8 жовтня · Міні-проєкт I: симуляція бою</p>
+  </div></section>
+
+  <!-- ══════════ 25 ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>Клас Fighter своїми руками</h2>
+    </div></div>
+
+    <div class="hbox hm" style="margin-top:0">У <strong>DartPad</strong> (dartpad.dev).
+      Код — <strong>повідомленням на платформі</strong> до <strong>8 жовтня</strong>.
+      Першим рядком — коментар із прізвищем.</div>
+<div class="dp" style="margin-top:12px">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">main.dart · для пункту 2</span></div>
+<div class="dp-code"><span class="sk">Fighter</span> t = <span class="sk">Fighter</span>(<span class="ss">'Taras'</span>, <span class="sn">50</span>, <span class="sn">11</span>);
+<span class="sk">Fighter</span> m = <span class="sk">Fighter</span>(<span class="ss">'Marko'</span>, <span class="sn">42</span>, <span class="sn">14</span>);</div>
+</div>
+    <div class="steps mt" style="gap:8px">
+      <div class="step" style="padding:9px 16px"><span class="step-n">1</span><span class="step-t">
+        Клас <span class="en">Fighter</span>: поля, конструктор, <span class="en">isAlive()</span>,
+        <span class="en">info()</span>, <span class="en">hit(other)</span></span></div>
+      <div class="step" style="padding:9px 16px"><span class="step-n">2</span><span class="step-t">
+        <b>Спершу вгадай</b>, потім запусти: Taras бʼє першим, без <span class="en">Random</span>.
+        Хто переможе, у якому раунді, скільки hp лишиться? Здогадка — коментарем</span></div>
+      <div class="step" style="padding:9px 16px"><span class="step-n">3</span><span class="step-t">
+        Ще один клас для іншої сутності (<span class="en">Product</span>, <span class="en">Book</span>
+        чи своя): два поля, конструктор, один метод, що <b>повертає</b> значення</span></div>
+      <div class="step" style="padding:9px 16px"><span class="step-n">4</span><span class="step-t">
+        ⭐⭐ <span class="en">List&lt;Fighter&gt;</span> із чотирьох і функція
+        <span class="en">Fighter strongest(team)</span></span></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

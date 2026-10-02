@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7.7 Validation · IT-англійська · 11 клас · Урок 6</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge IGCSE & O Level Computer Science
+                0478 / 0984 / 2210)
+  Клас          11
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · пʼятниця
+  Урок          6 з 36 · 09.10.2026
+  Тема          7.7 Validation: range · length · type · presence · format ·
+                check digit (ACTIVITY 7.7)
+  Акцент        plum (#602857)
+  Тривалість    45 хв, тесту немає · 21 слайд (s0–s20), останній — ДЗ
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — ТІЛЬКИ КНИЖКА. Нічого не вигадано.
+     Coursebook, розділ 7.7, «Validation», с. 172–176
+     (+ Summary с. 192, Exam-style question 4c зі с. 193).
+     Скани: office/igcse-0478/rozdil-07-algorithm-design/s172…s176.jpeg
+     Дослівно взято:
+       • KEY WORD validation + текст «Validation is the checking of data
+         that is input…» (с. 172)                                         → s1
+       • ACTIVITY 7.7 + «There are different types of validation» (с. 172) → s2
+       • range check: текст, KEY WORD, Example 1 і 2 (с. 173)              → s3, s4
+       • length check: «hello world» = 11, «123 ABC!» = 8, чотири команди,
+         Example 1 і 2 (с. 173–174)                                       → s5, s6
+       • type check: integer · real · string · Boolean, два способи
+         (.GetDataType(), .IsInteger()), Example 1 (с. 174)                → s7, s8
+       • presence check: null, "", Example 1 і 2 (с. 175)                  → s10
+       • format check: __/__/____, Example 2 (цикл, с. 176), примітка
+         про SUBSTRING (с. 175)                                           → s11, s12
+       • check digit: текст, KEY WORD, кроки Example (с. 176)              → s13
+       • Exam-style Q4c i–ii (с. 193)                                      → s17
+       • Summary (с. 192)                                                 → s19
+     Слова mini-vocab (s1), word bank (s9) і словника (s18) — з тексту
+     с. 172–176. Переклади — мої. Вхідні дані для вправ «Valid чи Invalid?»
+     (0, 1, 5, 10, 11 · 09/10/2026 …) — мої, алгоритми — книжки.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ДВІ НЕУЗГОДЖЕНОСТІ КНИЖКИ — на слайдах лише код, не суперечливий текст
+     • с. 173, range Example 1: текст «higher than 1 and less than 10»,
+       а код IF Number < 1 OR Number > 10 пропускає 1 і 10. На s4 —
+       відповідь за КОДОМ (1 і 10 — Valid).
+     • с. 173: «10 or less characters to be invalid, otherwise (10 or more)
+       it is valid», а код LENGTH(Data) < 10. На s6 — за кодом.
+     • с. 175: format check «1 number followed by 3 characters», а Example 1
+       — «1 number followed by 2 characters», другий рядок умови вицвів.
+       Тому Example 1 format check на слайдах НЕМАЄ — замість нього
+       Example 2 (дата, с. 176), він читається повністю.
+  ⚠️ ВИЦВІЛЕ НА СКАНІ
+     • с. 174, type check Example 2 — код вицвів, на слайдах немає.
+       Example 1 (`Data.GetDataType() <> Integer`) прочитано за коментарем
+       «//if it is not an integer».
+     • с. 176, check digit — вагові множники в рядку Total вицвіли. Тому на
+       s13 лише кроки за коментарями коду, без числового прикладу.
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • Verification, visual / double entry check, PROGRAMMING TASK 7.6,
+       ACTIVITY 7.8, Questions 25–31 — с. 177–178, це урок 7 (16.10).
+     • Компʼютер: ACTIVITY 7.7 каже «Visit some websites» — на
+       IT-англійській компʼютерів немає, тому лише з памʼяті, у парах.
+     • Відео — для IT-англійської не вирішено.
+  ────────────────────────────────────────────────────────────────
+  СЛОВНИК       тричі: s1 (KEY WORD + 3) · s9 (word bank, 10) · s18 (18 слів)
+  ПРИКЛАД → САМОСТІЙНО
+                s3 (range, приклад) → s4 (Valid / Invalid самі)
+                s5 (LENGTH, приклад) → s6 (Valid / Invalid самі)
+                s7 (data types) → s8 (визнач тип самі)
+                s11 (format, приклад) → s12 (SUBSTRING самі)
+                s14 «Яка перевірка?» · s15 T/F · s16 знайди помилку ·
+                s17 рівні ⭐/⭐⭐/⭐⭐⭐
+  ПЕРЕДБАЧ      відповідь на ТОМУ Ж слайді (reveal): s4, s6, s8, s12, s14–s17
+  РІЗАТИ ПЕРШИМ s13 (check digit — тільки KEY WORD), s15 (T/F), s8
+  НЕ РІЗАТИ     s14 («Яка перевірка?»), s16 (знайди помилку), s17
+  ────────────────────────────────────────────────────────────────
+  Конспект      2026-27-teacher/aplus/11-it-english/u06/konspekt.md
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: IGCSE-англійська 10 і 11 класів іде на plum. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f4eef3; --border:#e3d7e0;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--plum);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(96,40,87,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(96,40,87,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(96,40,87,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:44%}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2rem}
+h3{font-weight:700;font-size:1.28rem}
+p{font-size:18.5px;line-height:1.72;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:18.5px;line-height:1.75;color:var(--ink);margin-bottom:6px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:2.9rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.28rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:18px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--surf2)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.two.wide-l{grid-template-columns:1.35fr 1fr}
+.two.wide-r{grid-template-columns:1fr 1.35fr}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:19px 21px;
+      box-shadow:0 1px 3px rgba(96,40,87,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.65;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cb h3{color:var(--blue)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:13px 17px;margin:10px 0;font-size:17.5px;color:var(--ink);line-height:1.65;
+      box-shadow:0 1px 3px rgba(96,40,87,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--surf2);
+     border:1.5px solid var(--border);border-radius:11px;padding:13px 16px;
+     margin:11px 0;font-size:17.5px;line-height:1.65;color:var(--ink)}
+.tip.tb2{background:var(--sky);border-color:#c6d2ee}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.35rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── псевдокод: світлий блок, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(96,40,87,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:9px 14px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-title{flex:1;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9fc;color:var(--ink);padding:15px 18px;font-size:16px;line-height:1.7;white-space:pre-wrap}
+/* підсвітка — усі пари перевірені на ≥5:1 щодо #fdf9fc */
+.sk{color:#591429;font-weight:700}  /* ключове слово псевдокоду */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* ідентифікатор */
+.cm{color:#6f6570;font-style:italic}/* коментар */
+.bad{color:#a01818;font-weight:700}
+.codes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.codes .dp-code{font-size:14.5px;line-height:1.6}
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:16.5px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--accent);background:var(--surf2);font-size:15.5px}
+.tb td.mono{font-family:var(--f-mono);font-weight:700}
+.tb td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+.tb tr:last-child td{border-bottom:0}
+
+.qs{display:flex;flex-direction:column;gap:10px}
+.qs .q{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--accent);
+       border-radius:0 10px 10px 0;padding:11px 16px;font-size:17px;line-height:1.55}
+.qs .q b{color:var(--accent)}
+
+.steps{display:flex;flex-direction:column;gap:11px}
+.step{display:flex;align-items:flex-start;gap:14px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:13px 17px}
+.step-n{width:32px;height:32px;border-radius:9px;background:var(--surf2);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:15px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:17.5px;line-height:1.55;color:var(--ink)}
+
+/* ─── практичний блок ─── */
+.prac{background:var(--surf2);border:2px solid #d9bfd2;border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--plum);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--plum)}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:16.5px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:5px 13px;flex-shrink:0}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--dim);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16.5px;flex-shrink:0;letter-spacing:1px;min-width:74px;
+      font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.lv-t{font-size:17px;line-height:1.6;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:11px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:15px}
+.note{font-size:16px;color:var(--faint);line-height:1.55}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.uk{color:var(--dim)}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:16.5px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16px;line-height:1.42}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.mw{background:var(--surface);border:2px solid #d9bfd2;border-radius:14px;padding:14px 18px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.35rem;color:var(--accent);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:16px;color:var(--dim);line-height:1.45}
+
+/* «я вмію» */
+.can{display:flex;flex-direction:column;gap:9px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:11px 16px;
+       font-size:17px;line-height:1.45}
+.can-b{width:22px;height:22px;border:2px solid var(--accent);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.72rem} h3{font-size:1.14rem}
+  .sh{margin-bottom:11px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:16.5px;line-height:1.55}
+  .card{padding:14px 16px} .card p,.card li{font-size:15.5px;line-height:1.5}
+  .hbox{font-size:16px;padding:10px 14px;margin:7px 0}
+  .tip{font-size:16px;padding:10px 13px;margin:8px 0}
+  .tip-ico{font-size:1.15rem}
+  .label{margin-bottom:7px}
+  .mt{margin-top:10px}
+  .two{gap:15px} .three{gap:11px}
+  .step{padding:10px 13px} .step-t{font-size:16px}
+  .step-n{width:28px;height:28px;font-size:14px}
+  .can-i{font-size:15.5px;padding:9px 13px}
+  .prac{padding:13px 16px} .lv{padding:9px 12px} .lv-t{font-size:15.5px}
+  .prac-lead{font-size:15.5px;margin-bottom:9px}
+  .ptime{font-size:14.5px;padding:4px 10px}
+  .mw{padding:11px 14px} .mw .w{font-size:1.15rem} .mw .t{font-size:14.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:15.5px} .vp .uk{font-size:15px}
+  .vg{gap:9px}
+  .tb th,.tb td{padding:6px 10px;font-size:15px}
+  .qs .q{font-size:15.5px;padding:9px 13px}
+  .dp-code{font-size:14px;line-height:1.55} .dp-bar{padding:6px 11px}
+  .codes .dp-code{font-size:13px;line-height:1.5}
+  .title-h1{font-size:2.3rem} .title-sub{font-size:1.12rem;margin-bottom:20px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 4: ряд «карт» для пошуку ═══ */
+.deck{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0}
+.cd{min-width:58px;height:74px;padding:0 8px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface);border:2px solid var(--plum);border-radius:9px;
+  font-family:var(--f-mono);font-weight:700;font-size:1.45rem;color:var(--ink);
+  box-shadow:0 2px 5px rgba(96,40,87,.08)}
+.deck.sm .cd{min-width:40px;height:50px;font-size:1.1rem;border-radius:7px}
+@media (max-height:800px){.cd{height:60px;min-width:50px;font-size:1.25rem}
+  .deck.sm .cd{height:42px;min-width:36px;font-size:1rem}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО: Words in use ─── */
+.wu{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px}
+.wu-i{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:8px 13px}
+.wu-w{display:block;font-family:var(--f-mono);font-weight:700;font-size:15.5px;
+      color:var(--accent);margin-bottom:3px}
+.wu-p{display:block;font-size:15px;line-height:1.34;margin-bottom:1px}
+.wu-p::before{content:"· ";color:var(--faint)}
+
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">7.7 Validation</h1>
+      <p class="title-sub">Перевірка введених даних · шість видів перевірок · ACTIVITY 7.7<br>
+        IT-англійська · 11 клас · Урок 6 з 36 · 9 жовтня · с. 172–176</p>
+      <div class="chips">
+        <span class="chip">range check</span>
+        <span class="chip">length check</span>
+        <span class="chip">type check</span>
+        <span class="chip">presence check</span>
+        <span class="chip">format check</span>
+        <span class="chip">check digit</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── KEY WORD + MINI-VOCAB ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key word · с. 172</span>
+      <h2>Чотири слова, перш ніж почнемо</h2>
+    </div></div>
+    <div class="mini" style="grid-template-columns:1fr">
+      <div class="mw"><div class="w">validation</div>
+        <div class="t">the checking of data to make sure it is reasonable and within set bounds</div></div>
+    </div>
+    <div class="mini mt" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="mw"><div class="w">valid / invalid</div>
+        <div class="t">допустимий / недопустимий — дані проходять перевірку чи ні</div></div>
+      <div class="mw"><div class="w">set bounds</div>
+        <div class="t">встановлені межі: найменше й найбільше допустиме значення</div></div>
+      <div class="mw"><div class="w">character</div>
+        <div class="t">символ: літера, цифра, пробіл, знак</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ACTIVITY 7.7 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Activity 7.7</span>
+        <span class="t">Told that it is invalid</span><span class="ptime">3 хвилини</span></div>
+      <p class="prac-lead">«Validation is the checking of data that is input to make sure it is reasonable, and/or within set bounds.
+        For example, making sure that a number is entered for an age or limiting the range of numbers that can be entered.» — с. 172</p>
+      <div class="qs">
+        <div class="q"><b>1</b> · «Have you ever entered data to be told that it is invalid? What were you trying to enter, and why was it incorrect?»</div>
+        <div class="q"><b>2</b> · «Do some of them give you a set structure to fill in, for example, a date as __/__/____?»</div>
+      </div>
+    </div>
+    <p class="mt">У парах, з памʼяті: один приклад у зошит — що вводили і чому <span class="en">invalid</span>.</p>
+    <div class="hbox hm mt">«There are different types of validation.» — с. 172:
+      <b>range</b> · <b>length</b> · <b>type</b> · <b>presence</b> · <b>format</b> check · <b>check digit</b></div>
+  </div></section>
+
+  <!-- ══════════ 4 ── RANGE CHECK ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">📏</div><div>
+      <span class="label lb">Range check · Приклад · с. 173</span>
+      <h2>Between the minimum and maximum</h2>
+    </div></div>
+    <div class="hbox hm">«A range check assesses whether data is within one or two bounds. For example, an age must be
+      between 0 and 100. A date must be before today's date.»</div>
+    <div class="codes mt">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">Example 1 · using selection</span></div>
+        <div class="dp-code"><span class="sf">Number</span> &#8592; <span class="sk">INPUT</span>(<span class="ss">"Enter a number between 1 and 10"</span>)
+<span class="sk">IF</span> <span class="sf">Number</span> &lt; <span class="sn">1</span> <span class="sk">OR</span> <span class="sf">Number</span> &gt; <span class="sn">10</span> <span class="sk">THEN</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Invalid"</span>)
+<span class="sk">ELSE</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Valid"</span>)
+<span class="sk">ENDIF</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">Example 2 · using a loop</span></div>
+        <div class="dp-code"><span class="sf">Number</span> &#8592; <span class="sk">INPUT</span>(<span class="ss">"Enter a number between 1 and 10"</span>)
+<span class="sk">WHILE</span> <span class="sf">Number</span> &lt; <span class="sn">1</span> <span class="sk">OR</span> <span class="sf">Number</span> &gt; <span class="sn">10</span> <span class="sk">DO</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Invalid please try again"</span>)
+    <span class="sf">Number</span> &#8592; <span class="sk">INPUT</span>()
+<span class="sk">ENDWHILE</span></div>
+      </div>
+    </div>
+    <p class="mt">Example 2 «will continually ask for a value to be input until the number is valid».</p>
+  </div></section>
+
+  <!-- ══════════ 5 ── ТЕПЕР САМОСТІЙНО: RANGE ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Тепер самостійно</span>
+        <span class="t">Valid чи Invalid?</span><span class="ptime">3 хвилини</span></div>
+      <div class="two wide-r">
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-title">Range check · Example 1 · с. 173</span></div>
+          <div class="dp-code"><span class="sk">IF</span> <span class="sf">Number</span> &lt; <span class="sn">1</span> <span class="sk">OR</span> <span class="sf">Number</span> &gt; <span class="sn">10</span> <span class="sk">THEN</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Invalid"</span>)
+<span class="sk">ELSE</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Valid"</span>)
+<span class="sk">ENDIF</span></div>
+        </div>
+        <div>
+          <p class="prac-lead">Що виведе алгоритм для кожного числа? Напиши в зошит число і <span class="en">Valid</span> або <span class="en">Invalid</span>.</p>
+          <table class="tb">
+            <tr><th>Number</th><td class="c">0</td><td class="c">1</td><td class="c">5</td><td class="c">10</td><td class="c">11</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="card reveal mt"><h3>Відповідь</h3>
+      <p class="rv-hint">Спершу зошит — потім клацни.</p>
+      <div class="rv-body"><p>0 — <b>Invalid</b> · 1 — <b>Valid</b> · 5 — <b>Valid</b> · 10 — <b>Valid</b> · 11 — <b>Invalid</b>.
+        Алгоритм відкидає тільки числа <span class="ic">&lt; 1</span> або <span class="ic">&gt; 10</span>, тому 1 і 10 — Valid.</p></div></div>
+  </div></section>
+
+  <!-- ══════════ 6 ── LENGTH CHECK ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🔡</div><div>
+      <span class="label lb">Length check · Приклад · с. 173</span>
+      <h2>The number of characters</h2>
+    </div></div>
+    <div class="hbox hm">«A length check will check the number of characters that are present. … the length of
+      "hello world" is <b>11</b>, the space is also a character.»</div>
+    <div class="two mt">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">с. 173 · «8 will be output»</span></div>
+        <div class="dp-code"><span class="sf">TheData</span> &#8592; <span class="ss">"123 ABC!"</span>
+<span class="sk">OUTPUT</span>(<span class="sk">LENGTH</span>(<span class="sf">TheData</span>))</div>
+      </div>
+      <div class="card"><h3>«The following are all valid»</h3>
+        <p><span class="ic">theData.length()</span> · <span class="ic">LENGTH(theData)</span><br>
+          <span class="ic">LEN(theData)</span> · <span class="ic">theData.len</span></p></div>
+    </div>
+    <div class="hbox hb mt">«A length check can be programmed using <b>selection</b> or <b>iteration</b>.» Так само range check — <b>IF</b> або <b>WHILE</b>.</div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ТЕПЕР САМОСТІЙНО: LENGTH ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Тепер самостійно</span>
+        <span class="t">Length check · с. 173–174</span><span class="ptime">3 хвилини</span></div>
+      <div class="codes">
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-title">Example 1 · using selection</span></div>
+          <div class="dp-code"><span class="sf">Data</span> &#8592; <span class="sk">INPUT</span>()
+<span class="sk">IF</span> <span class="sk">LENGTH</span>(<span class="sf">Data</span>) &lt; <span class="sn">10</span> <span class="sk">THEN</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Invalid"</span>)
+<span class="sk">ELSE</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Valid"</span>)
+<span class="sk">ENDIF</span></div>
+        </div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-title">Example 2 · using iteration</span></div>
+          <div class="dp-code"><span class="sf">Data</span> &#8592; <span class="sk">INPUT</span>()
+<span class="sk">WHILE</span> <span class="sk">LENGTH</span>(<span class="sf">Data</span>) &lt; <span class="sn">10</span> <span class="sk">DO</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Invalid, please try again"</span>)
+    <span class="sf">Data</span> &#8592; <span class="sk">INPUT</span>()
+<span class="sk">ENDWHILE</span></div>
+        </div>
+      </div>
+      <p class="prac-lead mt">Що виведе <b>Example 1</b>? Напиши в зошит довжину й <span class="en">Valid</span> або <span class="en">Invalid</span>.</p>
+      <div class="two">
+        <div class="card reveal"><h3>a · <span class="ic">"hello world"</span></h3>
+          <p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p>LENGTH = <b>11</b> → <b>Valid</b> (11 не менше 10)</p></div></div>
+        <div class="card reveal"><h3>b · <span class="ic">"123 ABC!"</span></h3>
+          <p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p>LENGTH = <b>8</b> → <b>Invalid</b> (8 &lt; 10)</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── TYPE CHECK ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🏷️</div><div>
+      <span class="label lb">Type check · с. 174</span>
+      <h2>The correct data type</h2>
+    </div></div>
+    <div class="two wide-l">
+      <table class="tb">
+        <tr><th>Data type</th><th>с. 174</th></tr>
+        <tr><td class="mono">integer</td><td>whole number</td></tr>
+        <tr><td class="mono">real</td><td>decimal number</td></tr>
+        <tr><td class="mono">string</td><td>any characters</td></tr>
+        <tr><td class="mono">Boolean</td><td>true or false</td></tr>
+      </table>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t"><span class="ic">.GetDataType()</span> — «return the data type, that you can then compare to the one you want»</span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t"><span class="ic">.IsInteger()</span> — «return True if it is an integer and False otherwise»</span></div>
+      </div>
+    </div>
+    <div class="dp mt">
+      <div class="dp-bar"><span class="dp-title">Example 1 · using selection · «check if the data entered is an integer value to be valid»</span></div>
+      <div class="dp-code"><span class="sk">INPUT</span> <span class="sf">Data</span>
+<span class="cm">//check if the data entered is an integer</span>
+<span class="sk">IF</span> <span class="sf">Data</span>.<span class="sk">GetDataType</span>() &lt;&gt; <span class="sf">Integer</span> <span class="sk">THEN</span> <span class="cm">//if it is not an integer</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Invalid"</span>)
+<span class="sk">ENDIF</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ТЕПЕР САМОСТІЙНО: TYPES ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Тепер самостійно</span>
+        <span class="t">Який data type?</span><span class="ptime">2 хвилини</span></div>
+      <p class="prac-lead">Напиши в зошит літеру й тип: <span class="en">integer</span>, <span class="en">real</span>, <span class="en">string</span> або <span class="en">Boolean</span>.</p>
+      <table class="tb">
+        <tr><th>a</th><th>b</th><th>c</th><th>d</th><th>e</th><th>f</th></tr>
+        <tr><td class="c">100</td><td class="c">"hello world"</td><td class="c">TRUE</td><td class="c">9.5</td><td class="c">"123 ABC!"</td><td class="c">FALSE</td></tr>
+      </table>
+    </div>
+    <div class="card reveal mt"><h3>Відповідь</h3>
+      <p class="rv-hint">Спершу зошит — потім клацни.</p>
+      <div class="rv-body"><p>a — <b>integer</b> · b — <b>string</b> · c — <b>Boolean</b> · d — <b>real</b> · e — <b>string</b> (у лапках, тому й цифри тут — символи) · f — <b>Boolean</b></p></div></div>
+  </div></section>
+
+  <!-- ══════════ 10 ── WORD BANK ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lo">Word bank · с. 172–176</span>
+      <h2>Робочі слова перевірок</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">minimum / maximum</span><span class="uk">найменше / найбільше</span></div>
+      <div class="vp"><span class="en">within bounds</span><span class="uk">у межах</span></div>
+      <div class="vp"><span class="en">number of characters</span><span class="uk">кількість символів</span></div>
+      <div class="vp"><span class="en">data type</span><span class="uk">тип даних</span></div>
+      <div class="vp"><span class="en">whole number</span><span class="uk">ціле число</span></div>
+      <div class="vp"><span class="en">decimal number</span><span class="uk">десяткове число</span></div>
+      <div class="vp"><span class="en">null</span><span class="uk">нічого не введено</span></div>
+      <div class="vp"><span class="en">empty string ""</span><span class="uk">порожній рядок</span></div>
+      <div class="vp"><span class="en">selection / iteration</span><span class="uk">розгалуження / цикл</span></div>
+      <div class="vp"><span class="en">until it is valid</span><span class="uk">доки не стане допустимим</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── PRESENCE CHECK ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">✋</div><div>
+      <span class="label lb">Presence check · с. 175</span>
+      <h2>Some data has been entered</h2>
+    </div></div>
+    <div class="hbox hm">«A presence check makes sure that some data has been entered. Programming languages can make use of the
+      value <b>null</b>, or for a string value an <b>empty string</b> represented by <span class="ic">""</span>.»</div>
+    <div class="codes mt">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">Example 1 · «outputs Invalid if there is no data entered»</span></div>
+        <div class="dp-code"><span class="sk">INPUT</span> <span class="sf">Data</span>
+<span class="sk">IF</span> <span class="sf">Data</span> = <span class="sk">NULL</span> <span class="sk">THEN</span> <span class="cm">//check if the data entered is null</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Invalid"</span>)
+<span class="sk">ENDIF</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">Example 2 · «while there is no data entered»</span></div>
+        <div class="dp-code"><span class="sk">INPUT</span> <span class="sf">Data</span>
+<span class="sk">WHILE</span> <span class="sf">Data</span> = <span class="ss">""</span> <span class="sk">DO</span> <span class="cm">//loop while there is nothing in data</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Invalid please try again"</span>)
+    <span class="sk">INPUT</span> <span class="sf">Data</span>
+<span class="sk">ENDWHILE</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── FORMAT CHECK ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">📅</div><div>
+      <span class="label lb">Format check · Приклад · с. 175–176</span>
+      <h2>Entered in a specific way</h2>
+    </div></div>
+    <div class="two wide-r">
+      <div>
+        <div class="hbox hm">«…a date must be: <span class="ic">__/__/____</span>, where each space is a number — a <b>format check</b>
+          makes sure the data is entered this way.»</div>
+        <div class="hbox hb">«<span class="ic">SUBSTRING(String, x, y)</span> starts at character <b>x</b> in the string, and returns <b>y</b> number of characters.»</div>
+        <p class="note">Перший символ — позиція <b>0</b>.</p>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">Example 2 · using a loop · с. 176</span></div>
+        <div class="dp-code" style="font-size:13.5px;line-height:1.5"><span class="sk">INPUT</span> <span class="sf">Date</span>
+<span class="cm">//loop while the data is not in the correct format</span>
+<span class="sk">WHILE</span> (<span class="sk">SUBSTRING</span>(<span class="sf">Date</span>, <span class="sn">0</span>, <span class="sn">2</span>).<span class="sk">IsNumeric</span> = <span class="sk">FALSE</span> <span class="sk">OR</span> <span class="cm">//2 numbers</span>
+  <span class="sk">SUBSTRING</span>(<span class="sf">Date</span>, <span class="sn">2</span>, <span class="sn">1</span>) &lt;&gt; <span class="ss">"/"</span> <span class="sk">OR</span> <span class="cm">// 1st slash</span>
+  <span class="sk">SUBSTRING</span>(<span class="sf">Date</span>, <span class="sn">3</span>, <span class="sn">2</span>).<span class="sk">IsNumeric</span> = <span class="sk">FALSE</span> <span class="sk">OR</span> <span class="cm">//2 numbers</span>
+  <span class="sk">SUBSTRING</span>(<span class="sf">Date</span>, <span class="sn">5</span>, <span class="sn">1</span>) &lt;&gt; <span class="ss">"/"</span> <span class="sk">OR</span> <span class="cm">//2nd slash</span>
+  <span class="sk">SUBSTRING</span>(<span class="sf">Date</span>, <span class="sn">6</span>, <span class="sn">4</span>).<span class="sk">IsNumeric</span> = <span class="sk">FALSE</span>) <span class="sk">DO</span> <span class="cm">// 4 numbers, year</span>
+    <span class="sk">OUTPUT</span>(<span class="ss">"Invalid"</span>)
+    <span class="sk">INPUT</span> <span class="sf">Date</span>
+<span class="sk">ENDWHILE</span>
+<span class="sk">OUTPUT</span>(<span class="ss">"Valid"</span>)</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ТЕПЕР САМОСТІЙНО: FORMAT ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Тепер самостійно</span>
+        <span class="t">SUBSTRING і format check</span><span class="ptime">4 хвилини</span></div>
+      <p class="prac-lead"><span class="ic">Date = "09/10/2026"</span>. Напиши в зошит, що поверне кожен <span class="ic">SUBSTRING</span>.
+        <span class="ic">SUBSTRING(String, x, y)</span>: почати з символу <b>x</b> (перший — 0), взяти <b>y</b> символів.</p>
+      <div class="three">
+        <div class="card reveal"><h3><span class="ic">SUBSTRING(Date, 0, 2)</span></h3><p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p><b>"09"</b></p></div></div>
+        <div class="card reveal"><h3><span class="ic">SUBSTRING(Date, 2, 1)</span></h3><p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p><b>"/"</b></p></div></div>
+        <div class="card reveal"><h3><span class="ic">SUBSTRING(Date, 6, 4)</span></h3><p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p><b>"2026"</b></p></div></div>
+      </div>
+      <p class="prac-lead mt">Format check з Example 2 (дата <span class="ic">__/__/____</span>): напиши <span class="en">Valid</span> або <span class="en">Invalid</span>.</p>
+      <div class="three">
+        <div class="card reveal"><h3>a · <span class="ic">"09/10/2026"</span></h3><p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p><b>Valid</b></p></div></div>
+        <div class="card reveal"><h3>b · <span class="ic">"9/10/2026"</span></h3><p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p><b>Invalid</b>: <span class="ic">SUBSTRING(Date, 0, 2)</span> = "9/" — не 2 numbers</p></div></div>
+        <div class="card reveal"><h3>c · <span class="ic">"09-10-2026"</span></h3><p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p><b>Invalid</b>: <span class="ic">SUBSTRING(Date, 2, 1)</span> = "-", не "/"</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── CHECK DIGIT ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🔢</div><div>
+      <span class="label lr">Check digit · с. 176</span>
+      <h2>Calculated from a set of numbers</h2>
+    </div></div>
+    <div class="mini" style="grid-template-columns:1fr">
+      <div class="mw"><div class="w">check digit</div>
+        <div class="t">a type of error detection method that is used for data entry. A calculation is performed on the data entered
+          to create a value. Check digit values are compared to see if the data entered is correct.</div></div>
+    </div>
+    <div class="hbox hm mt">«A check digit is calculated from a set of numbers, and is input with the numbers. When the data has been input,
+      the calculation is performed on the data again and the result is compared with the final number (the check digit).»</div>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span><span class="step-t">Example: 5 digit number input — «4 digits used to calculate 5th check digit»</span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">«check if the calculated check digit is the same as the last digit» →
+        <span class="ic">"Correct data entry"</span> або <span class="ic">"Incorrect data entry"</span></span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ЯКА ПЕРЕВІРКА? ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🔍</div><div>
+      <span class="label lo">Тепер самостійно · с. 173–176</span>
+      <h2>Яка це перевірка?</h2>
+    </div></div>
+    <p>Напиши в зошит літеру й назву перевірки: <span class="en">range</span>, <span class="en">length</span>, <span class="en">type</span>,
+      <span class="en">presence</span>, <span class="en">format</span> check або <span class="en">check digit</span>.</p>
+    <div class="three mt">
+      <div class="card reveal"><h3>a · <span class="ic">WHILE LENGTH(Data) &lt; 10 DO</span></h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p><b>length check</b></p></div></div>
+      <div class="card reveal"><h3>b · <span class="ic">IF Data = NULL THEN</span></h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p><b>presence check</b></p></div></div>
+      <div class="card reveal"><h3>c · <span class="ic">IF Number &lt; 1 OR Number &gt; 10 THEN</span></h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p><b>range check</b></p></div></div>
+      <div class="card reveal"><h3>d · <span class="ic">SUBSTRING(Date, 2, 1) &lt;&gt; "/"</span></h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p><b>format check</b></p></div></div>
+      <div class="card reveal"><h3>e · <span class="ic">IF Data.GetDataType() &lt;&gt; Integer THEN</span></h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p><b>type check</b></p></div></div>
+      <div class="card reveal"><h3>f · the calculated digit = the last digit?</h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p><b>check digit</b></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── TRUE / FALSE ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lo">True or false? · с. 172–176</span>
+      <h2>Це правда?</h2>
+    </div></div>
+    <p>Напиши в зошит номер і <b>T</b> (true — так, правда) або <b>F</b> (false — ні, неправда).</p>
+    <div class="two mt">
+      <div class="qs">
+        <div class="q"><b>1</b> · A presence check makes sure that some data has been entered.</div>
+        <div class="q"><b>2</b> · A length check checks the data type.</div>
+        <div class="q"><b>3</b> · The length of "hello world" is 11.</div>
+      </div>
+      <div class="qs">
+        <div class="q"><b>4</b> · A range check can use selection or a loop.</div>
+        <div class="q"><b>5</b> · Boolean data is a decimal number.</div>
+        <div class="q"><b>6</b> · A check digit is input with the numbers.</div>
+      </div>
+    </div>
+    <div class="card reveal mt"><h3>Відповідь</h3>
+      <p class="rv-hint">Спершу зошит — потім клацни.</p>
+      <div class="rv-body"><p>1 <b>T</b> · 2 <b>F</b> — це type check · 3 <b>T</b> — пробіл теж символ · 4 <b>T</b> ·
+        5 <b>F</b> — Boolean: true or false · 6 <b>T</b></p></div></div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ЗНАЙДИ ПОМИЛКУ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🐞</div><div>
+      <span class="label lr">Знайди помилку</span>
+      <h2>В кожному алгоритмі — одна помилка</h2>
+    </div></div>
+    <p>Напиши в зошит для кожного алгоритму: <b>а)</b> номер рядка з помилкою; <b>б)</b> цей рядок правильно.</p>
+    <div class="two mt">
+      <div>
+        <p class="note"><b>A</b> · Має повторювати ввід, <b>поки число не буде від 1 до 10</b>.</p>
+        <div class="dp">
+          <div class="dp-code"><span class="cm">1</span> <span class="sf">Number</span> &#8592; <span class="sk">INPUT</span>(<span class="ss">"Enter a number between 1 and 10"</span>)
+<span class="cm">2</span> <span class="sk">WHILE</span> <span class="sf">Number</span> &lt; <span class="sn">1</span> <span class="sk">AND</span> <span class="sf">Number</span> &gt; <span class="sn">10</span> <span class="sk">DO</span>
+<span class="cm">3</span>     <span class="sk">OUTPUT</span>(<span class="ss">"Invalid please try again"</span>)
+<span class="cm">4</span>     <span class="sf">Number</span> &#8592; <span class="sk">INPUT</span>()
+<span class="cm">5</span> <span class="sk">ENDWHILE</span></div>
+        </div>
+        <div class="card reveal mt"><h3>Відповідь A</h3><p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p>а) рядок <b>2</b> · б) <span class="ic">WHILE Number &lt; 1 OR Number &gt; 10 DO</span> — число не може бути водночас &lt; 1 і &gt; 10</p></div></div>
+      </div>
+      <div>
+        <p class="note"><b>B</b> · Має повторювати ввід, <b>поки нічого не введено</b>.</p>
+        <div class="dp">
+          <div class="dp-code"><span class="cm">1</span> <span class="sk">INPUT</span> <span class="sf">Data</span>
+<span class="cm">2</span> <span class="sk">WHILE</span> <span class="sf">Data</span> &lt;&gt; <span class="ss">""</span> <span class="sk">DO</span>
+<span class="cm">3</span>     <span class="sk">OUTPUT</span>(<span class="ss">"Invalid please try again"</span>)
+<span class="cm">4</span>     <span class="sk">INPUT</span> <span class="sf">Data</span>
+<span class="cm">5</span> <span class="sk">ENDWHILE</span></div>
+        </div>
+        <div class="card reveal mt"><h3>Відповідь B</h3><p class="rv-hint">Клацни.</p>
+          <div class="rv-body"><p>а) рядок <b>2</b> · б) <span class="ic">WHILE Data = "" DO</span></p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ПРАКТИКА ЗА РІВНЯМИ ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Тепер самостійно</span>
+        <span class="t">Write a validation routine</span><span class="ptime">6 хвилин</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">Яка перевірка потрібна? Напиши назву.
+          1) an age must be between 0 and 100 · 2) a date as <span class="ic">__/__/____</span> ·
+          3) a name of at least 8 letters · 4) some data has been entered</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">Напиши псевдокодом <b>range check</b> з циклом <b>WHILE</b>:
+          «an age must be between 0 and 100» (с. 173).</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t"><b>Exam-style Q4c</b>, с. 193: «…input a name that is made of at least
+          8 letters. This is validated using a length check. <b>i</b> Identify one other appropriate validation routine. [1]
+          <b>ii</b> Write, using pseudocode, the length check validation for the name. [4]»</span></div>
+      </div>
+    </div>
+    <div class="three mt">
+      <div class="card reveal"><h3>⭐</h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p>1 range · 2 format · 3 length · 4 presence</p></div></div>
+      <div class="card reveal"><h3>⭐⭐</h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p style="font-family:var(--f-mono);font-size:13.5px;line-height:1.45">Age &#8592; INPUT()<br>WHILE Age &lt; 0 OR Age &gt; 100 DO<br>&nbsp;&nbsp;OUTPUT("Invalid please try again")<br>&nbsp;&nbsp;Age &#8592; INPUT()<br>ENDWHILE</p></div></div>
+      <div class="card cb reveal"><h3>⭐⭐⭐</h3><p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p style="font-size:14px;line-height:1.4"><b>i</b> presence check (або type check)</p>
+          <p style="font-family:var(--f-mono);font-size:13.5px;line-height:1.45">Name &#8592; INPUT()<br>WHILE LENGTH(Name) &lt; 8 DO<br>&nbsp;&nbsp;OUTPUT("Invalid, please try again")<br>&nbsp;&nbsp;Name &#8592; INPUT()<br>ENDWHILE</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key vocabulary</span>
+      <h2>Слова уроку</h2>
+    </div></div>
+    <div class="vg" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="vp"><span class="en">validation</span><span class="uk">перевірка введених даних</span></div>
+      <div class="vp"><span class="en">valid / invalid</span><span class="uk">допустимий / недопустимий</span></div>
+      <div class="vp"><span class="en">set bounds</span><span class="uk">встановлені межі</span></div>
+      <div class="vp"><span class="en">range check</span><span class="uk">перевірка діапазону</span></div>
+      <div class="vp"><span class="en">length check</span><span class="uk">перевірка довжини</span></div>
+      <div class="vp"><span class="en">type check</span><span class="uk">перевірка типу</span></div>
+      <div class="vp"><span class="en">presence check</span><span class="uk">перевірка наявності</span></div>
+      <div class="vp"><span class="en">format check</span><span class="uk">перевірка формату</span></div>
+      <div class="vp"><span class="en">check digit</span><span class="uk">контрольна цифра</span></div>
+      <div class="vp"><span class="en">data type</span><span class="uk">тип даних</span></div>
+      <div class="vp"><span class="en">integer</span><span class="uk">ціле число</span></div>
+      <div class="vp"><span class="en">real</span><span class="uk">десяткове (дійсне) число</span></div>
+      <div class="vp"><span class="en">string</span><span class="uk">рядок, будь-які символи</span></div>
+      <div class="vp"><span class="en">Boolean</span><span class="uk">логічне: true або false</span></div>
+      <div class="vp"><span class="en">null / empty string</span><span class="uk">нічого / порожній рядок ""</span></div>
+      <div class="vp"><span class="en">character</span><span class="uk">символ</span></div>
+      <div class="vp"><span class="en">error detection</span><span class="uk">виявлення помилок</span></div>
+      <div class="vp"><span class="en">data entry</span><span class="uk">введення даних</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">☑️</div><div>
+      <span class="label lr">I can…</span>
+      <h2>Чек-лист уроку</h2>
+    </div></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div><div>I can explain what <span class="en">validation</span> is.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can name the six types of validation and say what each one checks.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can identify which validation check an algorithm uses.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can write a <span class="en">range check</span> or a <span class="en">length check</span>
+        using selection or iteration.</div></div>
+    </div>
+    <div class="hbox hm mt">Summary, с. 192: «Validation is checking data entered is reasonable and within bounds. Validation checks include;
+      range check, length check, type check, presence check, format check and check digit.»</div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 7 · 16 жовтня · Verification</p>
+  </div></section>
+
+  <!-- ══════════ 21 ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">🏠</div><div>
+      <span class="label lo">Homework</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox hm">Письмово, від руки — олівцем або ручкою. Комп'ютер не потрібен.
+      Приносимо на урок 7, <strong>16 жовтня</strong>.</div>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span><div class="step-t">
+        Яка перевірка? Напиши назву. a) «A date must be before today's date.» · b) «An ID number: 1 number, then 3 letters.» ·
+        c) <span class="ic">IF Data = NULL THEN</span> · d) <span class="ic">Data.IsInteger()</span></div></div>
+      <div class="step"><span class="step-n">2</span><div class="step-t">
+        Length check Example 1 (<span class="ic">IF LENGTH(Data) &lt; 10</span>). Для кожного слова напиши LENGTH і
+        <span class="en">Valid</span> або <span class="en">Invalid</span>: <span class="ic">"validation"</span> · <span class="ic">"type check"</span> · <span class="ic">"data"</span></div></div>
+      <div class="step"><span class="step-n">3</span><div class="step-t">
+        Напиши псевдокодом <span class="en">type check</span> з циклом <b>WHILE</b>: повторювати ввід, поки дані не <span class="en">integer</span>.
+        Використай <span class="ic">.IsInteger()</span>.</div></div>
+      <div class="step"><span class="step-n">4</span><div class="step-t">
+        <span class="en">Translate:</span> <span class="en">set bounds</span> · <span class="en">presence check</span> ·
+        <span class="en">null</span> · <span class="en">integer</span> · <span class="en">Boolean</span> · <span class="en">error detection</span>.</div></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

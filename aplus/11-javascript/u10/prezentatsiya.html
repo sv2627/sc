@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Функції · JavaScript · 11 клас · Урок 10</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (основа мови)
+  Клас          11 (16–17 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум)
+  Урок          10 з 35 · 07.10.2026 · СЕРЕДА
+  Тема          Функції (тема 2.11 плану)
+  Тривалість    45 хв — показ ~12 · практика ~33 · збереження 1
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       33
+  ────────────────────────────────────────────────────────────────
+  СПИРАЄТЬСЯ НА уроки 1–9: let / const · шаблонні рядки · if / else ·
+     ? : (урок 6) · % · ** і toFixed (урок 5) · for / while / for...of ·
+     масиви: [ ], length, push, сума й лічильник по масиву (урок 9) ·
+     ReferenceError (урок 4)
+  НОВЕ          function · виклик () · параметр і аргумент · return ·
+                без return → undefined · return зупиняє функцію ·
+                функція-перевірка (true / false) · кілька return ·
+                значення за замовчуванням · локальна змінна ·
+                функціональний вираз · стрілкова функція (=>) ·
+                виклик до оголошення · функція з масивом ·
+                функція викликає функцію
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  ПРАКТИКА 1    сл. 10 — оголошення, параметри, return, 8 хв
+  ПРАКТИКА 2    сл. 16 — перевірки, кілька return, за замовчуванням, 8 хв
+  ПРАКТИКА 3    сл. 22 — вирази й стрілки, 8 хв
+  ПРАКТИКА 4    сл. 26 — функції з масивами, 9 хв
+  ДОВІДНИК      сл. 25 — тримати на дошці під час практик 3–4
+  ПЕРЕДБАЧ / ВИПРАВ  сл. 9 · 15 · 21 · 27 — відповідь на тому ж слайді
+  БАНК          сл. 29 — вісім завдань
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО РІЗАТИ ПЕРШИМ (показ, не практика): сл. 18 (функціональний
+     вираз — сказати одним реченням перед стрілками); сл. 20 (три
+     записи — лишається довідник); сл. 24 (функція кличе функцію —
+     пункт ⭐⭐ практики 2 це покриває); сл. 15 (передбач).
+  ⚠️ max / min / average масиву НЕ розібрано навмисно: це ⭐–⭐⭐
+     практичної № 2 «Статистика класу» на уроці 11 (12.10). Сьогодні
+     з масивами — лише cartTotal, countCheap, contains, onlyCheap.
+  ⚠️ ДЗ — CodePen, лише console.log, БЕЗ prompt.
+  ⚠️ Оцінювання — у конспекті, не на екрані. Git не згадується.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • колбеки (функція як аргумент), map / filter / forEach
+     • рекурсія, замикання, arguments, rest-параметри ...args
+     • методи обʼєктів і this — обʼєкти на уроці 12
+  ────────────────────────────────────────────────────────────────
+  План          office/plany/05-javascript-8.md, тема 2.11
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/11-javascript/u10/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:96px}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6 ─── */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.tree{font-family:var(--f-mono);font-size:16px;line-height:1.6;white-space:pre;color:var(--ink)}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8 ─── */
+.dp-out.con{font-family:var(--f-mono);font-size:16px;line-height:1.55;white-space:pre-wrap;padding:10px 19px}
+.dp-out.con b{color:var(--faint);font-family:var(--f-body);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+.three .mono{font-size:15.5px;line-height:1.55;margin-bottom:6px}
+table.ops td.c{text-align:center;font-family:var(--f-mono)}
+.ic{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ── ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Функції</h1>
+      <p class="title-sub">Написати один раз — викликати скільки завгодно<br>
+        JavaScript · 11 клас · Урок 10 з 35 · 7 жовтня</p>
+      <div class="chips">
+        <span class="chip">function</span>
+        <span class="chip">параметр</span>
+        <span class="chip">return</span>
+        <span class="chip">за замовчуванням</span>
+        <span class="chip">=&gt;</span>
+        <span class="chip">локальна змінна</span>
+        <span class="chip">функція + масив</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">♻️</div><div>
+      <span class="label lm">Після масивів</span>
+      <h2>Той самий код — тричі поспіль?</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">без функції — копія на кожен раз</span>
+        <div class="mono">console.log(`Зі знижкою: ${499 - 100} грн`);
+console.log(`Зі знижкою: ${1299 - 100} грн`);
+console.log(`Зі знижкою: ${899 - 100} грн`);
+// знижка стала 150 — правити тричі</div></div>
+      <div class="right"><span class="lbl">з функцією — один рецепт</span>
+        <div class="mono">function showSale(price) {
+  console.log(`Зі знижкою: ${price - 100} грн`);
+}
+showSale(499);
+showSale(1299);
+showSale(899);</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><b>Функція</b> — шматок коду з імʼям. Написали раз — запускаємо скільки треба</div>
+      <div class="hbox hp">Змінилась знижка — правимо <b>один</b> рядок усередині функції</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ОГЛЯД ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🗂️</div><div>
+      <span class="label lb">Уся родина</span>
+      <h2>Усе про функції — за один урок</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Що</th><th>Як виглядає</th></tr>
+      <tr><td>оголосити · викликати</td><td><span class="ic">function greet(name) { … }</span> · <span class="ic">greet('Оля')</span></td></tr>
+      <tr><td>повернути значення</td><td><span class="ic">return a * a;</span> — без нього результат <span class="ic">undefined</span></td></tr>
+      <tr><td>значення за замовчуванням</td><td><span class="ic">function power(n, k = 2)</span></td></tr>
+      <tr><td>локальна змінна</td><td><span class="ic">let</span> усередині — видно лише в цій функції</td></tr>
+      <tr><td>функціональний вираз</td><td><span class="ic">const sq = function (n) { return n * n; };</span></td></tr>
+      <tr><td>стрілкова функція</td><td><span class="ic">const sq = (n) =&gt; n * n;</span></td></tr>
+      <tr><td>функція з масивом</td><td><span class="ic">cartTotal([499, 1299, 250])</span></td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 4 ── АНАТОМІЯ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔬</div><div>
+      <span class="label lm">Як це влаштовано</span>
+      <h2>З чого складається функція</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1fr;align-items:stretch">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">оголошення</span></div>
+<div class="dp-code" style="font-size:19px"><span class="sk">function</span> <span class="sf">square</span>(n) {
+  <span class="sk">return</span> n * n;
+}</div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">виклик</span></div>
+<div class="dp-code" style="font-size:19px"><span class="sk">const</span> s = <span class="sf">square</span>(<span class="sn">5</span>);
+console.<span class="sf">log</span>(s);   <span class="cm">// 25</span></div>
+      </div>
+    </div>
+    <div class="rf mt">
+      <div class="rf-c"><h4>function</h4><pre>ключове слово:
+«оголошую функцію»</pre></div>
+      <div class="rf-c"><h4>square</h4><pre>назва — дієслово
+або що повертає</pre></div>
+      <div class="rf-c"><h4>(n)</h4><pre>параметр — змінна
+для вхідного значення</pre></div>
+      <div class="rf-c"><h4>{ … }</h4><pre>тіло — виконується
+лише під час виклику</pre></div>
+      <div class="rf-c"><h4>return</h4><pre>що функція віддає
+назовні</pre></div>
+      <div class="rf-c"><h4>square(5)</h4><pre>виклик; 5 — аргумент,
+стає значенням n</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ── ОГОЛОШЕННЯ І ВИКЛИК ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">📣</div><div>
+      <span class="label lm">Оголосити · викликати</span>
+      <h2>Оголошення нічого не запускає</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">function</span> <span class="sf">hello</span>() {
+  console.<span class="sf">log</span>(<span class="ss">'Привіт!'</span>);
+}
+
+<span class="sf">hello</span>();
+<span class="sf">hello</span>();</div>
+        <div class="dp-out con"><b>Консоль</b>Привіт!
+Привіт!</div>
+      </div>
+      <div>
+        <div class="hbox hm">Перші три рядки — лише <b>рецепт</b>. Консоль мовчить, доки немає виклику</div>
+        <div class="hbox hp"><b>Виклик</b> — імʼя і дужки <span class="ic">()</span>. Скільки викликів — стільки запусків</div>
+        <div class="hbox hr">Без дужок <span class="ic">console.log(hello)</span> друкує <b>текст функції</b>, а не запускає її</div>
+        <div class="hbox ho">Хто писав на Python: <span class="ic">def</span> → <span class="ic">function</span>, відступ → <span class="ic">{ }</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ПАРАМЕТРИ ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">📥</div><div>
+      <span class="label lm">Параметри й аргументи</span>
+      <h2>Функція отримує дані ззовні</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">function</span> <span class="sf">greet</span>(name, age) {
+  console.<span class="sf">log</span>(<span class="ss">`Привіт, ${name}! Тобі ${age}.`</span>);
+}
+
+<span class="sf">greet</span>(<span class="ss">'Оля'</span>, <span class="sn">16</span>);
+<span class="sf">greet</span>(<span class="ss">'Максим'</span>, <span class="sn">17</span>);
+<span class="sf">greet</span>(<span class="sn">16</span>, <span class="ss">'Оля'</span>);</div>
+        <div class="dp-out con"><b>Консоль</b>Привіт, Оля! Тобі 16.
+Привіт, Максим! Тобі 17.
+Привіт, 16! Тобі Оля.</div>
+      </div>
+      <div>
+        <div class="hbox hm"><b>Параметр</b> — імʼя в дужках оголошення: <span class="ic">name</span>, <span class="ic">age</span></div>
+        <div class="hbox hp"><b>Аргумент</b> — значення в дужках виклику: <span class="ic">'Оля'</span>, <span class="ic">16</span></div>
+        <div class="hbox hr">Аргументи стають параметрами <b>за порядком</b>, не за змістом — дивись третій рядок</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── RETURN ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">📤</div><div>
+      <span class="label lm">return</span>
+      <h2>Функція віддає результат</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">function</span> <span class="sf">square</span>(n) {
+  <span class="sk">return</span> n * n;
+}
+
+<span class="sk">const</span> s = <span class="sf">square</span>(<span class="sn">5</span>);
+console.<span class="sf">log</span>(s);               <span class="cm">// 25</span>
+console.<span class="sf">log</span>(<span class="sf">square</span>(<span class="sn">3</span>) + <span class="sn">1</span>);   <span class="cm">// 10</span>
+console.<span class="sf">log</span>(<span class="sf">square</span>(<span class="sf">square</span>(<span class="sn">2</span>))); <span class="cm">// 16</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Виклик <span class="ic">square(5)</span> <b>замінюється</b> на те, що стоїть після <span class="ic">return</span></div>
+        <div class="hbox hp">Результат можна покласти в змінну, додати до нього, передати в іншу функцію</div>
+        <div class="hbox ho">Функція, що <b>повертає</b>, — як калькулятор: дала число, а що з ним робити — вирішуєш ти</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── RETURN ПРОТИ CONSOLE.LOG ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">⚖️</div><div>
+      <span class="label lr">Головна пастка</span>
+      <h2><span class="ic">return</span> — не те саме, що <span class="ic">console.log</span></h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">надрукувала — і все</span>
+        <div class="mono">function square(n) {
+  console.log(n * n);
+}
+const s = square(5);   // друкує 25
+console.log(s + 1);    // NaN</div></div>
+      <div class="right"><span class="lbl">повернула — можна рахувати далі</span>
+        <div class="mono">function square(n) {
+  return n * n;
+}
+const s = square(5);   // нічого не друкує
+console.log(s + 1);    // 26</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hr">Без <span class="ic">return</span> функція повертає <span class="ic">undefined</span>. А <span class="ic">undefined + 1</span> → <b>NaN</b></div>
+      <div class="hbox hm"><span class="ic">console.log</span> — для людини, <span class="ic">return</span> — для програми</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе кожен фрагмент?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">function double(x) {
+  return x * 2;
+}
+console.log(double(double(3)));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>12</b> — спершу внутрішній виклик: 6, потім 12</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">function f(a, b) {
+  return a - b;
+}
+console.log(f(2, 10));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>-8</b> — <span class="ic">a</span> = 2, <span class="ic">b</span> = 10, за порядком</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">function g(x) {
+  x * 2;
+}
+console.log(g(4));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>undefined</b> — порахувала, але не повернула</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Перші власні функції</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.35fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">function square(n) {
+  return n * n;
+}
+console.log(square(4));  // 16
+console.log(square(7));  // 49</div>
+        <p class="mt" style="font-size:16px">Результат — у консолі: <b>F12 → Console</b></p></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у консоль</span>
+        <ul>
+          <li>Папка <span class="ic">js-11/funktsii</span>: <span class="ic">index.html</span> + <span class="ic">script.js</span>. Набери <span class="ic">square</span> і виклич тричі</li>
+          <li><span class="ic">cube(n)</span> — куб числа; <span class="ic">area(w, h)</span> — площа прямокутника</li>
+          <li><span class="ic">greet(name)</span> <b>повертає</b> рядок «Привіт, Оля!» — виведи для трьох імен</li>
+          <li>Заміни в <span class="ic">square</span> <span class="ic">return</span> на <span class="ic">console.log</span>. Що дає <span class="ic">square(3) + 1</span>? Поверни</li>
+          <li>⭐⭐ <span class="ic">toUah(usd)</span> за курсом 41.5 з двома знаками: <span class="ic">toUah(10)</span> → <span class="ic">'415.00'</span></li>
+          <li>⭐⭐⭐ <span class="ic">hypotenuse(a, b)</span> — гіпотенуза: <span class="ic">(a ** 2 + b ** 2) ** 0.5</span>. Для 3 і 4 — 5</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── RETURN ЗУПИНЯЄ ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🛑</div><div>
+      <span class="label lr">return зупиняє</span>
+      <h2>Після return функція закінчується</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">function</span> <span class="sf">divide</span>(a, b) {
+  <span class="sk">if</span> (b <span class="st">===</span> <span class="sn">0</span>) {
+    <span class="sk">return</span> <span class="ss">'на нуль не можна'</span>;
+  }
+  <span class="sk">return</span> a / b;
+}
+
+console.<span class="sf">log</span>(<span class="sf">divide</span>(<span class="sn">10</span>, <span class="sn">2</span>));   <span class="cm">// 5</span>
+console.<span class="sf">log</span>(<span class="sf">divide</span>(<span class="sn">1</span>, <span class="sn">0</span>));    <span class="cm">// на нуль не можна</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Спрацював <span class="ic">return</span> — решта рядків функції <b>не виконується</b></div>
+        <div class="hbox hp"><b>Рання перевірка</b> вгорі замість великого <span class="ic">else</span>: погане відсіяли — далі звичайний шлях</div>
+        <div class="hbox ho">Як <span class="ic">break</span> у циклі (урок 8), тільки виходить із <b>усієї</b> функції</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ФУНКЦІЯ-ПЕРЕВІРКА ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">✔️</div><div>
+      <span class="label lm">Так чи ні</span>
+      <h2>Функція-перевірка повертає true або false</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">function</span> <span class="sf">isEven</span>(n) {
+  <span class="sk">return</span> n % <span class="sn">2</span> <span class="st">===</span> <span class="sn">0</span>;
+}
+<span class="sk">function</span> <span class="sf">isAdult</span>(age) {
+  <span class="sk">return</span> age <span class="st">&gt;=</span> <span class="sn">18</span>;
+}
+
+<span class="sk">if</span> (<span class="sf">isEven</span>(<span class="sn">42</span>)) {
+  console.<span class="sf">log</span>(<span class="ss">'парне'</span>);
+}
+console.<span class="sf">log</span>(<span class="sf">isAdult</span>(<span class="sn">16</span>));   <span class="cm">// false</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Назва <span class="ic">is…</span> — питання, відповідь на яке «так» або «ні»</div>
+        <div class="hbox hp"><span class="ic">return n % 2 === 0</span> — <b>без</b> <span class="ic">if</span>: порівняння вже дає <span class="ic">true</span> чи <span class="ic">false</span></div>
+        <div class="hbox ho">Такий виклик стоїть прямо в умові: <span class="ic">if (isEven(x))</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── КІЛЬКА RETURN ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🪜</div><div>
+      <span class="label lm">Кілька return</span>
+      <h2>Оцінка словами — без жодного else</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">function</span> <span class="sf">grade</span>(score) {
+  <span class="sk">if</span> (score <span class="st">&gt;=</span> <span class="sn">10</span>) <span class="sk">return</span> <span class="ss">'відмінно'</span>;
+  <span class="sk">if</span> (score <span class="st">&gt;=</span> <span class="sn">7</span>) <span class="sk">return</span> <span class="ss">'добре'</span>;
+  <span class="sk">if</span> (score <span class="st">&gt;=</span> <span class="sn">4</span>) <span class="sk">return</span> <span class="ss">'задовільно'</span>;
+  <span class="sk">return</span> <span class="ss">'спробуй ще'</span>;
+}
+
+console.<span class="sf">log</span>(<span class="sf">grade</span>(<span class="sn">11</span>));   <span class="cm">// відмінно</span>
+console.<span class="sf">log</span>(<span class="sf">grade</span>(<span class="sn">5</span>));    <span class="cm">// задовільно</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">else</span> не потрібен: <span class="ic">return</span> уже вийшов із функції</div>
+        <div class="hbox hp">Порядок — <b>від вужчої</b> умови, як в умовах уроку 3</div>
+        <div class="hbox ho">Останній <span class="ic">return</span> — «усе інше»</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ЗА ЗАМОВЧУВАННЯМ ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">⚙️</div><div>
+      <span class="label lb">Значення за замовчуванням</span>
+      <h2>Аргумент не передали — береться запасне</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">function</span> <span class="sf">power</span>(base, exp = <span class="sn">2</span>) {
+  <span class="sk">return</span> base ** exp;
+}
+console.<span class="sf">log</span>(<span class="sf">power</span>(<span class="sn">5</span>));       <span class="cm">// 25</span>
+console.<span class="sf">log</span>(<span class="sf">power</span>(<span class="sn">2</span>, <span class="sn">10</span>));   <span class="cm">// 1024</span>
+
+<span class="sk">function</span> <span class="sf">greet</span>(name = <span class="ss">'гостю'</span>) {
+  <span class="sk">return</span> <span class="ss">`Привіт, ${name}!`</span>;
+}
+console.<span class="sf">log</span>(<span class="sf">greet</span>());        <span class="cm">// Привіт, гостю!</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">exp = 2</span> — якщо другого аргументу немає, <span class="ic">exp</span> буде 2</div>
+        <div class="hbox hp">Передали — запасне <b>ігнорується</b>: <span class="ic">power(2, 10)</span></div>
+        <div class="hbox hr">Без запасного пропущений параметр — <span class="ic">undefined</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Забагато чи замало аргументів</h2>
+    </div></div>
+    <div class="dp" style="margin-bottom:14px">
+      <div class="dp-code" style="padding:10px 19px"><span class="sk">function</span> <span class="sf">add</span>(a, b) { <span class="sk">return</span> a + b; }
+<span class="sk">function</span> <span class="sf">hi</span>(n = <span class="ss">'світ'</span>) { <span class="sk">return</span> <span class="ss">'Привіт, '</span> + n; }</div>
+    </div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log(add(2));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>NaN</b> — <span class="ic">b</span> = undefined, а <span class="ic">2 + undefined</span> → NaN</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log(add(2, 3, 100));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>5</b> — зайвий аргумент мовчки відкинуто</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log(hi('JS'));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>Привіт, JS</b> — передали, тож «світ» не потрібен</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">Перевірки й кілька return</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.35fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">function isEven(n) {
+  return n % 2 === 0;
+}
+console.log(isEven(0));   // true
+console.log(isEven(7));   // false</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у тому самому файлі</span>
+        <ul>
+          <li><span class="ic">isEven(n)</span> і <span class="ic">isOdd(n)</span> — перевір на 0, 7, 42</li>
+          <li><span class="ic">grade(score)</span> з чотирма <span class="ic">return</span> — пʼять тестових викликів</li>
+          <li><span class="ic">ticketPrice(age)</span>: до 6 — 0, до 18 — 80, інакше — 150 грн</li>
+          <li>Постав у <span class="ic">grade</span> перевірку <span class="ic">&gt;= 4</span> першою. Що тепер дає <span class="ic">grade(11)</span>? Поверни</li>
+          <li>⭐⭐ <span class="ic">max2(a, b)</span> і <span class="ic">max3(a, b, c)</span>, яка викликає <span class="ic">max2</span></li>
+          <li>⭐⭐⭐ <span class="ic">greet(name = 'гостю', lang = 'uk')</span>: <span class="ic">'en'</span> → «Hello, …!», інакше «Привіт, …!»</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ЛОКАЛЬНІ ЗМІННІ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🏠</div><div>
+      <span class="label lp">Область видимості</span>
+      <h2>Що в функції — лишається в функції</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">локальна — назовні не видно</span>
+        <div class="mono">function makeTotal() {
+  let total = 100;
+  return total * 2;
+}
+console.log(makeTotal()); // 200
+console.log(total);
+// ReferenceError:
+//   total is not defined</div></div>
+      <div class="right"><span class="lbl">зовнішня — всередині видно</span>
+        <div class="mono">const RATE = 41.5;
+
+function toUah(usd) {
+  return usd * RATE;
+}
+console.log(toUah(2));    // 83</div></div>
+    </div>
+    <div class="three mt">
+      <div class="hbox hm">Змінна, оголошена <b>в</b> функції, живе лише під час виклику</div>
+      <div class="hbox hp">Параметри — теж локальні</div>
+      <div class="hbox ho">Однакові імена в різних функціях одна одній <b>не заважають</b></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ФУНКЦІОНАЛЬНИЙ ВИРАЗ ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">📦</div><div>
+      <span class="label lb">Функціональний вираз</span>
+      <h2>Функцію можна покласти в змінну</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> square = <span class="sk">function</span> (n) {
+  <span class="sk">return</span> n * n;
+};
+
+console.<span class="sf">log</span>(<span class="sf">square</span>(<span class="sn">4</span>));   <span class="cm">// 16</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Функція — <b>значення</b>, як число чи рядок. Її кладуть у змінну</div>
+        <div class="hbox hp">Імені після <span class="ic">function</span> немає — імʼя дає змінна</div>
+        <div class="hbox hr">Наприкінці — <span class="ic">;</span>: це звичайне присвоєння <span class="ic">const x = …;</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── СТРІЛКОВА ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">➡️</div><div>
+      <span class="label lb">Стрілкова функція</span>
+      <h2>Коротший запис: <span class="ic">=&gt;</span></h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> square = (n) <span class="st">=&gt;</span> n * n;
+<span class="sk">const</span> add = (a, b) <span class="st">=&gt;</span> a + b;
+<span class="sk">const</span> hello = () <span class="st">=&gt;</span> console.<span class="sf">log</span>(<span class="ss">'Привіт!'</span>);
+
+<span class="sk">const</span> grade = (score) <span class="st">=&gt;</span> {
+  <span class="sk">if</span> (score <span class="st">&gt;=</span> <span class="sn">10</span>) <span class="sk">return</span> <span class="ss">'відмінно'</span>;
+  <span class="sk">return</span> <span class="ss">'спробуй ще'</span>;
+};
+
+console.<span class="sf">log</span>(<span class="sf">square</span>(<span class="sn">6</span>), <span class="sf">add</span>(<span class="sn">2</span>, <span class="sn">3</span>));   <span class="cm">// 36 5</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><b>Одна дія</b> — без <span class="ic">{ }</span> і без <span class="ic">return</span>: значення повертається саме</div>
+        <div class="hbox hr"><b>З <span class="ic">{ }</span></b> — <span class="ic">return</span> обовʼязковий, як у звичайній функції</div>
+        <div class="hbox hp">Без параметрів — порожні дужки <span class="ic">()</span>. Один параметр — дужки можна не писати: <span class="ic">n =&gt; n * n</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ── ТРИ ЗАПИСИ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🧩</div><div>
+      <span class="label lb">Порівняння</span>
+      <h2>Одна функція — три записи</h2>
+    </div></div>
+    <div class="three">
+      <div class="card"><h3>оголошення</h3>
+        <div class="mono">function cube(n) {
+  return n ** 3;
+}</div></div>
+      <div class="card cp"><h3>вираз</h3>
+        <div class="mono">const cube = function (n) {
+  return n ** 3;
+};</div></div>
+      <div class="card cr"><h3>стрілка</h3>
+        <div class="mono">const cube = (n) =&gt; n ** 3;</div></div>
+    </div>
+    <table class="ops mt">
+      <tr><th></th><th>Оголошення</th><th>Вираз і стрілка</th></tr>
+      <tr><td>Виклик <b>вище</b> за оголошення</td><td>працює</td><td><span class="ic">ReferenceError: Cannot access … before initialization</span></td></tr>
+      <tr><td>Коли брати</td><td>основні функції програми</td><td>короткі, на один рядок</td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 21 ── ПЕРЕДБАЧ СТРІЛКИ ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе кожен фрагмент?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const f = (x) =&gt; { x * 2 };
+console.log(f(5));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>undefined</b> — з <span class="ic">{ }</span> потрібен <span class="ic">return</span>. Або <span class="ic">(x) =&gt; x * 2</span></p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log(sq(3));
+const sq = (n) =&gt; n * n;</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>ReferenceError</b>: Cannot access 'sq' before initialization — стрілку викликали раніше, ніж створили</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log(cube(2));
+function cube(n) {
+  return n ** 3;
+}</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>8</b> — оголошення <span class="ic">function</span> можна викликати й вище</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">Вирази й стрілки</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.35fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">const double = (n) =&gt; n * 2;
+console.log(double(21));  // 42</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Перепиши <span class="ic">square</span>, <span class="ic">cube</span> і <span class="ic">isEven</span> стрілками — по одному рядку кожна</li>
+          <li><span class="ic">greet</span> стрілкою з шаблонним рядком: <span class="ic">greet('Оля')</span> → «Привіт, Оля!»</li>
+          <li><span class="ic">ticketPrice</span> з практики 2 — стрілкою з <span class="ic">{ }</span> і кількома <span class="ic">return</span></li>
+          <li>Прибери <span class="ic">return</span> у стрілці з <span class="ic">{ }</span>. Що вона повертає? Поверни</li>
+          <li>⭐⭐ Виклич стрілку <b>рядком вище</b> за її оголошення — прочитай помилку. Те саме з <span class="ic">function</span> — працює?</li>
+          <li>⭐⭐⭐ <span class="ic">toF(c)</span> і <span class="ic">toC(f)</span> стрілками: <span class="ic">c * 9 / 5 + 32</span>. Перевір: <span class="ic">toC(toF(25))</span> → 25</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 23 ── ФУНКЦІЯ + МАСИВ ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🧺</div><div>
+      <span class="label lm">Функція + масив</span>
+      <h2>Кошик з уроку 9 — тепер функцією</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">function</span> <span class="sf">cartTotal</span>(prices) {
+  <span class="sk">let</span> total = <span class="sn">0</span>;
+  <span class="sk">for</span> (<span class="sk">const</span> p <span class="sk">of</span> prices) {
+    total <span class="st">+=</span> p;
+  }
+  <span class="sk">return</span> total;
+}
+
+<span class="sk">const</span> cart = [<span class="sn">499</span>, <span class="sn">1299</span>, <span class="sn">250</span>, <span class="sn">899</span>];
+console.<span class="sf">log</span>(<span class="sf">cartTotal</span>(cart));        <span class="cm">// 2947</span>
+console.<span class="sf">log</span>(<span class="sf">cartTotal</span>([<span class="sn">100</span>, <span class="sn">50</span>]));   <span class="cm">// 150</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Масив — такий самий аргумент, як число</div>
+        <div class="hbox hp">Цикл суми з уроку 9 — <b>усередині</b>. Ззовні — один рядок виклику</div>
+        <div class="hbox ho">Будь-який кошик — та сама функція</div>
+        <div class="hbox hr"><span class="ic">total</span> — локальна. Після виклику її немає, лишається лише результат</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ── ФУНКЦІЯ КЛИЧЕ ФУНКЦІЮ ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔗</div><div>
+      <span class="label lm">Функція кличе функцію</span>
+      <h2>Нова функція збирається з готових</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · cartTotal — зі слайда 23</span></div>
+<div class="dp-code"><span class="sk">function</span> <span class="sf">totalWithSale</span>(prices, percent) {
+  <span class="sk">return</span> <span class="sf">cartTotal</span>(prices) * (<span class="sn">100</span> - percent) / <span class="sn">100</span>;
+}
+
+<span class="sk">function</span> <span class="sf">countCheap</span>(prices, limit) {
+  <span class="sk">let</span> count = <span class="sn">0</span>;
+  <span class="sk">for</span> (<span class="sk">const</span> p <span class="sk">of</span> prices) {
+    <span class="sk">if</span> (p <span class="st">&lt;</span> limit) count<span class="st">++</span>;
+  }
+  <span class="sk">return</span> count;
+}
+
+console.<span class="sf">log</span>(<span class="sf">totalWithSale</span>(cart, <span class="sn">10</span>));   <span class="cm">// 2652.3</span>
+console.<span class="sf">log</span>(<span class="sf">countCheap</span>(cart, <span class="sn">500</span>));     <span class="cm">// 2</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">totalWithSale</span> не рахує суму сама — просить <span class="ic">cartTotal</span></div>
+        <div class="hbox hp">Кожна функція — <b>одна справа</b>. З маленьких збирається велике</div>
+        <div class="hbox ho">Другий параметр <span class="ic">limit</span> — щоб межа не була вшита в код</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 25 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Усі функції на одному екрані</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>оголосити · викликати</h4><pre>function hi(name) {
+  …
+}
+hi('Оля');</pre></div>
+      <div class="rf-c"><h4>return</h4><pre>function sq(n) {
+  return n * n;
+}
+const s = sq(5); // 25</pre></div>
+      <div class="rf-c"><h4>без return</h4><pre>// повертає undefined
+// undefined + 1 → NaN</pre></div>
+      <div class="rf-c"><h4>кілька return</h4><pre>if (x &gt;= 10) return 'A';
+if (x &gt;= 7) return 'B';
+return 'C';</pre></div>
+      <div class="rf-c"><h4>за замовчуванням</h4><pre>function power(b, e = 2)
+power(5)     // 25</pre></div>
+      <div class="rf-c"><h4>локальна змінна</h4><pre>let усередині функції —
+назовні: not defined</pre></div>
+      <div class="rf-c"><h4>вираз</h4><pre>const sq = function (n) {
+  return n * n;
+};</pre></div>
+      <div class="rf-c"><h4>стрілка</h4><pre>const sq = (n) =&gt; n * n;
+const f = (x) =&gt; {
+  return x * 2; };</pre></div>
+      <div class="rf-c"><h4>з масивом</h4><pre>function total(arr) {
+  let t = 0;
+  for (const x of arr) t += x;
+  return t;
+}</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 26 ── ПРАКТИКА 4 ══════════ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 4</span>
+        <span class="t">Функції з масивами</span><span class="tmr">9 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.35fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">function countCheap(prices, limit) {
+  let count = 0;
+  for (const p of prices) {
+    if (p &lt; limit) count++;
+  }
+  return count;
+}
+console.log(countCheap([499, 1299, 250], 500));
+// 2</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li><span class="ic">cartTotal(prices)</span> — виклич для двох різних кошиків</li>
+          <li><span class="ic">contains(arr, item)</span> — <span class="ic">true</span> / <span class="ic">false</span> <b>без</b> <span class="ic">includes</span>, циклом і <span class="ic">return</span></li>
+          <li><span class="ic">repeat(text, n)</span> — рядок, повторений <span class="ic">n</span> разів: <span class="ic">repeat('ха', 3)</span> → <span class="ic">'хахаха'</span></li>
+          <li>Прибери <span class="ic">return count</span> у <span class="ic">countCheap</span>. Що в консолі? Поверни</li>
+          <li>⭐⭐ <span class="ic">onlyCheap(prices, limit)</span> — <b>новий масив</b> лише з дешевшими</li>
+          <li>⭐⭐⭐ <span class="ic">cartTotal(prices, sale = 0)</span> — знижка у відсотках; без неї — звичайна сума</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 27 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s26"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ</span>
+      <h2>Має вивести 10. Що не так?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+<div class="dp-code"><span class="sk">function</span> <span class="sf">avg</span>(arr) {
+  <span class="sk">let</span> sum = <span class="sn">0</span>;
+  <span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;</span> arr.length; i<span class="st">++</span>) {
+    sum <span class="st">+=</span> arr[i];
+  }
+  sum / arr.length;
+}
+
+<span class="sk">const</span> marks = [<span class="sn">10</span>, <span class="sn">8</span>, <span class="sn">12</span>];
+console.<span class="sf">log</span>(avg);</div>
+        <div class="dp-out con"><b>Консоль</b>ƒ avg(arr) { … }</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Три біди, червоного рядка немає</h3>
+        <p class="rv-hint">Знайди всі три, потім клацни</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">console.log(avg)</span> — без дужок і без аргументу. Треба <span class="ic">avg(marks)</span></p>
+          <p><b>2.</b> Немає <span class="ic">return</span> — функція повертає <span class="ic">undefined</span>. Треба <span class="ic">return sum / arr.length;</span></p>
+          <p><b>3.</b> <span class="ic">i = 1</span> — перша оцінка пропущена: вийшло б ≈ 6.67. Старт з <b>0</b></p>
+          <p class="mt" style="color:var(--brand)">Полагоджене дає <b>10</b>.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 28 ── ДІАГНОСТИКА ══════════ -->
+  <section class="slide" id="s27"><div class="slide-inner">
+    <div class="sh"><div class="si">🩺</div><div>
+      <span class="label lr">Діагностика</span>
+      <h2>Шість бід функцій</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox hr"><span class="ic">undefined</span> замість відповіді — немає <span class="ic">return</span> (або стрілка з <span class="ic">{ }</span> без нього)</div>
+        <div class="hbox hr"><b>NaN</b> — забули аргумент: <span class="ic">a + undefined</span></div>
+        <div class="hbox hp">У консолі <b>текст функції</b> — виклик без <span class="ic">()</span></div>
+      </div>
+      <div>
+        <div class="hbox ho"><span class="ic">x is not defined</span> — змінну з функції читають ззовні</div>
+        <div class="hbox hm"><span class="ic">Cannot access 'f' before initialization</span> — стрілку викликали вище оголошення</div>
+        <div class="hbox hp"><b>Рядки після <span class="ic">return</span> не працюють</b> — <span class="ic">return</span> завжди виходить</div>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🔦</span>
+      <div><span class="ic">console.log('n =', n)</span> першим рядком тіла — і видно, з чим функцію насправді викликали.</div></div>
+  </div></section>
+
+  <!-- ══════════ 29 ── БАНК ══════════ -->
+  <section class="slide" id="s28"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Останній.</b> <span class="ic">lastOf(arr)</span> — останній елемент; для <span class="ic">[]</span> — «порожньо»</div>
+      <div class="bk"><b>Задом наперед.</b> <span class="ic">reverseText('кіт')</span> → <span class="ic">'тік'</span>: <span class="ic">for...of</span> і <span class="ic">r = ch + r</span></div>
+      <div class="bk"><b>Голосні.</b> <span class="ic">countVowels(text)</span> — скільки голосних у фразі</div>
+      <div class="bk"><b>Просте число.</b> <span class="ic">isPrime(n)</span> — ділиться лише на 1 і на себе. 13 → true, 9 → false</div>
+      <div class="bk"><b>FizzBuzz.</b> <span class="ic">fizz(n)</span> повертає Fizz, Buzz, FizzBuzz або саме число; виклич для 1…15</div>
+      <div class="bk"><b>Кубик.</b> <span class="ic">randomInt(min, max)</span> — рецепт <span class="ic">Math.random</span> з уроку 8 у функції</div>
+      <div class="bk"><b>Конвертер.</b> <span class="ic">convert(uah, currency = 'usd')</span> — usd або eur, два знаки</div>
+      <div class="bk"><b>Квест.</b> <span class="ic">ask(question)</span> — питає, поки не введуть 1 або 2, і повертає відповідь</div>
+    </div>
+    <div class="hbox hm mt">Усі вісім — тільки тим, що вже було</div>
+  </div></section>
+
+  <!-- ══════════ 30 ── ЗБЕРЕГТИ ══════════ -->
+  <section class="slide" id="s29"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Зберігаємо роботу уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="cm">// Функції · урок 10</span>
+<span class="cm">// Прізвище Імʼя · рівень: ⭐⭐</span>
+<span class="cm">// зроблено: практики 1, 2, 3, 4</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Коментар — <b>першим рядком</b> <span class="ic">script.js</span>, потім <b>Ctrl + S</b></div>
+        <div class="hbox hp">Папку <span class="ic">js-11/funktsii</span> не видаляти: на уроці 11 знадобляться функції з масивами</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 31 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s30"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Словник</span>
+      <h2>Слова, які лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="ic">function</span> — функція</div>
+        <div class="hbox hm"><span class="ic">parameter</span> — параметр</div>
+        <div class="hbox hp"><span class="ic">argument</span> — аргумент</div>
+      </div>
+      <div>
+        <div class="hbox hr"><span class="ic">return</span> — повернути</div>
+        <div class="hbox ho"><span class="ic">call</span> — викликати, виклик</div>
+        <div class="hbox"><span class="ic">arrow function</span> — стрілкова функція</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 32 ── ПІДСУМОК ══════════ -->
+  <section class="slide" id="s31"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Після уроку 10 у вас є</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>У коді</h3><ul>
+        <li><span class="ic">function</span>, параметри, <span class="ic">return</span></li>
+        <li>значення за замовчуванням</li>
+        <li>вираз і стрілка <span class="ic">=&gt;</span></li>
+        <li>функції, що приймають масив</li>
+      </ul></div>
+      <div class="card cp"><h3>У голові</h3><ul>
+        <li><span class="ic">return</span> — для програми, <span class="ic">console.log</span> — для людини</li>
+        <li><span class="ic">return</span> одразу виходить із функції</li>
+        <li>що в функції — лишається в функції</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання</strong> — на наступному слайді.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 11 · понеділок 12 жовтня · Практична № 2 «Статистика класу»</p>
+  </div></section>
+
+  <!-- ══════════ 33 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s32"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>Чотири функції в консолі</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">На <strong>codepen.io</strong>, панель <b>JS</b>, результат — кнопка <b>Console</b> · код — <strong>повідомленням на платформі</strong> до <strong>12 жовтня</strong></div>
+    <div class="two" style="grid-template-columns:1.1fr 1fr;gap:16px">
+      <div class="steps" style="gap:8px">
+        <div class="step" style="padding:9px 15px"><span class="step-n">1</span><span class="step-t" style="font-size:16.5px">
+          Вгадай, що виведе код праворуч, — коментарем. Потім запусти й звір</span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">2</span><span class="step-t" style="font-size:16.5px">
+          Стрілка <span class="ic">toF(c)</span>: <span class="ic">c * 9 / 5 + 32</span>. Виклики для 0, 100, -40</span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">3</span><span class="step-t" style="font-size:16.5px">
+          <span class="ic">countAbove(arr, limit)</span> — скільки чисел більші за <span class="ic">limit</span>. Виклик: <span class="ic">countAbove([3, 9, 12, 5, 10], 8)</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">4</span><span class="step-t" style="font-size:16.5px">
+          <span class="ic">initials(first, last)</span> → <span class="ic">'О. К.'</span> для <span class="ic">'Оля', 'Коваль'</span>. Перша літера — <span class="ic">first[0]</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">⭐</span><span class="step-t" style="font-size:16.5px">
+          ⭐⭐⭐ <span class="ic">range(from, to)</span> — масив чисел від <span class="ic">from</span> до <span class="ic">to</span>: <span class="ic">range(3, 7)</span> → <span class="ic">[3, 4, 5, 6, 7]</span></span></div>
+      </div>
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">до пункту 1</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.55;padding:12px 16px"><span class="cm">// Прізвище Імʼя</span>
+<span class="sk">function</span> <span class="sf">mystery</span>(a, b = <span class="sn">3</span>) {
+  <span class="sk">if</span> (a <span class="st">&gt;</span> b) <span class="sk">return</span> a - b;
+  <span class="sk">return</span> a * b;
+}
+console.<span class="sf">log</span>(<span class="sf">mystery</span>(<span class="sn">10</span>), <span class="sf">mystery</span>(<span class="sn">2</span>),
+            <span class="sf">mystery</span>(<span class="sn">4</span>, <span class="sn">5</span>));</div>
+        </div>
+        <div class="tip to" style="font-size:15.5px;padding:9px 13px"><span class="tip-ico">⚙️</span>
+          <div><span class="ic">prompt</span> не потрібен. Кожну функцію — виклич у <span class="ic">console.log</span></div></div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

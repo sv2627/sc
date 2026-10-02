@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binary search · IT-англійська · 9 клас · Урок 6</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge Lower Secondary Computing 0860)
+  Клас          9
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · четвер
+  Урок          6 з 36 · 08.10.2026
+  Тема          Binary search · Двійковий пошук
+  Цілі          9CT.05 Describe and use binary searches
+                9CT.08 Compare and contrast algorithms designed for the same
+                task (тут — лише linear search проти binary search, як
+                пропонує сам блок 9CT.05)
+  Тривалість    45 хв, 18 слайдів, без компʼютерів
+  Акцент        rose (#af3b41)
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — ТІЛЬКИ СХЕМА CAMBRIDGE. Нічого не вигадано.
+     `0860 Computing Stage 9 Scheme of Work.docx`, юніт 9.1,
+     блок 9CT.05. Звідти дослівно:
+       • словник: «find the definition for a particular word … start by
+         opening the dictionary at the centre and decide whether the word
+         … comes before or after» + питання «Is this method faster than
+         looking through the dictionary from the start? Or from the end?
+         When will this search be slower …?» → «if the search item is
+         near the start, searching in this way will be slower» — слайд 3
+       • «What would happen if the words in the dictionary were not in
+         alphabetical order?» → «it would not be possible … the data needs
+         to be recorded in a searchable order» — слайд 4
+       • «compare the number with the middle number … select the numbers
+         to the left if it is less … to the right if it is greater …
+         discard the remaining numbers … repeat … until the correct number
+         has been found or until there are no elements left» — слайди 5, 7
+       • «if there are 10 cards then the middle card is the 5th or 6th
+         (either can be chosen as long as used consistently)» — слайд 7
+       • «numbers in different positions … as well as with numbers that
+         do not exist in the set» — слайд 8
+       • «put the cards into order, ascending or descending» + Additional
+         notes «Learners should also have experience working with data in
+         descending order» — слайд 9
+       • «ten colours … based upon the first letter … For colours such as
+         ‘Brown’ and ‘Blue’ … consider the second letter» + «Learners
+         should have experience of searching text» — слайд 10
+       • «write a set of instructions on how to perform a binary search …
+         swap … follow the instructions precisely … identify the changes or
+         improvements» — слайди 11, 12
+       • «Why are searching algorithms important? … allow particular data
+         items to be found in a collection of data» · «Why are there
+         multiple searching algorithms …? … different algorithms are more
+         appropriate in different scenarios» · «How practical … a linear
+         search for a particular definition in a dictionary?» — слайд 13
+       • означення linear search — зі схеми Stage 8, блок 8CT.05: «checking
+         each item in turn starting with the first item … until the
+         required item is found / all items have been searched» (схема
+         Stage 9 пише «recalling earlier learning about linear searches»,
+         але Stage 8 у класу не було — тому лише означення, одним рядком)
+       • словник: «Binary search» з розділу Language юніта 9.1; решта —
+         з тексту блоку 9CT.05 (+ linear search зі Stage 8)
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО ДОДАНО ПОНАД СХЕМУ І ЧОМУ
+     • Схема каже «displaying a series of numbers, in ascending numerical
+       order» і «ten colours», але конкретних рядів не дає. Ряд чисел —
+       масив Numbers з уроку 5 (дані схеми 9P.01), лише впорядкований:
+       2 2 5 6 8 10 16 36 81. Карти 10…1 — «playing cards, or other
+       numbered cards». Кольори — Colours з уроку 5 (без Grey) + Brown
+       (зі схеми) + Pink, Silver, White, щоб вийшло десять.
+     • Правило парної кількості: схема дозволяє 5-ту або 6-ту — беремо
+       ЛІВУ середню (5-ту з 10) завжди.
+     • Practice 5 «Find the error» — це крок схеми «If the instructions do
+       not work, the second pair should identify the changes», поданий як
+       готова інструкція з однією помилкою.
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • Псевдокоду й блок-схеми binary search. Схема: «Learners do not need
+       to be able to write or follow an algorithm to perform a binary
+       search» і «limit their thinking here to a sequence of steps rather
+       than thinking about flowcharts or pseudocode»
+     • Власних прикладів блоку 9CT.08 (оцінка Pass/Merit/Distinction,
+       Celsius→Fahrenheit, три числа) — вони про порівняння програм, не
+       пошуку; кандидати на резервний урок 7
+     • Швидкодії, кількості кроків, «log n». 9CT.08: «Stage 9 learners do
+       not need to be concerned with run-time»
+  ────────────────────────────────────────────────────────────────
+  МОВА          I період — англійською терміни й питання схеми.
+                Пояснення й інструкції українською.
+  СЛОВНИК       ТРИЧІ за урок: s1 (вхід, 4 слова) · s5 (word bank, 10)
+                · s14 (вихід, 16 слів) + s15 Words in use
+  ПРАКТИКИ      s7–s11 (≈ 23 хв) + s13 T/F (3 хв); відповіді в .reveal
+  ДОМАШНЄ       слайд 18 — письмово від руки, 5 пунктів, без компʼютера;
+                відповіді в конспекті
+  ────────────────────────────────────────────────────────────────
+  Аркуш A4      rozdatka.html — видається в кінці уроку, слайди на нього не посилаються
+  Конспект      2026-27-teacher/aplus/9-it-english/u06/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: IT-англійська всіх класів іде на rose. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--rose);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--rose)}
+.uk{color:var(--dim)}
+
+/* ═══ СЛОВНИК ═══ */
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mw{background:var(--surface);border:2px solid var(--pink);border-radius:14px;padding:15px 19px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.5rem;color:var(--rose);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:17px;color:var(--dim);line-height:1.5}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:17px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16.5px;line-height:1.45}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--rose);border-radius:6px;flex-shrink:0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4 ─── */
+/* графіки хвилі (inline SVG) */
+.gw{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:8px 10px 4px}
+.card .gw{border:0;padding:4px 0 0}
+.gw svg{display:block}
+/* слайд «тест» */
+.big-test{text-align:center}
+.big-test h2{font-size:2.6rem}
+/* словник на 16 слів — чотири колонки */
+.vg4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.defn{font-family:var(--f-ser);font-size:1.3rem;line-height:1.6;color:var(--ink)}
+
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 13px;font-size:17px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+.tbl td.m{font-family:var(--f-mono);font-weight:700}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .mw{padding:12px 15px} .mw .w{font-size:1.3rem} .mw .t{font-size:15.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:16px} .vp .uk{font-size:15.5px}
+  .vg{gap:9px} .vg3{gap:8px} .vg4{gap:8px}
+  .big-test h2{font-size:2.2rem} .defn{font-size:1.15rem}
+  .gw{padding:6px 8px 2px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .tbl th,.tbl td{padding:7px 11px;font-size:15.5px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО: Words in use ─── */
+.wu{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px}
+.wu-i{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:8px 13px}
+.wu-w{display:block;font-family:var(--f-mono);font-weight:700;font-size:15.5px;
+      color:var(--accent);margin-bottom:3px}
+.wu-p{display:block;font-size:15px;line-height:1.34;margin-bottom:1px}
+.wu-p::before{content:"· ";color:var(--faint)}
+
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Binary search</h1>
+      <p class="title-sub">Двійковий пошук · дивимось у середину, відкидаємо половину<br>
+        IT-англійська · 9 клас · Урок 6 з 36 · 8 жовтня</p>
+      <div class="chips">
+        <span class="chip">binary search</span>
+        <span class="chip">middle</span>
+        <span class="chip">ascending · descending</span>
+        <span class="chip">9CT.05</span>
+        <span class="chip">9CT.08</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── MINI-VOCAB ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Words first</span>
+      <h2>Чотири слова, які сьогодні прозвучать</h2>
+    </div></div>
+    <div class="mini">
+      <div class="mw"><div class="w">binary search</div>
+        <div class="t">двійковий пошук — щоразу дивимось у середину й відкидаємо половину</div></div>
+      <div class="mw"><div class="w">middle</div>
+        <div class="t">середній, посередині</div></div>
+      <div class="mw"><div class="w">to compare</div>
+        <div class="t">порівняти — більше, менше чи дорівнює</div></div>
+      <div class="mw"><div class="w">to discard</div>
+        <div class="t">відкинути — більше не дивимось туди</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── СЛОВНИК-КНИЖКА ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📕</div><div>
+      <span class="label lm">Warm-up</span>
+      <h2>Find a word in a dictionary</h2>
+    </div></div>
+    <div class="hbox hm">Відкрий словник <strong>посередині</strong> (at the centre). Слово, яке шукаєш, —
+      <strong>before</strong> чи <strong>after</strong> слова, яке бачиш? Відкинь половину й повтори.</div>
+    <div class="two mt">
+      <div class="card cm reveal">
+        <h3>Is this method faster than looking through the dictionary from the start?</h3>
+        <p class="rv-hint">Скажи «так» чи «ні», потім клацни.</p>
+        <div class="rv-body"><p><b>Yes</b>, майже завжди. Не треба гортати кожну сторінку від початку.</p></div>
+      </div>
+      <div class="card cm reveal">
+        <h3>When will this search be slower than starting at the beginning?</h3>
+        <p class="rv-hint">Подумай, де лежить слово. Потім клацни.</p>
+        <div class="rv-body"><p>If the search item is <b>near the start</b> — наприклад, слово на «A».</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ПОРЯДОК ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🔀</div><div>
+      <span class="label lo">Think · pairs</span>
+      <h2>And if there is no order?</h2>
+    </div></div>
+    <div class="card cm reveal">
+      <h3>What would happen if the words in the dictionary were not in alphabetical order?</h3>
+      <p class="rv-hint">Обговоріть у парі, потім клацни.</p>
+      <div class="rv-body"><p>This method would <b>not be possible</b>: the data is not in an <span class="en">order</span>.</p></div>
+    </div>
+    <div class="card cm reveal mt">
+      <h3>Does this limit when this searching algorithm can be used?</h3>
+      <p class="rv-hint">Так чи ні? Потім клацни.</p>
+      <div class="rv-body"><p><b>Yes.</b> The data needs to be in a <b>searchable order</b>.</p></div>
+    </div>
+    <div class="hbox mt">For a <span class="en">binary search</span>, the data needs to be put into an <strong>order</strong>:
+      <span class="en">ascending</span> (1 2 3 · A B C) or <span class="en">descending</span> (3 2 1 · C B A).</div>
+  </div></section>
+
+  <!-- ══════════ 5 ── ЯК ПРАЦЮЄ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lm">Binary search · steps</span>
+      <h2>Compare with the middle number</h2>
+    </div></div>
+    <p class="note">Ряд чисел у порядку <span class="en">ascending</span>. Шукаємо одне число і його <span class="en">position</span>.</p>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Compare</b> the number with the <span class="en">middle</span> number. Equal? — <b>found</b>.</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t">Not equal and <span class="en">less than</span> the middle number → select the numbers to the <b>left</b>.</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t">Not equal and <span class="en">greater than</span> the middle number → select the numbers to the <b>right</b>.</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><span class="en">Discard</span> the <span class="en">remaining</span> numbers.</span></div>
+      <div class="step"><span class="step-n">5</span>
+        <span class="step-t"><b>Repeat</b> until the number is found or until there are <b>no elements left</b>.</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── WORD BANK ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lp">Word bank · говоримо вголос</span>
+      <h2>Слова, якими описують пошук</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">binary search</span><span class="uk">двійковий пошук</span></div>
+      <div class="vp"><span class="en">searching algorithm</span><span class="uk">алгоритм пошуку</span></div>
+      <div class="vp"><span class="en">order</span><span class="uk">порядок</span></div>
+      <div class="vp"><span class="en">ascending</span><span class="uk">за зростанням: 1 2 3 · A B C</span></div>
+      <div class="vp"><span class="en">descending</span><span class="uk">за спаданням: 3 2 1 · C B A</span></div>
+      <div class="vp"><span class="en">alphabetical order</span><span class="uk">алфавітний порядок</span></div>
+      <div class="vp"><span class="en">middle</span><span class="uk">середній, посередині</span></div>
+      <div class="vp"><span class="en">to compare</span><span class="uk">порівняти</span></div>
+      <div class="vp"><span class="en">to discard</span><span class="uk">відкинути</span></div>
+      <div class="vp"><span class="en">less than · greater than</span><span class="uk">менше ніж · більше ніж</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ПРИКЛАД ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🧩</div><div>
+      <span class="label lb">Приклад</span>
+      <h2>Find 36</h2>
+    </div></div>
+    <table class="tbl">
+      <tr><th>Step 1</th><td>2</td><td>2</td><td>5</td><td>6</td><td class="c">[8]</td><td>10</td><td>16</td><td>36</td><td>81</td><td>36 &gt; 8 → <b>right</b></td></tr>
+      <tr><th>Step 2</th><td><s>2</s></td><td><s>2</s></td><td><s>5</s></td><td><s>6</s></td><td><s>8</s></td><td>10</td><td class="c">[16]</td><td>36</td><td>81</td><td>36 &gt; 16 → <b>right</b></td></tr>
+      <tr><th>Step 3</th><td><s>2</s></td><td><s>2</s></td><td><s>5</s></td><td><s>6</s></td><td><s>8</s></td><td><s>10</s></td><td><s>16</s></td><td class="c">[36]</td><td>81</td><td><b>found</b> · index 7</td></tr>
+    </table>
+    <div class="two mt">
+      <div class="hbox">9 numbers → the middle is the <b>5th</b>. <s>Закреслене</s> — discarded.</div>
+      <div class="hbox ho"><b>Even number</b> (4, 10…)? Two middles. We always take the <b>left</b> one:
+        of 10 — the 5th; of 4 — the 2nd.</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 1</span>
+        <span class="t">Numbers · ascending</span><span class="tmr">5 хвилин</span></div>
+      <p class="prac-lead">У зошит: випиши по черзі всі <span class="en">middle</span> числа, з якими порівнюєш. Потім — found чи not found.</p>
+      <table class="tbl">
+        <tr><th>Index</th><td class="c">0</td><td class="c">1</td><td class="c">2</td><td class="c">3</td><td class="c">4</td><td class="c">5</td><td class="c">6</td><td class="c">7</td><td class="c">8</td></tr>
+        <tr><th>Data</th><td>2</td><td>2</td><td>5</td><td>6</td><td>8</td><td>10</td><td>16</td><td>36</td><td>81</td></tr>
+      </table>
+    </div>
+    <div class="three mt">
+      <div class="card reveal">
+        <h3>⭐ Find 5</h3>
+        <p class="rv-hint">Клацни після зошита.</p>
+        <div class="rv-body"><p>8 → 2 → <b>5</b> · found, index 2</p></div>
+      </div>
+      <div class="card reveal">
+        <h3>⭐⭐ Find 81</h3>
+        <p class="rv-hint">Клацни після зошита.</p>
+        <div class="rv-body"><p>8 → 16 → 36 → <b>81</b> · found, index 8</p></div>
+      </div>
+      <div class="card cm reveal">
+        <h3>⭐⭐⭐ Find 7</h3>
+        <p class="rv-hint">Клацни після зошита.</p>
+        <div class="rv-body"><p>8 → 2 → 5 → 6 → no elements left · <b>not found</b></p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 2</span>
+        <span class="t">Cards · descending</span><span class="tmr">4 хвилини</span></div>
+      <p class="prac-lead">10 карт лежать сорочкою вгору, у порядку <span class="en">descending</span>. Випиши в зошит усі <span class="en">middle</span> карти, які перевертаєш.</p>
+      <table class="tbl">
+        <tr><th>Card</th><td class="c">1st</td><td class="c">2nd</td><td class="c">3rd</td><td class="c">4th</td><td class="c">5th</td><td class="c">6th</td><td class="c">7th</td><td class="c">8th</td><td class="c">9th</td><td class="c">10th</td></tr>
+        <tr><th>Value</th><td>10</td><td>9</td><td>8</td><td>7</td><td>6</td><td>5</td><td>4</td><td>3</td><td>2</td><td>1</td></tr>
+      </table>
+    </div>
+    <div class="three mt">
+      <div class="card reveal">
+        <h3>⭐ Find 9</h3>
+        <p class="rv-hint">Клацни після зошита.</p>
+        <div class="rv-body"><p>6 → <b>9</b> · found, 2nd card</p></div>
+      </div>
+      <div class="card reveal">
+        <h3>⭐⭐ Find 3</h3>
+        <p class="rv-hint">Клацни після зошита.</p>
+        <div class="rv-body"><p>6 → <b>3</b> · found, 8th card</p></div>
+      </div>
+      <div class="card cm reveal">
+        <h3>⭐⭐⭐ 3 is less than 6. Чому йдемо вправо, а не вліво?</h3>
+        <p class="rv-hint">Одне речення, потім клацни.</p>
+        <div class="rv-body"><p>Порядок <span class="en">descending</span>: менші числа — <b>праворуч</b>.</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 3</span>
+        <span class="t">Ten colours · alphabetical order</span><span class="tmr">5 хвилин</span></div>
+      <p class="prac-lead">Порівнюй за першою буквою. Перша однакова — дивись на другу. Випиши в зошит усі <span class="en">middle</span> слова.</p>
+      <table class="tbl">
+        <tr><th>1–5</th><td>Blue</td><td>Brown</td><td>Green</td><td>Orange</td><td>Pink</td></tr>
+        <tr><th>6–10</th><td>Purple</td><td>Red</td><td>Silver</td><td>White</td><td>Yellow</td></tr>
+      </table>
+    </div>
+    <div class="three mt">
+      <div class="card reveal">
+        <h3>⭐ Find Green</h3>
+        <p class="rv-hint">Клацни після зошита.</p>
+        <div class="rv-body"><p>Pink → Brown → <b>Green</b></p></div>
+      </div>
+      <div class="card reveal">
+        <h3>⭐⭐ Find Blue</h3>
+        <p class="rv-hint">Клацни після зошита.</p>
+        <div class="rv-body"><p>Pink → Brown → <b>Blue</b>. B<b>l</b> is before B<b>r</b>.</p></div>
+      </div>
+      <div class="card cm reveal">
+        <h3>⭐⭐⭐ Find Purple</h3>
+        <p class="rv-hint">Клацни після зошита.</p>
+        <div class="rv-body"><p>Pink → Silver → <b>Purple</b>. P<b>u</b> is after P<b>i</b>.</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПРАКТИКА 4 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 4</span>
+        <span class="t">Write the instructions</span><span class="tmr">6 хвилин</span></div>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t"><b>У парі</b> напишіть у зошит інструкцію: як зробити <span class="en">binary search</span> на картах. 5–6 коротких кроків.</span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t"><b>Swap</b> — обміняйтеся зошитами з іншою парою.</span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t"><b>Follow the instructions precisely</b> — виконайте чужу інструкцію буквально на ряду карт з Practice 2: find 4.</span></div>
+        <div class="step"><span class="step-n">4</span>
+          <span class="step-t">Не спрацювало? Допишіть під чужою інструкцією, що змінити.</span></div>
+      </div>
+    </div>
+    <div class="card cm reveal mt">
+      <h3>Зразок</h3>
+      <p class="rv-hint">Спершу свою, потім клацни.</p>
+      <div class="rv-body"><p>1 Put the cards in order. · 2 Look at the middle card. · 3 If it is the card, stop. ·
+        4 If not, select the cards to the left or to the right. · 5 Discard the remaining cards. ·
+        6 Repeat until the card is found or there are no cards left.</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ПРАКТИКА 5 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 5</span>
+        <span class="t">Find the error</span><span class="tmr">3 хвилини</span></div>
+      <p class="prac-lead">Інструкція має робити <span class="en">binary search</span> у ряду чисел за зростанням
+        (<span class="en">ascending</span>). У ній <b>одна</b> помилка. Запиши в зошит: а) номер рядка з помилкою; б) правильне слово.</p>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t">Look at the middle number.</span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t">If it is the number you are looking for, stop.</span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t">If your number is less than the middle number, select the numbers to the right.</span></div>
+        <div class="step"><span class="step-n">4</span><span class="step-t">If your number is greater than the middle number, select the numbers to the right.</span></div>
+        <div class="step"><span class="step-n">5</span><span class="step-t">Discard the remaining numbers and repeat.</span></div>
+      </div>
+    </div>
+    <div class="card cm reveal mt">
+      <h3>Відповідь</h3>
+      <p class="rv-hint">Клацни після зошита.</p>
+      <div class="rv-body"><p>а) рядок <b>3</b> · б) <b>left</b>: less than → select the numbers to the <b>left</b>.</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── LINEAR VS BINARY ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">⚖️</div><div>
+      <span class="label lm">Compare · 9CT.08</span>
+      <h2>Two searching algorithms, one task</h2>
+    </div></div>
+    <div class="two">
+      <div class="card">
+        <h3><span class="en">linear search</span></h3>
+        <p>Checks <b>each item in turn</b>, starting with the first item, until the item is found
+          or all items have been searched. Порядок не потрібен.</p>
+      </div>
+      <div class="card cm">
+        <h3><span class="en">binary search</span></h3>
+        <p>Compares with the <b>middle</b> item and <b>discards</b> the remaining items.
+          The data needs to be in an <b>order</b>.</p>
+      </div>
+    </div>
+    <div class="three mt">
+      <div class="card cm reveal">
+        <h3>Why are searching algorithms important?</h3>
+        <p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p>They allow particular <b>data items</b> to be found in a <b>collection of data</b>.</p></div>
+      </div>
+      <div class="card cm reveal">
+        <h3>Why are there multiple searching algorithms?</h3>
+        <p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p>Different algorithms are more appropriate in different <b>scenarios</b>.</p></div>
+      </div>
+      <div class="card cm reveal">
+        <h3>A linear search in a dictionary — practical?</h3>
+        <p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p><b>No.</b> Довелося б перевірити кожне слово, починаючи з першого.</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРАКТИКА 6 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 6</span>
+        <span class="t">True or false?</span><span class="tmr">3 хвилини</span></div>
+      <p class="prac-lead">Це правда? Запиши в зошит номер і <b>T</b> (true — так, правда) або <b>F</b> (false — ні, неправда).</p>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">1</span><span class="lv-t">For a binary search, the data needs to be in an order.</span></div>
+        <div class="lv"><span class="lv-s">2</span><span class="lv-t">A binary search works only with numbers.</span></div>
+        <div class="lv"><span class="lv-s">3</span><span class="lv-t">A binary search works only with data in ascending order.</span></div>
+        <div class="lv"><span class="lv-s">4</span><span class="lv-t">A linear search checks each item in turn, starting with the first.</span></div>
+        <div class="lv"><span class="lv-s">5</span><span class="lv-t">A binary search compares with the middle item.</span></div>
+      </div>
+    </div>
+    <div class="card cm reveal mt">
+      <h3>Відповіді</h3>
+      <p class="rv-hint">Клацни після зошита.</p>
+      <div class="rv-body"><p>1 <b>T</b> · 2 <b>F</b> — words too (colours) · 3 <b>F</b> — descending too (cards) · 4 <b>T</b> · 5 <b>T</b></p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key vocabulary</span>
+      <h2>Шістнадцять слів цього уроку</h2>
+    </div></div>
+    <div class="vg4">
+      <div class="vp"><span class="en">binary search</span><span class="uk">двійковий пошук</span></div>
+      <div class="vp"><span class="en">linear search</span><span class="uk">лінійний пошук</span></div>
+      <div class="vp"><span class="en">searching algorithm</span><span class="uk">алгоритм пошуку</span></div>
+      <div class="vp"><span class="en">data item</span><span class="uk">елемент даних</span></div>
+      <div class="vp"><span class="en">collection of data</span><span class="uk">набір даних</span></div>
+      <div class="vp"><span class="en">order</span><span class="uk">порядок</span></div>
+      <div class="vp"><span class="en">ascending</span><span class="uk">за зростанням</span></div>
+      <div class="vp"><span class="en">descending</span><span class="uk">за спаданням</span></div>
+      <div class="vp"><span class="en">alphabetical order</span><span class="uk">алфавітний порядок</span></div>
+      <div class="vp"><span class="en">middle</span><span class="uk">середній</span></div>
+      <div class="vp"><span class="en">position</span><span class="uk">позиція, місце</span></div>
+      <div class="vp"><span class="en">to compare</span><span class="uk">порівняти</span></div>
+      <div class="vp"><span class="en">to discard</span><span class="uk">відкинути</span></div>
+      <div class="vp"><span class="en">remaining</span><span class="uk">решта, ті, що лишились</span></div>
+      <div class="vp"><span class="en">less than · greater than</span><span class="uk">менше ніж · більше ніж</span></div>
+      <div class="vp"><span class="en">element</span><span class="uk">елемент</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── WORDS IN USE ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">💬</div><div>
+      <span class="label lo">Словник · як це вживати</span>
+      <h2>Words in use</h2>
+    </div></div>
+    <div class="wu">
+      <div class="wu-i"><span class="wu-w">binary search</span>
+        <span class="wu-p">Describe and use binary searches.</span>
+        <span class="wu-p">Use a binary search to find out if you have that card.</span></div>
+      <div class="wu-i"><span class="wu-w">order</span>
+        <span class="wu-p">The data needs to be put into an order.</span>
+        <span class="wu-p">Put the cards into order, ascending or descending.</span></div>
+      <div class="wu-i"><span class="wu-w">middle</span>
+        <span class="wu-p">Compare the number with the middle number.</span>
+        <span class="wu-p">Of 10 cards, the middle card is the 5th or 6th.</span></div>
+      <div class="wu-i"><span class="wu-w">to discard</span>
+        <span class="wu-p">Discard the remaining numbers.</span>
+        <span class="wu-p">Repeat until there are no elements left.</span></div>
+      <div class="wu-i"><span class="wu-w">searching algorithm</span>
+        <span class="wu-p">Why are searching algorithms important?</span>
+        <span class="wu-p">Different algorithms are more appropriate in different scenarios.</span></div>
+      <div class="wu-i"><span class="wu-w">linear search</span>
+        <span class="wu-p">Each item is checked in turn, starting with the first.</span>
+        <span class="wu-p">How practical is a linear search in a dictionary?</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">☑️</div><div>
+      <span class="label lr">I can…</span>
+      <h2>Чек-лист уроку</h2>
+    </div></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div><div>I can describe a
+        <span class="en">binary search</span>: compare with the middle, discard the remaining.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can say why the data needs to be in an
+        <span class="en">order</span>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can use a binary search on numbers — <span class="en">ascending</span> and
+        <span class="en">descending</span>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can use a binary search on words in
+        <span class="en">alphabetical order</span>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can compare a <span class="en">linear search</span> and a binary search.</div></div>
+    </div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 7 · 15 жовтня ·
+      Algorithms drill</p>
+  </div></section>
+
+  <!-- ══════════ 18 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lo">Homework</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox hm">Письмово, від руки — олівцем або ручкою. Компʼютер не потрібен.
+      Приносимо на урок 7, <strong>15 жовтня</strong>.</div>
+    <div class="two mt" style="grid-template-columns:1fr 1.1fr">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t">Переклади: <span class="en">binary search</span> · <span class="en">linear search</span> ·
+            <span class="en">ascending</span> · <span class="en">descending</span> ·
+            <span class="en">middle</span> · <span class="en">to discard</span></span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t">Допиши: <span class="en">For a binary search, the data needs to be in an o______.</span></span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t">Це правда? Напиши T (true — так, правда) або F (false — ні, неправда):
+            <span class="en">A linear search compares with the middle item first.</span></span></div>
+      </div>
+      <div>
+        <table class="tbl">
+          <tr><th>Ascending</th><td>1</td><td>3</td><td>4</td><td>7</td><td>9</td><td>12</td><td>15</td></tr>
+        </table>
+        <table class="tbl mt">
+          <tr><th>Descending</th><td>Yellow</td><td>White</td><td>Silver</td><td>Red</td><td>Purple</td><td>Pink</td><td>Orange</td></tr>
+        </table>
+        <div class="steps mt">
+          <div class="step"><span class="step-n">4</span>
+            <span class="step-t">Find <b>12</b>. Випиши всі <span class="en">middle</span> числа.</span></div>
+          <div class="step"><span class="step-n">5</span>
+            <span class="step-t">Find <b>Pink</b>. Випиши всі <span class="en">middle</span> слова.</span></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

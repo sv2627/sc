@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Масиви · JavaScript · 11 клас · Урок 9</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (основа мови)
+  Клас          11 (16–17 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум)
+  Урок          9 з 35 · 05.10.2026 · ПОНЕДІЛОК
+  Тема          Масиви (тема 2.10 плану)
+  Тривалість    45 хв — показ ~12 · практика ~32 · збереження 1
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       32
+  ────────────────────────────────────────────────────────────────
+  СПИРАЄТЬСЯ НА уроки 1–8: let / const · prompt · Number() · null ·
+     шаблонні рядки · if / else · === !== · && || · % · += *= ·
+     TypeError «Assignment to constant variable» (урок 4) ·
+     for · while · for...of по рядку · накопичувач і лічильник (урок 8)
+  НОВЕ          [ ] · індекс з 0 · arr[i] читати й змінювати · length ·
+                останній arr[arr.length - 1] · undefined за межею ·
+                const-масив змінюється · push · pop · unshift · shift ·
+                includes · indexOf (-1) · join · перебір for і for...of ·
+                сума, середнє, max, лічильник, новий масив через push ·
+                масив зі prompt
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  ПРАКТИКА 1    сл. 8  — створити, читати, змінювати, 8 хв
+  ПРАКТИКА 2    сл. 14 — push / pop / includes / join, 8 хв
+  ПРАКТИКА 3    сл. 22 — кошик GameStore: сума, середнє, max, 9 хв
+  ПРАКТИКА 4    сл. 26 — масив зі prompt, 7 хв
+  ДОВІДНИК      сл. 25 — тримати на дошці під час практик 3–4
+  ПЕРЕДБАЧ / ВИПРАВ  сл. 6 · 11 · 21 · 24 — відповідь на тому ж слайді
+  БАНК          сл. 28 — вісім завдань
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО РІЗАТИ ПЕРШИМ (показ, не практика): сл. 13 (join — сказати
+     усно на практиці 2); сл. 17 (for чи for...of); сл. 20 (лічильник
+     і новий масив — лишаються пунктами практики 3); сл. 11 (передбач).
+  ⚠️ Поточна оцінка II періоду — за планом сьогодні (тема 2.10).
+     Критерії — у конспекті, не на екрані.
+  ⚠️ ДЗ — CodePen, лише console.log, БЕЗ prompt.
+  ⚠️ Git не згадується. Здача — підпис першим рядком script.js.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • sort — урок 13 (рядки і випадковість), ⭐⭐⭐ практичної № 2
+     • map / filter / forEach — потребують функцій-аргументів (урок 10 —
+       лише функції, колбеків не буде)
+     • slice / splice, масиви масивів, split — зайве для першого знайомства
+     • for...in — обʼєкти на уроці 12
+  ────────────────────────────────────────────────────────────────
+  План          office/plany/05-javascript-8.md, тема 2.10
+  Роздатка      rozdatka.html — 1 сторінка A4, 80 % площі під запис
+  Конспект      2026-27-teacher/aplus/11-javascript/u09/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:96px}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6 ─── */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.tree{font-family:var(--f-mono);font-size:16px;line-height:1.6;white-space:pre;color:var(--ink)}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8 ─── */
+.dp-out.con{font-family:var(--f-mono);font-size:16px;line-height:1.55;white-space:pre-wrap;padding:10px 19px}
+.dp-out.con b{color:var(--faint);font-family:var(--f-body);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+.three .mono{font-size:15.5px;line-height:1.55;margin-bottom:6px}
+table.ops td.c{text-align:center;font-family:var(--f-mono)}
+.ic{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ── ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Масиви</h1>
+      <p class="title-sub">Багато значень під одним імʼям<br>
+        JavaScript · 11 клас · Урок 9 з 35 · 5 жовтня</p>
+      <div class="chips">
+        <span class="chip">[ ]</span>
+        <span class="chip">arr[0]</span>
+        <span class="chip">length</span>
+        <span class="chip">push · pop</span>
+        <span class="chip">includes</span>
+        <span class="chip">join</span>
+        <span class="chip">for...of</span>
+        <span class="chip">Кошик GameStore</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lm">Після циклів</span>
+      <h2>Сто цін — сто змінних?</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">без масиву — змінна на кожну ціну</span>
+        <div class="mono">const price1 = 499;
+const price2 = 1299;
+const price3 = 250;
+const price4 = 899;
+const sum = price1 + price2
+          + price3 + price4;
+// а якщо ігор 100?</div></div>
+      <div class="right"><span class="lbl">з масивом — одне імʼя на всі</span>
+        <div class="mono">const prices = [499, 1299, 250, 899];
+
+let sum = 0;
+for (const p of prices) {
+  sum += p;
+}
+// хоч 4 ціни, хоч 100</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><b>Масив</b> — впорядкований список значень під одним імʼям</div>
+      <div class="hbox hp">Цикл з уроку 8 проходить по масиву <b>будь-якої довжини</b> — код не змінюється</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ОГЛЯД ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🗂️</div><div>
+      <span class="label lb">Уся родина</span>
+      <h2>Що вміє масив — за один урок</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Що</th><th>Як пишеться</th><th>Приклад</th></tr>
+      <tr><td>створити</td><td><span class="ic">[ ]</span></td><td><span class="ic">const prices = [499, 1299, 250];</span></td></tr>
+      <tr><td>прочитати · змінити</td><td><span class="ic">arr[i]</span></td><td><span class="ic">prices[0]</span> · <span class="ic">prices[1] = 999</span></td></tr>
+      <tr><td>довжина</td><td><span class="ic">.length</span></td><td><span class="ic">prices.length</span> → 3</td></tr>
+      <tr><td>додати · забрати</td><td><span class="ic">push</span> · <span class="ic">pop</span> · <span class="ic">unshift</span> · <span class="ic">shift</span></td><td><span class="ic">prices.push(899)</span></td></tr>
+      <tr><td>знайти</td><td><span class="ic">includes</span> · <span class="ic">indexOf</span></td><td><span class="ic">prices.includes(250)</span> → true</td></tr>
+      <tr><td>склеїти в рядок</td><td><span class="ic">join</span></td><td><span class="ic">prices.join(', ')</span></td></tr>
+      <tr><td>перебрати</td><td><span class="ic">for</span> · <span class="ic">for...of</span></td><td><span class="ic">for (const p of prices)</span></td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 4 ── ІНДЕКС (діаграма) ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🔢</div><div>
+      <span class="label lm">Як це влаштовано</span>
+      <h2>Кожне місце має номер — індекс. Від нуля</h2>
+    </div></div>
+    <div class="dp" style="margin-bottom:8px">
+      <div class="dp-code" style="padding:10px 19px"><span class="sk">const</span> games = [<span class="ss">'Minecraft'</span>, <span class="ss">'Tetris'</span>, <span class="ss">'Doom'</span>, <span class="ss">'Portal'</span>];</div>
+    </div>
+    <svg class="diagram" viewBox="0 0 940 170" role="img"
+         aria-label="Масив із чотирьох назв ігор: індекси від 0 до 3, довжина 4"
+         font-family="'Montserrat','Segoe UI',system-ui,sans-serif">
+      <text x="20" y="34" fill="#55564f" font-size="15" font-weight="700">індекс</text>
+      <text x="175" y="34" text-anchor="middle" fill="#591429" font-size="22" font-weight="800" font-family="'JetBrains Mono', Menlo, monospace">0</text>
+      <text x="385" y="34" text-anchor="middle" fill="#591429" font-size="22" font-weight="800" font-family="'JetBrains Mono', Menlo, monospace">1</text>
+      <text x="595" y="34" text-anchor="middle" fill="#591429" font-size="22" font-weight="800" font-family="'JetBrains Mono', Menlo, monospace">2</text>
+      <text x="805" y="34" text-anchor="middle" fill="#591429" font-size="22" font-weight="800" font-family="'JetBrains Mono', Menlo, monospace">3</text>
+      <rect x="80"  y="46" width="190" height="64" rx="9" fill="#ffffff" stroke="#591429" stroke-width="2.5"/>
+      <rect x="290" y="46" width="190" height="64" rx="9" fill="#ffffff" stroke="#591429" stroke-width="2.5"/>
+      <rect x="500" y="46" width="190" height="64" rx="9" fill="#ffffff" stroke="#591429" stroke-width="2.5"/>
+      <rect x="710" y="46" width="190" height="64" rx="9" fill="#f6eaee" stroke="#591429" stroke-width="2.5"/>
+      <text x="175" y="85" text-anchor="middle" fill="#0253b3" font-size="19" font-family="'JetBrains Mono', Menlo, monospace">'Minecraft'</text>
+      <text x="385" y="85" text-anchor="middle" fill="#0253b3" font-size="19" font-family="'JetBrains Mono', Menlo, monospace">'Tetris'</text>
+      <text x="595" y="85" text-anchor="middle" fill="#0253b3" font-size="19" font-family="'JetBrains Mono', Menlo, monospace">'Doom'</text>
+      <text x="805" y="85" text-anchor="middle" fill="#0253b3" font-size="19" font-family="'JetBrains Mono', Menlo, monospace">'Portal'</text>
+      <text x="175" y="140" text-anchor="middle" fill="#2e2f2b" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">games[0]</text>
+      <text x="805" y="140" text-anchor="middle" fill="#2e2f2b" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">games[games.length - 1]</text>
+      <text x="490" y="162" text-anchor="middle" fill="#55564f" font-size="15">games.length → 4 · останній індекс → 3</text>
+    </svg>
+    <div class="three">
+      <div class="hbox hm">Перший — <b><span class="ic">[0]</span></b>, не <span class="ic">[1]</span></div>
+      <div class="hbox hp">Останній індекс = <b><span class="ic">length - 1</span></b></div>
+      <div class="hbox ho">Рядок так само: <span class="ic">'кіт'[0]</span> → <span class="ic">'к'</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ── ЧИТАЄМО Й ЗМІНЮЄМО ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">✏️</div><div>
+      <span class="label lm">arr[i]</span>
+      <h2>Прочитати, змінити, вийти за край</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> games = [<span class="ss">'Minecraft'</span>, <span class="ss">'Tetris'</span>, <span class="ss">'Doom'</span>];
+
+console.<span class="sf">log</span>(games[<span class="sn">0</span>]);       <span class="cm">// Minecraft</span>
+console.<span class="sf">log</span>(games.length);    <span class="cm">// 3</span>
+
+games[<span class="sn">1</span>] = <span class="ss">'Portal'</span>;          <span class="cm">// замінили</span>
+console.<span class="sf">log</span>(games);
+<span class="cm">// ['Minecraft', 'Portal', 'Doom']</span>
+
+console.<span class="sf">log</span>(games[<span class="sn">5</span>]);       <span class="cm">// undefined</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">games[1] = …</span> — як звичайне присвоєння, тільки з номером місця</div>
+        <div class="hbox hr">За межею масиву — <b>не помилка</b>, а <span class="ic">undefined</span>. Червоного рядка не буде</div>
+        <div class="hbox hp"><span class="ic">console.log(games)</span> показує весь масив — у Chrome його можна розгорнути трикутником</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе кожен рядок?</h2>
+    </div></div>
+    <div class="dp" style="margin-bottom:14px">
+      <div class="dp-code" style="padding:10px 19px"><span class="sk">const</span> a = [<span class="sn">10</span>, <span class="sn">20</span>, <span class="sn">30</span>];</div>
+    </div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log(a[a.length - 1]);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>30</b> — <span class="ic">a.length - 1</span> = 2, а <span class="ic">a[2]</span> — останній</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log(a[3]);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>undefined</b> — індекси лише 0, 1, 2</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">a[0] = a[1] + a[2];
+console.log(a);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>[50, 20, 30]</b> — змінився лише перший</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── CONST ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔒</div><div>
+      <span class="label lr">const і масив</span>
+      <h2>Вміст міняти можна. Сам масив замінити — ні</h2>
+    </div></div>
+    <div class="pair">
+      <div class="right"><span class="lbl">можна — змінюємо вміст</span>
+        <div class="mono">const cart = ['Tetris'];
+cart[0] = 'Doom';
+cart.push('Portal');
+// ['Doom', 'Portal']</div></div>
+      <div class="wrong"><span class="lbl">не можна — новий масив у ту саму змінну</span>
+        <div class="mono">const cart = ['Tetris'];
+cart = ['Doom'];
+// TypeError: Assignment
+//   to constant variable</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><span class="ic">const</span> тримає <b>саму коробку</b>, а не те, що в ній лежить</div>
+      <div class="hbox hp">Масиви оголошуємо через <span class="ic">const</span>. Помилка — та сама, що з уроку 4</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Створити, прочитати, змінити</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.3fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">const friends = ['Оля', 'Максим', 'Ірина'];
+console.log(friends[0]);
+console.log(friends.length);
+friends[2] = 'Дана';
+console.log(friends);</div>
+        <p class="mt" style="font-size:16px">Результат — у консолі: <b>F12 → Console</b></p></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у консоль</span>
+        <ul>
+          <li>Папка <span class="ic">js-11/masyvy</span>: <span class="ic">index.html</span> + <span class="ic">script.js</span>. Масив із 5 улюблених ігор</li>
+          <li>Виведи першу, третю й останню. Останню — через <span class="ic">length - 1</span></li>
+          <li>Заміни другу гру на іншу й виведи весь масив</li>
+          <li>Напиши <span class="ic">games = [];</span> — прочитай помилку. Прибери рядок</li>
+          <li>⭐⭐ Поміняй першу й останню гру місцями — через допоміжну змінну</li>
+          <li>⭐⭐⭐ Масив із 3 чисел. Заміни середнє на суму першого й останнього</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── PUSH / POP ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">➕</div><div>
+      <span class="label lm">push · pop</span>
+      <h2>Додати в кінець і забрати з кінця</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> cart = [<span class="ss">'Tetris'</span>, <span class="ss">'Doom'</span>];
+
+cart.<span class="sf">push</span>(<span class="ss">'Portal'</span>);
+console.<span class="sf">log</span>(cart);     <span class="cm">// ['Tetris', 'Doom', 'Portal']</span>
+
+<span class="sk">const</span> last = cart.<span class="sf">pop</span>();
+console.<span class="sf">log</span>(last);     <span class="cm">// Portal</span>
+console.<span class="sf">log</span>(cart);     <span class="cm">// ['Tetris', 'Doom']</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">push(x)</span> — поклати <span class="ic">x</span> <b>у кінець</b></div>
+        <div class="hbox hp"><span class="ic">pop()</span> — <b>забрати</b> останній і віддати його: можна покласти в змінну</div>
+        <div class="hbox ho">Змінюється <b>сам масив</b>. Писати <span class="ic">cart = cart.push(…)</span> не треба</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── UNSHIFT / SHIFT ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🚶</div><div>
+      <span class="label lm">unshift · shift</span>
+      <h2>Те саме — з початку масиву</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1.15fr">
+      <table class="ops">
+        <tr><th>Метод</th><th>Де</th><th>Що робить</th></tr>
+        <tr><td class="o" style="width:110px">push</td><td>кінець</td><td>додає</td></tr>
+        <tr><td class="o">pop</td><td>кінець</td><td>забирає</td></tr>
+        <tr><td class="o">unshift</td><td>початок</td><td>додає</td></tr>
+        <tr><td class="o">shift</td><td>початок</td><td>забирає</td></tr>
+      </table>
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">черга в магазині</span></div>
+<div class="dp-code"><span class="sk">const</span> queue = [<span class="ss">'Оля'</span>, <span class="ss">'Максим'</span>];
+queue.<span class="sf">push</span>(<span class="ss">'Ірина'</span>);   <span class="cm">// прийшла — у кінець</span>
+<span class="sk">const</span> next = queue.<span class="sf">shift</span>();
+console.<span class="sf">log</span>(next);     <span class="cm">// Оля — обслужили</span>
+console.<span class="sf">log</span>(queue);    <span class="cm">// ['Максим', 'Ірина']</span></div>
+        </div>
+        <div class="hbox hp mt">Черга: новий — <b>push</b> у кінець, обслужили — <b>shift</b> з початку</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Простеж масив після кожного рядка</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1.1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> a = [<span class="sn">1</span>, <span class="sn">2</span>, <span class="sn">3</span>];
+a.<span class="sf">push</span>(<span class="sn">4</span>);
+a.<span class="sf">shift</span>();
+a.<span class="sf">unshift</span>(<span class="sn">0</span>);
+a.<span class="sf">pop</span>();
+console.<span class="sf">log</span>(a, a.length);</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Що в консолі?</h3>
+        <p class="rv-hint">Запиши масив після кожного рядка, потім клацни</p>
+        <div class="rv-body">
+          <p class="mono">[1, 2, 3, 4]   ← push(4)
+[2, 3, 4]      ← shift()
+[0, 2, 3, 4]   ← unshift(0)
+[0, 2, 3]      ← pop()</p>
+          <p class="mt">Виведе <b>[0, 2, 3] 3</b></p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── INCLUDES / INDEXOF ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔍</div><div>
+      <span class="label lb">includes · indexOf</span>
+      <h2>Чи є такий елемент — і де саме</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> games = [<span class="ss">'Tetris'</span>, <span class="ss">'Doom'</span>, <span class="ss">'Portal'</span>];
+
+games.<span class="sf">includes</span>(<span class="ss">'Doom'</span>);       <span class="cm">// true</span>
+games.<span class="sf">includes</span>(<span class="ss">'doom'</span>);       <span class="cm">// false</span>
+games.<span class="sf">indexOf</span>(<span class="ss">'Portal'</span>);      <span class="cm">// 2</span>
+games.<span class="sf">indexOf</span>(<span class="ss">'Minecraft'</span>);   <span class="cm">// -1</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">includes</span> — відповідь <b>так / ні</b>. Зручно в <span class="ic">if</span></div>
+        <div class="hbox hp"><span class="ic">indexOf</span> — <b>номер місця</b>; немає — <span class="ic">-1</span></div>
+        <div class="hbox hr">Порівнюють точно: <span class="ic">'doom'</span> і <span class="ic">'Doom'</span> — різні. Допоможе <span class="ic">toLowerCase()</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── JOIN ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔗</div><div>
+      <span class="label lb">join</span>
+      <h2>Масив → один рядок для alert</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> cart = [<span class="ss">'Tetris'</span>, <span class="ss">'Doom'</span>, <span class="ss">'Portal'</span>];
+
+cart.<span class="sf">join</span>(<span class="ss">', '</span>);    <span class="cm">// 'Tetris, Doom, Portal'</span>
+cart.<span class="sf">join</span>(<span class="ss">' + '</span>);   <span class="cm">// 'Tetris + Doom + Portal'</span>
+
+<span class="sf">alert</span>(<span class="ss">`Кошик: ${cart}`</span>);
+<span class="cm">// Кошик: Tetris,Doom,Portal</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">join(', ')</span> — склеює елементи, між ними ставить те, що в дужках</div>
+        <div class="hbox hr">Без <span class="ic">join</span> масив у рядку склеюється <b>комами без пробілів</b></div>
+        <div class="hbox hp">Масив при цьому <b>не змінюється</b> — <span class="ic">join</span> дає новий рядок</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">Список покупок</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.3fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">const list = ['хліб', 'молоко'];
+list.push('сир');
+console.log(list.join(', '));
+console.log(list.includes('сир'));
+// true</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у тому самому файлі</span>
+        <ul>
+          <li>Код практики 1 закоментуй: виділи й <b>Ctrl + /</b></li>
+          <li>Список із 3 покупок: дві додай у кінець, одну — на початок. Виведи через <span class="ic">join(', ')</span></li>
+          <li>Забери останню через <span class="ic">pop</span>: виведи, що забрали і скільки лишилось</li>
+          <li>Напиши <span class="ic">list.Push('сир')</span> з великої <b>P</b> — прочитай помилку, виправ</li>
+          <li>⭐⭐ Немає «сир» у списку — додай, є — виведи «вже є». Через <span class="ic">if</span> і <span class="ic">includes</span></li>
+          <li>⭐⭐⭐ Черга з 4 імен: обслуговуй по одному через <span class="ic">shift</span>, поки <span class="ic">length</span> більше 0</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── FOR З ІНДЕКСОМ ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🐾</div><div>
+      <span class="label lm">Перебір · for</span>
+      <h2>Лічильник циклу = індекс масиву</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.25fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> games = [<span class="ss">'Tetris'</span>, <span class="ss">'Doom'</span>, <span class="ss">'Portal'</span>];
+
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">0</span>; i <span class="st">&lt;</span> games.length; i<span class="st">++</span>) {
+  console.<span class="sf">log</span>(<span class="ss">`${i + 1}. ${games[i]}`</span>);
+}</div>
+        <div class="dp-out con"><b>Консоль</b>1. Tetris
+2. Doom
+3. Portal</div>
+      </div>
+      <table class="ops">
+        <tr><th>i</th><th>i &lt; 3</th><th>games[i]</th></tr>
+        <tr><td class="c">0</td><td class="c">true</td><td class="c">Tetris</td></tr>
+        <tr><td class="c">1</td><td class="c">true</td><td class="c">Doom</td></tr>
+        <tr><td class="c">2</td><td class="c">true</td><td class="c">Portal</td></tr>
+        <tr><td class="c">3</td><td class="c"><b>false</b></td><td class="c">вихід</td></tr>
+      </table>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm">Старт з <b>0</b> — бо перший індекс 0</div>
+      <div class="hbox hr">Умова <span class="ic">i &lt; games.length</span>, <b>не</b> <span class="ic">&lt;=</span>: індексу 3 немає</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── FOR...OF ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔁</div><div>
+      <span class="label lm">Перебір · for...of</span>
+      <h2>Той самий for...of, що по літерах на уроці 8</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.25fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> prices = [<span class="sn">499</span>, <span class="sn">1299</span>, <span class="sn">250</span>];
+
+<span class="sk">for</span> (<span class="sk">const</span> p <span class="sk">of</span> prices) {
+  console.<span class="sf">log</span>(<span class="ss">`${p} грн`</span>);
+}</div>
+        <div class="dp-out con"><b>Консоль</b>499 грн
+1299 грн
+250 грн</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">p</span> по черзі стає <b>кожним елементом</b>. Ні індексу, ні <span class="ic">length</span></div>
+        <div class="hbox hp">Урок 8: <span class="ic">for (const ch of word)</span> — по літерах. Сьогодні — по елементах</div>
+        <div class="hbox ho">Коротше й безпечніше: за край масиву не вийти</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── FOR ЧИ FOR...OF ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">⚖️</div><div>
+      <span class="label lb">Вибери</span>
+      <h2>Коли for, а коли for...of</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">for...of — масив не зміниться</span>
+        <div class="mono">const prices = [500, 1000, 200];
+for (let p of prices) {
+  p = p * 0.9;
+}
+// [500, 1000, 200]</div></div>
+      <div class="right"><span class="lbl">for з індексом — змінює сам масив</span>
+        <div class="mono">const prices = [500, 1000, 200];
+for (let i = 0; i &lt; prices.length; i++) {
+  prices[i] = prices[i] * 0.9;
+}
+// [450, 900, 180]</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><b>for...of</b> — лише <b>прочитати</b> кожен: сума, пошук, вивід</div>
+      <div class="hbox hp"><b>for</b> — потрібен <b>номер</b> або треба <b>змінити</b> елементи</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── СУМА І СЕРЕДНЄ ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🧺</div><div>
+      <span class="label lm">Кошик GameStore</span>
+      <h2>Сума і середня ціна</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> prices = [<span class="sn">499</span>, <span class="sn">1299</span>, <span class="sn">250</span>, <span class="sn">899</span>];
+
+<span class="sk">let</span> sum = <span class="sn">0</span>;
+<span class="sk">for</span> (<span class="sk">const</span> p <span class="sk">of</span> prices) {
+  sum <span class="st">+=</span> p;
+}
+<span class="sk">const</span> avg = sum / prices.length;
+
+console.<span class="sf">log</span>(<span class="ss">`Разом: ${sum} грн`</span>);
+console.<span class="sf">log</span>(<span class="ss">`Середня: ${avg} грн`</span>);</div>
+        <div class="dp-out con"><b>Консоль</b>Разом: 2947 грн
+Середня: 736.75 грн</div>
+      </div>
+      <div>
+        <div class="hbox hm">Накопичувач з уроку 8: <span class="ic">let sum = 0</span> <b>до</b> циклу</div>
+        <div class="hbox hp"><b>Середнє</b> = сума ÷ <span class="ic">length</span></div>
+        <div class="hbox hr">Порожній масив: <span class="ic">0 / 0</span> → <b>NaN</b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── МАКСИМУМ ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🏔️</div><div>
+      <span class="label lm">Найбільше</span>
+      <h2>Найдорожча гра в кошику</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> prices = [<span class="sn">499</span>, <span class="sn">1299</span>, <span class="sn">250</span>, <span class="sn">899</span>];
+
+<span class="sk">let</span> max = prices[<span class="sn">0</span>];
+<span class="sk">for</span> (<span class="sk">const</span> p <span class="sk">of</span> prices) {
+  <span class="sk">if</span> (p <span class="st">&gt;</span> max) {
+    max = p;
+  }
+}
+console.<span class="sf">log</span>(<span class="ss">'Найдорожча:'</span>, max);</div>
+        <div class="dp-out con"><b>Консоль</b>Найдорожча: 1299</div>
+      </div>
+      <div>
+        <div class="hbox hm">Старт — <b>перший елемент</b>, далі «бачу більше — запамʼятовую»</div>
+        <div class="hbox hr">Чому не <span class="ic">let max = 0</span>? Для <span class="ic">[-5, -2, -8]</span> вийде 0 — а такого числа в масиві немає</div>
+        <div class="hbox hp">Найменше — те саме зі знаком <span class="ic">&lt;</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ── ЛІЧИЛЬНИК І НОВИЙ МАСИВ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🧮</div><div>
+      <span class="label lm">if у циклі</span>
+      <h2>Порахувати — або зібрати в новий масив</h2>
+    </div></div>
+    <div class="pair">
+      <div class="right" style="border-color:var(--brand)"><span class="lbl" style="color:var(--brand)">лічильник</span>
+        <div class="mono">let cheap = 0;
+for (const p of prices) {
+  if (p &lt; 500) {
+    cheap++;
+  }
+}
+console.log(cheap);   // 2</div></div>
+      <div class="right" style="border-color:var(--blue)"><span class="lbl" style="color:var(--blue)">новий масив</span>
+        <div class="mono">const sale = [];
+for (const p of prices) {
+  if (p &lt; 500) {
+    sale.push(p);
+  }
+}
+console.log(sale);    // [499, 250]</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><span class="ic">prices = [499, 1299, 250, 899]</span> — той самий кошик</div>
+      <div class="hbox hp">Порожній <span class="ic">[]</span> до циклу, <span class="ic">push</span> у ньому — так масив <b>росте</b></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе кожен цикл?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">let s = 0;
+for (const x of [2, 4, 6]) {
+  s += x;
+}
+console.log(s);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>12</b> — 2 + 4 + 6</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const a = [5, 3, 8];
+let m = a[0];
+for (const x of a) {
+  if (x &lt; m) m = x;
+}
+console.log(m);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>3</b> — знак <span class="ic">&lt;</span>: шукаємо найменше</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const r = [];
+for (const x of [1, 2, 3, 4]) {
+  if (x % 2 === 0) r.push(x * 10);
+}
+console.log(r);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>[20, 40]</b> — лише парні, помножені на 10</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">Кошик GameStore</span><span class="tmr">9 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.35fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — сума кошика</span>
+        <div class="mono">const prices = [499, 1299, 250, 899];
+let sum = 0;
+for (const p of prices) {
+  sum += p;
+}
+console.log('Разом:', sum);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Свій кошик із 5 цін: сума і середня ціна</li>
+          <li>Найдорожча і найдешевша ціна</li>
+          <li>Скільки ігор дешевших за 500 грн</li>
+          <li>Перепиши суму через <span class="ic">for</span> з індексом. Заміни <span class="ic">&lt;</span> на <span class="ic">&lt;=</span> — що стало з сумою? Поверни</li>
+          <li>⭐⭐ Масив назв поруч із масивом цін: виведи «Doom — 899 грн» для кожної гри</li>
+          <li>⭐⭐⭐ Знижка 10 % на ігри, дорожчі за 1000 грн: зміни сам масив, потім нова сума</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 23 ── МАСИВ ЗІ PROMPT ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📝</div><div>
+      <span class="label lm">while + push</span>
+      <h2>Масив, який заповнює людина</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.45fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> names = [];
+<span class="sk">let</span> name = <span class="sf">prompt</span>(<span class="ss">'Імʼя (порожньо — кінець):'</span>);
+
+<span class="sk">while</span> (name <span class="st">!==</span> <span class="sk">null</span> <span class="st">&amp;&amp;</span> name <span class="st">!==</span> <span class="ss">''</span>) {
+  names.<span class="sf">push</span>(name);
+  name = <span class="sf">prompt</span>(<span class="ss">'Ще імʼя (порожньо — кінець):'</span>);
+}
+
+<span class="sf">alert</span>(<span class="ss">`Записано ${names.length}: ${names.join(', ')}`</span>);</div>
+      </div>
+      <div>
+        <div class="hbox hm">Порожній масив <span class="ic">[]</span> — до циклу</div>
+        <div class="hbox hp">Скільки імен буде — невідомо, тому <span class="ic">while</span> (урок 8)</div>
+        <div class="hbox hr">Вихід — порожнє поле <b>або</b> Скасувати. Без <span class="ic">null</span> Скасувати не випустить</div>
+        <div class="hbox ho">Числа — через <span class="ic">Number()</span> перед <span class="ic">push</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ</span>
+      <h2>Має бути середнє 10. Що не так?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+<div class="dp-code"><span class="sk">const</span> marks = [<span class="sn">10</span>, <span class="sn">8</span>, <span class="sn">12</span>];
+<span class="sk">let</span> sum;
+
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;=</span> marks.length; i<span class="st">++</span>) {
+  sum <span class="st">+=</span> marks[i];
+}
+
+console.<span class="sf">log</span>(sum / marks.length);</div>
+        <div class="dp-out con"><b>Консоль</b>NaN</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Три біди, червоного рядка немає</h3>
+        <p class="rv-hint">Знайди всі три, потім клацни</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">let sum;</span> — без нуля: <span class="ic">undefined + 8</span> = <b>NaN</b></p>
+          <p><b>2.</b> <span class="ic">i = 1</span> — перша оцінка пропущена. Старт з <b>0</b></p>
+          <p><b>3.</b> <span class="ic">i &lt;= marks.length</span> — читає <span class="ic">marks[3]</span>, тобто <span class="ic">undefined</span>. Потрібно <span class="ic">&lt;</span></p>
+          <p class="mt" style="color:var(--brand)">Полагоджене дає <b>10</b>. Або коротше — <span class="ic">for (const m of marks)</span>: ні старту, ні межі.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 25 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Увесь масив на одному екрані</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>створити · прочитати</h4><pre>const a = [10, 20, 30];
+a[0]        // 10
+a.length    // 3</pre></div>
+      <div class="rf-c"><h4>змінити · останній</h4><pre>a[1] = 99;
+a[a.length - 1]
+a[7]        // undefined</pre></div>
+      <div class="rf-c"><h4>кінець · початок</h4><pre>a.push(x)     a.pop()
+a.unshift(x)  a.shift()</pre></div>
+      <div class="rf-c"><h4>знайти · склеїти</h4><pre>a.includes(x)  // true
+a.indexOf(x)   // -1
+a.join(', ')</pre></div>
+      <div class="rf-c"><h4>for — з номером</h4><pre>for (let i = 0;
+     i &lt; a.length; i++) {
+  a[i] …
+}</pre></div>
+      <div class="rf-c"><h4>for...of — кожен</h4><pre>for (const x of a) {
+  …
+}</pre></div>
+      <div class="rf-c"><h4>сума · середнє</h4><pre>let sum = 0;
+… sum += x;
+sum / a.length</pre></div>
+      <div class="rf-c"><h4>найбільше</h4><pre>let max = a[0];
+… if (x &gt; max) max = x;</pre></div>
+      <div class="rf-c"><h4>новий масив</h4><pre>const r = [];
+… if (умова) r.push(x);</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 26 ── ПРАКТИКА 4 ══════════ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 4</span>
+        <span class="t">Температура тижня</span><span class="tmr">7 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.3fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — збираємо числа</span>
+        <div class="mono">const temps = [];
+let t = prompt('Температура:');
+while (t !== null &amp;&amp; t !== '') {
+  temps.push(Number(t));
+  t = prompt('Ще (порожньо — кінець):');
+}</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Збери температури тижня, як у прикладі</li>
+          <li>Виведи їх через <span class="ic">join(', ')</span> і скільки їх</li>
+          <li>Середня температура</li>
+          <li>Прибери <span class="ic">Number()</span>. Що тепер вийшло замість суми? Поверни</li>
+          <li>⭐⭐ Найтепліший і найхолодніший день</li>
+          <li>⭐⭐⭐ Скільки днів нижче нуля — і новий масив лише з ними</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 27 ── ДІАГНОСТИКА ══════════ -->
+  <section class="slide" id="s26"><div class="slide-inner">
+    <div class="sh"><div class="si">🩺</div><div>
+      <span class="label lr">Діагностика</span>
+      <h2>Шість бід масиву</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox hr"><span class="ic">undefined</span> — індекс за межею або рахуєш з 1</div>
+        <div class="hbox hr"><b>NaN</b> у сумі — накопичувач без <span class="ic">= 0</span> або <span class="ic">&lt;=</span> у межі циклу</div>
+        <div class="hbox hp"><span class="ic">list.Push is not a function</span> — метод із великої літери</div>
+      </div>
+      <div>
+        <div class="hbox ho"><span class="ic">Assignment to constant variable</span> — у <span class="ic">const</span>-масив поклали новий масив</div>
+        <div class="hbox hm"><span class="ic">includes</span> каже <span class="ic">false</span>, хоч елемент є — регістр або пробіл</div>
+        <div class="hbox hp"><b>«Сума» 01089</b> — у масиві рядки: <span class="ic">Number()</span> перед <span class="ic">push</span></div>
+      </div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🔦</span>
+      <div><span class="ic">console.log(arr)</span> до і після циклу — і видно, що насправді лежить у масиві.</div></div>
+  </div></section>
+
+  <!-- ══════════ 28 ── БАНК ══════════ -->
+  <section class="slide" id="s27"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Задом наперед.</b> Вивести масив з кінця: <span class="ic">for</span> від <span class="ic">length - 1</span> до 0</div>
+      <div class="bk"><b>Пошук у каталозі.</b> <span class="ic">prompt</span> назви гри → «є, місце 3» або «немає»</div>
+      <div class="bk"><b>Без повторів.</b> Додавати імʼя в масив, лише якщо такого ще немає</div>
+      <div class="bk"><b>Парні й непарні.</b> Розкласти масив чисел у два нові масиви</div>
+      <div class="bk"><b>Друга за ціною.</b> Друга найдорожча гра — одним проходом</div>
+      <div class="bk"><b>Кубик × 60.</b> Масив <span class="ic">[0, 0, 0, 0, 0, 0]</span>: скільки разів випала кожна грань — <span class="ic">counts[roll - 1]++</span></div>
+      <div class="bk"><b>Таблиця в масив.</b> <span class="ic">[7, 14, …, 70]</span> — через <span class="ic">push</span> у <span class="ic">for</span></div>
+      <div class="bk"><b>Інвентар квесту.</b> Масив предметів героя: <span class="ic">push</span> у розвилках, <span class="ic">includes</span> відкриває двері</div>
+    </div>
+    <div class="hbox hm mt">Усі вісім — тільки тим, що вже було. Функцій не треба</div>
+  </div></section>
+
+  <!-- ══════════ 29 ── ЗБЕРЕГТИ ══════════ -->
+  <section class="slide" id="s28"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Зберігаємо роботу уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="cm">// Масиви · урок 9</span>
+<span class="cm">// Прізвище Імʼя · рівень: ⭐⭐</span>
+<span class="cm">// зроблено: практики 1, 2, 3, 4</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Коментар — <b>першим рядком</b> <span class="ic">script.js</span>, потім <b>Ctrl + S</b></div>
+        <div class="hbox hp">Папку <span class="ic">js-11/masyvy</span> не видаляти: на уроці 10 код суми кошика стане функцією</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 30 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s29"><div class="slide-inner">
+    <div class="sh"><div class="si">🔤</div><div>
+      <span class="label lp">Словник</span>
+      <h2>Слова, які лишаються англійською</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="hbox"><span class="ic">array</span> — масив</div>
+        <div class="hbox hm"><span class="ic">element</span> — елемент масиву</div>
+        <div class="hbox hp"><span class="ic">index</span> — індекс, номер місця</div>
+      </div>
+      <div>
+        <div class="hbox hr"><span class="ic">length</span> — довжина</div>
+        <div class="hbox ho"><span class="ic">push</span> — проштовхнути, додати в кінець</div>
+        <div class="hbox"><span class="ic">join</span> — зʼєднати</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 31 ── ПІДСУМОК ══════════ -->
+  <section class="slide" id="s30"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Після уроку 9 у вас є</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>У коді</h3><ul>
+        <li><span class="ic">[ ]</span>, <span class="ic">arr[i]</span>, <span class="ic">length</span></li>
+        <li><span class="ic">push</span> · <span class="ic">pop</span> · <span class="ic">unshift</span> · <span class="ic">shift</span></li>
+        <li><span class="ic">includes</span> · <span class="ic">indexOf</span> · <span class="ic">join</span></li>
+        <li>сума, середнє, найбільше по масиву</li>
+      </ul></div>
+      <div class="card cp"><h3>У голові</h3><ul>
+        <li>індекс — з нуля, останній — <span class="ic">length - 1</span></li>
+        <li>за межею — <span class="ic">undefined</span>, не помилка</li>
+        <li>прочитати — <span class="ic">for...of</span>; змінити — <span class="ic">for</span></li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання</strong> — на наступному слайді.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 10 · середа 7 жовтня · Функції</p>
+  </div></section>
+
+  <!-- ══════════ 32 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s31"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>Температура тижня в консолі</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">На <strong>codepen.io</strong>, панель <b>JS</b>, результат — кнопка <b>Console</b> · код — <strong>повідомленням на платформі</strong> до <strong>7 жовтня</strong></div>
+    <div class="two" style="grid-template-columns:1.15fr 1fr;gap:16px">
+      <div class="steps" style="gap:8px">
+        <div class="step" style="padding:9px 15px"><span class="step-n">1</span><span class="step-t" style="font-size:16.5px">
+          Вгадай, що виведе рядок праворуч, — коментарем. Потім запусти й звір</span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">2</span><span class="step-t" style="font-size:16.5px">
+          Середня температура тижня</span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">3</span><span class="step-t" style="font-size:16.5px">
+          Найвища й найнижча температура</span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">4</span><span class="step-t" style="font-size:16.5px">
+          Скільки днів нижче нуля</span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">⭐</span><span class="step-t" style="font-size:16.5px">
+          ⭐⭐⭐ Новий масив лише з температурами вище нуля — виведи через <span class="ic">join(', ')</span></span></div>
+      </div>
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">початок файлу</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.55;padding:12px 16px"><span class="cm">// Прізвище Імʼя</span>
+<span class="sk">const</span> temps = [<span class="sn">3</span>, <span class="sn">-2</span>, <span class="sn">5</span>, <span class="sn">0</span>, <span class="sn">-4</span>, <span class="sn">7</span>, <span class="sn">5</span>];
+
+<span class="cm">// пункт 1</span>
+console.<span class="sf">log</span>(temps[<span class="sn">1</span>], temps.length,
+            temps[temps.length - <span class="sn">1</span>]);</div>
+        </div>
+        <div class="tip to" style="font-size:15.5px;padding:9px 13px"><span class="tip-ico">⚙️</span>
+          <div><span class="ic">prompt</span> не потрібен: дані вже в масиві. Усі відповіді — <span class="ic">console.log</span></div></div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
