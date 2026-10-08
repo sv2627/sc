@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 9 · код для DartPad · Flutter 10 клас</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#eef1f8;--border:#dcdfe9;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--blue);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#aab4cc}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:760px}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+padding:24px 26px;display:block;box-shadow:0 1px 3px rgba(2,83,179,.05);
+transition:border-color .18s,background .18s,transform .18s,box-shadow .18s}
+a.card:hover{border-color:var(--accent);background:var(--surf2);transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(2,83,179,.09)}
+.card .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);display:block;margin-bottom:9px}
+.card h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin-bottom:7px;line-height:1.2}
+.card p{font-size:16.5px;color:var(--dim)}
+.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:26px;
+box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--accent);display:block;margin-bottom:8px}
+.hero p{font-size:17px;color:var(--dim)}
+.hero ul{margin:0;padding-left:22px;font-size:17px;color:var(--dim)}
+.hero li{margin-bottom:6px}
+.hero li:last-child{margin-bottom:0}
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 7px;border-radius:5px}
+.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+font-size:15px;color:var(--dim)}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}
+.card{padding:19px 20px}.hero{padding:18px 20px}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:18px;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;
+  background:var(--surf2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.codebar b{font-family:var(--f-head);color:var(--accent)}
+.copy{font:700 16px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:10px 18px;min-height:44px;cursor:pointer}
+.copy.ok{background:#1d7a3a}
+pre.dart{font-family:var(--f-mono);font-size:15px;line-height:1.55;padding:18px;overflow-x:auto;
+  white-space:pre;tab-size:2;color:var(--ink)}
+.cm{color:#5c6b5e;font-style:italic}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">10 клас · Flutter</a><span class="sep">/</span><a href="./">Урок 9</a><span class="sep">/</span><span>Код</span></nav>
+<div class="kicker">Урок 9 / 68 · 08.10.2026 · код для DartPad</div>
+<h1>Код уроку і домашнього</h1>
+<p class="lead">Натисни «Скопіювати», відкрий <a href="https://dartpad.dev" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px solid">dartpad.dev</a>, встав і натисни Run. Пояснення — у коментарях після <code>//</code>.</p>
+
+<div class="kicker" style="margin-top:28px">Домашнє завдання</div>
+<div class="codebox"><div class="codebar"><b>Таблиця перемог · каркас</b>
+  <button class="copy" data-for="dz">Скопіювати</button></div>
+<pre class="dart" id="dz"><span class="cm">// Домашнє · урок 9 · «Таблиця перемог».</span>
+<span class="cm">// Встав код у dartpad.dev.</span>
+<span class="cm">// Крок 1. Спершу вгадай, скільки перемог у кожного, і напиши здогадку</span>
+<span class="cm">//         коментарем тут, над main. Наприклад: // Olha 3, ...</span>
+<span class="cm">// Крок 2. Заміни рядок // ... циклом, який рахує перемоги у wins. Запусти.</span>
+<span class="cm">//         Збіглося зі здогадкою?</span>
+<span class="cm">// Код надішли повідомленням на платформі до 14 жовтня.</span>
+<span class="cm">// Першим рядком — коментар із прізвищем.</span>
+
+void main() {
+  <span class="cm">// Хто виграв кожен бій турніру — по одному імені на бій.</span>
+  List&lt;String&gt; winners = [&#x27;Olha&#x27;, &#x27;Ivan&#x27;, &#x27;Olha&#x27;, &#x27;Nina&#x27;, &#x27;Olha&#x27;, &#x27;Ivan&#x27;];
+
+  <span class="cm">// Таблиця: імʼя -&gt; скільки разів переміг. Поки порожня.</span>
+  Map&lt;String, int&gt; wins = {};
+
+  <span class="cm">// ...</span>
+
+  <span class="cm">// Друкує таблицю: кожна пара «імʼя: перемоги» з нового рядка.</span>
+  wins.forEach((name, w) =&gt; print(&#x27;$name: $w&#x27;));
+}</pre></div>
+
+<div class="kicker" style="margin-top:34px">Урок</div>
+<div class="codebox"><div class="codebar"><b>Симуляція бою · фінальна версія ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="urok">Скопіювати</button></div>
+<pre class="dart" id="urok"><span class="cm">// Урок 9 · Міні-проєкт I: симуляція бою — фінальна версія з уроку.</span>
+<span class="cm">// Відкрий dartpad.dev, встав увесь код і натисни Run.</span>
+<span class="cm">// ⭐ бій двох бійців · ⭐⭐ турнір і таблиця перемог · ⭐⭐⭐ крит, лікування, статистика.</span>
+
+import &#x27;dart:math&#x27;;
+
+<span class="cm">// Статистика всього турніру: тип події -&gt; скільки разів (⭐⭐⭐).</span>
+Map&lt;String, int&gt; stats = {&#x27;hits&#x27;: 0, &#x27;crits&#x27;: 0, &#x27;heals&#x27;: 0};
+
+class Fighter {
+  String name; <span class="cm">// імʼя бійця</span>
+  int hp; <span class="cm">// здоровʼя зараз</span>
+  int attack; <span class="cm">// сила удару</span>
+  int maxHp = 0; <span class="cm">// здоровʼя на початку — щоб відновити перед новим боєм</span>
+  int potions = 1; <span class="cm">// лікувань на один бій (⭐⭐⭐)</span>
+  int damageDone = 0; <span class="cm">// скільки шкоди завдав за турнір (⭐⭐⭐)</span>
+
+  <span class="cm">// Конструктор: запамʼятовуємо початкове hp у maxHp.</span>
+  Fighter(this.name, this.hp, this.attack) {
+    maxHp = hp;
+  }
+
+  <span class="cm">// Живий, поки hp більше нуля.</span>
+  bool isAlive() =&gt; hp &gt; 0;
+
+  String info() =&gt; &#x27;$name: hp $hp, attack $attack&#x27;;
+
+  <span class="cm">// Удар: сила + випадкове число від 0 до 5.</span>
+  void hit(Fighter other) {
+    int damage = attack + Random().nextInt(6);
+    <span class="cm">// Шанс 1 з 5 на критичний удар — шкода ×2.</span>
+    if (Random().nextInt(5) == 0) {
+      damage = damage * 2;
+      print(&#x27;CRIT!&#x27;);
+      stats.update(&#x27;crits&#x27;, (v) =&gt; v + 1);
+    }
+    other.hp = other.hp - damage;
+    if (other.hp &lt; 0) other.hp = 0; <span class="cm">// hp не буває мінусовим</span>
+    damageDone = damageDone + damage;
+    stats.update(&#x27;hits&#x27;, (v) =&gt; v + 1);
+    print(&#x27;$name hits ${other.name} for $damage. ${other.name}: ${other.hp} hp&#x27;);
+  }
+
+  <span class="cm">// Лікування: +20 hp, але не більше за maxHp.</span>
+  void heal() {
+    hp = hp + 20;
+    if (hp &gt; maxHp) hp = maxHp;
+    potions--;
+    stats.update(&#x27;heals&#x27;, (v) =&gt; v + 1);
+    print(&#x27;$name heals. $name: $hp hp&#x27;);
+  }
+
+  <span class="cm">// Хід бійця: якщо hp менше третини і є зілля — лікується, інакше бʼє.</span>
+  void turn(Fighter other) {
+    if (hp &lt; maxHp ~/ 3 &amp;&amp; potions &gt; 0) {
+      heal();
+    } else {
+      hit(other);
+    }
+  }
+
+  <span class="cm">// Перед кожним новим боєм — повне здоровʼя і одне зілля.</span>
+  void restore() {
+    hp = maxHp;
+    potions = 1;
+  }
+}
+
+<span class="cm">// Бій до переможця. Повертає того, хто вижив.</span>
+Fighter fight(Fighter a, Fighter b) {
+  int round = 0;
+  while (a.isAlive() &amp;&amp; b.isAlive()) {
+    round++;
+    print(&#x27;--- Round $round ---&#x27;);
+    a.turn(b);
+    if (b.isAlive()) b.turn(a); <span class="cm">// мертвий не відповідає</span>
+  }
+  Fighter winner = a.isAlive() ? a : b;
+  print(&#x27;Winner: ${winner.name} in $round rounds, ${winner.hp} hp left&#x27;);
+  return winner;
+}
+
+void main() {
+  List&lt;Fighter&gt; fighters = [
+    Fighter(&#x27;Andrii&#x27;, 60, 10),
+    Fighter(&#x27;Bohdan&#x27;, 70, 8),
+    Fighter(&#x27;Olha&#x27;, 55, 11),
+    Fighter(&#x27;Daryna&#x27;, 65, 9),
+  ];
+
+  <span class="cm">// Таблиця перемог: спершу всім 0.</span>
+  Map&lt;String, int&gt; wins = {};
+  for (Fighter f in fighters) wins[f.name] = 0;
+
+  <span class="cm">// Турнір «кожен з кожним»: j починається з i + 1,</span>
+  <span class="cm">// щоб пара не билась двічі і боєць не бився сам із собою.</span>
+  for (int i = 0; i &lt; fighters.length; i++) {
+    for (int j = i + 1; j &lt; fighters.length; j++) {
+      fighters[i].restore();
+      fighters[j].restore();
+      Fighter w = fight(fighters[i], fighters[j]);
+      wins.update(w.name, (v) =&gt; v + 1);
+    }
+  }
+
+  <span class="cm">// Таблиця перемог.</span>
+  print(&#x27;=== Wins ===&#x27;);
+  wins.forEach((name, w) =&gt; print(&#x27;$name: $w&#x27;));
+
+  <span class="cm">// Чемпіон — той, у кого найбільше перемог.</span>
+  String champion = &#x27;&#x27;;
+  int best = -1;
+  wins.forEach((name, w) {
+    if (w &gt; best) {
+      best = w;
+      champion = name;
+    }
+  });
+  print(&#x27;Champion: $champion&#x27;);
+
+  <span class="cm">// Статистика турніру (⭐⭐⭐).</span>
+  print(&#x27;=== Stats ===&#x27;);
+  stats.forEach((k, v) =&gt; print(&#x27;$k: $v&#x27;));
+  for (Fighter f in fighters) {
+    print(&#x27;${f.name}: damage ${f.damageDone}&#x27;);
+  }
+}</pre></div>
+
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.for).innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+  b.textContent = 'Скопійовано ✓'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Скопіювати'; b.classList.remove('ok'); }, 2000);
+});
+</script>
+</body>
+</html>
