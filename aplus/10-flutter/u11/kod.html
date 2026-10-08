@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 11 · код для DartPad · Flutter 10 клас</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#eef1f8;--border:#dcdfe9;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--blue);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#aab4cc}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:760px}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+padding:24px 26px;display:block;box-shadow:0 1px 3px rgba(2,83,179,.05);
+transition:border-color .18s,background .18s,transform .18s,box-shadow .18s}
+a.card:hover{border-color:var(--accent);background:var(--surf2);transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(2,83,179,.09)}
+.card .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);display:block;margin-bottom:9px}
+.card h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin-bottom:7px;line-height:1.2}
+.card p{font-size:16.5px;color:var(--dim)}
+.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:26px;
+box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--accent);display:block;margin-bottom:8px}
+.hero p{font-size:17px;color:var(--dim)}
+.hero ul{margin:0;padding-left:22px;font-size:17px;color:var(--dim)}
+.hero li{margin-bottom:6px}
+.hero li:last-child{margin-bottom:0}
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 7px;border-radius:5px}
+.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+font-size:15px;color:var(--dim)}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}
+.card{padding:19px 20px}.hero{padding:18px 20px}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:18px;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;
+  background:var(--surf2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.codebar b{font-family:var(--f-head);color:var(--accent)}
+.copy{font:700 16px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:10px 18px;min-height:44px;cursor:pointer}
+.copy.ok{background:#1d7a3a}
+pre.dart{font-family:var(--f-mono);font-size:15px;line-height:1.55;padding:18px;overflow-x:auto;
+  white-space:pre;tab-size:2;color:var(--ink)}
+.cm{color:#5c6b5e;font-style:italic}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">10 клас · Flutter</a><span class="sep">/</span><a href="./">Урок 11</a><span class="sep">/</span><span>Код</span></nav>
+<div class="kicker">Урок 11 / 68 · 15.10.2026 · код для DartPad</div>
+<h1>Код уроку і домашнього</h1>
+<p class="lead">Натисни «Скопіювати», відкрий <a href="https://dartpad.dev" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px solid">dartpad.dev</a>, встав і натисни Run. Пояснення — у коментарях після <code>//</code>.</p>
+
+<div class="kicker" style="margin-top:28px">Домашнє завдання</div>
+<div class="codebox"><div class="codebar"><b>Середній бал учня · допиши метод</b>
+  <button class="copy" data-for="dz">Скопіювати</button></div>
+<pre class="dart" id="dz"><span class="cm">// Домашнє · урок 11 · «Середній бал учня».</span>
+<span class="cm">// Завдання: дописати метод average() у класі Student —</span>
+<span class="cm">// він повертає середнє оцінок цього учня.</span>
+<span class="cm">// Має надрукувати:</span>
+<span class="cm">//   Olha: 11.0</span>
+<span class="cm">//   Ivan: 8.5</span>
+<span class="cm">// Що зробити: у методі average() нижче, на місці «ДОПИШИ ТУТ»,</span>
+<span class="cm">// порахуй суму оцінок циклом і поверни суму, поділену на кількість.</span>
+<span class="cm">// Підказка — як середня ціна на уроці 6:</span>
+<span class="cm">//   for (int g in grades) { ... }  — додай кожну оцінку до sum</span>
+<span class="cm">//   return sum / grades.length;     — знак / дає double</span>
+<span class="cm">// Поки не допишеш, DartPad підкреслює sum — це лише попередження.</span>
+<span class="cm">// Код надішли повідомленням на платформі до 21 жовтня.</span>
+<span class="cm">// Першим рядком — коментар із прізвищем.</span>
+
+class Student {
+  String name; <span class="cm">// імʼя</span>
+  List&lt;int&gt; grades; <span class="cm">// оцінки учня</span>
+
+  Student(this.name, this.grades);
+
+  <span class="cm">// Середній бал цього учня.</span>
+  double average() {
+    int sum = 0;
+    <span class="cm">// ДОПИШИ ТУТ: цикл по grades, додай кожну оцінку до sum</span>
+    <span class="cm">// ДОПИШИ ТУТ: заміни return 0 — поверни sum, поділену на кількість оцінок</span>
+    return 0;
+  }
+}
+
+void main() {
+  <span class="cm">// Два учні — два обʼєкти класу Student.</span>
+  Student a = Student(&#x27;Olha&#x27;, [10, 11, 12]);
+  Student b = Student(&#x27;Ivan&#x27;, [8, 9]);
+
+  print(&#x27;${a.name}: ${a.average()}&#x27;);
+  print(&#x27;${b.name}: ${b.average()}&#x27;);
+}</pre></div>
+
+<div class="kicker" style="margin-top:34px">Урок</div>
+<div class="codebox"><div class="codebar"><b>Практики 1–2 · клас Product і склад</b>
+  <button class="copy" data-for="urok">Скопіювати</button></div>
+<pre class="dart" id="urok"><span class="cm">// Урок 11 · Повторення і практика: класи й обʼєкти — Практики 1 і 2, фінальна версія.</span>
+<span class="cm">// Відкрий dartpad.dev, встав увесь код і натисни Run.</span>
+<span class="cm">// Товар — сутність, тому class. Склад — список обʼєктів List&lt;Product&gt;.</span>
+
+class Product {
+  String name; <span class="cm">// назва</span>
+  int price; <span class="cm">// ціна за штуку, грн</span>
+  int count; <span class="cm">// скільки штук на складі</span>
+  int sold = 0; <span class="cm">// ⭐⭐⭐ скільки продано — поле зі значенням одразу</span>
+
+  <span class="cm">// Конструктор: this. — значення одразу в поле.</span>
+  Product(this.name, this.price, this.count);
+
+  <span class="cm">// Рядок для людини — замість Instance of &#x27;Product&#x27;.</span>
+  String info() =&gt; &#x27;$name: $price grn, $count pcs&#x27;;
+
+  <span class="cm">// Вартість залишку цього товару.</span>
+  int total() =&gt; price * count;
+
+  <span class="cm">// Продати n штук. Більше, ніж є, — не продаємо і повертаємо false.</span>
+  bool sell(int n) {
+    if (n &gt; count) return false;
+    count -= n;
+    sold += n;
+    return true;
+  }
+
+  <span class="cm">// Поповнити склад.</span>
+  void restock(int n) {
+    count += n;
+  }
+
+  <span class="cm">// ⭐⭐ Знижка у відсотках: ~/ — ціле ділення, ціна лишається int.</span>
+  void discount(int percent) {
+    price = price * (100 - percent) ~/ 100;
+  }
+
+  <span class="cm">// ⭐⭐⭐ Виторг за проданим.</span>
+  int revenue() =&gt; sold * price;
+}
+
+<span class="cm">// ===== Практика 2: функції над складом =====</span>
+
+<span class="cm">// Вартість усього складу: сума total() кожного товару.</span>
+int stockValue(List&lt;Product&gt; xs) {
+  int s = 0;
+  for (Product p in xs) {
+    s += p.total();
+  }
+  return s;
+}
+
+<span class="cm">// Найдешевший товар — функція повертає цілий обʼєкт.</span>
+Product cheapest(List&lt;Product&gt; xs) {
+  Product best = xs[0];
+  for (Product p in xs) {
+    if (p.price &lt; best.price) best = p;
+  }
+  return best;
+}
+
+<span class="cm">// ⭐⭐⭐ Продати за назвою. Спершу any — бо firstWhere без збігу падає.</span>
+bool sellByName(List&lt;Product&gt; xs, String name, int n) {
+  if (!xs.any((p) =&gt; p.name == name)) {
+    print(&#x27;No such product: $name&#x27;);
+    return false;
+  }
+  Product p = xs.firstWhere((p) =&gt; p.name == name);
+  return p.sell(n);
+}
+
+void main() {
+  <span class="cm">// --- Практика 1: один товар ---</span>
+  Product pen = Product(&#x27;pen&#x27;, 25, 40);
+  print(pen.info());
+  print(&#x27;Total: ${pen.total()}&#x27;);
+  print(&#x27;Sell 50: ${pen.sell(50)}&#x27;); <span class="cm">// стільки немає</span>
+  print(&#x27;Sell 5: ${pen.sell(5)}&#x27;);
+  pen.restock(10);
+  print(pen.info());
+  pen.discount(20); <span class="cm">// ⭐⭐</span>
+  print(pen.info());
+  print(&#x27;Revenue: ${pen.revenue()}&#x27;); <span class="cm">// ⭐⭐⭐ 5 штук × 20 грн</span>
+
+  <span class="cm">// --- Практика 2: склад ---</span>
+  List&lt;Product&gt; stock = [
+    Product(&#x27;pen&#x27;, 25, 40),
+    Product(&#x27;notebook&#x27;, 60, 12),
+    Product(&#x27;backpack&#x27;, 900, 0),
+    Product(&#x27;marker&#x27;, 45, 8),
+  ];
+  for (Product p in stock) {
+    print(p.info());
+  }
+  print(&#x27;Stock value: ${stockValue(stock)}&#x27;);
+  print(&#x27;Cheapest: ${cheapest(stock).name}&#x27;);
+  <span class="cm">// Чого немає: where — відібрати, map — лише назви, join — в один рядок.</span>
+  print(&#x27;Out of stock: ${stock.where((p) =&gt; p.count == 0).map((p) =&gt; p.name).join(&#x27;, &#x27;)}&#x27;);
+  <span class="cm">// Скільки товарів дорожчі за 50 грн.</span>
+  print(&#x27;More than 50 grn: ${stock.where((p) =&gt; p.price &gt; 50).length}&#x27;);
+  <span class="cm">// ⭐⭐ Від найдорожчого до найдешевшого — готова формула з уроку 8.</span>
+  stock.sort((a, b) =&gt; b.price - a.price);
+  print(stock.map((p) =&gt; p.name).join(&#x27;, &#x27;));
+  <span class="cm">// ⭐⭐⭐ Продаж за назвою.</span>
+  print(sellByName(stock, &#x27;marker&#x27;, 3));
+  print(sellByName(stock, &#x27;marker&#x27;, 10));
+  print(sellByName(stock, &#x27;ruler&#x27;, 1));
+}</pre></div>
+<div class="codebox"><div class="codebar"><b>Бібліотека · фінальна версія ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="biblioteka">Скопіювати</button></div>
+<pre class="dart" id="biblioteka"><span class="cm">// Урок 11 · Маленький проєкт «Бібліотека» — фінальна версія ⭐–⭐⭐⭐.</span>
+<span class="cm">// Відкрий dartpad.dev, встав увесь код і натисни Run.</span>
+<span class="cm">// Книжка — сутність: class Book. «Яку книжку хто взяв» — словник: Map&lt;String, String&gt;.</span>
+
+class Book {
+  String title; <span class="cm">// назва</span>
+  String author; <span class="cm">// автор</span>
+  bool available = true; <span class="cm">// на полиці чи видана</span>
+
+  Book(this.title, this.author);
+
+  <span class="cm">// Рядок для людини: in — на полиці, out — видана.</span>
+  String info() {
+    String state = available ? &#x27;in&#x27; : &#x27;out&#x27;;
+    return &#x27;$title, $author: $state&#x27;;
+  }
+
+  <span class="cm">// ⭐ Видати. Уже видана — false, нічого не міняємо.</span>
+  bool borrow() {
+    if (!available) return false;
+    available = false;
+    return true;
+  }
+
+  <span class="cm">// ⭐ Повернути на полицю.</span>
+  void giveBack() {
+    available = true;
+  }
+}
+
+<span class="cm">// ⭐⭐⭐ Скільки книжок зараз у читача: рахуємо значення словника видач.</span>
+int booksOf(Map&lt;String, String&gt; loans, String reader) {
+  int c = 0;
+  for (String r in loans.values) {
+    if (r == reader) c++;
+  }
+  return c;
+}
+
+<span class="cm">// ⭐⭐ Видати книжку читачеві й записати у словник видач.</span>
+<span class="cm">// ⭐⭐⭐ Ліміт: не більше двох книжок на руках.</span>
+bool lend(List&lt;Book&gt; lib, Map&lt;String, String&gt; loans, String title, String reader) {
+  if (!lib.any((b) =&gt; b.title == title)) {
+    print(&#x27;No such book: $title&#x27;);
+    return false;
+  }
+  if (booksOf(loans, reader) &gt;= 2) {
+    print(&#x27;$reader already has 2 books&#x27;);
+    return false;
+  }
+  Book b = lib.firstWhere((b) =&gt; b.title == title);
+  if (!b.borrow()) {
+    print(&#x27;$title is taken&#x27;);
+    return false;
+  }
+  loans[title] = reader;
+  return true;
+}
+
+<span class="cm">// ⭐⭐ Повернути: книжка на полицю, запис зі словника — геть.</span>
+void giveBackBook(List&lt;Book&gt; lib, Map&lt;String, String&gt; loans, String title) {
+  if (!loans.containsKey(title)) {
+    print(&#x27;$title was not lent&#x27;);
+    return;
+  }
+  lib.firstWhere((b) =&gt; b.title == title).giveBack();
+  loans.remove(title);
+}
+
+void main() {
+  List&lt;Book&gt; library = [
+    Book(&#x27;Kobzar&#x27;, &#x27;Shevchenko&#x27;),
+    Book(&#x27;Lisova pisnia&#x27;, &#x27;Ukrainka&#x27;),
+    Book(&#x27;Zakhar Berkut&#x27;, &#x27;Franko&#x27;),
+    Book(&#x27;Tyhrolovy&#x27;, &#x27;Bahrianyi&#x27;),
+    Book(&#x27;Kaidasheva simia&#x27;, &#x27;Nechui-Levytskyi&#x27;),
+  ];
+
+  <span class="cm">// ⭐ Видати двічі ту саму книжку: вдруге не вийде.</span>
+  print(library[4].borrow());
+  print(library[4].borrow());
+  for (Book b in library) {
+    print(b.info());
+  }
+  print(&#x27;Available: ${library.where((b) =&gt; b.available).length}&#x27;);
+
+  <span class="cm">// ⭐⭐ Словник видач: назва -&gt; читач.</span>
+  Map&lt;String, String&gt; loans = {};
+  lend(library, loans, &#x27;Kobzar&#x27;, &#x27;Olha&#x27;);
+  lend(library, loans, &#x27;Tyhrolovy&#x27;, &#x27;Ivan&#x27;);
+  lend(library, loans, &#x27;Kobzar&#x27;, &#x27;Ivan&#x27;); <span class="cm">// уже видана</span>
+  lend(library, loans, &#x27;Eneida&#x27;, &#x27;Nina&#x27;); <span class="cm">// такої немає</span>
+  lend(library, loans, &#x27;Zakhar Berkut&#x27;, &#x27;Olha&#x27;);
+  lend(library, loans, &#x27;Lisova pisnia&#x27;, &#x27;Olha&#x27;); <span class="cm">// ⭐⭐⭐ третя — ліміт</span>
+  loans.forEach((title, reader) =&gt; print(&#x27;$title -&gt; $reader&#x27;));
+  giveBackBook(library, loans, &#x27;Tyhrolovy&#x27;);
+  giveBackBook(library, loans, &#x27;Eneida&#x27;);
+  lend(library, loans, &#x27;Lisova pisnia&#x27;, &#x27;Nina&#x27;);
+  print(&#x27;Available: ${library.where((b) =&gt; b.available).length}&#x27;);
+
+  <span class="cm">// ⭐⭐⭐ Хто скільки книжок має — словник-лічильник за значеннями loans.</span>
+  Map&lt;String, int&gt; perReader = {};
+  for (String r in loans.values) {
+    perReader.update(r, (v) =&gt; v + 1, ifAbsent: () =&gt; 1);
+  }
+  perReader.forEach((r, n) =&gt; print(&#x27;$r: $n&#x27;));
+}</pre></div>
+
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.for).innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+  b.textContent = 'Скопійовано ✓'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Скопіювати'; b.classList.remove('ok'); }, 2000);
+});
+</script>
+</body>
+</html>

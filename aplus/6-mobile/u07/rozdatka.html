@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · Мобільні додатки · 6 клас · Урок 7</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          Розробка мобільних додатків (MIT App Inventor)
+  Клас          6
+  Урок          7 / 36 · 16.10.2026 · A+
+  Тема          Міні-проєкт I: складання — повторення уроків 1–6
+  Звідки        CSS — копія aplus/6-mobile/u06/rozdatka.html без змін;
+                завдання власні: повторення уроків 1–6 (компоненти,
+                панелі, кнопка-сюрприз, «що на екрані», помилки) і план
+                своєї візитівки. Нового матеріалу немає.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ СХОВИЩЕ. Урок іде за ноутбуками, тому в класі аркуш НЕ видається
+     (правило 20.09 і 24.09.2026: роздатка й ноутбуки не поєднуються).
+     Друкується на випадок тривоги. Жодне завдання не потребує
+     комп'ютера, телефона чи App Inventor.
+     Блоки намальовано ч/б: товста ліва смуга — жовта «підкова» події,
+     внутрішня рамка — блок усередині (set або call).
+  ⚠️ ДЗ на аркуші НЕ пишеться — воно на сайті App Inventor.
+     Відповіді — у конспекті вчителя.
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок —
+                на ксероксі вони зникають. Тільки чорне на білому.
+  ОБСЯГ         Рівно одна сторінка A4.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+/* ─── довідка: єдиний стиснутий блок ─── */
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+/* ─── завдання ─── */
+.b{margin-bottom:1.4mm; break-inside:avoid}
+/* A+ u05: і сам заголовок без «>» — у колонках .b.two він лишався
+   браузерним h2 (великий, без лінії). */
+.b h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+/* Селектор БЕЗ «>» (як у 10-flutter/u05): у блоках .b.two заголовок лежить
+   у колонці, дочірній селектор його не діставав — тег злипався з заголовком. */
+.b h2 .tag{float:right; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700;
+  margin-left:4mm}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.4fr 1fr}
+.two.k46{grid-template-columns:1fr 1.4fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+/* лінійки для письма */
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7.2mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:10pt; font-weight:700; padding-bottom:.4mm}
+.sl.wide span{min-width:52mm}
+
+/* рамка для запису */
+.wb{border:var(--line); min-height:16mm; padding:1.4mm 2mm}
+.wb .cap{font-family:var(--fm); font-size:9pt; font-weight:700; text-transform:uppercase;
+  letter-spacing:.6px}
+
+/* схема з пропусками */
+.flow{display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:2mm; align-items:center}
+.fl-b{border:var(--line); min-height:17mm; padding:1.2mm 1.8mm; font-size:10pt; line-height:1.18}
+.fl-a{font-family:var(--fm); font-size:13pt; font-weight:800; text-align:center}
+
+/* таблиця «постав букву» */
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.8mm 1.8mm; font-size:10.5pt; text-align:left}
+table.t th{font-size:9.5pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:22mm; text-align:center}
+table.t td.b2{width:34mm}
+
+/* словник із порожньою колонкою */
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.5mm 0; font-size:11pt; vertical-align:bottom}
+table.voc td.en{width:44%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+pre.c{font-family:var(--fm); font-size:10.5pt; line-height:1.32; border:var(--line);
+  padding:1.6mm 2.2mm; white-space:pre-wrap; font-weight:700}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4: блок події з пропусками ───
+   Підкова App Inventor у ч/б: товста ліва смуга = жовтий блок події,
+   рамка всередині = зелений блок дії. Тільки #000. */
+.ev{border:var(--line); border-left:4mm solid #000; padding:1.2mm 2mm 1.6mm 2mm;
+  font-family:var(--fm); font-size:10.5pt; font-weight:700; line-height:1.5}
+.ev .do{border:var(--thin); margin:1mm 0 0 3mm; padding:.8mm 1.6mm}
+.ev u, .fill{text-decoration:none; border-bottom:var(--thin); display:inline-block; min-width:20mm}
+.fill.w{min-width:34mm}
+table.t.mt2 td{border:0; padding:1.1mm 1.2mm; font-size:10pt}
+table.t.mt2 td.gap{width:9mm}
+table.t.mt2 td:first-child{border:var(--thin)}
+table.t.mt2 td:last-child{border:var(--thin)}
+.pc{font-family:var(--fm); font-size:9.6pt; line-height:1.3; border:var(--line); padding:1.2mm 2mm;
+  white-space:pre-wrap; font-weight:700}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>Мобільні додатки &#183; 6 клас &#183; Урок 7 / 36 &#183; 16 жовтня</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Міні-проєкт I: складання &#8212; згадуємо уроки 1&#8211;6</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Де що</p>
+        <p><b>Designer</b> &#8212; компоненти на екрані</p>
+        <p><b>Blocks</b> &#8212; програма з блоків</p>
+        <p><b>Media</b> &#8212; файли: <b>Upload File&#8230;</b></p>
+        <p><b>Properties</b> &#8212; налаштування</p>
+      </div>
+      <div>
+        <p class="rh">Блоки трьох видів</p>
+        <p>подія: <code>when Button1.Click do</code></p>
+        <p>встанови: <code>set Label1.Text to</code></p>
+        <p>команда: <code>call Sound1.Play</code></p>
+        <p>блок працює лише <b>в підкові</b></p>
+      </div>
+      <div>
+        <p class="rh">Візитівка</p>
+        <p>&#9733; ім&#39;я, фото, 3 факти, 2 кнопки зі звуком</p>
+        <p>&#9733;&#9733; + сюрприз: картинка й повідомлення</p>
+        <p>&#9733;&#9733;&#9733; + «День» / «Ніч»</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b two">
+    <div>
+      <h2>1 &#183; Зістав<span class="tag">з&#39;єднай лінією</span></h2>
+      <table class="t mt2">
+        <tr><td><code>Label</code></td><td class="gap"></td><td>звук і вібрація</td></tr>
+        <tr><td><code>Button</code></td><td class="gap"></td><td>картинка</td></tr>
+        <tr><td><code>Image</code></td><td class="gap"></td><td>коробка: у рядок</td></tr>
+        <tr><td><code>Sound</code></td><td class="gap"></td><td>напис</td></tr>
+        <tr><td><code>Notifier</code></td><td class="gap"></td><td>кнопка</td></tr>
+        <tr><td><code>HorizontalArrangement</code></td><td class="gap"></td><td>повідомлення на екрані</td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>2 &#183; Впиши слово<span class="tag">два зайві</span></h2>
+      <p class="q"><b>Designer &#183; Blocks &#183; Media &#183; Properties &#183; Source &#183; Palette</b></p>
+      <p class="q" style="margin-top:1.6mm">а) Кнопки на екран ставимо в <span class="fill w"></span></p>
+      <p class="q" style="margin-top:2.4mm">б) Файли завантажуємо в <span class="fill w"></span></p>
+      <p class="q" style="margin-top:2.4mm">в) Колір букв міняємо в <span class="fill w"></span></p>
+      <p class="q" style="margin-top:2.4mm">г) Звук для Sound1 задає <span class="fill w"></span></p>
+    </div>
+  </div>
+
+  <div class="b two k64">
+    <div>
+      <h2>3 &#183; Кнопка-сюрприз<span class="tag">впиши пропуски</span></h2>
+      <p class="q">Натиснули <b>Button3</b> &#8212; нове фото <b>me2.png</b>, смужка «Ура!» і звук.</p>
+      <div class="ev">when Button3.<u></u> do
+        <div class="do">set Image1.<u></u> to "me2.png"</div>
+        <div class="do">call <u></u>.ShowAlert notice "Ура!"</div>
+        <div class="do">call Sound1.<u></u></div>
+      </div>
+    </div>
+    <div>
+      <h2>4 &#183; Знайди помилку<span class="tag">коротко</span></h2>
+      <p class="q"><b>а)</b> У Media файл <code>me2.png</code>, а в блоці <code>"Me2.png"</code>.</p>
+      <div class="ln s"></div>
+      <p class="q" style="margin-top:.8mm"><b>б)</b> Блок <code>call Sound1.Play</code> лежить поза підковою.</p>
+      <div class="ln s"></div>
+      <p class="q" style="margin-top:.8mm"><b>в)</b> У Blocks немає шухляди <code>Notifier1</code>.</p>
+      <div class="ln s"></div>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>5 &#183; Що на екрані<span class="tag">на старті: напис Привіт, фото me.png · «Ура!» &#8212; так чи ні</span></h2>
+    <div class="two" style="grid-template-columns:1.15fr 1fr">
+      <div class="pc">when Button1.Click do
+   set Label1.Text to "Мяу!"
+   call Sound1.Play
+
+when Button2.Click do
+   set Image1.Picture to "me2.png"
+   call Notifier1.ShowAlert notice "Ура!"</div>
+      <table class="t">
+        <tr><th>Натиснули</th><th>Напис</th><th>Фото</th><th>«Ура!»</th></tr>
+        <tr><td>старт</td><td></td><td></td><td></td></tr>
+        <tr><td>Button1</td><td></td><td></td><td></td></tr>
+        <tr><td>Button2</td><td></td><td></td><td></td></tr>
+        <tr><td>Button1, тоді Button2</td><td></td><td></td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>6 &#183; План моєї візитівки<span class="tag">ескіз і кнопки</span></h2>
+    <div class="two k46">
+      <div class="wb" style="min-height:31mm"><span class="cap">ескіз екрана: ім&#39;я, фото, 3 факти, кнопки</span></div>
+      <table class="t">
+        <tr><th>Кнопка</th><th>Подія</th><th>Що робить</th></tr>
+        <tr><td>Мяу</td><td>Click</td><td>грає звук meow.mp3</td></tr>
+        <tr><td>&#160;</td><td></td><td></td></tr>
+        <tr><td>&#160;</td><td></td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>Мобільні додатки &#183; 6 клас</span>
+    <span>Урок 7 &#183; 16.10.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

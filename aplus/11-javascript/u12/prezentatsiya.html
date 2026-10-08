@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Повторення і практика: вікторина з масивів і функцій · JavaScript · 11 клас · Урок 12</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (основа мови)
+  Клас          11 (16–17 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум)
+  Урок          12 з 35 · 14.10.2026 · СЕРЕДА
+  Тема          Повторення і практика: вікторина з масивів і функцій
+                (замість теми «Обʼєкти» — тиждень 13–16.10 без нового матеріалу)
+  Тривалість    45 хв — згадуємо ~9 · практика ~34 · збереження 1
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       20
+  ────────────────────────────────────────────────────────────────
+  НОВОГО НЕМАЄ. Усе — з уроків 1–10:
+     let / const · typeof · шаблонні рядки · prompt → рядок, null ·
+     Number, NaN (1–2) · if / else if · === · && || (3) ·
+     SyntaxError / ReferenceError / TypeError (4) · % (5) ·
+     switch, ? : (6) · trim().toLowerCase(), confirm (7) ·
+     for / while / do...while / break / continue / for...of,
+     Math.random (8) · масиви, push / shift / indexOf / join (9) ·
+     function, return, за замовчуванням, стрілка (10)
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  ЗГАДУЄМО      сл. 3–8 — шість карток-нагадувань, по три питання
+                з відповіддю на тому ж слайді
+  ПРАКТИКА 1    сл. 9  — функції з умовами й рядками, 8 хв
+  ПРАКТИКА 2    сл. 10 — цикли й масиви у функціях, 8 хв
+  ДОВІДНИК      сл. 11 — тримати на дошці під час практик
+  ПРАКТИКА 3    сл. 12–14 — вікторина: приклад → самостійно, 15 хв
+  ВИПРАВ        сл. 15 — зламана вікторина, відповідь на тому ж слайді
+  ПЕРЕВІРКА     сл. 16 — таблиця проходів власної вікторини
+  БАНК          сл. 17 — вісім завдань
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО РІЗАТИ ПЕРШИМ (згадування, не практика): сл. 8 (помилки);
+     сл. 3 (типи); сл. 11 показати й лишити на дошці без розбору.
+  ⚠️ max / min / середнє масиву — НЕ беремо: це практична № 2
+     уроку 11 (12.10), вікторина спирається лише на уроки 1–10.
+  ⚠️ ДЗ — CodePen, лише console.log, БЕЗ prompt.
+  ⚠️ Оцінювання — у конспекті, не на екрані. Git не згадується.
+  ────────────────────────────────────────────────────────────────
+  Роздатка      rozdatka.html — 1 сторінка A4, сховище
+  Конспект      2026-27-teacher/aplus/11-javascript/u12/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:96px}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6 ─── */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.tree{font-family:var(--f-mono);font-size:16px;line-height:1.6;white-space:pre;color:var(--ink)}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8 ─── */
+.dp-out.con{font-family:var(--f-mono);font-size:16px;line-height:1.55;white-space:pre-wrap;padding:10px 19px}
+.dp-out.con b{color:var(--faint);font-family:var(--f-body);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+.three .mono{font-size:15.5px;line-height:1.55;margin-bottom:6px}
+table.ops td.c{text-align:center;font-family:var(--f-mono)}
+.ic{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 12 ─── інлайн-код не розривається між рядками */
+.ic{white-space:nowrap}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ── ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Повторення і практика</h1>
+      <p class="title-sub">Згадуємо уроки 1–10 — і збираємо з них вікторину<br>
+        JavaScript · 11 клас · Урок 12 з 35 · 14 жовтня</p>
+      <div class="chips">
+        <span class="chip">типи і prompt</span>
+        <span class="chip">if / switch</span>
+        <span class="chip">цикли</span>
+        <span class="chip">масиви</span>
+        <span class="chip">функції</span>
+        <span class="chip">вікторина</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── ПЛАН ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🧭</div><div>
+      <span class="label lm">Нового сьогодні немає</span>
+      <h2>Згадати — і зробити руками</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1fr">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t"><b>Згадуємо</b> — шість карток: типи, умови, цикли, масиви, функції, помилки. На кожній — три питання</span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t"><b>Практика 1</b> — функції з умовами й рядками</span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t"><b>Практика 2</b> — цикли й масиви всередині функцій</span></div>
+        <div class="step"><span class="step-n">4</span><span class="step-t"><b>Практика 3</b> — власна вікторина в браузері</span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">що вийде наприкінці</span></div>
+        <div class="dp-out con"><b>Що бачить гравець</b>prompt  Столиця України?      → Київ
+prompt  Скільки буде 7 * 8?   → 54
+prompt  Мова цього курсу?     → JavaScript
+alert   Правильно: 2 з 3</div>
+        <div class="dp-out" style="font-size:16.5px;line-height:1.6;color:var(--dim)">Питання й відповіді — у <b>масивах</b>, перевірка — <b>функцією</b>, питання по черзі — <b>циклом</b>, рахунок — <b>умовою</b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ЗГАДУЄМО: ТИПИ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔤</div><div>
+      <span class="label lb">Згадуємо · уроки 1–2</span>
+      <h2>Змінні, типи, prompt</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>let · const</h4><pre>let score = 0;   // можна змінити
+const RATE = 41.5; // не можна</pre></div>
+      <div class="rf-c"><h4>prompt → рядок</h4><pre>const a = prompt('Число?');
+// '7' — рядок; Скасувати → null
+const n = Number(a);  // 7</pre></div>
+      <div class="rf-c"><h4>шаблонний рядок</h4><pre>`Привіт, ${name}!`
+typeof 5      // 'number'
+typeof '5'    // 'string'</pre></div>
+    </div>
+    <div class="three mt">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log('5' + 3, '5' * 3);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>53 15</b> — плюс із рядком склеює, множення перетворює на число</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log(Number('12abc'));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>NaN</b> — «не число». А <span class="ic">typeof NaN</span> — усе одно <span class="ic">'number'</span></p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const x = 1;
+x = 2;</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>TypeError</b>: Assignment to constant variable — для зміни потрібен <span class="ic">let</span></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ЗГАДУЄМО: УМОВИ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔀</div><div>
+      <span class="label lb">Згадуємо · уроки 3 і 6</span>
+      <h2>Умови</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>if · else if · else</h4><pre>if (age &gt;= 18) { … }
+else if (age &gt;= 14) { … }
+else { … }</pre></div>
+      <div class="rf-c"><h4>=== · &amp;&amp; · ||</h4><pre>a === b   // і значення, і тип
+a &gt; 0 &amp;&amp; a &lt; 10  // обидві
+a === 1 || a === 2 // одна</pre></div>
+      <div class="rf-c"><h4>switch · ? :</h4><pre>switch (d) {
+  case 1: …; break;
+  default: …
+}
+x &gt; 0 ? 'так' : 'ні'</pre></div>
+    </div>
+    <div class="three mt">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const age = 15;
+if (age &gt;= 18) {
+  console.log('А');
+} else if (age &gt;= 14) {
+  console.log('Б');
+} else {
+  console.log('В');
+}</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>Б</b> — перша умова хибна, друга справджується</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log(5 === '5');
+console.log(5 == '5');</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>false true</b> — <span class="ic">===</span> порівнює і тип. Тому пишемо <span class="ic">===</span></p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">switch (3) {
+  case 3: console.log('ср');
+  case 4: console.log('чт');
+    break;
+}</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>ср</b> і <b>чт</b> — після <span class="ic">case 3</span> немає <span class="ic">break</span>, виконання йде далі</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ── ЗГАДУЄМО: ЦИКЛИ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔁</div><div>
+      <span class="label lb">Згадуємо · урок 8</span>
+      <h2>Цикли</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>for · for...of</h4><pre>for (let i = 1; i &lt;= 5; i++) { … }
+for (const ch of 'кіт') { … }</pre></div>
+      <div class="rf-c"><h4>while · do...while</h4><pre>while (умова) { … }
+do { … } while (умова);
+// do — хоч раз виконається</pre></div>
+      <div class="rf-c"><h4>break · continue</h4><pre>break     // вийти з циклу
+continue  // пропустити крок
+s += i    // накопичувач</pre></div>
+    </div>
+    <div class="three mt">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">let i = 10;
+while (i &gt; 0) {
+  console.log(i);
+  i -= 3;
+}</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>10 7 4 1</b> — чотири рядки; −2 вже не більше за 0</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">let s = 0;
+for (let i = 1; i &lt;= 5; i++) {
+  if (i === 3) continue;
+  s += i;
+}
+console.log(s);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>12</b> — 1 + 2 + 4 + 5, трійку пропущено</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">let n = 0;
+for (const ch of 'молоко') {
+  if (ch === 'о') n++;
+}
+console.log(n);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>3</b> — лічильник по літерах рядка</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ЗГАДУЄМО: МАСИВИ ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🧺</div><div>
+      <span class="label lb">Згадуємо · урок 9</span>
+      <h2>Масиви</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>індекс з нуля</h4><pre>const a = ['x', 'y', 'z'];
+a[0]           // 'x'
+a[a.length - 1] // 'z'</pre></div>
+      <div class="rf-c"><h4>додати · забрати</h4><pre>push / pop     — кінець
+unshift / shift — початок</pre></div>
+      <div class="rf-c"><h4>знайти · склеїти</h4><pre>includes('y')  // true
+indexOf('w')   // -1
+join(', ')     // 'x, y, z'</pre></div>
+    </div>
+    <div class="three mt">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const a = [4, 8, 15];
+console.log(a[1], a[3]);
+console.log(a.length);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>8 undefined</b> і <b>3</b> — індекси 0, 1, 2; за краєм — <span class="ic">undefined</span></p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const a = [4, 8, 15];
+a.push(16);
+a.shift();
+console.log(a.join(', '));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>8, 15, 16</b> — 16 додано в кінець, 4 забрано з початку</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const a = [8, 15, 16];
+console.log(a.indexOf(4));
+console.log(a.includes(15));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>-1</b> і <b>true</b> — четвірки немає, 15 є</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ЗГАДУЄМО: ФУНКЦІЇ ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">⚙️</div><div>
+      <span class="label lb">Згадуємо · урок 10</span>
+      <h2>Функції</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>оголосити · викликати</h4><pre>function sq(n) {
+  return n * n;
+}
+sq(5)   // 25</pre></div>
+      <div class="rf-c"><h4>за замовчуванням</h4><pre>function power(b, e = 2) {
+  return b ** e;
+}
+power(5)   // 25</pre></div>
+      <div class="rf-c"><h4>стрілка</h4><pre>const sq = (n) =&gt; n * n;
+// з { } — потрібен return
+// без return → undefined</pre></div>
+    </div>
+    <div class="three mt">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">function f(a, b = 10) {
+  return a * b;
+}
+console.log(f(3), f(3, 2));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>30 6</b> — без другого аргументу <span class="ic">b</span> = 10</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const g = (x) =&gt; { x + 1 };
+console.log(g(1));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>undefined</b> — фігурні дужки є, <span class="ic">return</span> немає</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">function h(n) {
+  if (n &gt; 0) return 'плюс';
+  return 'не плюс';
+  console.log('кінець');
+}
+console.log(h(0));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>не плюс</b> — і все: після <span class="ic">return</span> рядок «кінець» не виконується</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ЗГАДУЄМО: ПОМИЛКИ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🩺</div><div>
+      <span class="label lr">Згадуємо · урок 4</span>
+      <h2>Помилки: яка це?</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>SyntaxError</h4><pre>написано не за правилами:
+дужка, лапка, кома</pre></div>
+      <div class="rf-c"><h4>ReferenceError</h4><pre>такого імені немає:
+одруківка, змінна з функції</pre></div>
+      <div class="rf-c"><h4>TypeError</h4><pre>значення не того типу:
+const змінили, null.trim()</pre></div>
+    </div>
+    <div class="three mt">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const total = 1;
+console.log(totl);</div>
+        <p class="rv-hint">Яка помилка? Клацни</p>
+        <div class="rv-body"><p><b>ReferenceError</b>: totl is not defined — одруківка в імені</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">let x = 5;
+if (x &gt; 3 {
+  console.log(x);
+}</div>
+        <p class="rv-hint">Яка помилка? Клацни</p>
+        <div class="rv-body"><p><b>SyntaxError</b>: Unexpected token '{' — немає <span class="ic">)</span> після умови</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const n = 5;
+n.push(1);</div>
+        <p class="rv-hint">Яка помилка? Клацни</p>
+        <div class="rv-body"><p><b>TypeError</b>: n.push is not a function — <span class="ic">push</span> є лише в масиву</p></div></div>
+    </div>
+    <div class="tip tm" style="margin-top:12px;padding:10px 15px"><span class="tip-ico">🔦</span>
+      <div>Червоного рядка немає, а результат дивний — <span class="ic">console.log('x =', x)</span> або breakpoint у DevTools</div></div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Функції з умовами й рядками</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.35fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">function sign(n) {
+  if (n &gt; 0) return 'додатне';
+  if (n &lt; 0) return 'відʼємне';
+  return 'нуль';
+}
+console.log(sign(-5));
+// відʼємне</div>
+        <p class="mt" style="font-size:16px">Папка <span class="ic">js-11/povtorennia</span>: <span class="ic">index.html</span> + <span class="ic">script.js</span>. Вивід — <b>F12 → Console</b></p></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у консоль</span>
+        <ul>
+          <li>Набери <span class="ic">sign</span> і перевір на 7, −3, 0</li>
+          <li><span class="ic">clean(text)</span> — без пробілів по краях і малими літерами: <span class="ic">clean('  Київ ')</span> → <span class="ic">'київ'</span></li>
+          <li><span class="ic">isAnswer(input, correct)</span> — <span class="ic">true</span>, якщо <span class="ic">clean(input)</span> дорівнює <span class="ic">correct</span>. Перевір <span class="ic">' КИЇВ'</span> і <span class="ic">'Львів'</span></li>
+          <li><span class="ic">season(month)</span>: 12, 1, 2 → «зима», 3–5 → «весна», 6–8 → «літо», інакше «осінь»</li>
+          <li>⭐⭐ <span class="ic">isLeap(year)</span> — високосний: ділиться на 4 і не на 100, <b>або</b> на 400. 2024 → true, 1900 → false</li>
+          <li>⭐⭐⭐ <span class="ic">plural(n)</span>: «1 бал», «3 бали», «5 балів», «11 балів», «21 бал». Підказка: <span class="ic">n % 10</span> і <span class="ic">n % 100</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">Цикли й масиви у функціях</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.35fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">function countLetter(text, letter) {
+  let count = 0;
+  for (const ch of text) {
+    if (ch === letter) count++;
+  }
+  return count;
+}
+console.log(countLetter('банан', 'а'));
+// 2</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — той самий файл</span>
+        <ul>
+          <li>Набери <span class="ic">countLetter</span> і порахуй <span class="ic">'a'</span> у <span class="ic">'JavaScript'</span></li>
+          <li><span class="ic">stars(n)</span> — рядок із <span class="ic">n</span> зірочок: <span class="ic">stars(4)</span> → <span class="ic">'****'</span></li>
+          <li><span class="ic">countdown(n)</span> — масив від <span class="ic">n</span> до 1: <span class="ic">countdown(3)</span> → <span class="ic">[3, 2, 1]</span></li>
+          <li><span class="ic">firstLong(words, len)</span> — перше слово, довше за <span class="ic">len</span>, інакше «немає». <span class="ic">['кіт', 'собака', 'їжак']</span> і 4 → «собака»</li>
+          <li>⭐⭐ <span class="ic">onlyEven(arr)</span> — новий масив лише з парних. <span class="ic">[3, 8, 10, 7, 4]</span> → <span class="ic">[8, 10, 4]</span></li>
+          <li>⭐⭐⭐ <span class="ic">multTable(n)</span> — масив рядків <span class="ic">'7 x 1 = 7'</span> … <span class="ic">'7 x 10 = 70'</span>. Виведи циклом <span class="ic">for...of</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Уроки 1–10 на одному екрані</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>ввід</h4><pre>const s = prompt('?');
+// рядок або null
+Number(s)   // число</pre></div>
+      <div class="rf-c"><h4>очистити ввід</h4><pre>s.trim().toLowerCase()
+// '  Київ ' → 'київ'</pre></div>
+      <div class="rf-c"><h4>умова</h4><pre>if (a === b) { … }
+else { … }
+x &gt; 0 ? 'так' : 'ні'</pre></div>
+      <div class="rf-c"><h4>for по індексах</h4><pre>for (let i = 0;
+     i &lt; arr.length; i++) {
+  arr[i]
+}</pre></div>
+      <div class="rf-c"><h4>лічильник</h4><pre>let count = 0;
+if (…) count++;</pre></div>
+      <div class="rf-c"><h4>новий масив</h4><pre>const r = [];
+r.push(x);
+r.join(', ')</pre></div>
+      <div class="rf-c"><h4>функція</h4><pre>function f(a, b = 1) {
+  return a * b;
+}</pre></div>
+      <div class="rf-c"><h4>стрілка</h4><pre>const f = (a) =&gt; a * 2;</pre></div>
+      <div class="rf-c"><h4>вихід</h4><pre>break    // з циклу
+return   // з функції</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ВІКТОРИНА: ЗАДУМ ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">❓</div><div>
+      <span class="label lm">Практика 3 · задум</span>
+      <h2>Вікторина: з чого вона складається</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>два масиви</h4><pre>questions[i] — питання
+answers[i]   — відповідь
+однаковий індекс i</pre></div>
+      <div class="rf-c"><h4>функція-перевірка</h4><pre>isRight(input, correct)
+→ true або false</pre></div>
+      <div class="rf-c"><h4>цикл по питаннях</h4><pre>for від 0
+до questions.length</pre></div>
+      <div class="rf-c"><h4>prompt</h4><pre>питання з масиву,
+відповідь — рядок</pre></div>
+      <div class="rf-c"><h4>лічильник</h4><pre>правильно → score++</pre></div>
+      <div class="rf-c"><h4>alert у кінці</h4><pre>`Правильно: ${score}
+ з ${questions.length}`</pre></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm">Відповіді в масиві пишемо <b>малими літерами</b> — ввід гравця теж зводимо до малих</div>
+      <div class="hbox hp">Тема — будь-яка твоя: футбол, ігри, хімія, місто, серіал</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ВІКТОРИНА: ПРИКЛАД ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🧪</div><div>
+      <span class="label lb">Практика 3 · приклад</span>
+      <h2>Вікторина на три питання</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.55fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">js-11/viktoryna/script.js</span></div>
+<div class="dp-code" style="font-size:15.5px;line-height:1.55;padding:12px 17px"><span class="sk">const</span> questions = [<span class="ss">'Столиця України?'</span>,
+  <span class="ss">'Скільки буде 7 * 8?'</span>, <span class="ss">'Мова цього курсу?'</span>];
+<span class="sk">const</span> answers = [<span class="ss">'київ'</span>, <span class="ss">'56'</span>, <span class="ss">'javascript'</span>];
+
+<span class="sk">function</span> <span class="sf">clean</span>(text) {
+  <span class="sk">return</span> text.<span class="sf">trim</span>().<span class="sf">toLowerCase</span>();
+}
+<span class="sk">function</span> <span class="sf">isRight</span>(input, correct) {
+  <span class="sk">return</span> <span class="sf">clean</span>(input) <span class="st">===</span> correct;
+}
+
+<span class="sk">let</span> score = <span class="sn">0</span>;
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">0</span>; i <span class="st">&lt;</span> questions.length; i<span class="st">++</span>) {
+  <span class="sk">const</span> input = <span class="sf">prompt</span>(questions[i]);
+  <span class="sk">if</span> (<span class="sf">isRight</span>(input, answers[i])) score<span class="st">++</span>;
+}
+<span class="sf">alert</span>(<span class="ss">`Правильно: ${score} з ${questions.length}`</span>);</div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">questions[i]</span> і <span class="ic">answers[i]</span> — одне питання й <b>його</b> відповідь</div>
+        <div class="hbox hp"><span class="ic">' КИЇВ '</span> після <span class="ic">clean</span> — <span class="ic">'київ'</span>: зараховано</div>
+        <div class="hbox ho">Додаєш питання — додаєш і відповідь. Цикл сам іде до <span class="ic">length</span></div>
+        <div class="hbox hr">Кнопка «Скасувати» — <span class="ic">null</span>, і гра падає. Це ⭐⭐ на наступному слайді</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">Твоя вікторина</span><span class="tmr">15 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.5fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — серце гри</span>
+        <div class="mono">let score = 0;
+for (let i = 0;
+     i &lt; questions.length; i++) {
+  const input =
+    prompt(questions[i]);
+  if (isRight(input, answers[i]))
+    score++;
+}</div>
+        <p class="mt" style="font-size:16px">Повний код — на попередньому слайді. Нова папка <span class="ic">js-11/viktoryna</span></p></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Набери вікторину з прикладу й пройди її двічі: усе правильно і все неправильно</li>
+          <li>Заміни питання своїми — <b>пʼять</b> на одну тему. Відповіді — малими літерами</li>
+          <li>Після кожної відповіді — <span class="ic">alert</span>: «Правильно!» або «Ні. Відповідь: …» з <span class="ic">answers[i]</span></li>
+          <li>⭐⭐ Натисни «Скасувати» — прочитай помилку в консолі. Полагодь: <span class="ic">if (input === null) break;</span> перед перевіркою</li>
+          <li>⭐⭐ <span class="ic">grade(score, total)</span> з кількома <span class="ic">return</span>: усе правильно — «Відмінно», не менше половини — «Непогано», інакше «Спробуй ще». Додай у фінальний <span class="ic">alert</span></li>
+          <li>⭐⭐⭐ <span class="ic">confirm('Ще раз?')</span> і <span class="ic">do...while</span> навколо всієї гри. <span class="ic">score</span> — з нуля на кожному колі</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ</span>
+      <h2>Усе правильно — а пише 0 з 3. Що не так?</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+<div class="dp-code" style="font-size:15.5px;line-height:1.55;padding:12px 17px"><span class="cm">// questions і answers — як у прикладі</span>
+<span class="sk">function</span> <span class="sf">isRight</span>(input, correct) {
+  input.<span class="sf">trim</span>().<span class="sf">toLowerCase</span>() <span class="st">===</span> correct;
+}
+
+<span class="sk">const</span> score = <span class="sn">0</span>;
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">0</span>; i <span class="st">&lt;=</span> questions.length; i<span class="st">++</span>) {
+  <span class="sk">const</span> input = <span class="sf">prompt</span>(questions[i]);
+  <span class="sk">if</span> (<span class="sf">isRight</span>(input, answers[i])) score<span class="st">++</span>;
+}
+<span class="sf">alert</span>(<span class="ss">`Правильно: ${score} з ${questions.length}`</span>);</div>
+        <div class="dp-out con"><b>Що бачить гравець</b>три питання → четверте вікно без питання
+→ «Правильно: 0 з 3»</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Три біди — і поки жодної червоної</h3>
+        <p class="rv-hint">Знайди всі три, потім клацни</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">i &lt;= questions.length</span> — зайве коло, <span class="ic">questions[3]</span> — <span class="ic">undefined</span>. Треба <span class="ic">&lt;</span></p>
+          <p><b>2.</b> У <span class="ic">isRight</span> немає <span class="ic">return</span> — завжди <span class="ic">undefined</span>, тому 0</p>
+          <p><b>3.</b> <span class="ic">const score</span> — щойно полагодиш 2, зʼявиться <b>TypeError</b>: Assignment to constant variable. Треба <span class="ic">let</span></p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ПЕРЕВІР СВОЮ ВІКТОРИНУ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">✅</div><div>
+      <span class="label lm">Перед «готово»</span>
+      <h2>Пройди свою вікторину пʼять разів</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Що вводиш</th><th>Що має статися</th></tr>
+      <tr><td>усі відповіді правильні</td><td>«Правильно: 5 з 5»</td></tr>
+      <tr><td>усі відповіді неправильні</td><td>«Правильно: 0 з 5»</td></tr>
+      <tr><td>правильна, але <span class="ic">'  ВЕЛИКИМИ  '</span></td><td>зараховано</td></tr>
+      <tr><td>порожньо і Enter</td><td>не зараховано, гра йде далі</td></tr>
+      <tr><td>⭐⭐ «Скасувати» на другому питанні</td><td>гра зупиняється без червоного рядка в консолі</td></tr>
+    </table>
+    <div class="two mt">
+      <div class="hbox hm">Усі пʼять рядків збіглися — <b>поміняйся з сусідом</b> і пройди його вікторину</div>
+      <div class="hbox hr">Не збіглося — <span class="ic">console.log('input =', input)</span> перед перевіркою</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── БАНК ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Помилки списком.</b> Масив <span class="ic">mistakes</span>: неправильне питання — <span class="ic">push</span>. У кінці — <span class="ic">join(', ')</span></div>
+      <div class="bk"><b>Друга спроба.</b> Неправильно — спитати те саме ще <b>один</b> раз</div>
+      <div class="bk"><b>Підказка.</b> Ввели <span class="ic">?</span> — показати першу літеру: <span class="ic">answers[i][0]</span>, і спитати знову</div>
+      <div class="bk"><b>Бали за складність.</b> Масив <span class="ic">points = [1, 2, 3, …]</span> і <span class="ic">score += points[i]</span></div>
+      <div class="bk"><b>Відсоток.</b> «Правильно 60%» — <span class="ic">score / total * 100</span> і <span class="ic">toFixed(0)</span></div>
+      <div class="bk"><b>Бліц.</b> Одне випадкове питання — рецепт <span class="ic">Math.floor(Math.random() * N)</span></div>
+      <div class="bk"><b>Слово «бал».</b> <span class="ic">plural(score)</span> з практики 1 у фінальному <span class="ic">alert</span></div>
+      <div class="bk"><b>Хто грає.</b> Спершу <span class="ic">prompt('Імʼя?')</span>, у кінці — «Оля, правильно: 4 з 5»</div>
+    </div>
+    <div class="hbox hm mt">Усі вісім — тільки тим, що вже було</div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ЗБЕРЕГТИ ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Зберігаємо роботу уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">viktoryna/script.js</span></div>
+<div class="dp-code"><span class="cm">// Вікторина · урок 12</span>
+<span class="cm">// Прізвище Імʼя · рівень: ⭐⭐</span>
+<span class="cm">// тема: футбол · питань: 5</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Коментар — <b>першим рядком</b> <span class="ic">script.js</span>, потім <b>Ctrl + S</b></div>
+        <div class="hbox hp">Те саме — у <span class="ic">povtorennia/script.js</span>: практики 1–2</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── ПІДСУМОК ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lm">Підсумок</span>
+      <h2>Із чого зібрано вікторину</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>У коді</h3><ul>
+        <li>два масиви з однаковими індексами</li>
+        <li>функція-перевірка, що повертає <span class="ic">true</span> / <span class="ic">false</span></li>
+        <li>цикл <span class="ic">for</span> до <span class="ic">length</span> і лічильник</li>
+        <li><span class="ic">prompt</span>, <span class="ic">null</span> і <span class="ic">break</span></li>
+      </ul></div>
+      <div class="card cp"><h3>У голові</h3><ul>
+        <li>ввід людини — спершу очистити</li>
+        <li><span class="ic">&lt;</span>, а не <span class="ic">&lt;=</span>, коли йдемо до <span class="ic">length</span></li>
+        <li>без <span class="ic">return</span> функція дає <span class="ic">undefined</span></li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання</strong> — на наступному слайді.</div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Наступний урок · понеділок 19 жовтня</p>
+  </div></section>
+
+  <!-- ══════════ 20 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання · 10 хвилин</span>
+      <h2>Вікторина без prompt</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">На <strong>codepen.io</strong>, панель <b>JS</b>, результат — кнопка <b>Console</b> · код — <strong>повідомленням на платформі</strong> до <strong>19 жовтня</strong></div>
+    <div class="two" style="grid-template-columns:1fr 1.15fr;gap:16px">
+      <div class="steps" style="gap:8px">
+        <div class="step" style="padding:9px 15px"><span class="step-n">0</span><span class="step-t" style="font-size:16px">
+          Перепиши код праворуч. Зараз у консолі <span class="ic">Результат: 0 з 3</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">1</span><span class="step-t" style="font-size:16px">
+          У <span class="ic">isRight</span> на місці <b>ДОПИШИ 1</b>: поверни <span class="ic">true</span>, якщо <span class="ic">input</span> без пробілів і малими дорівнює <span class="ic">correct</span>. Підказка: <span class="ic">return</span> + <span class="ic">trim().toLowerCase()</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">2</span><span class="step-t" style="font-size:16px">
+          У циклі на місці <b>ДОПИШИ 2</b>: якщо <span class="ic">isRight(given[i], answers[i])</span> — <span class="ic">score++</span>. Має вийти <span class="ic">Результат: 2 з 3</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">3</span><span class="step-t" style="font-size:16px">
+          У кожен масив допиши четвертий елемент: <span class="ic">'Скільки місяців у році?'</span>, <span class="ic">'12'</span>, <span class="ic">'12'</span>. Має вийти <span class="ic">Результат: 3 з 4</span></span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">CodePen · JS</span></div>
+<div class="dp-code" style="font-size:14px;line-height:1.5;padding:11px 14px"><span class="cm">// Прізвище Імʼя</span>
+<span class="sk">const</span> questions = [<span class="ss">'Столиця Франції?'</span>,
+  <span class="ss">'Скільки буде 2 + 2 * 2?'</span>,
+  <span class="ss">'Скільки днів у тижні?'</span>];
+<span class="sk">const</span> answers = [<span class="ss">'париж'</span>, <span class="ss">'6'</span>, <span class="ss">'7'</span>];
+<span class="sk">const</span> given = [<span class="ss">' Париж'</span>, <span class="ss">'8'</span>, <span class="ss">'7 '</span>];
+<span class="cm">// given — відповіді гравця</span>
+
+<span class="sk">function</span> <span class="sf">isRight</span>(input, correct) {
+  <span class="cm">// ДОПИШИ 1 — один рядок</span>
+}
+
+<span class="sk">let</span> score = <span class="sn">0</span>;
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">0</span>; i <span class="st">&lt;</span> questions.length; i<span class="st">++</span>) {
+  <span class="cm">// ДОПИШИ 2 — один рядок</span>
+}
+console.<span class="sf">log</span>(<span class="ss">`Результат: ${score} з ${questions.length}`</span>);</div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
