@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 10 · код для DartPad · Flutter 10 клас</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#eef1f8;--border:#dcdfe9;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--blue);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#aab4cc}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:760px}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+padding:24px 26px;display:block;box-shadow:0 1px 3px rgba(2,83,179,.05);
+transition:border-color .18s,background .18s,transform .18s,box-shadow .18s}
+a.card:hover{border-color:var(--accent);background:var(--surf2);transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(2,83,179,.09)}
+.card .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);display:block;margin-bottom:9px}
+.card h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin-bottom:7px;line-height:1.2}
+.card p{font-size:16.5px;color:var(--dim)}
+.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:26px;
+box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--accent);display:block;margin-bottom:8px}
+.hero p{font-size:17px;color:var(--dim)}
+.hero ul{margin:0;padding-left:22px;font-size:17px;color:var(--dim)}
+.hero li{margin-bottom:6px}
+.hero li:last-child{margin-bottom:0}
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 7px;border-radius:5px}
+.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+font-size:15px;color:var(--dim)}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}
+.card{padding:19px 20px}.hero{padding:18px 20px}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:18px;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;
+  background:var(--surf2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.codebar b{font-family:var(--f-head);color:var(--accent)}
+.copy{font:700 16px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:10px 18px;min-height:44px;cursor:pointer}
+.copy.ok{background:#1d7a3a}
+pre.dart{font-family:var(--f-mono);font-size:15px;line-height:1.55;padding:18px;overflow-x:auto;
+  white-space:pre;tab-size:2;color:var(--ink)}
+.cm{color:#5c6b5e;font-style:italic}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">10 клас · Flutter</a><span class="sep">/</span><a href="./">Урок 10</a><span class="sep">/</span><span>Код</span></nav>
+<div class="kicker">Урок 10 / 68 · 14.10.2026 · код для DartPad</div>
+<h1>Код уроку і домашнього</h1>
+<p class="lead">Натисни «Скопіювати», відкрий <a href="https://dartpad.dev" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px solid">dartpad.dev</a>, встав і натисни Run. Пояснення — у коментарях після <code>//</code>.</p>
+
+<div class="kicker" style="margin-top:28px">Домашнє завдання</div>
+<div class="codebox"><div class="codebar"><b>Дешевше за ліміт · допиши цикл</b>
+  <button class="copy" data-for="dz">Скопіювати</button></div>
+<pre class="dart" id="dz"><span class="cm">// Домашнє · урок 10 · «Дешевше за ліміт».</span>
+<span class="cm">// Завдання: дописати функцію countCheaper — вона рахує,</span>
+<span class="cm">// скільки позицій у прайсі коштують МЕНШЕ за limit.</span>
+<span class="cm">// Має надрукувати:</span>
+<span class="cm">//   Cheaper than 50: 3</span>
+<span class="cm">//   Cheaper than 40: 1</span>
+<span class="cm">// Що зробити: у функції нижче, на місці «ДОПИШИ ТУТ», напиши цикл</span>
+<span class="cm">// по цінах прайсу і натисни Run.</span>
+<span class="cm">// Підказка — як сума значень Map на уроці:</span>
+<span class="cm">//   for (int p in prices.values) { ... }</span>
+<span class="cm">//   усередині — if: ціна менша за limit -&gt; count++;</span>
+<span class="cm">// Код надішли повідомленням на платформі до 15 жовтня.</span>
+<span class="cm">// Першим рядком — коментар із прізвищем.</span>
+
+<span class="cm">// Скільки цін у прайсі менші за limit.</span>
+int countCheaper(Map&lt;String, int&gt; prices, int limit) {
+  int count = 0;
+  <span class="cm">// ДОПИШИ ТУТ: цикл по prices.values, у ньому if і count++</span>
+  return count;
+}
+
+void main() {
+  <span class="cm">// Прайс — словник: назва -&gt; ціна в гривнях.</span>
+  Map&lt;String, int&gt; prices = {&#x27;coffee&#x27;: 45, &#x27;tea&#x27;: 30, &#x27;juice&#x27;: 40, &#x27;croissant&#x27;: 55};
+
+  <span class="cm">// Два виклики з різним лімітом.</span>
+  print(&#x27;Cheaper than 50: ${countCheaper(prices, 50)}&#x27;);
+  print(&#x27;Cheaper than 40: ${countCheaper(prices, 40)}&#x27;);
+}</pre></div>
+
+<div class="kicker" style="margin-top:34px">Урок</div>
+<div class="codebox"><div class="codebar"><b>Практики 1–3 · функції, лічильник, прайс і чек</b>
+  <button class="copy" data-for="urok">Скопіювати</button></div>
+<pre class="dart" id="urok"><span class="cm">// Урок 10 · Повторення і практика: функції, List і Map — фінальна версія.</span>
+<span class="cm">// Відкрий dartpad.dev, встав увесь код і натисни Run.</span>
+<span class="cm">// Практика 1 — функції над списком · Практика 2 — Map-лічильник · Практика 3 — прайс і чек.</span>
+
+<span class="cm">// ===== Практика 1: функції над списком температур =====</span>
+
+<span class="cm">// Сума всіх чисел списку.</span>
+int sum(List&lt;int&gt; xs) {
+  int s = 0;
+  for (int x in xs) {
+    s += x;
+  }
+  return s;
+}
+
+<span class="cm">// Середнє: знак / завжди дає double.</span>
+double average(List&lt;int&gt; xs) =&gt; sum(xs) / xs.length;
+
+<span class="cm">// Найбільше: беремо перше і порівнюємо з рештою.</span>
+int maxOf(List&lt;int&gt; xs) {
+  int m = xs[0];
+  for (int x in xs) {
+    if (x &gt; m) m = x;
+  }
+  return m;
+}
+
+<span class="cm">// Найменше — так само, тільки знак &lt;.</span>
+int minOf(List&lt;int&gt; xs) {
+  int m = xs[0];
+  for (int x in xs) {
+    if (x &lt; m) m = x;
+  }
+  return m;
+}
+
+<span class="cm">// Скільки днів тепліше за limit. Іменований параметр зі значенням за замовчуванням.</span>
+int countAbove(List&lt;int&gt; xs, {int limit = 15}) {
+  int c = 0;
+  for (int x in xs) {
+    if (x &gt; limit) c++;
+  }
+  return c;
+}
+
+<span class="cm">// ⭐⭐ Самі значення, більші за limit, — фільтр where.</span>
+List&lt;int&gt; above(List&lt;int&gt; xs, int limit) =&gt; xs.where((x) =&gt; x &gt; limit).toList();
+
+<span class="cm">// ===== Практика 2: Map-лічильник замовлень =====</span>
+
+<span class="cm">// Скільки разів зустрілась кожна назва. Новий ключ — 1, наявний — +1.</span>
+Map&lt;String, int&gt; countAll(List&lt;String&gt; xs) {
+  Map&lt;String, int&gt; counts = {};
+  for (String x in xs) {
+    counts.update(x, (v) =&gt; v + 1, ifAbsent: () =&gt; 1);
+  }
+  return counts;
+}
+
+<span class="cm">// ===== Практика 3: прайс і чек =====</span>
+
+<span class="cm">// Сума чека. Чого немає в прайсі — повідомляємо і пропускаємо.</span>
+<span class="cm">// ⭐⭐ discount — знижка у відсотках, іменований параметр.</span>
+int total(List&lt;String&gt; cart, Map&lt;String, int&gt; prices, {int discount = 0}) {
+  int s = 0;
+  for (String item in cart) {
+    if (prices.containsKey(item)) {
+      s += prices[item] as int; <span class="cm">// as int — як на уроці 6: «тут точно число»</span>
+    } else {
+      print(&#x27;Unknown: $item&#x27;);
+    }
+  }
+  return s * (100 - discount) ~/ 100;
+}
+
+void main() {
+  <span class="cm">// --- Практика 1 ---</span>
+  List&lt;int&gt; temps = [14, 17, 12, 19, 21, 16, 20]; <span class="cm">// з понеділка по неділю</span>
+  print(&#x27;Sum: ${sum(temps)}&#x27;);
+  print(&#x27;Average: ${average(temps)}&#x27;);
+  print(&#x27;Max: ${maxOf(temps)}, min: ${minOf(temps)}&#x27;);
+  print(&#x27;Above 15: ${countAbove(temps)}&#x27;);
+  print(&#x27;Above 18: ${countAbove(temps, limit: 18)}&#x27;);
+  print(&#x27;Values above 18: ${above(temps, 18)}&#x27;);
+  <span class="cm">// ⭐⭐⭐ Назва найтеплішого дня: номер максимуму в temps = номер дня в days.</span>
+  List&lt;String&gt; days = [&#x27;Mon&#x27;, &#x27;Tue&#x27;, &#x27;Wed&#x27;, &#x27;Thu&#x27;, &#x27;Fri&#x27;, &#x27;Sat&#x27;, &#x27;Sun&#x27;];
+  print(&#x27;Warmest: ${days[temps.indexOf(maxOf(temps))]}&#x27;);
+
+  <span class="cm">// --- Практика 2 ---</span>
+  List&lt;String&gt; orders = [&#x27;coffee&#x27;, &#x27;tea&#x27;, &#x27;coffee&#x27;, &#x27;juice&#x27;, &#x27;coffee&#x27;, &#x27;tea&#x27;, &#x27;cocoa&#x27;];
+  Map&lt;String, int&gt; counts = countAll(orders);
+  counts.forEach((name, n) =&gt; print(&#x27;$name: $n&#x27;));
+  print(&#x27;Different drinks: ${counts.length}&#x27;);
+  <span class="cm">// Скільки всього замовлень — сума значень.</span>
+  int all = 0;
+  for (int n in counts.values) {
+    all += n;
+  }
+  print(&#x27;All orders: $all&#x27;);
+  <span class="cm">// Найпопулярніший — як чемпіон у турнірі.</span>
+  String top = &#x27;&#x27;;
+  int best = -1;
+  counts.forEach((name, n) {
+    if (n &gt; best) {
+      best = n;
+      top = name;
+    }
+  });
+  print(&#x27;Top: $top&#x27;);
+  <span class="cm">// ⭐⭐ Назви за абеткою: ключі -&gt; список -&gt; sort.</span>
+  List&lt;String&gt; names = counts.keys.toList();
+  names.sort();
+  print(names.join(&#x27;, &#x27;));
+  <span class="cm">// ⭐⭐⭐ Те, що замовили лише раз.</span>
+  print(counts.keys.where((k) =&gt; counts[k] == 1).join(&#x27;, &#x27;));
+
+  <span class="cm">// --- Практика 3 ---</span>
+  <span class="cm">// Прайс — справжній словник: назва -&gt; ціна.</span>
+  Map&lt;String, int&gt; prices = {&#x27;coffee&#x27;: 45, &#x27;tea&#x27;: 30, &#x27;juice&#x27;: 40};
+  prices[&#x27;croissant&#x27;] = 55; <span class="cm">// дописати</span>
+  List&lt;String&gt; cart = [&#x27;coffee&#x27;, &#x27;croissant&#x27;, &#x27;tea&#x27;];
+  print(&#x27;Total: ${total(cart, prices)}&#x27;);
+  cart.add(&#x27;cocoa&#x27;); <span class="cm">// цього в прайсі ще немає</span>
+  print(&#x27;Total: ${total(cart, prices)}&#x27;);
+  prices[&#x27;tea&#x27;] = 35; <span class="cm">// змінити ціну</span>
+  prices[&#x27;cocoa&#x27;] = 50; <span class="cm">// додати позицію</span>
+  print(&#x27;Total: ${total(cart, prices)}&#x27;);
+  prices.remove(&#x27;juice&#x27;); <span class="cm">// прибрати позицію</span>
+  print(&#x27;Price list: ${prices.length} items&#x27;);
+  print(&#x27;With 10% off: ${total(cart, prices, discount: 10)}&#x27;);
+  <span class="cm">// ⭐⭐⭐ Виторг за день: кількість із Практики 2 × ціна з прайсу.</span>
+  int revenue = 0;
+  counts.forEach((name, n) {
+    if (prices.containsKey(name)) {
+      revenue += n * (prices[name] as int);
+    } else {
+      print(&#x27;No price: $name&#x27;);
+    }
+  });
+  print(&#x27;Revenue: $revenue&#x27;);
+}</pre></div>
+<div class="codebox"><div class="codebar"><b>Журнал оцінок · фінальна версія ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="zhurnal">Скопіювати</button></div>
+<pre class="dart" id="zhurnal"><span class="cm">// Урок 10 · Підсумкова практика «Журнал оцінок» — фінальна версія ⭐–⭐⭐⭐.</span>
+<span class="cm">// Відкрий dartpad.dev, встав увесь код і натисни Run.</span>
+<span class="cm">// Журнал — словник: імʼя -&gt; оцінка за контрольну (1–12).</span>
+
+<span class="cm">// ⭐ Середній бал: сума значень / кількість.</span>
+double average(Map&lt;String, int&gt; marks) {
+  int s = 0;
+  for (int m in marks.values) {
+    s += m;
+  }
+  return s / marks.length;
+}
+
+<span class="cm">// ⭐ Найкращий: як чемпіон у турнірі — forEach і запамʼятати найбільше.</span>
+String best(Map&lt;String, int&gt; marks) {
+  String name = &#x27;&#x27;;
+  int top = 0;
+  marks.forEach((k, v) {
+    if (v &gt; top) {
+      top = v;
+      name = k;
+    }
+  });
+  return name;
+}
+
+<span class="cm">// ⭐⭐ Імена тих, у кого оцінка не нижча за limit.</span>
+List&lt;String&gt; atLeast(Map&lt;String, int&gt; marks, int limit) {
+  List&lt;String&gt; names = [];
+  marks.forEach((k, v) {
+    if (v &gt;= limit) names.add(k);
+  });
+  return names;
+}
+
+<span class="cm">// ⭐⭐ Поставити оцінку з перевіркою: лише від 1 до 12.</span>
+void setMark(Map&lt;String, int&gt; marks, String name, int mark) {
+  if (mark &lt; 1 || mark &gt; 12) {
+    print(&#x27;Invalid mark for $name: $mark&#x27;);
+    return;
+  }
+  marks[name] = mark;
+}
+
+<span class="cm">// ⭐⭐⭐ Рівень за оцінкою: ланцюжок if / else if / else.</span>
+String level(int mark) {
+  if (mark &gt;= 10) {
+    return &#x27;high&#x27;;
+  } else if (mark &gt;= 7) {
+    return &#x27;mid&#x27;;
+  } else {
+    return &#x27;low&#x27;;
+  }
+}
+
+<span class="cm">// ⭐⭐⭐ Скільки учнів на кожному рівні — ще один словник-лічильник.</span>
+Map&lt;String, int&gt; levels(Map&lt;String, int&gt; marks) {
+  Map&lt;String, int&gt; res = {};
+  for (int m in marks.values) {
+    res.update(level(m), (v) =&gt; v + 1, ifAbsent: () =&gt; 1);
+  }
+  return res;
+}
+
+void main() {
+  Map&lt;String, int&gt; marks = {&#x27;Olha&#x27;: 10, &#x27;Ivan&#x27;: 7, &#x27;Nina&#x27;: 12, &#x27;Petro&#x27;: 9, &#x27;Sofiia&#x27;: 11};
+
+  <span class="cm">// ⭐ Увесь журнал, середній і найкращий.</span>
+  marks.forEach((name, m) =&gt; print(&#x27;$name: $m&#x27;));
+  print(&#x27;Average: ${average(marks)}&#x27;);
+  print(&#x27;Best: ${best(marks)}&#x27;);
+
+  <span class="cm">// ⭐⭐ Хто має 10 і більше · нові оцінки з перевіркою.</span>
+  print(&#x27;10+: ${atLeast(marks, 10).join(&#x27;, &#x27;)}&#x27;);
+  setMark(marks, &#x27;Ivan&#x27;, 8); <span class="cm">// змінити наявну</span>
+  setMark(marks, &#x27;Marko&#x27;, 4); <span class="cm">// дописати нового</span>
+  setMark(marks, &#x27;Nina&#x27;, 13); <span class="cm">// не пройде перевірку</span>
+  print(&#x27;Students: ${marks.length}, average: ${average(marks)}&#x27;);
+
+  <span class="cm">// ⭐⭐⭐ Рівні.</span>
+  levels(marks).forEach((k, v) =&gt; print(&#x27;$k: $v&#x27;));
+}</pre></div>
+
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.for).innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+  b.textContent = 'Скопійовано ✓'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Скопіювати'; b.classList.remove('ok'); }, 2000);
+});
+</script>
+</body>
+</html>
