@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Контрольна і міні-проєкт I «Текстовий квест» · JavaScript · 8 клас · Урок 7</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (перший рік мови)
+  Клас          8 (13–14 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · понеділок · 11:45 · Медіатека
+  Урок          7 з 35 · 19.10.2026
+  Тема          Контрольна за I чверть + міні-проєкт I «Текстовий квест»
+  Тривалість    45 хв — контрольна ~15 · згадуємо ~4 · квест ~22 · здача і ДЗ ~4
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       20
+  ────────────────────────────────────────────────────────────────
+  ⚠️ НОВОГО НЕМАЄ. Рішення користувача 14.10.2026: тиждень 19–23.10 —
+     нагадування + контрольна + практика; міні-проєкт лишається, він і є
+     практика. Усе в коді — з уроків 1–6: let/const, prompt, null,
+     Number, шаблонні рядки, if / else if / else, вкладений if, && || !,
+     ? :, switch, trim, toLowerCase, += -=, true / false у змінній.
+  ⚠️ confirm («зіграти ще раз») з плану НЕ даємо — це було б нове.
+  ⚠️ ЗДАЧА — прізвище й рівень коментарем першими рядками script.js
+     (Git у курсі не згадується до січня 2027).
+  ⚠️ КОНТРОЛЬНА — на папері, 5 варіантів, лежить у приватному
+     репозиторії поруч із конспектом. На слайдах — лише рядок плану.
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  ПЛАН          сл. 2 — показати перед контрольною
+  ЗГАДУЄМО      сл. 3–4 — після контрольної, reveal на тому ж слайді
+  КВЕСТ         сл. 5 рівні · 6 дерево · 7 передбач · 8 висяча гілка
+  ПРАКТИКА      сл. 10 (П1, 8 хв, заготовка сл. 9) · 12 (П2, 7 хв) ·
+                14 (П3, 7 хв)
+  ДОВІДНИК      сл. 15 — на дошці під час П2–П3
+  ВИПРАВ        сл. 16 · ТЕСТ СУСІДА сл. 17 · БАНК сл. 18 · ЗДАЧА сл. 19
+  ДОМАШНЄ       сл. 20 — CodePen, код повідомленням на платформі до
+                02.11; відповіді в конспекті
+  РІЗАТИ ПЕРШИМ сл. 7 (передбач — усно) · 16 (виправ) · 13 (лише код).
+                Практику НЕ різати
+  ────────────────────────────────────────────────────────────────
+  Аркуш         rozdatka.html — 1 сторінка A4, для сховища
+  Конспект      2026-27-teacher/aplus/8-javascript/u07/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand);white-space:nowrap}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:120px;white-space:nowrap}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── імітація діалогового вікна Chrome ─── */
+.dlg{border:2px solid var(--border);border-radius:12px;background:var(--surface);
+  overflow:hidden;box-shadow:0 4px 16px rgba(89,20,41,.10);max-width:460px;margin:0 auto}
+.dlg-bar{background:var(--surf2);border-bottom:1.5px solid var(--border);
+  padding:8px 14px;font-family:var(--f-mono);font-size:13px;color:var(--dim)}
+.dlg-body{padding:16px 18px;font-size:17.5px;color:var(--ink)}
+.dlg-in{margin-top:11px;border:1.5px solid var(--border);border-radius:7px;
+  padding:8px 11px;font-family:var(--f-mono);font-size:16px;color:var(--dim);background:var(--bg)}
+.dlg-btn{display:flex;gap:9px;justify-content:flex-end;padding:0 18px 15px}
+.dlg-btn span{border:1.5px solid var(--border);border-radius:8px;padding:7px 17px;font-size:15.5px}
+.dlg-btn span.ok{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 7 ─── дерево квесту, стовпчик reveal-карток,
+   інлайн-код не розривається між рядками */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.tree{font-family:var(--f-mono);font-size:16px;line-height:1.6;white-space:pre;color:var(--ink)}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Контрольна і квест</h1>
+      <p class="title-sub">Контрольна за уроки 1–6 · міні-проєкт I «Текстовий квест»<br>
+        JavaScript · 8 клас · Урок 7 з 35 · 19 жовтня</p>
+      <div class="chips">
+        <span class="chip">prompt · alert</span>
+        <span class="chip">if у if</span>
+        <span class="chip">else — кінцівка</span>
+        <span class="chip">trim · toLowerCase</span>
+        <span class="chip">let gold · += -=</span>
+        <span class="chip">&amp;&amp; &nbsp;|| &nbsp;? :</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lm">Сьогодні</span>
+      <h2>Контрольна — і свій квест</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Контрольна</b> за уроки 1–6 — на аркуші, <b>15 хвилин</b></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Згадуємо</b> два слайди: розвилка в розвилці, ввід і змінна стану</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Квест</b> у <span class="ic">prompt</span> / <span class="ic">alert</span>: три практики, рівні ⭐ / ⭐⭐ / ⭐⭐⭐</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t">Прізвище і рівень — <b>першим рядком</b> <span class="ic">script.js</span></span></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hp">Нова папка <span class="ic">js-8/kvest</span>:
+        <span class="ic">index.html</span> + <span class="ic">script.js</span>, каркас — як на уроці 1</div>
+      <div class="hbox hm">Нового нічого: усе для квесту вже було на уроках 1–6</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ЗГАДУЄМО: РОЗВИЛКА В РОЗВИЛЦІ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔀</div><div>
+      <span class="label lb">Згадуємо · урок 3</span>
+      <h2>Розвилка в розвилці</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>if усередині if</h4><pre>if (c1 === '1') {
+  const c2 = prompt('…');
+  if (c2 === '1') { … }
+}</pre></div>
+      <div class="rf-c"><h4>else — усе інше</h4><pre>if (c === '1') { … }
+else if (c === '2') { … }
+else { alert('КІНЕЦЬ'); }</pre></div>
+      <div class="rf-c"><h4>prompt — рядок</h4><pre>prompt('1 чи 2?')
+// '1', а не 1
+// тому c === '1'</pre></div>
+    </div>
+    <div class="three mt">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">c = '1'
+c === 1</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>false</b> — рядок <span class="ic">'1'</span> і число <span class="ic">1</span> різні</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">if (c === '1') {…}
+else if (c === '2') {…}
+// ввели 3</div>
+        <p class="rv-hint">Що побачить гравець?</p>
+        <div class="rv-body"><p><b>Нічого</b> — жодна гілка не підійшла, а <span class="ic">else</span> немає</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">Внутрішній prompt —
+коли він питає?</div>
+        <p class="rv-hint">Клацни</p>
+        <div class="rv-body"><p>Лише якщо <b>зовнішня</b> умова справдилась</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ЗГАДУЄМО: ВВІД І СТАН ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🎒</div><div>
+      <span class="label lb">Згадуємо · уроки 1, 3, 4</span>
+      <h2>Ввід без сюрпризів і змінна стану</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>Скасувати — першим</h4><pre>if (raw === null) {
+  alert('Гру перервано');
+}</pre></div>
+      <div class="rf-c"><h4>очистити ввід</h4><pre>raw.trim().toLowerCase()
+// ' Ліс ' → 'ліс'</pre></div>
+      <div class="rf-c"><h4>змінна стану</h4><pre>let gold = 5;
+gold += 3;   // 8
+gold -= 2;   // 6</pre></div>
+    </div>
+    <div class="three mt">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">' ТАК '.trim()
+  .toLowerCase()</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>'так'</b> — без пробілів, маленькими</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const gold = 5;
+gold += 3;</div>
+        <p class="rv-hint">Що в консолі?</p>
+        <div class="rv-body"><p><b>TypeError</b> — <span class="ic">const</span> не змінюється. Для стану — <span class="ic">let</span></p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">c === 'ліс' || c === 'л'
+// c = 'л'</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>true</b> — для <span class="ic">||</span> досить однієї правди</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ── ТРИ РІВНІ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🪜</div><div>
+      <span class="label lo">Міні-проєкт I</span>
+      <h2>Три рівні — кожен наступний містить попередній</h2>
+    </div></div>
+    <div class="lvl">
+      <div class="lv"><span class="lv-s">⭐</span>
+        <span class="lv-t"><b>Грається.</b> 3 розвилки, 2+ кінцівки,
+          <span class="ic">prompt</span> + <span class="ic">if</span> / <span class="ic">else</span>. Кожна дорога закінчується</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐</span>
+        <span class="lv-t"><b>Живе.</b> 5+ розвилок, <b>змінна стану</b> (золото або здоровʼя),
+          на чужу відповідь, пробіли й Скасувати гра не мовчить і не падає</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+        <span class="lv-t"><b>Має секрет.</b> + <b>очки</b>, прихована кінцівка
+          за умовою з <span class="ic">&amp;&amp;</span> або <span class="ic">||</span>,
+          фінальне повідомлення через <span class="ic">? :</span></span></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🧱</span>
+      <div>Спершу — робочий ⭐ від початку до кожної кінцівки. Недороблений ⭐⭐⭐
+      гірший за готовий ⭐⭐.</div></div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ДЕРЕВО ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🌳</div><div>
+      <span class="label lm">Спершу — дерево</span>
+      <h2>Квест на 3 розвилки: план у зошит</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.15fr 1fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад дерева</span>
+        <div class="tree">Нічна школа, світло згасло
+├─ 1 спортзал
+│    ├─ 1 драбина → ПЕРЕМОГА
+│    └─ 2 мати    → КІНЕЦЬ
+├─ 2 їдальня
+│    ├─ 1 кухня   → ПЕРЕМОГА
+│    └─ 2 роздача → КІНЕЦЬ
+└─ інше          → КІНЕЦЬ</div></div>
+      <div>
+        <div class="hbox hm">Розвилка — це <span class="ic">prompt</span> + <span class="ic">if</span>.
+          Тут їх <b>три</b>: перша, у спортзалі, в їдальні</div>
+        <div class="hbox hp">Кожна стрілка закінчується <b>кінцівкою</b> або новою розвилкою.
+          Тут кінцівок <b>пʼять</b></div>
+        <div class="hbox ho">Рядок «інше» — це останній <span class="ic">else</span>.
+          Без нього гра мовчить</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🔮</div><div>
+      <span class="label lo">Розминка · передбач</span>
+      <h2>Що покаже гра?</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.45fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+        <div class="dp-code" style="font-size:16px;line-height:1.6"><span class="sk">let</span> gold = <span class="sn">5</span>;
+<span class="sk">const</span> c1 = <span class="sf">prompt</span>(<span class="ss">'1 — міст, 2 — брід'</span>);
+<span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'1'</span>) {
+  gold <span class="st">-=</span> <span class="sn">2</span>;
+  <span class="sf">alert</span>(<span class="ss">'Міст тримає.'</span>);
+} <span class="sk">else if</span> (c1 <span class="st">===</span> <span class="ss">'2'</span>) {
+  gold <span class="st">+=</span> <span class="sn">4</span>;
+  <span class="sk">const</span> c2 = <span class="sf">prompt</span>(<span class="ss">'1 — далі, 2 — назад'</span>);
+  <span class="sk">if</span> (c2 <span class="st">===</span> <span class="ss">'2'</span>) { gold <span class="st">-=</span> <span class="sn">1</span>; }
+}
+<span class="sf">alert</span>(<span class="ss">`Золото: ${gold}`</span>);</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3>Ввели 1</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>Два вікна: «Міст тримає.», потім «Золото: 3»</p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3>Ввели 2, потім 2</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>5 + 4 − 1 → «Золото: 8»</p></div></div>
+        <div class="card cr reveal" onclick="this.classList.toggle('open')"><h3>Ввели 3</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>Лише «Золото: 5» — жодна розвилка не спрацювала, гравець не знає чому</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ВИСЯЧА ГІЛКА ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🍂</div><div>
+      <span class="label lr">Головна біда квестів</span>
+      <h2>Висяча гілка: де гра мовчить?</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · висячі гілки</span></div>
+        <div class="dp-code" style="font-size:16px;line-height:1.6"><span class="sk">const</span> c1 = <span class="sf">prompt</span>(<span class="ss">'1 — підвал, 2 — дах'</span>);
+<span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'1'</span>) {
+  <span class="sk">const</span> c2 = <span class="sf">prompt</span>(<span class="ss">'1 — ліхтарик, 2 — сходи'</span>);
+  <span class="sk">if</span> (c2 <span class="st">===</span> <span class="ss">'1'</span>) {
+    <span class="sf">alert</span>(<span class="ss">'Знайшов вихід. ПЕРЕМОГА'</span>);
+  }
+} <span class="sk">else if</span> (c1 <span class="st">===</span> <span class="ss">'2'</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Гелікоптер забрав тебе. ПЕРЕМОГА'</span>);
+}</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3>Які відповіді дають тишу?</h3>
+          <p class="rv-hint">назви три, потім клацни</p><div class="rv-body"><p><b>1, потім 2</b> · <b>3</b> на першому питанні ·
+            <b>Скасувати</b> на першому. Червоного в консолі немає</p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3>Що дописати?</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>Два <span class="ic">else</span>: внутрішній —
+            «Сходи обвалились. КІНЕЦЬ», зовнішній — «Такої дороги немає. КІНЕЦЬ»</p></div></div>
+        <div class="hbox hp" style="margin:0">Правило: <b>кожен <span class="ic">if</span> з <span class="ic">prompt</span>
+          має свій <span class="ic">else</span></b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ЗАГОТОВКА ⭐ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🧩</div><div>
+      <span class="label lb">Приклад · рівень ⭐</span>
+      <h2>Заготовка — три розвилки, пʼять кінцівок</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.6fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">js-8/kvest/script.js</span></div>
+        <div class="dp-code" style="font-size:15px;line-height:1.55;padding:12px 16px"><span class="sf">alert</span>(<span class="ss">'Ти лишився в школі. Світло згасло.'</span>);
+<span class="sk">const</span> c1 = <span class="sf">prompt</span>(<span class="ss">'1 — спортзал, 2 — їдальня'</span>);
+<span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'1'</span>) {
+  <span class="sk">const</span> c2 = <span class="sf">prompt</span>(<span class="ss">'Спортзал. 1 — драбина, 2 — мати'</span>);
+  <span class="sk">if</span> (c2 <span class="st">===</span> <span class="ss">'1'</span>) { <span class="sf">alert</span>(<span class="ss">'Вікно під стелею! ПЕРЕМОГА'</span>); }
+  <span class="sk">else</span> { <span class="sf">alert</span>(<span class="ss">'Ти заснув на матах. КІНЕЦЬ'</span>); }
+} <span class="sk">else if</span> (c1 <span class="st">===</span> <span class="ss">'2'</span>) {
+  <span class="sk">const</span> c3 = <span class="sf">prompt</span>(<span class="ss">'Їдальня. 1 — кухня, 2 — роздача'</span>);
+  <span class="sk">if</span> (c3 <span class="st">===</span> <span class="ss">'1'</span>) { <span class="sf">alert</span>(<span class="ss">'Чорний хід відчинено! ПЕРЕМОГА'</span>); }
+  <span class="sk">else</span> { <span class="sf">alert</span>(<span class="ss">'Чекаєш на ранок. КІНЕЦЬ'</span>); }
+} <span class="sk">else</span> {
+  <span class="sf">alert</span>(<span class="ss">'Ти не зрушив з місця. КІНЕЦЬ'</span>);
+}</div>
+      </div>
+      <div>
+        <div class="hbox hm">Це вже <b>рівень ⭐</b>: жодна дорога не висить</div>
+        <div class="hbox hp">Тема — <b>своя</b>: космос, ліс, гра, місто. Заміни всі тексти, будову лиши</div>
+        <div class="hbox ho">Ще раз запустити — <b>F5</b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Кожна дорога — до кінцівки · ⭐</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.2fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — закрити висячу гілку</span>
+        <div class="mono" style="font-size:15.5px;line-height:1.6">if (c2 === '1') {
+  alert('Знайшов вихід. ПЕРЕМОГА');
+} else {
+  alert('Сходи обвалились. КІНЕЦЬ');
+}
+// … і в самому низу:
+} else {
+  alert('Такої дороги немає. КІНЕЦЬ');
+}</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — свій квест</span>
+        <ul>
+          <li>Намалюй у зошиті своє дерево: 3 розвилки, кінцівки підписано</li>
+          <li>Набери заготовку й заміни всі тексти на свою історію</li>
+          <li>Пройди <b>кожну</b> дорогу дерева — щоразу F5</li>
+          <li>Прибери один <span class="ic">else</span>, введи <span class="ic">7</span> — почуй тишу. Поверни</li>
+          <li>⭐⭐ Ще дві розвилки: усього 5. Дерево в зошиті — теж</li>
+          <li>⭐⭐⭐ Одна розвилка — через <span class="ic">switch</span> з <span class="ic">case '1':</span> і <span class="ic">default</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ВВІД І СТАН ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🛡️</div><div>
+      <span class="label lb">Приклад · рівень ⭐⭐</span>
+      <h2>Ввід без сюрпризів + золото</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">одна розвилка рівня ⭐⭐</span></div>
+        <div class="dp-code" style="font-size:15px;line-height:1.55;padding:12px 16px"><span class="sk">let</span> gold = <span class="sn">0</span>;
+<span class="sk">const</span> raw = <span class="sf">prompt</span>(<span class="ss">'Ліворуч чи праворуч?'</span>);
+<span class="sk">if</span> (raw <span class="st">===</span> <span class="sk">null</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Гру перервано.'</span>);
+} <span class="sk">else</span> {
+  <span class="sk">const</span> c = raw.<span class="sf">trim</span>().<span class="sf">toLowerCase</span>();
+  <span class="sk">if</span> (c <span class="st">===</span> <span class="ss">'ліворуч'</span> <span class="st">||</span> c <span class="st">===</span> <span class="ss">'л'</span>) {
+    gold <span class="st">+=</span> <span class="sn">10</span>;
+    <span class="sf">alert</span>(<span class="ss">`Скриня! Золото: ${gold}`</span>);
+  } <span class="sk">else if</span> (c <span class="st">===</span> <span class="ss">'праворуч'</span> <span class="st">||</span> c <span class="st">===</span> <span class="ss">'п'</span>) {
+    gold <span class="st">-=</span> <span class="sn">3</span>;
+    <span class="sf">alert</span>(<span class="ss">`Пастка! Золото: ${gold}`</span>);
+  } <span class="sk">else</span> {
+    <span class="sf">alert</span>(<span class="ss">'Не зрозумів. КІНЕЦЬ'</span>);
+  }
+}</div>
+      </div>
+      <div>
+        <div class="hbox hr"><span class="ic">raw === null</span> — <b>до</b> <span class="ic">.trim()</span>.
+          Інакше Скасувати дає TypeError</div>
+        <div class="hbox hm">Слово чи буква — обидва через <span class="ic">||</span>, кожне порівняння повністю</div>
+        <div class="hbox hp"><span class="ic">gold</span> — через <span class="ic">let</span> на самому початку, до всіх розвилок</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">Квест живе · ⭐⭐</span><span class="tmr">7 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.25fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — серце рівня</span>
+        <div class="mono" style="font-size:15.5px;line-height:1.6">let gold = 0;
+…
+const c = raw.trim().toLowerCase();
+if (c === 'ліворуч' || c === 'л') {
+  gold += 10;
+}
+…
+alert(`Золото: ${gold}`);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — свій квест</span>
+        <ul>
+          <li>Першим рядком — <span class="ic">let gold = 0;</span> (або <span class="ic">health</span>)</li>
+          <li>Хоча б дві гілки додають, одна забирає: <span class="ic">+=</span> і <span class="ic">-=</span></li>
+          <li>Кожна кінцівка показує <span class="ic">`Золото: ${gold}`</span></li>
+          <li>Відповіді словами: <span class="ic">.trim().toLowerCase()</span>. Перевір <span class="ic">' ЛІВОРУЧ '</span></li>
+          <li>⭐⭐ Скасувати на будь-якій розвилці — «Гру перервано.» без червоного рядка</li>
+          <li>⭐⭐⭐ Здоровʼя на нулі — одразу «Сили скінчились. КІНЕЦЬ», далі гра не питає</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ОЧКИ І ТАЄМНИЦЯ ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🗝️</div><div>
+      <span class="label lb">Приклад · рівень ⭐⭐⭐</span>
+      <h2>Очки і прихована кінцівка</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">фінал квесту</span></div>
+        <div class="dp-code" style="font-size:15.5px;line-height:1.6;padding:12px 16px"><span class="sk">let</span> score = <span class="sn">0</span>;
+<span class="sk">let</span> hasKey = <span class="sk">false</span>;
+<span class="cm">// у розвилках: score += 10;  hasKey = true;</span>
+
+<span class="sk">if</span> (hasKey <span class="st">&amp;&amp;</span> score <span class="st">&gt;=</span> <span class="sn">20</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Ключ підійшов! ТАЄМНА КІНЦІВКА'</span>);
+} <span class="sk">else</span> {
+  <span class="sk">const</span> title = score <span class="st">&gt;=</span> <span class="sn">20</span> ? <span class="ss">'герой'</span> : <span class="ss">'новачок'</span>;
+  <span class="sf">alert</span>(<span class="ss">`Очки: ${score}. Ти — ${title}`</span>);
+}</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3>score 30, ключа немає</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>«Очки: 30. Ти — герой»</p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3>score 10, ключ є</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>«Очки: 10. Ти — новачок» — <span class="ic">&amp;&amp;</span> хоче обидві умови</p></div></div>
+        <div class="card cr reveal" onclick="this.classList.toggle('open')"><h3>Чому таємна — першою?</h3>
+          <p class="rv-hint">клацни</p><div class="rv-body"><p>Вужча умова першою — урок 3. Інакше до неї не дійде</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">Квест має секрет · ⭐⭐⭐</span><span class="tmr">7 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.25fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — прихована кінцівка</span>
+        <div class="mono" style="font-size:15.5px;line-height:1.6">let hasKey = false;
+…
+hasKey = true; // у потрібній гілці
+…
+if (hasKey &amp;&amp; score &gt;= 20) {
+  alert('ТАЄМНА КІНЦІВКА');
+}</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — свій квест</span>
+        <ul>
+          <li>Додай <span class="ic">let score = 0;</span> — очки в кількох гілках</li>
+          <li>Предмет-перемикач: <span class="ic">let hasKey = false;</span>, в одній гілці <span class="ic">true</span></li>
+          <li>Наприкінці — таємна кінцівка з <span class="ic">&amp;&amp;</span>, вона <b>першою</b></li>
+          <li>Звичайний фінал — звання через <span class="ic">? :</span></li>
+          <li>Знайди дорогу до таємної кінцівки сам. Запиши її в коментар</li>
+          <li>⭐⭐⭐ Ще одна таємна — з <span class="ic">||</span>: «або два предмети, або 50 очок»</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Усе для квесту — з уроків 1–6</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>розвилка</h4><pre>const c = prompt('1 чи 2?');
+if (c === '1') { … }
+else if (c === '2') { … }
+else { … }</pre></div>
+      <div class="rf-c"><h4>кінцівка</h4><pre>alert('Скарб. ПЕРЕМОГА');
+// після неї — нічого
+// не питаємо</pre></div>
+      <div class="rf-c"><h4>Скасувати</h4><pre>if (raw === null) {
+  alert('Гру перервано.');
+} else { … }</pre></div>
+      <div class="rf-c"><h4>очистити</h4><pre>raw.trim().toLowerCase()
+c === 'так' || c === 'т'</pre></div>
+      <div class="rf-c"><h4>стан</h4><pre>let gold = 0;
+gold += 10;  gold -= 3;
+`Золото: ${gold}`</pre></div>
+      <div class="rf-c"><h4>секрет</h4><pre>let hasKey = false;
+if (hasKey &amp;&amp; score &gt;= 20)
+score &gt;= 20 ? 'герой'
+            : 'новачок'</pre></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🧭</span>
+      <div>Гра мовчить — <span class="ic">console.log('c =', c)</span> перед <span class="ic">if</span>. Видно, що саме прийшло</div></div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ</span>
+      <h2>Три біди, а червона — лише одна</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+        <div class="dp-code" style="font-size:15.5px;line-height:1.6;padding:12px 16px"><span class="sk">let</span> gold = <span class="sn">0</span>;
+<span class="sk">const</span> raw = <span class="sf">prompt</span>(<span class="ss">'Ліворуч чи праворуч?'</span>);
+<span class="sk">let</span> c = raw.<span class="sf">trim</span>().<span class="sf">toLowerCase</span>();
+<span class="sk">if</span> (c <span class="st">===</span> <span class="ss">'ліворуч'</span>) {
+  gold + <span class="sn">10</span>;
+  <span class="sf">alert</span>(<span class="ss">'Скриня!'</span>);
+} <span class="sk">else if</span> (c = <span class="ss">'праворуч'</span>) {
+  <span class="sf">alert</span>(<span class="ss">'Пастка. КІНЕЦЬ'</span>);
+}
+<span class="sf">alert</span>(<span class="ss">`Золото: ${gold}`</span>);</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Ввели «ліворуч», «абв», Скасувати</h3>
+        <p class="rv-hint">Знайди всі три, потім клацни</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">gold + 10;</span> рахує, але не зберігає — «Золото: 0». Треба <span class="ic">gold += 10;</span></p>
+          <p><b>2.</b> <span class="ic">c = 'праворуч'</span> — одне <span class="ic">=</span>: на «абв» теж «Пастка». Треба <span class="ic">===</span></p>
+          <p><b>3.</b> Скасувати → <b>TypeError</b>: <span class="ic">null</span> не має <span class="ic">trim</span>. Спершу <span class="ic">raw === null</span></p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ТЕСТ СУСІДА ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">✅</div><div>
+      <span class="label lm">Перед «готово»</span>
+      <h2>Пройди свій квест як чужий</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Рівень</th><th>Що вводиш</th><th>Що має статися</th></tr>
+      <tr><td class="o">⭐</td><td>кожна дорога дерева по черзі</td><td>кожна закінчується <span class="ic">alert</span>-кінцівкою</td></tr>
+      <tr><td class="o">⭐</td><td><span class="ic">7</span> на першому питанні</td><td>кінцівка «такої дороги немає», а не тиша</td></tr>
+      <tr><td class="o">⭐⭐</td><td><span class="ic">' ЛІВОРУЧ '</span> з пробілами</td><td>зараховано як «ліворуч»</td></tr>
+      <tr><td class="o">⭐⭐</td><td>Скасувати на другій розвилці</td><td>«Гру перервано.», у консолі чисто</td></tr>
+      <tr><td class="o">⭐⭐</td><td>дорога з <span class="ic">+=</span> і <span class="ic">-=</span></td><td>золото в кінці збігається з підрахунком у зошиті</td></tr>
+      <tr><td class="o">⭐⭐⭐</td><td>дорога з ключем і без</td><td>таємна кінцівка — лише з ключем</td></tr>
+    </table>
+    <div class="two mt">
+      <div class="hbox hm">Усе збіглося — поміняйся з сусідом і пройди <b>його</b> квест</div>
+      <div class="hbox hr">Знайшов тишу в чужому — скажи йому, на якій відповіді</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── БАНК ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Зробив усе?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Імʼя героя.</b> <span class="ic">prompt('Як тебе звати?')</span> на початку, імʼя — в кожній кінцівці</div>
+      <div class="bk"><b>Рюкзак.</b> <span class="ic">let item = 'нічого';</span> гілки кладуть предмет. Наприкінці: «У рюкзаку: …»</div>
+      <div class="bk"><b>Платна брама.</b> Є 7 золота — <span class="ic">gold -= 7</span> і далі, ні — «Бракує 3 золота»</div>
+      <div class="bk"><b>Друга спроба.</b> Не зрозумів відповідь — спитати ще <b>один</b> раз, потім кінцівка</div>
+      <div class="bk"><b>Меню через switch.</b> Перша розвилка — <span class="ic">switch</span>: <span class="ic">case '1': case 'ліс':</span> поруч</div>
+      <div class="bk"><b>Загадка.</b> Двері відчиняються, якщо відповідь на загадку правильна: <span class="ic">trim</span> і <span class="ic">toLowerCase</span></div>
+      <div class="bk"><b>Чесний підсумок.</b> Наприкінці: «Розвилок пройдено: 3» — лічильник <span class="ic">+= 1</span> у кожній</div>
+      <div class="bk"><b>Зламай сусідові.</b> У копії його квесту — одна тиха помилка. Хай шукає з <span class="ic">console.log</span></div>
+    </div>
+    <div class="hbox hm mt">Усі вісім — тільки тим, що вже було. Циклів не треба</div>
+  </div></section>
+
+  <!-- ══════════ 19 ── ЗДАЄМО ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">📤</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Підписати рівень і зберегти</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t">Квест пройшов <b>таблицю</b> свого рівня — слайд 17</span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t">У консолі <b>жодного червоного рядка</b>, службові <span class="ic">console.log</span> прибрано</span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t">Прізвище, рівень і дорога до таємної кінцівки — <b>першими рядками</b> <span class="ic">script.js</span>, потім <span class="ic">Ctrl+S</span></span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">kvest/script.js</span></div>
+        <div class="dp-code" style="font-size:15.5px;line-height:1.6"><span class="cm">// Міні-проєкт I · Текстовий квест
+// Прізвище Імʼя · рівень ⭐⭐
+// розвилок: 5 · кінцівок: 6
+// таємна: 2 → ліворуч → 1</span>
+
+<span class="sk">let</span> gold = <span class="sn">0</span>;
+…</div>
+      </div>
+    </div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 8 · 2 листопада · Цикли</p>
+  </div></section>
+
+  <!-- ══════════ 20 ── ДОМАШНЄ ЗАВДАННЯ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання · 10 хвилин</span>
+      <h2>Квест без prompt: закрий дві висячі гілки</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">На <strong>codepen.io</strong>, панель <b>JS</b>, результат — кнопка <b>Console</b> ·
+      код — <strong>повідомленням на платформі</strong> до <strong>2 листопада</strong></div>
+    <div class="two" style="grid-template-columns:1.05fr 1fr;gap:16px;margin-top:10px">
+      <div class="steps" style="gap:8px">
+        <div class="step" style="padding:9px 15px"><span class="step-n">1</span><span class="step-t" style="font-size:16px">
+          Перепиши заготовку. Вибір гравця вже в змінних <span class="ic">c1</span> і <span class="ic">c2</span>. Зараз у консолі лише <span class="ic">Золото: 8</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">2</span><span class="step-t" style="font-size:16px">
+          На місці <span class="ic">// ДОПИШИ ТУТ 1</span> — <span class="ic">else</span> з <span class="ic">console.log('Заблукав. КІНЕЦЬ');</span>
+          Має вийти два рядки: <span class="ic">Заблукав. КІНЕЦЬ</span> і <span class="ic">Золото: 8</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">3</span><span class="step-t" style="font-size:16px">
+          На місці <span class="ic">// ДОПИШИ ТУТ 2</span> — <span class="ic">else</span> з <span class="ic">'Такої дороги немає. КІНЕЦЬ'</span>.
+          Зміни <span class="ic">c1</span> на <span class="ic">'гори'</span> — має вийти ця кінцівка і <span class="ic">Золото: 5</span></span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">заготовка</span></div>
+<div class="dp-code" style="font-size:14px;line-height:1.42;padding:10px 14px"><span class="cm">// Прізвище Імʼя</span>
+<span class="sk">const</span> c1 = <span class="ss">'ліс'</span>;
+<span class="sk">const</span> c2 = <span class="ss">'2'</span>;
+<span class="sk">let</span> gold = <span class="sn">5</span>;
+<span class="sk">if</span> (c1 <span class="st">===</span> <span class="ss">'ліс'</span>) {
+  gold <span class="st">+=</span> <span class="sn">3</span>;
+  <span class="sk">if</span> (c2 <span class="st">===</span> <span class="ss">'1'</span>) {
+    console.<span class="sf">log</span>(<span class="ss">'Скриня. ПЕРЕМОГА'</span>);
+  }
+  <span class="cm">// ДОПИШИ ТУТ 1</span>
+} <span class="sk">else if</span> (c1 <span class="st">===</span> <span class="ss">'річка'</span>) {
+  gold <span class="st">-=</span> <span class="sn">2</span>;
+  console.<span class="sf">log</span>(<span class="ss">'Човен поплив. КІНЕЦЬ'</span>);
+}
+<span class="cm">// ДОПИШИ ТУТ 2</span>
+console.<span class="sf">log</span>(<span class="ss">`Золото: ${gold}`</span>);</div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

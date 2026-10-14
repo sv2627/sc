@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 13 · код для DartPad · Flutter 10 клас</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#eef1f8;--border:#dcdfe9;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--blue);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#aab4cc}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:760px}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+padding:24px 26px;display:block;box-shadow:0 1px 3px rgba(2,83,179,.05);
+transition:border-color .18s,background .18s,transform .18s,box-shadow .18s}
+a.card:hover{border-color:var(--accent);background:var(--surf2);transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(2,83,179,.09)}
+.card .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);display:block;margin-bottom:9px}
+.card h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin-bottom:7px;line-height:1.2}
+.card p{font-size:16.5px;color:var(--dim)}
+.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:26px;
+box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--accent);display:block;margin-bottom:8px}
+.hero p{font-size:17px;color:var(--dim)}
+.hero ul{margin:0;padding-left:22px;font-size:17px;color:var(--dim)}
+.hero li{margin-bottom:6px}
+.hero li:last-child{margin-bottom:0}
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 7px;border-radius:5px}
+.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+font-size:15px;color:var(--dim)}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}
+.card{padding:19px 20px}.hero{padding:18px 20px}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:18px;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;
+  background:var(--surf2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.codebar b{font-family:var(--f-head);color:var(--accent)}
+.copy{font:700 16px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:10px 18px;min-height:44px;cursor:pointer}
+.copy.ok{background:#1d7a3a}
+pre.dart{font-family:var(--f-mono);font-size:15px;line-height:1.55;padding:18px;overflow-x:auto;
+  white-space:pre;tab-size:2;color:var(--ink)}
+.cm{color:#5c6b5e;font-style:italic}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">10 клас · Flutter</a><span class="sep">/</span><a href="./">Урок 13</a><span class="sep">/</span><span>Код</span></nav>
+<div class="kicker">Урок 13 / 68 · 22.10.2026 · код для DartPad</div>
+<h1>Код уроку і домашнього</h1>
+<p class="lead">Натисни «Скопіювати», відкрий <a href="https://dartpad.dev" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px solid">dartpad.dev</a>, встав і натисни Run. Пояснення — у коментарях після <code>//</code>.</p>
+
+<div class="kicker" style="margin-top:28px">Домашнє завдання</div>
+<div class="codebox"><div class="codebar"><b>Дні в поїздках · допиши два місця</b>
+  <button class="copy" data-for="dz">Скопіювати</button></div>
+<pre class="dart" id="dz"><span class="cm">// Домашнє · урок 13 · «Дні в поїздках». Прізвище: ...</span>
+<span class="cm">// Поїздка — сутність (місто і скільки днів) -&gt; class Trip.</span>
+<span class="cm">// «Місто -&gt; скільки днів разом» — словник -&gt; Map.</span>
+<span class="cm">// Що треба: порахувати, скільки днів разом провели в кожному місті.</span>
+<span class="cm">// Має надрукувати:</span>
+<span class="cm">// Lviv: 5</span>
+<span class="cm">// Odesa: 3</span>
+<span class="cm">// Kyiv: 1</span>
+<span class="cm">// Total: 9</span>
+<span class="cm">// Поки не дописано, DartPad жовтим підкреслить t («isn't used») — це нормально, зникне після пункту 1.</span>
+
+class Trip {
+  String city;
+  int days;
+  Trip(this.city, this.days);
+}
+
+void main() {
+  List&lt;Trip&gt; trips = [
+    Trip('Lviv', 3),
+    Trip('Odesa', 2),
+    Trip('Lviv', 2),
+    Trip('Kyiv', 1),
+    Trip('Odesa', 1),
+  ];
+
+  Map&lt;String, int&gt; daysByCity = {};
+  for (Trip t in trips) {
+    <span class="cm">// 1. ДОПИШИ ТУТ ОДИН РЯДОК: додай t.days до міста t.city.</span>
+    <span class="cm">//    Підказка — як таблиця перемог на уроці 9, тільки замість +1 — + t.days:</span>
+    <span class="cm">//    daysByCity.update(t.city, (v) =&gt; ..., ifAbsent: () =&gt; ...);</span>
+  }
+  daysByCity.forEach((city, d) =&gt; print('$city: $d'));
+
+  int total = 0;
+  <span class="cm">// 2. ДОПИШИ ТУТ: цикл по daysByCity.values, кожне число додай до total.</span>
+  print('Total: $total');
+}</pre></div>
+<div class="kicker" style="margin-top:34px">Урок</div>
+<div class="codebox"><div class="codebar"><b>Практика 1 · продажі за тиждень ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="p1">Скопіювати</button></div>
+<pre class="dart" id="p1"><span class="cm">// Урок 13 · Практика 1 «Продажі за тиждень» — фінальна версія ⭐–⭐⭐⭐.</span>
+<span class="cm">// Скільки чашок кави продали щодня, з понеділка: порядок важливий -&gt; List.</span>
+
+<span class="cm">// Сума всіх чисел списку.</span>
+int total(List&lt;int&gt; xs) {
+  int sum = 0;
+  for (int x in xs) {
+    sum += x;
+  }
+  return sum;
+}
+
+<span class="cm">// Середнє. Ділення / дає дробове число -&gt; тип double, не int.</span>
+double average(List&lt;int&gt; xs) =&gt; total(xs) / xs.length;
+
+<span class="cm">// Найбільше число: беремо перше і порівнюємо з кожним.</span>
+int best(List&lt;int&gt; xs) {
+  int b = xs[0];
+  for (int x in xs) {
+    if (x &gt; b) b = x;
+  }
+  return b;
+}
+
+<span class="cm">// Скільки днів більше за limit: where відбирає, length рахує.</span>
+int daysAbove(List&lt;int&gt; xs, int limit) =&gt; xs.where((x) =&gt; x &gt; limit).length;
+
+<span class="cm">// ⭐⭐⭐ Різниця з попереднім днем — цикл за номером, з другого дня (i = 1).</span>
+List&lt;int&gt; growth(List&lt;int&gt; xs) {
+  List&lt;int&gt; res = [];
+  for (int i = 1; i &lt; xs.length; i++) {
+    res.add(xs[i] - xs[i - 1]);
+  }
+  return res;
+}
+
+void main() {
+  List&lt;int&gt; sales = [12, 7, 15, 9, 20, 3, 11];
+  List&lt;String&gt; days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  print(total(sales)); <span class="cm">// 77</span>
+  print(average(sales)); <span class="cm">// 11.0</span>
+  print(best(sales)); <span class="cm">// 20</span>
+  print(daysAbove(sales, 10)); <span class="cm">// 4</span>
+  <span class="cm">// ⭐⭐ День рекорду: номер найбільшого числа -&gt; назва дня з тим самим номером.</span>
+  print(days[sales.indexOf(best(sales))]); <span class="cm">// Fri</span>
+  print(growth(sales)); <span class="cm">// [-5, 8, -6, 11, -17, 8]</span>
+}</pre></div>
+<div class="codebox"><div class="codebar"><b>Практика 2 · телефонна книга ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="p2">Скопіювати</button></div>
+<pre class="dart" id="p2"><span class="cm">// Урок 13 · Практика 2 «Телефонна книга» — фінальна версія ⭐–⭐⭐⭐.</span>
+<span class="cm">// Номер шукаємо за іменем -&gt; словник Map: ключ — імʼя, значення — номер.</span>
+
+<span class="cm">// Номер за іменем. as String — «тут точно рядок», як as int на уроці 6.</span>
+String find(Map&lt;String, String&gt; book, String name) {
+  if (book.containsKey(name)) return book[name] as String;
+  return 'Unknown: $name';
+}
+
+<span class="cm">// ⭐⭐ Додати контакт, лише якщо такого імені ще немає.</span>
+void addContact(Map&lt;String, String&gt; book, String name, String phone) {
+  if (book.containsKey(name)) {
+    print('Already exists: $name');
+    return;
+  }
+  book[name] = phone;
+}
+
+<span class="cm">// ⭐⭐⭐ Пошук навпаки: за номером — імʼя. Перебираємо ключі.</span>
+String whoIs(Map&lt;String, String&gt; book, String phone) {
+  for (String name in book.keys) {
+    if (book[name] == phone) return name;
+  }
+  return 'No one';
+}
+
+void main() {
+  Map&lt;String, String&gt; phones = {
+    'Olha': '067-111-22-33',
+    'Ivan': '050-444-55-66',
+  };
+  phones['Nina'] = '063-777-88-99'; <span class="cm">// новий ключ — новий запис</span>
+  print(phones['Ivan']); <span class="cm">// 050-444-55-66</span>
+
+  print(find(phones, 'Nina')); <span class="cm">// 063-777-88-99</span>
+  print(find(phones, 'Petro')); <span class="cm">// Unknown: Petro</span>
+  phones['Ivan'] = '050-000-00-00'; <span class="cm">// ключ уже є — значення замінюється</span>
+  phones.remove('Olha');
+  print(phones.length); <span class="cm">// 2</span>
+  phones.forEach((name, phone) =&gt; print('$name: $phone'));
+
+  addContact(phones, 'Nina', '099-000-00-00'); <span class="cm">// Already exists: Nina</span>
+  addContact(phones, 'Anna', '097-123-45-67');
+  <span class="cm">// ⭐⭐ Імена за абеткою: ключі -&gt; список -&gt; sort.</span>
+  List&lt;String&gt; names = phones.keys.toList();
+  names.sort();
+  print(names); <span class="cm">// [Anna, Ivan, Nina]</span>
+
+  print(whoIs(phones, '050-000-00-00')); <span class="cm">// Ivan</span>
+  print(whoIs(phones, '000')); <span class="cm">// No one</span>
+}</pre></div>
+<div class="codebox"><div class="codebar"><b>Кавʼярня: день у касі · фінальна версія ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="proj">Скопіювати</button></div>
+<pre class="dart" id="proj"><span class="cm">// Урок 13 · Маленький проєкт «Кавʼярня: день у касі» — фінальна версія ⭐–⭐⭐⭐.</span>
+<span class="cm">// Замовлення — СУТНІСТЬ (у кожного той самий набір полів і дій) → class Order.</span>
+<span class="cm">// Меню «назва → ціна» і підрахунки «назва → скільки» — СЛОВНИКИ → Map.</span>
+
+<span class="cm">// ⭐ Клас замовлення: хто замовив і що саме (список позицій).</span>
+class Order {
+  String customer;
+  List&lt;String&gt; items;
+  Order(this.customer, this.items);
+
+  <span class="cm">// Сума замовлення за меню. Позиції, якої немає в меню, не рахуємо.</span>
+  int total(Map&lt;String, int&gt; menu) {
+    int sum = 0;
+    for (String item in items) {
+      if (menu.containsKey(item)) {
+        sum += menu[item] as int; <span class="cm">// as int — «тут точно число», як на уроці 6</span>
+      }
+    }
+    return sum;
+  }
+
+  <span class="cm">// Один рядок для друку: Olha: coffee, croissant = 100 grn</span>
+  String info(Map&lt;String, int&gt; menu) =&gt;
+      '$customer: ${items.join(', ')} = ${total(menu)} grn';
+}
+
+<span class="cm">// ⭐⭐ Виторг за день — сума всіх замовлень.</span>
+int revenue(List&lt;Order&gt; day, Map&lt;String, int&gt; menu) {
+  int sum = 0;
+  for (Order o in day) {
+    sum += o.total(menu);
+  }
+  return sum;
+}
+
+<span class="cm">// ⭐⭐ Найбільше замовлення — функція повертає цілий обʼєкт.</span>
+Order biggest(List&lt;Order&gt; day, Map&lt;String, int&gt; menu) {
+  Order best = day[0];
+  for (Order o in day) {
+    if (o.total(menu) &gt; best.total(menu)) best = o;
+  }
+  return best;
+}
+
+<span class="cm">// ⭐⭐ Скільки продано кожної позиції: «назва → кількість».</span>
+Map&lt;String, int&gt; soldCounts(List&lt;Order&gt; day) {
+  Map&lt;String, int&gt; sold = {};
+  for (Order o in day) {
+    for (String item in o.items) {
+      sold.update(item, (v) =&gt; v + 1, ifAbsent: () =&gt; 1);
+    }
+  }
+  return sold;
+}
+
+<span class="cm">// ⭐⭐⭐ Хіт дня — позиція з меню, якої продано найбільше.</span>
+String bestSeller(Map&lt;String, int&gt; sold, Map&lt;String, int&gt; menu) {
+  String best = '';
+  int max = 0;
+  sold.forEach((item, n) {
+    if (menu.containsKey(item) &amp;&amp; n &gt; max) {
+      best = item;
+      max = n;
+    }
+  });
+  return best;
+}
+
+<span class="cm">// ⭐⭐⭐ Скільки витратив кожен гість — «імʼя → гривні».</span>
+Map&lt;String, int&gt; spentBy(List&lt;Order&gt; day, Map&lt;String, int&gt; menu) {
+  Map&lt;String, int&gt; spent = {};
+  for (Order o in day) {
+    int t = o.total(menu);
+    spent.update(o.customer, (v) =&gt; v + t, ifAbsent: () =&gt; t);
+  }
+  return spent;
+}
+
+void main() {
+  <span class="cm">// Меню — словник: назва → ціна, грн.</span>
+  Map&lt;String, int&gt; menu = {'coffee': 45, 'tea': 30, 'croissant': 55, 'juice': 40};
+
+  <span class="cm">// ⭐ Замовлення за день — список обʼєктів.</span>
+  List&lt;Order&gt; day = [
+    Order('Olha', ['coffee', 'croissant']),
+    Order('Ivan', ['tea']),
+    Order('Nina', ['coffee', 'coffee', 'juice']),
+    Order('Olha', ['tea', 'cocoa']),
+    Order('Marko', ['juice', 'croissant', 'coffee']),
+  ];
+
+  <span class="cm">// ⭐ Усі замовлення і скільки їх.</span>
+  for (Order o in day) {
+    print(o.info(menu));
+  }
+  print('Orders: ${day.length}');
+
+  <span class="cm">// ⭐⭐ Виторг, найбільше замовлення, продано по позиціях.</span>
+  print('Revenue: ${revenue(day, menu)} grn');
+  Order big = biggest(day, menu);
+  print('Biggest: ${big.customer}, ${big.total(menu)} grn');
+  Map&lt;String, int&gt; sold = soldCounts(day);
+  sold.forEach((item, n) =&gt; print('$item: $n'));
+
+  <span class="cm">// ⭐⭐⭐ Чого немає в меню, хіт дня, середній чек, витрати гостей.</span>
+  for (String item in sold.keys) {
+    if (!menu.containsKey(item)) print('Not on menu: $item');
+  }
+  print('Best seller: ${bestSeller(sold, menu)}');
+  print('Average check: ${revenue(day, menu) / day.length} grn');
+  spentBy(day, menu).forEach((name, s) =&gt; print('$name spent $s grn'));
+}</pre></div>
+
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.for).innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+  b.textContent = 'Скопійовано ✓'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Скопіювати'; b.classList.remove('ok'); }, 2000);
+});
+</script>
+</body>
+</html>

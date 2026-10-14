@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · IT-англійська · 9 клас · Урок 8</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          IT-англійська (Cambridge Lower Secondary Computing 0860)
+  Клас          9
+  Урок          8 / 36 · 22.10.2026
+  Тема          Boolean expression to circuit · Від виразу до схеми
+  Ціль          9CS.07
+  Видається     У КІНЦІ уроку: на уроці працюють зі слайдів і в зошиті.
+                Аркуш = сховище + домашнє завдання (блок унизу).
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — `0860 Computing Stage 9 Scheme of Work.docx`, блок 9CS.07.
+     Resources: «Images of the three logic gates» — довідка;
+     «Logic expressions that require logic circuits drawing» — завд. 3:
+     NOT(A AND B), (A AND B) OR NOT C, (A AND NOT B) OR (B AND C) — усі
+     три дослівно з блоку (третій — 4 вентилі, тому ⭐⭐⭐: схема каже
+     «a maximum of 3 gates is sufficient»);
+     «Logic expressions with incorrect logic circuits» — завд. 4: помилка
+     з Sample lesson «drawing (A AND B) or C instead of A AND (B OR C)».
+     Таблиці істинності (завд. 2) — Stage 8, блок 8CS.06 («They should
+     only change the ‘Output’ column»).
+     ДЗ пункт 3 NOT(A OR B) — наш, дзеркало NOT(A AND B) зі схеми.
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок.
+  ОБСЯГ         Рівно одна сторінка A4. Перевірено вимірюванням.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+/* ─── довідка: єдиний стиснутий блок ─── */
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+/* ─── завдання ─── */
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b > h2, .b > div > h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b h2 .tag{float:right; margin-left:4mm; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.4fr 1fr}
+.two.k46{grid-template-columns:1fr 1.4fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+/* лінійки для письма */
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+
+/* таблиці */
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.5mm 1.8mm; font-size:10.5pt; text-align:left}
+table.t th{font-size:9.5pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:26mm; text-align:center}
+table.t td.m{font-family:var(--fm); font-weight:700}
+
+/* словник із порожньою колонкою */
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.4mm 0; font-size:11pt; vertical-align:bottom}
+table.voc td.en{width:46%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+/* ─── логічні схеми й рамки для малювання ─── */
+.lc{display:block; width:100%; height:auto; color:#000}
+.gates{display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5mm; text-align:center}
+.gates .lc{height:9mm}
+.gates span{font-family:var(--fm); font-weight:700; font-size:9pt}
+.box{border:var(--line); height:48mm; position:relative; padding:1mm 1.6mm}
+.box .ex{font-family:var(--fm); font-weight:700; font-size:9.5pt; white-space:nowrap}
+code{white-space:nowrap}
+.box.hw{height:31mm}
+.d3{display:grid; grid-template-columns:.9fr 1.2fr 1.5fr; gap:3mm}
+table.tt{border-collapse:collapse; width:100%}
+table.tt td,table.tt th{border:var(--thin); padding:.9mm 1mm; text-align:center; font-family:var(--fm); font-size:10pt}
+table.tt th{font-size:8.5pt}
+table.tt td.o{width:16mm}
+.tts{display:grid; grid-template-columns:1fr 1fr .72fr; gap:2.5mm; align-items:start}
+.chk{display:inline-block; width:3.6mm; height:3.6mm; border:1.5px solid #000; vertical-align:-.6mm; margin:0 1mm 0 2.5mm}
+.err .lc{max-height:27mm; width:auto; max-width:100%}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>IT-англійська &#183; 9 клас &#183; Урок 8 / 36 &#183; 22 жовтня</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Boolean expression to circuit &#183; від виразу до схеми</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <div class="gates">
+          <div><svg viewBox="0 0 140 80" class="lc" role="img" aria-label="logic gate"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"><polyline points="6,27.5 40,27.5"/><polyline points="6,52.5 40,52.5"/><polyline points="97,40 127,40"/><path d="M40,15 H72 A25,25 0 0 1 72,65 H40 Z"/></g></svg><span>AND</span></div>
+          <div><svg viewBox="0 0 140 80" class="lc" role="img" aria-label="logic gate"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"><polyline points="12,27.5 46,27.5"/><polyline points="12,52.5 46,52.5"/><polyline points="100,40 130,40"/><path d="M40,15 Q80,15 100,40 Q80,65 40,65 Q55,40 40,15 Z"/></g></svg><span>OR</span></div>
+          <div><svg viewBox="0 0 130 80" class="lc" role="img" aria-label="logic gate"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"><polyline points="6,40 40,40"/><polyline points="90,40 120,40"/><path d="M40,20 L80,40 L40,60 Z"/><circle cx="85" cy="40" r="5"/></g></svg><span>NOT</span></div>
+        </div>
+      </div>
+      <div>
+        <p><code>AND</code>, <code>OR</code> &#8212; 2 inputs &#183; <code>NOT</code> &#8212; 1 input &#183; all &#8212; 1 output</p>
+        <p><b>AND</b> = 1, коли обидва входи 1 &#183; <b>OR</b> = 1, коли хоч один вхід 1 &#183; <b>NOT</b>: 0 &#8594; 1, 1 &#8594; 0</p>
+      </div>
+      <div>
+        <p class="rh">Brackets</p>
+        <p>Спершу схема в дужках, потім &#8212; те, що зовні (the exterior).</p>
+        <p><code>NOT A AND B</code> &#8800; <code>NOT(A AND B)</code></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b two k46">
+    <div>
+      <h2>1 &#183; Словник</h2>
+      <table class="voc">
+        <tr><td class="en" style="width:64%">logic gate</td><td></td></tr>
+        <tr><td class="en">logic circuit</td><td></td></tr>
+        <tr><td class="en">Boolean expression</td><td></td></tr>
+        <tr><td class="en">brackets</td><td></td></tr>
+        <tr><td class="en">truth table</td><td></td></tr>
+        <tr><td class="en">to connect</td><td></td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>2 &#183; Truth tables<span class="tag">впиши Output</span></h2>
+      <div class="tts">
+        <table class="tt"><tr><th>A</th><th>B</th><th>A AND B</th></tr>
+          <tr><td>0</td><td>0</td><td class="o"></td></tr><tr><td>0</td><td>1</td><td class="o"></td></tr>
+          <tr><td>1</td><td>0</td><td class="o"></td></tr><tr><td>1</td><td>1</td><td class="o"></td></tr></table>
+        <table class="tt"><tr><th>A</th><th>B</th><th>A OR B</th></tr>
+          <tr><td>0</td><td>0</td><td class="o"></td></tr><tr><td>0</td><td>1</td><td class="o"></td></tr>
+          <tr><td>1</td><td>0</td><td class="o"></td></tr><tr><td>1</td><td>1</td><td class="o"></td></tr></table>
+        <table class="tt"><tr><th>A</th><th>NOT A</th></tr>
+          <tr><td>0</td><td class="o"></td></tr><tr><td>1</td><td class="o"></td></tr></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>3 &#183; Намалюй логічну схему<span class="tag">&#9733; &#183; &#9733;&#9733; &#183; &#9733;&#9733;&#9733;</span></h2>
+    <div class="d3">
+      <div class="box"><div class="ex">&#9733; X = NOT(A AND B)</div></div>
+      <div class="box"><div class="ex">&#9733;&#9733; X = (A AND B) OR NOT C</div></div>
+      <div class="box"><div class="ex">&#9733;&#9733;&#9733; X = (A AND NOT B) OR (B AND C)</div></div>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>4 &#183; Знайди помилку<span class="tag">X = A AND (B OR C)</span></h2>
+    <div class="two">
+      <div class="err">
+        <p class="q">Схему намалювали для виразу <code>X = A AND (B OR C)</code>, але в ній одна помилка.</p>
+        <svg viewBox="0 0 320 150" class="lc" role="img" aria-label="X = (A AND B) OR C"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"><polyline points="24,25 80,25.0"/><polyline points="24,50 80,50.0"/><polyline points="137,37.5 171.5,37.5 171.5,70.0 206,70.0"/><polyline points="24,115 115.0,115 115.0,95.0 206,95.0"/><polyline points="260,82.5 294,82.5"/><path d="M80,12.5 H112 A25,25 0 0 1 112,62.5 H80 Z"/><path d="M200,57.5 Q240,57.5 260,82.5 Q240,107.5 200,107.5 Q215,82.5 200,57.5 Z"/></g><g fill="currentColor" stroke="none" font-family="Arial, sans-serif" font-weight="700" font-size="22"><text x="4" y="32">A</text><text x="4" y="57">B</text><text x="4" y="122">C</text><text x="300" y="89.5">X</text></g></svg>
+        <p class="q">а) Яка помилка? Постав &#10003;:<br>
+          <span class="chk"></span>gate symbol <span class="chk"></span>input letters <span class="chk"></span>brackets</p>
+      </div>
+      <div class="box"><div class="ex">б) Намалюй правильну схему</div></div>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>Домашнє завдання &#183; до 5 листопада<span class="tag">10 хв</span></h2>
+    <div class="two">
+      <div>
+        <p class="q"><b>1</b> &#183; Переклади: <code>logic gate</code> <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>
+          <code>logic circuit</code> <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>
+          <code>brackets</code> <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>
+          <code>truth table</code> <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></p>
+        <p class="q"><b>2</b> &#183; Напиши T (true &#8212; так, правда) або F (false &#8212; ні, неправда):
+          A NOT gate has two inputs. &#160; <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></p>
+      </div>
+      <div class="box hw"><div class="ex"><b>3</b> &#183; Намалюй: X = NOT(A OR B)</div></div>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>IT-англійська &#183; 9 клас &#183; 9CS.07</span>
+    <span>Урок 8 &#183; 22.10.2026</span>
+  </div>
+
+</div>
+</body>
+</html>
