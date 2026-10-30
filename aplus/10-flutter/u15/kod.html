@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 15 · код уроку · Flutter 10 клас</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#eef1f8;--border:#dcdfe9;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--blue);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#aab4cc}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:760px}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+padding:24px 26px;display:block;box-shadow:0 1px 3px rgba(2,83,179,.05);
+transition:border-color .18s,background .18s,transform .18s,box-shadow .18s}
+a.card:hover{border-color:var(--accent);background:var(--surf2);transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(2,83,179,.09)}
+.card .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);display:block;margin-bottom:9px}
+.card h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin-bottom:7px;line-height:1.2}
+.card p{font-size:16.5px;color:var(--dim)}
+.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:26px;
+box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--accent);display:block;margin-bottom:8px}
+.hero p{font-size:17px;color:var(--dim)}
+.hero ul{margin:0;padding-left:22px;font-size:17px;color:var(--dim)}
+.hero li{margin-bottom:6px}
+.hero li:last-child{margin-bottom:0}
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 7px;border-radius:5px}
+.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+font-size:15px;color:var(--dim)}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}
+.card{padding:19px 20px}.hero{padding:18px 20px}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:18px;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;
+  background:var(--surf2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.codebar b{font-family:var(--f-head);color:var(--accent)}
+.copy{font:700 16px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:10px 18px;min-height:44px;cursor:pointer}
+.copy.ok{background:#1d7a3a}
+pre.dart{font-family:var(--f-mono);font-size:15px;line-height:1.55;padding:18px;overflow-x:auto;
+  white-space:pre;tab-size:2;color:var(--ink)}
+.cm{color:#5c6b5e;font-style:italic}
+
+.steps-note{font-size:16.5px;color:var(--dim);margin-top:10px}
+.open{display:inline-block;font:700 16px var(--f-body);background:#1d7a3a;color:#fff;border-radius:10px;
+  padding:10px 18px;min-height:44px;margin-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">10 клас · Flutter</a><span class="sep">/</span><a href="./">Урок 15</a><span class="sep">/</span><span>Код</span></nav>
+<div class="kicker">Урок 15 / 68 · 05.11.2026 · код уроку</div>
+<h1>Код уроку і домашнього</h1>
+<p class="lead">Перші чотири блоки — для DartPad: «Скопіювати», відкрий <a href="https://dartpad.dev/?sample=counter" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px solid">dartpad.dev</a>, заміни весь код і натисни Run. YouTube-плеєр — окремо внизу: йому потрібен пакет, а пакети DartPad не підключає. Пояснення — у коментарях після <code>//</code>, усе змінене від базового лічильника позначено <code>НОВЕ</code>.</p>
+
+<div class="kicker" style="margin-top:28px">Домашнє завдання · до 11 листопада</div>
+<div class="codebox"><div class="codebar"><b>Радіо · допиши два місця</b>
+  <button class="copy" data-for="dz">Скопіювати</button></div>
+<pre class="dart" id="dz"><span class="cm">// Домашнє · урок 15 · «Радіо». Прізвище: ...</span>
+<span class="cm">// Кнопка Next уже працює. Допиши два місця з позначкою ДОПИШИ ТУТ.</span>
+<span class="cm">// Перевір: тричі Next -&gt; Station 4 / 4, Rock FM, Next сіра;</span>
+<span class="cm">//          ще чотири рази Prev -&gt; Station 1 / 4, Jazz FM, Prev сіра.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.teal),
+      home: const RadioPage(),
+    );
+  }
+}
+
+class RadioPage extends StatefulWidget {
+  const RadioPage({super.key});
+
+  @override
+  State&lt;RadioPage&gt; createState() =&gt; _RadioPageState();
+}
+
+class _RadioPageState extends State&lt;RadioPage&gt; {
+  final List&lt;String&gt; _stations = ['Jazz FM', 'News 24', 'Pop Hits', 'Rock FM'];
+  int _index = 0; <span class="cm">// номер станції у списку, з нуля</span>
+
+  <span class="cm">// Готово: наступна, але не далі останньої.</span>
+  void _next() {
+    setState(() {
+      if (_index &lt; _stations.length - 1) {
+        _index++;
+      }
+    });
+  }
+
+  <span class="cm">// 1. ДОПИШИ ТУТ: попередня, але не раніше першої (номер 0).</span>
+  <span class="cm">//    Так само, як _next вище: setState, усередині if (_index &gt; 0) і _index--.</span>
+  void _prev() {
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      <span class="cm">// 2. ДОПИШИ ТУТ: замість 'Radio' — 'Station 1 / 4'.</span>
+      <span class="cm">//    Номер для людини з одиниці: ${_index + 1}, а скільки всього — ${_stations.length}.</span>
+  <span class="cm">//    const перед Text прибери — у тексті тепер змінна.</span>
+      appBar: AppBar(title: const Text('Radio')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: .center,
+          children: [
+            Text(
+              _stations[_index],
+              style: Theme.of(context).textTheme.displaySmall,
+            ),
+            Row(
+              mainAxisAlignment: .center,
+              children: [
+                ElevatedButton(
+                  onPressed: _index &gt; 0 ? _prev : null,
+                  child: const Text('Prev'),
+                ),
+                ElevatedButton(
+                  onPressed: _index &lt; _stations.length - 1 ? _next : null,
+                  child: const Text('Next'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</pre></div>
+
+<div class="kicker" style="margin-top:34px">Урок · DartPad</div>
+<div class="codebox"><div class="codebar"><b>1 · Базовий лічильник</b>
+  <button class="copy" data-for="basic">Скопіювати</button></div>
+<pre class="dart" id="basic"><span class="cm">// Урок 15 · 1. Базовий лічильник — той самий, що dartpad.dev/?sample=counter.</span>
+<span class="cm">// Одна кругла кнопка «+», число росте. Від нього стартуємо.</span>
+import 'package:flutter/material.dart';
+
+<span class="cm">// Точка входу. runApp показує на екрані головний віджет — MyApp.</span>
+void main() =&gt; runApp(const MyApp());
+
+<span class="cm">// MyApp — рамка застосунку: назва, колір, перший екран.</span>
+<span class="cm">// StatelessWidget — сам ніколи не змінюється.</span>
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Counter',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.blue),
+      home: const MyHomePage(title: 'Counter'),
+    );
+  }
+}
+
+<span class="cm">// MyHomePage — екран, який змінюється. StatefulWidget — віджет зі станом,</span>
+<span class="cm">// а сам стан живе в класі _MyHomePageState нижче.</span>
+class MyHomePage extends StatefulWidget {
+  final String title;
+
+  const MyHomePage({super.key, required this.title});
+
+  @override
+  State&lt;MyHomePage&gt; createState() =&gt; _MyHomePageState();
+}
+
+class _MyHomePageState extends State&lt;MyHomePage&gt; {
+  int _counter = 0; <span class="cm">// стан: число на екрані</span>
+
+  <span class="cm">// setState — «дані змінились, перемалюй екран».</span>
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span class="cm">// Scaffold — каркас сторінки: шапка, тіло, кругла кнопка.</span>
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      body: Center(
+        <span class="cm">// Column — віджети один під одним, .center — по центру.</span>
+        child: Column(
+          mainAxisAlignment: .center,
+          children: [
+            const Text('You have pushed the button this many times:'),
+            Text(
+              '$_counter', <span class="cm">// число стає текстом через $</span>
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter, <span class="cm">// без () — передаємо метод, а не викликаємо</span>
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}</pre></div>
+
+<div class="codebox"><div class="codebar"><b>2 · Лічильник з + і − (практика 1)</b>
+  <button class="copy" data-for="pm">Скопіювати</button></div>
+<pre class="dart" id="pm"><span class="cm">// Урок 15 · 2. Модифікований лічильник: кнопки «−» і «+» поруч, не нижче 0,</span>
+<span class="cm">// кругла кнопка тепер скидає до 0. Усе, що змінилось від базового, позначено НОВЕ.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Counter',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.blue),
+      home: const MyHomePage(title: 'Counter: + and -'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  final String title;
+
+  const MyHomePage({super.key, required this.title});
+
+  @override
+  State&lt;MyHomePage&gt; createState() =&gt; _MyHomePageState();
+}
+
+class _MyHomePageState extends State&lt;MyHomePage&gt; {
+  int _counter = 0;
+
+  <span class="cm">// «+» — як і було.</span>
+  void _increment() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  <span class="cm">// НОВЕ: «−». if не пускає нижче нуля.</span>
+  void _decrement() {
+    setState(() {
+      if (_counter &gt; 0) {
+        _counter--;
+      }
+    });
+  }
+
+  <span class="cm">// НОВЕ: скинути до нуля.</span>
+  void _reset() {
+    setState(() {
+      _counter = 0;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: .center,
+          children: [
+            const Text('Count:'),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.displayMedium, <span class="cm">// НОВЕ: ще більший шрифт</span>
+            ),
+            <span class="cm">// НОВЕ: Row — дві кнопки поруч під числом.</span>
+            Row(
+              mainAxisAlignment: .center,
+              children: [
+                ElevatedButton(
+                  <span class="cm">// На нулі кнопка сіра: null — «натискати нічого».</span>
+                  onPressed: _counter &gt; 0 ? _decrement : null,
+                  child: const Icon(Icons.remove),
+                ),
+                ElevatedButton(
+                  onPressed: _increment,
+                  child: const Icon(Icons.add),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      <span class="cm">// НОВЕ: кругла кнопка тепер не «+», а «скинути».</span>
+      floatingActionButton: FloatingActionButton(
+        onPressed: _reset,
+        tooltip: 'Reset',
+        child: const Icon(Icons.refresh),
+      ),
+    );
+  }
+}</pre></div>
+
+<div class="codebox"><div class="codebar"><b>3 · Плейлист ⭐–⭐⭐⭐ (практика 2)</b>
+  <button class="copy" data-for="pl">Скопіювати</button></div>
+<pre class="dart" id="pl"><span class="cm">// Урок 15 · Практика 2 «Плейлист» — фінальна версія ⭐–⭐⭐⭐.</span>
+<span class="cm">// Той самий лічильник, тільки число — це номер відео у списку.</span>
+<span class="cm">// «−» — попереднє, «+» — наступне. Плеєра ще немає: замість нього — назва.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+<span class="cm">// Відео — сутність (назва і тривалість) -&gt; class.</span>
+class Video {
+  final String title;
+  final int minutes;
+  const Video(this.title, this.minutes);
+}
+
+<span class="cm">// Порядок важливий, ходимо за номером -&gt; List.</span>
+const List&lt;Video&gt; videos = [
+  Video('Flutter in 100 seconds', 2),
+  Video('Expanded', 1),
+  Video('Spacer', 1),
+  Video('Wrap', 1),
+];
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.red),
+      home: const PlaylistPage(),
+    );
+  }
+}
+
+class PlaylistPage extends StatefulWidget {
+  const PlaylistPage({super.key});
+
+  @override
+  State&lt;PlaylistPage&gt; createState() =&gt; _PlaylistPageState();
+}
+
+class _PlaylistPageState extends State&lt;PlaylistPage&gt; {
+  int _index = 0; <span class="cm">// номер відео у списку, з нуля</span>
+
+  <span class="cm">// ⭐ Наступне — не далі останнього.</span>
+  void _next() {
+    setState(() {
+      if (_index &lt; videos.length - 1) {
+        _index++;
+      }
+    });
+  }
+
+  <span class="cm">// ⭐ Попереднє — не раніше першого.</span>
+  void _prev() {
+    setState(() {
+      if (_index &gt; 0) {
+        _index--;
+      }
+    });
+  }
+
+  <span class="cm">// ⭐⭐⭐ По колу: після останнього — знову перше. % — остача від ділення.</span>
+  void _loopNext() {
+    setState(() {
+      _index = (_index + 1) % videos.length;
+    });
+  }
+
+  <span class="cm">// ⭐⭐⭐ Скільки хвилин у всьому плейлисті.</span>
+  int _totalMinutes() {
+    int sum = 0;
+    for (Video v in videos) {
+      sum += v.minutes;
+    }
+    return sum;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Video v = videos[_index]; <span class="cm">// поточне відео</span>
+    return Scaffold(
+      <span class="cm">// ⭐ Номер для людини — з одиниці, тому _index + 1.</span>
+      appBar: AppBar(title: Text('Video ${_index + 1} / ${videos.length}')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: .center,
+          children: [
+            Text(v.title, style: Theme.of(context).textTheme.headlineMedium),
+            Text('${v.minutes} min'),
+            Row(
+              mainAxisAlignment: .center,
+              children: [
+                <span class="cm">// ⭐⭐ На краях кнопка сіра.</span>
+                ElevatedButton(
+                  onPressed: _index &gt; 0 ? _prev : null,
+                  child: const Icon(Icons.skip_previous),
+                ),
+                ElevatedButton(
+                  onPressed: _index &lt; videos.length - 1 ? _next : null,
+                  child: const Icon(Icons.skip_next),
+                ),
+              ],
+            ),
+            <span class="cm">// ⭐⭐ Останнє відео — напис.</span>
+            Text(_index == videos.length - 1 ? 'Last video' : ''),
+            Text('Playlist: ${_totalMinutes()} min'),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _loopNext,
+        tooltip: 'Loop',
+        child: const Icon(Icons.repeat),
+      ),
+    );
+  }
+}</pre></div>
+
+<div class="kicker" style="margin-top:34px">Урок · YouTube-плеєр — проєкт у VS Code, не DartPad</div>
+<a class="open" href="app/" target="_blank" rel="noopener">Відкрити готовий застосунок ↗</a>
+<p class="steps-note">Це той самий код нижче, зібраний командою <code>flutter build web</code>. Перевірено: Flutter 3.44 · youtube_player_flutter 10.0.1.</p>
+<div class="codebox"><div class="codebar"><b>Як створити проєкт</b>
+  <button class="copy" data-for="steps">Скопіювати</button></div>
+<pre class="dart" id="steps"># Термінал VS Code, по одній команді. Потрібен встановлений Flutter SDK.
+flutter create --platforms web my_videos   # новий проєкт лише для вебу
+cd my_videos
+flutter pub add youtube_player_flutter     # пакет з pub.dev -&gt; pubspec.yaml
+# заміни весь lib/main.dart кодом нижче
+flutter run -d chrome                      # запуск у Chrome
+flutter build web                          # сайт: папка build/web, у ній index.html</pre></div>
+
+<div class="codebox"><div class="codebar"><b>pubspec.yaml · що додала команда</b>
+  <button class="copy" data-for="pub">Скопіювати</button></div>
+<pre class="dart" id="pub"># pubspec.yaml — розділ dependencies після flutter pub add youtube_player_flutter
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  youtube_player_flutter: ^10.0.1 # &lt;- цей рядок додала команда</pre></div>
+
+<div class="codebox"><div class="codebar"><b>lib/main.dart · YouTube-плеєр</b>
+  <button class="copy" data-for="yt">Скопіювати</button></div>
+<pre class="dart" id="yt"><span class="cm">// Урок 15 · YouTube-плеєр на Flutter — перший застосунок із пакетом.</span>
+<span class="cm">// Це «Плейлист» з практики 2, тільки замість назви — справжній плеєр.</span>
+<span class="cm">// Пакет: youtube_player_flutter 10 (pub.dev). У DartPad не запуститься —</span>
+<span class="cm">// потрібен проєкт: flutter create -&gt; flutter pub add youtube_player_flutter.</span>
+<span class="cm">// Запуск: flutter run -d chrome · збірка сайту: flutter build web</span>
+import 'package:flutter/material.dart';
+<span class="cm">// НОВЕ: імпорт пакета — після flutter pub add він є в pubspec.yaml.</span>
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+<span class="cm">// Відео — сутність: id з посилання YouTube і назва -&gt; class.</span>
+<span class="cm">// id — це те, що в посиланні після watch?v=</span>
+class Video {
+  final String id;
+  final String title;
+  const Video(this.id, this.title);
+}
+
+<span class="cm">// Порядок важливий, ходимо за номером -&gt; List.</span>
+const List&lt;Video&gt; videos = [
+  Video('lHhRhPV--G0', 'Flutter in 100 seconds'),
+  Video('_rnZaagadyo', 'Expanded · Widget of the Week'),
+  Video('7FJgd7QN1zI', 'Spacer · Widget of the Week'),
+  Video('z5iw2SeFx2M', 'Wrap · Widget of the Week'),
+];
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter videos',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.red),
+      home: const PlayerPage(),
+    );
+  }
+}
+
+class PlayerPage extends StatefulWidget {
+  const PlayerPage({super.key});
+
+  @override
+  State&lt;PlayerPage&gt; createState() =&gt; _PlayerPageState();
+}
+
+class _PlayerPageState extends State&lt;PlayerPage&gt; {
+  int _index = 0; <span class="cm">// номер відео у списку, з нуля — як _counter</span>
+
+  <span class="cm">// НОВЕ: пульт плеєра. late — «значення буде, але трохи пізніше» (в initState).</span>
+  late final YoutubePlayerController _controller;
+
+  <span class="cm">// НОВЕ: initState — один раз, коли екран зʼявляється. Тут створюємо пульт.</span>
+  @override
+  void initState() {
+    super.initState();
+    _controller = YoutubePlayerController.fromVideoId(
+      videoId: videos[_index].id,
+      autoPlay: false, <span class="cm">// браузер не дає вмикати звук без кліку</span>
+    );
+  }
+
+  <span class="cm">// НОВЕ: dispose — коли екран зникає. Пульт закриваємо, щоб не грав «у фоні».</span>
+  @override
+  void dispose() {
+    _controller.close();
+    super.dispose();
+  }
+
+  <span class="cm">// Показати відео з номером i: змінити стан і сказати плеєру, що вантажити.</span>
+  void _show(int i) {
+    setState(() {
+      _index = i;
+    });
+    _controller.loadVideoById(videoId: videos[i].id);
+  }
+
+  <span class="cm">// «+» — наступне, «−» — попереднє. Межі — як у лічильнику «не нижче 0».</span>
+  void _next() {
+    if (_index &lt; videos.length - 1) _show(_index + 1);
+  }
+
+  void _prev() {
+    if (_index &gt; 0) _show(_index - 1);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Video ${_index + 1} / ${videos.length}')),
+      body: Center(
+        <span class="cm">// Щоб на широкому екрані плеєр не розтягувався на всю ширину.</span>
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Column(
+            mainAxisAlignment: .center,
+            children: [
+              <span class="cm">// НОВЕ: сам плеєр — віджет із пакета. Йому досить пульта.</span>
+              YoutubePlayer(controller: _controller),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  videos[_index].title,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: .center,
+                children: [
+                  ElevatedButton(
+                    onPressed: _index &gt; 0 ? _prev : null,
+                    child: const Icon(Icons.skip_previous),
+                  ),
+                  ElevatedButton(
+                    onPressed: _index &lt; videos.length - 1 ? _next : null,
+                    child: const Icon(Icons.skip_next),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}</pre></div>
+
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.for).innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+  b.textContent = 'Скопійовано ✓'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Скопіювати'; b.classList.remove('ok'); }, 2000);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лічильник «+ і −» і YouTube-плеєр · Мобільна розробка Flutter · 10 клас · Урок 15</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Мобільна розробка Flutter (Flutter I + II за рік)
+  Клас          10
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · четвер 14:20, к. 309
+  Урок          14 з 68 · 05.11.2026 · перший після осінніх канікул
+  Тема          Лічильник «+ і −» і YouTube-плеєр
+  Тривалість    45 хв — повторення I чверті 8 хв + розминка 2 хв
+                + базовий і модифікований код 4 хв + практика 1 7 хв
+                + практика 2 11 хв + пакет і показ 7 хв + відео 3 хв + пастки й ДЗ 3 хв
+  Акцент        blue (#0253b3)
+  Слайдів       19
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Учні — DartPad (лічильник, плейлист).
+     YouTube-плеєр показує вчитель: готовий застосунок у app/
+     (flutter build web), код — kod.html, останній блок.
+  ────────────────────────────────────────────────────────────────
+  ПЛАН          Урок 13 (22.10) НЕ ВІДБУВСЯ. Його матеріал переїхав сюди
+                з ../u13/ (без змін по суті), спереду — повторення I чверті:
+                слайд 2 — перевірка листка на канікули (List, Map, Reset),
+                слайд 3 — шість «що виведе» по u01–u12.
+  Місток        лічильник уроків 10 і 12, onPressed: null, Row,
+                List і номер (урок 5), class (урок 8), % (урок 3).
+                ДЗ уроку 12 (Гучність) — НЕ перевіряємо окремо (давно);
+                «Радіо» з u13 не задавали — воно ДЗ цього уроку.
+                Далі: урок 15 (ср 11.11).
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ФОРМАТ «ПРИКЛАД → ТЕПЕР САМОСТІЙНО».
+     слайд 8  (7 хв)  практика 1: з «+» зробити «+ і −»
+     слайди 9–10 (11 хв) практика 2: плейлист — List<Video> і номер
+     слайди 11–16 — пакет, команди, код плеєра, показ, відео, старий API
+     ⛔ НЕ РІЗАТИ слайди 2–3 і 8–10.
+     ЯКЩО НЕ ВСТИГАЄТЕ — ріжеться відео (15) і старий API (16) — усно.
+  ⚠️ youtube_player_flutter 10.0.1: README і старі відео показують
+     initialVideoId + YoutubePlayerFlags — у версії 10 цього немає
+     (слайд 15). Наш код — fromVideoId / loadVideoById / close.
+  ✅ КОД ПЕРЕВІРЕНО 21.10.2026 у Docker (Flutter 3.44 · Dart 3.12):
+     flutter analyze + flutter build web усіх програм; помилки
+     «зламай» і старого API — з аналізатора і dart2js; застосунок
+     відкрито в Chromium, ▶ перемикає відео.
+  ────────────────────────────────────────────────────────────────
+  Код           kod.html — ДЗ, лічильник базовий і з + і −, плейлист,
+                команди проєкту, pubspec, lib/main.dart плеєра
+  Застосунок    app/ — зібраний flutter build web, base href="./"
+  Проєкт        2026-27-teacher/aplus/10-flutter/u13/youtube_app/
+  Аркуш         rozdatka.html — 1 сторінка A4, для сховища
+  Конспект      2026-27-teacher/aplus/10-flutter/u13/konspekt.md
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: акцент курсу — синій із палітри. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#eef1f8; --border:#dcdfe9;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(2,83,179,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lr{background:#fae7e8;color:var(--rose)}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(2,83,179,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#f9fbfd;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:14px 19px;font-family:var(--f-mono);
+        font-size:16px;border-top:1.5px solid var(--border);white-space:pre-wrap}
+.dp-out .lbl{font-family:var(--f-body);font-size:13px;color:var(--faint);
+             text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:6px}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #f9fbfd */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#6b6a72;font-style:italic}/* коментар */
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--blue);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid #b9c8e6;border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--blue);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--blue)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+.uk{color:var(--dim)}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--blue);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .dp-out{font-size:14.5px;padding:11px 15px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .demo,.solo{padding:10px 13px}
+  .demo .dp-code,.solo .dp-code{font-size:14.5px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .bank{gap:8px} .bk{padding:9px 12px;font-size:15px}
+  .refg{gap:6px} .rf{padding:6px 9px}
+  .rf .rt{font-size:13px;flex-basis:110px} .rf .rc{font-size:13px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+.demo .dp-code{border:1px solid var(--border);border-radius:9px;padding:11px 14px;
+  font-size:16px;line-height:1.65}
+
+/* довідник конструкцій — слайд 18 */
+.refg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rf{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+    padding:8px 12px;display:flex;align-items:baseline;gap:10px}
+.rf .rt{font-size:14.5px;color:var(--dim);flex:0 0 128px;line-height:1.3}
+.rf .rc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--brand);
+        line-height:1.35;flex:1}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4 ─── */
+.rv-body .mono{font-family:var(--f-mono);white-space:pre-wrap}
+.hbox.hp{border-color:var(--plum)}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10 (повторення) ─── */
+/* код у рядку не розривається між рядками */
+.en{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10 (лічильник) ─── */
+.vid{position:relative;width:100%;max-width:min(1000px,calc((100vh - 270px) * 16 / 9));margin:0 auto;
+     aspect-ratio:16/9;border-radius:13px;overflow:hidden;border:1.5px solid var(--border);background:#000}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.dp-code.tree{line-height:1.5}
+.demo .dp-code{font-family:var(--f-mono)}
+.dp.small .dp-code{font-size:14px;line-height:1.42;padding:11px 16px}
+@media print{ .vid{display:none !important} }
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 12 ─── */
+.solo li{margin-bottom:3px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 13 ─── */
+.dp.tight .dp-code{font-size:13.5px;line-height:1.36;padding:9px 15px}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Лічильник «+ і −» і YouTube-плеєр</h1>
+      <p class="title-sub">Повторення I чверті, потім — від одного «+» до двох кнопок, плейлиста і першого пакета з pub.dev<br>Мобільна розробка Flutter · 10 клас · Урок 15 з 68 · 5 листопада</p>
+      <div class="chips">
+        <span class="chip">повторення</span>
+        <span class="chip">setState</span>
+        <span class="chip">Row</span>
+        <span class="chip">onPressed: null</span>
+        <span class="chip">List + номер</span>
+        <span class="chip">pub.dev</span>
+        <span class="chip">flutter pub add</span>
+        <span class="chip">youtube_player_flutter</span>
+        <span class="chip">flutter build web</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🍂</div><div>
+      <span class="label lb">Повторення · 4 хв</span>
+      <h2>Завдання на канікули: як мало вийти</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>List</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">List&lt;int&gt; marks =
+  [9, 7, 12, 10];</p>
+  <p>Функція <span class="en">average</span> і скільки оцінок <span class="en">&gt;= 10</span></p>
+  <p class="rv-hint">Спершу скажи сам, потім клацни.</p>
+  <div class="rv-body">
+      <p class="mono" style="font-size:14px">double average(List&lt;int&gt; xs) {
+  int sum = 0;
+  for (int x in xs) {
+    sum += x;
+  }
+  return sum / xs.length;
+}
+marks.where((m) =&gt; m &gt;= 10).length</p>
+      <p class="mt"><span class="en">9.5</span> і <span class="en">2</span></p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>Map</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">Map&lt;String, int&gt; stock =
+  {'pen': 10, 'book': 3};</p>
+  <p>Дописати <span class="en">bag → 2</span>, до <span class="en">pen</span> додати 5, вивести все</p>
+  <p class="rv-hint">Три рядки коду — які?</p>
+  <div class="rv-body">
+      <p class="mono" style="font-size:14px">stock['bag'] = 2;
+stock.update('pen', (v) =&gt; v + 5);
+stock.forEach((k, v) =&gt;
+    print('$k: $v'));</p>
+      <p class="mono mt" style="font-size:14px">pen: 15
+book: 3
+bag: 2</p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>Flutter</h3>
+  <p>Лічильник з <span class="en">?sample=counter</span>: кнопка <span class="en">Reset</span> ставить число на <span class="en">0</span></p>
+  <p class="rv-hint">Метод і кнопка — як?</p>
+  <div class="rv-body">
+      <p class="mono" style="font-size:14px">void _reset() {
+  setState(() {
+    _counter = 0;
+  });
+}
+ElevatedButton(
+  onPressed: _reset,
+  child: const Text('Reset'),
+),</p>
+      <p class="mt">Без <span class="en">setState</span> число стане 0, а екран — ні</p>
+  </div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lb">Повторення · 4 хв</span>
+      <h2>I чверть: що виведе?</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · Ділення</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">int a = 7;
+print('${a ~/ 2} ${a % 2}');</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">3 1</p><p><span class="en">~/</span> — ціла частина, <span class="en">%</span> — остача</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · Цикл</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">for (int i = 1; i &lt;= 3; i++) {
+  print(i * i);
+}</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">1
+4
+9</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · Функція</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">int f(int x) =&gt; x * 2 + 1;
+print(f(f(1)));</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">7</p><p><span class="en">f(1) = 3</span>, <span class="en">f(3) = 7</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>4 · List</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">List&lt;String&gt; xs = ['a', 'b', 'c'];
+xs.add('d');
+print('${xs.length} ${xs[1]}');</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">4 b</p><p>Номери з нуля: <span class="en">xs[1]</span> — другий</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>5 · Map</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">Map&lt;String, int&gt; wins =
+    {'Olha': 2};
+wins['Ivan'] = 1;
+wins.update('Olha', (v) =&gt; v + 1);
+print(wins);</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">{Olha: 3, Ivan: 1}</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>6 · Клас</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">class Item {
+  final String name;
+  final int price;
+  Item(this.name, this.price);
+  bool isCheap() =&gt; price &lt; 100;
+}
+print(Item('Pen', 40).isCheap());</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">true</p></div>
+</div>
+    </div>
+    <div class="hbox hm mt"><b>Сутність</b> з полями й методами (товар, відео) → <span class="en">class</span> · <b>словник</b> «імʼя → перемоги» → <span class="en">Map</span></div>
+  </div></section>
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🔥</div><div>
+      <span class="label lb">Розминка · 2 хв</span>
+      <h2>Сім натискань</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">стан екрана · три кнопки</span></div>
+<div class="dp-code"><span class="sk">int</span> _counter = <span class="sn">0</span>;
+
+<span class="sk">void</span> <span class="sf">_decrement</span>() {
+  <span class="sf">setState</span>(() {
+    <span class="sk">if</span> (_counter &gt; <span class="sn">0</span>) {
+      _counter--;
+    }
+  });
+}
+<span class="cm">// у Row:</span>
+<span class="sk">ElevatedButton</span>(
+  onPressed: _counter &gt; <span class="sn">0</span> ? _decrement : <span class="sk">null</span>,
+  child: <span class="sk">const</span> <span class="sk">Icon</span>(<span class="sk">Icons</span>.remove),
+),</div>
+</div>
+      <div>
+        <div class="hbox hm" style="margin-top:0">Натиснули по черзі:<br>
+          <span class="en">+</span> · <span class="en">+</span> · <span class="en">+</span> · <span class="en">−</span> · <span class="en">↻</span> · <span class="en">−</span> · <span class="en">+</span></div>
+        <div class="hbox"><span class="en">↻</span> — кругла кнопка, <span class="en">_counter = 0</span></div>
+<div class="card cm reveal">
+  <h3>Що на екрані?</h3>
+  <p class="rv-hint">Число на листочок, потім клацни.</p>
+  <div class="rv-body">
+      <p class="mono">3 · 2 · 0 · 0 · 1</p>
+      <p class="mt">Після <span class="en">↻</span> кнопка <span class="en">−</span> сіра: <span class="en">onPressed: null</span>, натискання нічого не робить. Відповідь — <b>1</b></p>
+  </div>
+</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🧱</div><div>
+      <span class="label lm">Базовий код</span>
+      <h2>Лічильник: одна кнопка «+»</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+<div class="dp small tight">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">dartpad.dev/?sample=counter · стан екрана</span></div>
+<div class="dp-code"><span class="sk">class</span> _MyHomePageState <span class="sk">extends</span> <span class="sk">State</span>&lt;<span class="sk">MyHomePage</span>&gt; {
+  <span class="sk">int</span> _counter = <span class="sn">0</span>; <span class="cm">// стан: число на екрані</span>
+
+  <span class="sk">void</span> <span class="sf">_incrementCounter</span>() {
+    <span class="sf">setState</span>(() {
+      _counter++; <span class="cm">// змінили і перемалювали</span>
+    });
+  }
+
+  @override
+  <span class="sk">Widget</span> <span class="sf">build</span>(<span class="sk">BuildContext</span> context) {
+    <span class="sk">return</span> <span class="sk">Scaffold</span>(
+      appBar: <span class="sk">AppBar</span>(title: <span class="sk">Text</span>(widget.title)),
+      body: <span class="sk">Center</span>(
+        child: <span class="sk">Column</span>(mainAxisAlignment: .center, children: [
+          <span class="sk">const</span> <span class="sk">Text</span>(<span class="ss">'You have pushed the button this many times:'</span>),
+          <span class="sk">Text</span>(<span class="ss">'$_counter'</span>),
+        ]),
+      ),
+      floatingActionButton: <span class="sk">FloatingActionButton</span>(
+        onPressed: _incrementCounter,
+        child: <span class="sk">const</span> <span class="sk">Icon</span>(<span class="sk">Icons</span>.add),
+      ),
+    );
+  }
+}</div>
+</div>
+      <div>
+        <div class="hbox hm" style="margin-top:0"><b>Стан</b> — поле <span class="en">_counter</span>. Підкреслення: «тільки для цього класу»</div>
+        <div class="hbox"><b>setState</b> — «дані змінились, перемалюй». Без нього число росте, а екран стоїть</div>
+        <div class="hbox ho"><b>onPressed: _incrementCounter</b> — без дужок: передаємо метод, а не викликаємо</div>
+        <div class="hbox hb">Повний код із коментарями — сторінка <a href="kod.html" target="_blank" style="text-decoration:underline"><b>«Код»</b></a>, блок 1</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">➕</div><div>
+      <span class="label lm">Модифікований код</span>
+      <h2>Що змінилось: «−», «+» і скинути</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.45fr 1fr">
+<div class="dp small tight">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">лише нові шматки · повний код — блок 2</span></div>
+<div class="dp-code"><span class="cm">// НОВЕ: «−». if не пускає нижче нуля</span>
+<span class="sk">void</span> <span class="sf">_decrement</span>() {
+  <span class="sf">setState</span>(() {
+    <span class="sk">if</span> (_counter &gt; <span class="sn">0</span>) {
+      _counter--;
+    }
+  });
+}
+<span class="cm">// НОВЕ: скинути до нуля</span>
+<span class="sk">void</span> <span class="sf">_reset</span>() {
+  <span class="sf">setState</span>(() { _counter = <span class="sn">0</span>; });
+}
+<span class="cm">// НОВЕ: у children, під числом — дві кнопки поруч</span>
+<span class="sk">Row</span>(mainAxisAlignment: .center, children: [
+  <span class="sk">ElevatedButton</span>(
+    onPressed: _counter &gt; <span class="sn">0</span> ? _decrement : <span class="sk">null</span>,
+    child: <span class="sk">const</span> <span class="sk">Icon</span>(<span class="sk">Icons</span>.remove),
+  ),
+  <span class="sk">ElevatedButton</span>(
+    onPressed: _increment,
+    child: <span class="sk">const</span> <span class="sk">Icon</span>(<span class="sk">Icons</span>.add),
+  ),
+]),
+<span class="cm">// НОВЕ: кругла кнопка скидає</span>
+floatingActionButton: <span class="sk">FloatingActionButton</span>(
+  onPressed: _reset, child: <span class="sk">const</span> <span class="sk">Icon</span>(<span class="sk">Icons</span>.refresh)),</div>
+</div>
+      <div>
+        <table class="tb">
+          <tr><th>Було</th><th>Стало</th></tr>
+          <tr><td>одна кнопка <span class="en">+</span></td><td><span class="en">−</span> і <span class="en">+</span> поруч у <span class="en">Row</span></td></tr>
+          <tr><td>число будь-яке</td><td>не нижче <span class="en">0</span></td></tr>
+          <tr><td>кругла — <span class="en">Icons.add</span></td><td>кругла — <span class="en">Icons.refresh</span>, скидає</td></tr>
+          <tr><td><span class="en">headlineMedium</span></td><td><span class="en">displayMedium</span> — більше</td></tr>
+        </table>
+        <div class="hbox ho mt"><span class="en">? _decrement : null</span> — на нулі кнопка <b>сіра</b>, натиснути не можна</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lp">Тримати відкритим</span>
+      <h2>Довідник уроку</h2>
+    </div></div>
+
+    <div class="refg">
+      <div class="rf"><span class="rt">поле стану</span><span class="rc">int _counter = 0;</span></div>
+      <div class="rf"><span class="rt">змінити й перемалювати</span><span class="rc">setState(() { _counter++; });</span></div>
+      <div class="rf"><span class="rt">не нижче 0</span><span class="rc">if (_counter &gt; 0) { _counter--; }</span></div>
+      <div class="rf"><span class="rt">кнопки поруч</span><span class="rc">Row(mainAxisAlignment: .center, children: [ ... ])</span></div>
+      <div class="rf"><span class="rt">кнопка-іконка</span><span class="rc">ElevatedButton(onPressed: _increment, child: const Icon(Icons.add)),</span></div>
+      <div class="rf"><span class="rt">сіра за умовою</span><span class="rc">onPressed: _counter &gt; 0 ? _decrement : null</span></div>
+      <div class="rf"><span class="rt">іконки</span><span class="rc">Icons.add · Icons.remove · Icons.refresh · Icons.skip_next · Icons.skip_previous</span></div>
+      <div class="rf"><span class="rt">елемент списку за номером</span><span class="rc">videos[_index]</span></div>
+      <div class="rf"><span class="rt">номер для людини</span><span class="rc">Text('Video ${_index + 1} / ${videos.length}')</span></div>
+      <div class="rf"><span class="rt">останній номер</span><span class="rc">videos.length - 1</span></div>
+      <div class="rf"><span class="rt">по колу</span><span class="rc">_index = (_index + 1) % videos.length;</span></div>
+      <div class="rf"><span class="rt">додати пакет</span><span class="rc">flutter pub add youtube_player_flutter</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Практика 1 · 7 хв</span>
+      <h2>Приклад — і самостійно: з «+» зроби «+ і −»</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.15fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · уже є в DartPad</span>
+<div class="dp-code"><span class="sk">void</span> <span class="sf">_incrementCounter</span>() {
+  <span class="sf">setState</span>(() {
+    _counter++;
+  });
+}
+<span class="cm">// ...</span>
+floatingActionButton: <span class="sk">FloatingActionButton</span>(
+  onPressed: _incrementCounter,
+  child: <span class="sk">const</span> <span class="sk">Icon</span>(<span class="sk">Icons</span>.add),
+),</div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно · dartpad.dev/?sample=counter</span>
+        <ul>
+          <li>Метод <span class="en">_decrement()</span>: −1, але <b>не нижче 0</b></li>
+          <li>Під числом <span class="en">Row</span> із двома <span class="en">ElevatedButton</span>: <span class="en">Icons.remove</span> і <span class="en">Icons.add</span></li>
+          <li>Пʼять разів <span class="en">+</span>, сім разів <span class="en">−</span> → <span class="en">0</span>, не <span class="en">-2</span></li>
+          <li><b>Зламай:</b> <span class="en">onPressed: _decrement()</span> з дужками — прочитай помилку, поверни</li>
+          <li>⭐⭐ На нулі <span class="en">−</span> сіра: <span class="en">onPressed: _counter &gt; 0 ? _decrement : null</span></li>
+          <li>⭐⭐ Кругла кнопка — <span class="en">_reset()</span> з <span class="en">Icons.refresh</span>, знову 0</li>
+          <li>⭐⭐⭐ Над числом <span class="en">Count:</span>, число — <span class="en">displayMedium</span>, свій <span class="en">colorSchemeSeed</span></li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Практика 2 · 11 хв</span>
+      <h2>Приклад — і самостійно: плейлист</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.15fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · лічильник стає номером</span>
+<div class="dp-code"><span class="sk">class</span> <span class="sk">Video</span> {
+  <span class="sk">final</span> <span class="sk">String</span> title;
+  <span class="sk">final</span> <span class="sk">int</span> minutes;
+  <span class="sk">const</span> <span class="sk">Video</span>(<span class="sk">this</span>.title, <span class="sk">this</span>.minutes);
+}
+<span class="sk">const</span> <span class="sk">List</span>&lt;<span class="sk">Video</span>&gt; videos = [
+  <span class="sk">Video</span>(<span class="ss">'Flutter in 100 seconds'</span>, <span class="sn">2</span>),
+  <span class="sk">Video</span>(<span class="ss">'Expanded'</span>, <span class="sn">1</span>),
+  <span class="sk">Video</span>(<span class="ss">'Spacer'</span>, <span class="sn">1</span>),
+  <span class="sk">Video</span>(<span class="ss">'Wrap'</span>, <span class="sn">1</span>),
+];
+<span class="cm">// у стані: int _index = 0;</span>
+<span class="cm">// у children:</span>
+<span class="sk">Text</span>(videos[_index].title),</div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно · на основі практики 1</span>
+        <ul>
+          <li><span class="en">_counter</span> → <span class="en">_index</span>. <span class="en">_next()</span> — не далі останнього, <span class="en">_prev()</span> — не раніше першого</li>
+          <li>Кнопки <span class="en">Icons.skip_previous</span> і <span class="en">Icons.skip_next</span> поруч</li>
+          <li>Шапка <span class="en">Video 1 / 4</span>, під назвою <span class="en">2 min</span></li>
+          <li><b>Зламай:</b> прибери межу в <span class="en">_next</span> і натисни пʼять разів — прочитай червоний екран</li>
+          <li>⭐⭐ На краях кнопки сірі, на останньому — напис <span class="en">Last video</span></li>
+          <li>⭐⭐⭐ Кругла кнопка <span class="en">Icons.repeat</span> — по колу через <span class="en">%</span>; унизу <span class="en">Playlist: 5 min</span></li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lo">Практика 2 · перевір себе</span>
+      <h2>Плейлист: що має бути на екрані</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>Тричі ▶</h3>
+  <p class="rv-hint">Спершу сам, потім клацни.</p>
+  <div class="rv-body">
+      <p class="mono">Video 4 / 4
+Wrap
+1 min
+Last video</p>
+      <p class="mt">▶ сіра: <span class="en">_index</span> = <span class="en">3</span> = <span class="en">videos.length - 1</span></p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>«Зламай»</h3>
+  <p class="rv-hint">Що каже червоний екран?</p>
+  <div class="rv-body">
+      <p class="mono">RangeError (index):
+Index out of range:
+index should be less
+than 4: 4</p>
+      <p class="mt">Елемента з номером <span class="en">4</span> немає — номери від 0 до 3</p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>⭐⭐⭐ По колу</h3>
+  <p class="rv-hint">З четвертого — куди?</p>
+  <div class="rv-body">
+      <p class="mono">_index = (_index + 1) % videos.length;</p>
+      <p class="mt">(3 + 1) % 4 = <span class="en">0</span> — знову перше. Хвилини: 2 + 1 + 1 + 1 = <span class="en">5</span></p>
+  </div>
+</div>
+    </div>
+    <div class="hbox hm mt">Плейлист — це той самий лічильник: число стало номером у списку. Залишилось замість назви поставити <b>справжній плеєр</b></div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lb">Новий крок · pub.dev</span>
+      <h2>Пакет — чужий готовий код</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1fr">
+      <div>
+        <div class="hbox hm" style="margin-top:0"><b>pub.dev</b> — склад пакетів для Dart і Flutter. Плеєр YouTube, карти, камера, база даних — хтось уже написав</div>
+        <div class="hbox"><b>youtube_player_flutter</b> — плеєр YouTube з кнопками, перемотуванням і повним екраном. Ключ API не потрібен</div>
+        <div class="hbox ho"><b>DartPad пакети не підключає</b> — потрібен справжній проєкт у VS Code і Flutter SDK</div>
+      </div>
+      <table class="tb">
+        <tr><th colspan="2">pub.dev/packages/youtube_player_flutter</th></tr>
+        <tr><td>Версія</td><td class="mono">10.0.1</td></tr>
+        <tr><td>Платформи</td><td>Android · iOS · macOS · <b>Web</b></td></tr>
+        <tr><td>Потрібен Flutter</td><td class="mono">3.38 або новіший</td></tr>
+        <tr><td>Під капотом</td><td class="mono">youtube_player_iframe</td></tr>
+        <tr><td>Як додати</td><td class="mono">flutter pub add …</td></tr>
+      </table>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🛠️</div><div>
+      <span class="label lb">Проєкт · 4 команди</span>
+      <h2>Від порожньої папки до сайту</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.25fr 1fr">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t"><span class="en">flutter create --platforms web my_videos</span><br>новий проєкт, лише веб</span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t"><span class="en">cd my_videos</span><br><span class="en">flutter pub add youtube_player_flutter</span><br>пакет записується в <span class="en">pubspec.yaml</span></span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t"><span class="en">flutter run -d chrome</span><br>запуск у Chrome, як лічильник</span></div>
+        <div class="step"><span class="step-n">4</span><span class="step-t"><span class="en">flutter build web</span><br>готовий сайт — папка <span class="en">build/web</span>, у ній <span class="en">index.html</span></span></div>
+      </div>
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">pubspec.yaml · після кроку 2</span></div>
+<div class="dp-code">dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^<span class="sn">1</span>.<span class="sn">0</span>.<span class="sn">8</span>
+  youtube_player_flutter: ^<span class="sn">10</span>.<span class="sn">0</span>.<span class="sn">1</span></div>
+<div class="dp-out" style="word-break:break-all"><span class="lbl">У коді</span>import 'package:youtube_player_flutter/youtube_player_flutter.dart';</div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">▶️</div><div>
+      <span class="label lm">Код плеєра</span>
+      <h2>Три нові речі: пульт, initState, плеєр</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+<div class="dp small">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">lib/main.dart · стан екрана · повний код — «Код», останній блок</span></div>
+<div class="dp-code"><span class="sk">int</span> _index = <span class="sn">0</span>;
+<span class="sk">late</span> <span class="sk">final</span> <span class="sk">YoutubePlayerController</span> _controller; <span class="cm">// пульт</span>
+
+@override
+<span class="sk">void</span> <span class="sf">initState</span>() { <span class="cm">// один раз, коли екран зʼявився</span>
+  <span class="sk">super</span>.<span class="sf">initState</span>();
+  _controller = <span class="sk">YoutubePlayerController</span>.<span class="sf">fromVideoId</span>(
+    videoId: videos[_index].id, <span class="cm">// 'lHhRhPV--G0'</span>
+    autoPlay: <span class="sk">false</span>,
+  );
+}
+
+@override
+<span class="sk">void</span> <span class="sf">dispose</span>() { <span class="cm">// екран зник — пульт закрити</span>
+  _controller.<span class="sf">close</span>();
+  <span class="sk">super</span>.<span class="sf">dispose</span>();
+}
+
+<span class="sk">void</span> <span class="sf">_show</span>(<span class="sk">int</span> i) {
+  <span class="sf">setState</span>(() { _index = i; });
+  _controller.<span class="sf">loadVideoById</span>(videoId: videos[i].id);
+}
+<span class="cm">// у children, замість Text(назва):</span>
+<span class="sk">YoutubePlayer</span>(controller: _controller),</div>
+</div>
+      <div>
+        <div class="hbox hm" style="margin-top:0"><b>id</b> — частина посилання після <span class="en">watch?v=</span>. У класі <span class="en">Video</span> зʼявилось поле <span class="en">id</span></div>
+        <div class="hbox"><b>late</b> — «значення буде, але пізніше»: пульт створюється в <span class="en">initState</span></div>
+        <div class="hbox ho"><b>_next</b> і <b>_prev</b> — ті самі межі, що в плейлисті, тільки викликають <span class="en">_show</span></div>
+        <div class="hbox hb"><span class="en">autoPlay: false</span> — браузер не вмикає відео зі звуком без кліку</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🖥️</div><div>
+      <span class="label lb">Показ · 3 хв</span>
+      <h2>Плейлист із плеєром — у браузері</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1fr">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t">Шапка <span class="en">Video 1 / 4</span>, плеєр, назва, дві кнопки — як у практиці 2</span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t">▶ — наступне відео вантажиться в той самий плеєр</span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t">На першому ◀ сіра, на четвертому — ▶</span></div>
+        <div class="step"><span class="step-n">4</span><span class="step-t">Перемотування, пауза, повний екран — з пакета, ми їх не писали</span></div>
+      </div>
+      <div class="card" style="text-align:center">
+        <h3>Готовий застосунок</h3>
+        <p>Зібраний командою <span class="en">flutter build web</span> з коду сторінки «Код»</p>
+        <p class="mt"><a href="app/" target="_blank" rel="noopener" class="nbtn" style="display:inline-block;text-decoration:none">Відкрити ↗</a></p>
+        <p class="note mt">Сайт → 10 клас · Flutter → урок 15 → «Код» → «Відкрити готовий застосунок»</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🎬</div><div>
+      <span class="label lb">Відео · 3 хв</span>
+      <h2>Той самий пакет — у чужому проєкті</h2>
+    </div></div>
+
+    <div class="vid">
+      <iframe src="https://www.youtube-nocookie.com/embed/lNQJNImBsKY?rel=0&amp;enablejsapi=1"
+        title="Flutter Tutorial - How to Play Youtube Videos (youtube_player_flutter)" loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+        ></iframe>
+    </div>
+    <p class="note mt">eclectify University · 2:40 · англійською. Відео старіше за версію 10 — код у ньому трохи інший, див. наступний слайд ·
+      <a href="https://www.youtube.com/watch?v=lNQJNImBsKY" target="_blank" rel="noopener" style="text-decoration:underline">відкрити на YouTube</a> ·
+      як додати пакет: <a href="https://www.youtube.com/watch?v=_tCgIwza9bU" target="_blank" rel="noopener" style="text-decoration:underline">HeyFlutter, 2:32</a></p>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🕰️</div><div>
+      <span class="label lo">Старий і новий код</span>
+      <h2>Чому код із відео не компілюється</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">старі відео і README · до версії 10</span></div>
+<div class="dp-code"><span class="sk">YoutubePlayerController</span>(
+  initialVideoId: <span class="ss">'lHhRhPV--G0'</span>,
+  flags: <span class="sk">const</span> <span class="sk">YoutubePlayerFlags</span>(
+    autoPlay: <span class="sk">false</span>,
+  ),
+);
+_controller.<span class="sf">load</span>(<span class="ss">'_rnZaagadyo'</span>);
+_controller.<span class="sf">dispose</span>();</div>
+</div>
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">версія 10.0.1 · наш код</span></div>
+<div class="dp-code"><span class="sk">YoutubePlayerController</span>.<span class="sf">fromVideoId</span>(
+  videoId: <span class="ss">'lHhRhPV--G0'</span>,
+  autoPlay: <span class="sk">false</span>,
+);
+
+_controller.<span class="sf">loadVideoById</span>(videoId: <span class="ss">'_rnZaagadyo'</span>);
+_controller.<span class="sf">close</span>();</div>
+</div>
+    </div>
+    <div class="hbox hm mt">Пакети оновлюються, і старий приклад ламається: <span class="en">The named parameter 'initialVideoId' isn't defined</span>.
+      Звіряй з <b>версією</b> на pub.dev і з прикладом <span class="en">example/</span> самого пакета</div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">🏦</div><div>
+      <span class="label lp">Банк завдань · для тих, хто закінчив</span>
+      <h2>Ще вісім доробок</h2>
+    </div></div>
+
+    <div class="bank">
+      <div class="bk"><b>1.</b> Лічильник: кнопки <span class="en">-5</span> і <span class="en">+5</span>; «−5» з 3 дає 0, а не <span class="en">-2</span></div>
+      <div class="bk"><b>2.</b> Лічильник: не більше 10, на 10 — <span class="en">+</span> сіра і напис <span class="en">Max</span></div>
+      <div class="bk"><b>3.</b> Лічильник: колір числа — червоний на 0, зелений на 10 (<span class="en">style: TextStyle(color: …)</span>)</div>
+      <div class="bk"><b>4.</b> Плейлист: <span class="en">Icons.first_page</span> — одразу на перше відео</div>
+      <div class="bk"><b>5.</b> Плейлист: <span class="en">Left: 3 min</span> — хвилини від поточного відео до кінця (на другому — 3)</div>
+      <div class="bk"><b>6.</b> Плейлист: під назвою <span class="en">Next: Spacer</span> — назва наступного відео, на останньому — <span class="en">End</span></div>
+      <div class="bk"><b>7.</b> Плейлист: пʼяте відео — свій <span class="en">Video</span> у список; шапка сама стане <span class="en">/ 5</span></div>
+      <div class="bk"><b>8.</b> Плейлист: <span class="en">Icons.shuffle</span> — випадкове відео: <span class="en">Random().nextInt(videos.length)</span> з <span class="en">dart:math</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">⚠️</div><div>
+      <span class="label lo">Пастки</span>
+      <h2>Найчастіші проблеми</h2>
+    </div></div>
+
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t"><b><span class="en">onPressed: _decrement()</span></b> з дужками — <span class="en">has a type of 'void'</span>. Треба без дужок</span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t"><b>Без межі в <span class="en">_next</span></b> — червоний екран <span class="en">RangeError</span>: останній номер <span class="en">length - 1</span></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t"><b><span class="en">Video $_index</span></b> показує <span class="en">0</span> для першого — людині треба <span class="en">${_index + 1}</span></span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t"><b><span class="en">import 'package:youtube_player_flutter/…'</span> у DartPad</b> — пакета там немає, тільки в проєкті</span></div>
+      <div class="step"><span class="step-n">5</span><span class="step-t"><b>Код зі старого відео</b> — <span class="en">initialVideoId</span>, <span class="en">YoutubePlayerFlags</span> у версії 10 вже немає</span></div>
+      <div class="step"><span class="step-n">6</span><span class="step-t"><b>Відео не грає зі звуком саме</b> — браузер чекає кліку, тому <span class="en">autoPlay: false</span></span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>Радіо</h2>
+    </div></div>
+
+    <div class="hbox hm" style="margin-top:0">У <strong>DartPad</strong>. Стартовий код — <a href="kod.html" target="_blank" style="text-decoration:underline"><strong>сторінка «Код»</strong></a> (сайт → урок 15): скопіюй, встав, Run.
+      Код — <strong>повідомленням на платформі</strong> до <strong>11 листопада</strong>, першим рядком — коментар із прізвищем.</div>
+    <div class="steps mt" style="gap:10px">
+      <div class="step"><span class="step-n">1</span><span class="step-t">
+        Метод <span class="en">_prev()</span>: попередня станція, але <b>не раніше першої</b> — так само, як готовий <span class="en">_next()</span></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">
+        У шапці замість <span class="en">Radio</span> — <span class="en">Station 1 / 4</span>: <span class="en">${_index + 1}</span> і <span class="en">${_stations.length}</span></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">
+        <b>Перевір:</b> тричі <span class="en">Next</span> → <span class="en">Station 4 / 4</span>, <span class="en">Rock FM</span>; потім чотири рази <span class="en">Prev</span> → <span class="en">Station 1 / 4</span>, <span class="en">Jazz FM</span></span></div>
+    </div>
+    <div class="tip"><span class="tip-ico">💡</span><span>Місця позначені <span class="en">ДОПИШИ ТУТ</span>. У пункті 2 прибери <span class="en">const</span> перед <span class="en">Text</span> — у тексті тепер змінна</span></div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+  /* відео на іншому слайді — на паузу */
+  document.querySelectorAll('.slide:not(.active) iframe').forEach(f => {
+    try { f.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); } catch (e) {}
+  });
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
