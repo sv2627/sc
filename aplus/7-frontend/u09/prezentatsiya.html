@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Позиціонування · Front-end II · 7 клас · Урок 9</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Front-end II (адаптивна верстка, Grid, за зразком)
+  Клас          7
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · середа 13:25 · к. 309
+  Урок          9 з 36 · 11.11.2026 · перший урок II періоду
+                (04.11 — канікули; урок 9 переїхав на 11.11, резерв 10
+                «Липка шапка і кнопка вгору» знято з дати, sticky —
+                тут ⭐⭐⭐, fixed — у банку; уроки 11+ не рухаються)
+  Тема          Позиціонування (тема 2.9 плану, ядро)
+  Тривалість    45 хв — згадуємо 7 · показ 8 · практика 25 ·
+                передбач/помилки 3 · ДЗ 2
+  Акцент        blue (#0253b3) — --accent:var(--blue), як уроки 1–8
+  Слайдів       21 (s0…s20) · sN = id, людський номер на 1 більший
+  CSS           копія u08 + блок «ДОДАНО ДЛЯ УРОКУ 9» (живі демо
+                position на слайдах: .pz, .mc, .bdg, .zq, .sbox)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. VS Code + Chrome DevTools. Інтернет — лише для
+     картинок picsum у каталозі (вже є з уроку 8).
+  ПЛАН          office/plany/03-frontend-7.md, тема 2.9: position:
+                relative на картці, absolute на бейджі «-30%», top /
+                right, z-index, правило «absolute шукає найближчого
+                relative». Артефакт — картка товару з бейджем у кутку.
+                З 2.10 взято тільки sticky-шапку (⭐⭐⭐, крок 4) і
+                fixed-кнопку «вгору» (банк, картка 3).
+  ПОВНА РОДИНА  s5 — усі п'ять значень position (static, relative,
+                absolute, fixed, sticky) і чотири координати.
+  ────────────────────────────────────────────────────────────────
+  ЗГАДУЄМО      s2 ДЗ на канікули — код і відповідь на слайді
+                s3 полиця книжок (ДЗ уроку 8) + швидкі питання Grid
+  НОВЕ          s4 задача · s5 родина · s6 relative · s9 absolute ·
+                s12 z-index · s15 sticky (живий скрол на слайді)
+  ПРАКТИКА      s7  рівні ⭐ / ⭐⭐ / ⭐⭐⭐ — що має вийти
+                s8  крок 1  папка u09, relative-експеримент   4 хв
+                s10 крок 2  бейдж «-30%» на картці             9 хв
+                s13 крок 3  другий бейдж і z-index             6 хв
+                s16 крок 4  ⭐⭐⭐ липка шапка                    6 хв
+                разом 25 хв + передбач s11, помилки s17 (≈3 хв)
+                s14 довідник · s18 банк · s19 перевір і здай
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ПРИ БРАКУ ЧАСУ: знімати s3 (питання), s11 (передбач), s17
+     (помилки), s18 (банк). НЕ різати: s2 (звірка ДЗ), s8, s10, s13
+     (кроки), s14 (довідник), s19 (перевір і здай), s20 (ДЗ).
+  ⛔ ЧОГО ТУТ СВІДОМО НЕМАЄ: transform і transition (урок 11), тому
+     «бейдж рівно по центру» лише як питання в банку; Flexbox,
+     grid-template-areas; @media; Emmet (рішення 26.09); Git.
+  ⚠️ Оцінювання — тільки в конспекті.
+  ────────────────────────────────────────────────────────────────
+  Роздатка      rozdatka.html — лише для сховища, у класі не роздається
+  ДЗ            dz.html — ті самі пункти, що на s20; код — kod.html
+                (кнопка «Скопіювати»), здача — Google Classroom 7 кл.
+                до 18.11 (урок 11)
+  Конспект      2026-27-teacher/aplus/7-frontend/u09/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+.dp-out h1{font-size:1.9rem;color:var(--ink);font-family:var(--f-head)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово / тег */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* атрибут / селектор */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:18px 22px;white-space:pre}
+.tree b{color:var(--accent);font-weight:700}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:#9c5b00;
+               background:#fdf0d9;border:1.5px solid #f2ddb5;
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:29px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--ink)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 1: макет «два екрани» (слайд 6) і лічильники ═══ */
+.scrs{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
+.scr-cap{font-family:var(--f-mono);font-size:16px;color:var(--dim);text-align:center;margin-bottom:8px}
+.scr-win{border:2px solid var(--border);border-radius:10px;background:var(--surface);
+         padding:11px;overflow:hidden;box-shadow:0 1px 3px rgba(89,20,41,.06)}
+.scr-win.bad{border-color:var(--rose)}
+.scr-bar{height:15px;border-radius:5px;background:var(--sky);margin-bottom:10px}
+.scr-cards{display:flex;gap:8px}
+.scr-cards .blk{height:60px;border-radius:7px;background:var(--pink);flex:1 0 90px}
+.scr-line{height:9px;border-radius:5px;background:var(--border);margin-top:10px}
+.scr-line.s{width:58%}
+.scr-win.bad .scr-cards{width:235%}
+.scr-tag{font-family:var(--f-mono);font-size:16px;text-align:center;margin-top:10px;color:var(--dim)}
+.scr-tag.bad{color:var(--rose);font-weight:700}
+.nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center}
+.num{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:18px 12px;
+     box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.num b{display:block;font-family:var(--f-mono);font-size:2.3rem;color:var(--accent);line-height:1.2}
+.num span{display:block;font-size:17px;color:var(--dim);margin-top:6px}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:17px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:6px 14px;flex-shrink:0}
+.prac-lead{font-size:18px;line-height:1.65;color:var(--dim);margin-bottom:13px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+.tri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:stretch}
+.pc{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:12px 15px;font-family:var(--f-mono);font-size:16px;line-height:1.65;white-space:pre-wrap}
+.pc b{color:var(--brand)}
+.pc .lbl{font-family:var(--f-body);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--faint);display:block;margin-bottom:7px}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 13px;font-size:17px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3: «приклад → тепер самостійно» ─── */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4: живі мініатюри сітки й довідник ─── */
+/* .gd — справжній display:grid на слайді: учень бачить результат коду */
+.gd{display:grid;gap:10px;background:var(--surface);border:1.5px solid var(--border);
+    border-radius:12px;padding:12px}
+.gd .c{background:var(--sky);border:1.5px solid #b9c8e6;border-radius:8px;min-height:50px;
+    display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);
+    font-weight:700;font-size:16px;color:var(--blue)}
+.gd .c.p{background:#fbe3e8;border-color:var(--pink);color:var(--brand)}
+.gd.sm .c{min-height:38px;font-size:14.5px}
+/* .fx — той самий набір карток у Flexbox із переносом, для порівняння */
+.fx{display:flex;flex-wrap:wrap;gap:10px;background:var(--surface);border:1.5px solid var(--border);
+    border-radius:12px;padding:12px}
+.fx .c{flex:1 0 26%;background:var(--sky);border:1.5px solid #b9c8e6;border-radius:8px;min-height:50px;
+    display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);
+    font-weight:700;font-size:16px;color:var(--blue)}
+.gcap{font-family:var(--f-mono);font-size:15px;color:var(--dim);text-align:center;margin:7px 0 0}
+.gcap.bad{color:var(--rose);font-weight:700}
+.over{overflow:hidden;border:2px solid var(--rose);border-radius:12px;padding:8px}
+/* довідник властивостей — слайд 19 */
+.refg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rf{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+    padding:8px 12px;display:flex;align-items:baseline;gap:10px}
+.rf .rt{font-size:15px;color:var(--dim);flex:0 0 150px;line-height:1.3}
+.rf .rc{font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--brand);
+        line-height:1.35;flex:1}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 5: нового CSS немає — живі мініатюри .gd з уроку 4,
+   span і лінії задано інлайн-стилем на самих комірках (учень бачить
+   справжній результат правила). ─── */
+
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6: практична — макет-зразок, смужка «Швидше», чек-лист ─── */
+/* смужка-підказка біля кожного кроку */
+.hint{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px;margin-top:9px;
+  padding:6px 14px;border-radius:10px;background:#fdf3e2;border:1.5px solid #f2ddb5;font-size:16px;line-height:1.4;color:var(--ink)}
+.hint .hk{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.3px;
+  text-transform:uppercase;color:#9c5b00}
+.hint code{font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+kbd{font-family:var(--f-mono);font-size:.9em;background:var(--surface);border:1px solid var(--border);
+  border-bottom-width:3px;border-radius:7px;padding:1px 8px;white-space:nowrap}
+/* макет готової сторінки-каталогу */
+.mock{background:#fff;border:1.5px solid var(--border);border-radius:13px;overflow:hidden;
+  box-shadow:0 2px 10px rgba(89,20,41,.07)}
+.mock .m-hd{background:var(--brand);color:#fff;padding:10px 16px;display:flex;justify-content:space-between;
+  align-items:center;font-size:16px;font-weight:800}
+.mock .m-hd span{font-weight:600;font-size:14.5px;opacity:.95}
+.mock .m-body{padding:12px 16px 14px}
+.mock .m-h1{font-family:var(--f-head);font-size:22px;font-weight:800;color:var(--ink);margin-bottom:8px}
+.mock .gd{padding:0;border:0;gap:8px}
+.mock .gd .c{min-height:54px;flex-direction:column;font-size:13.5px;line-height:1.3}
+.mock .gd .c small{font-weight:400;color:var(--dim);font-size:12.5px}
+.mock .m-ft{border-top:1.5px solid var(--border);padding:7px 16px;font-size:13px;color:var(--dim)}
+/* чек-лист самоперевірки */
+.chk{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+.ck{display:flex;align-items:flex-start;gap:11px;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:10px;padding:9px 13px;font-size:17px;line-height:1.45;color:var(--ink)}
+.ck .bx{flex-shrink:0;width:22px;height:22px;border:2.5px solid var(--blue);border-radius:5px;margin-top:2px}
+.ck .st{flex-shrink:0;font-size:14px;letter-spacing:1px;min-width:44px;margin-top:2px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 7: нового CSS немає — лише класи уроків 1–6 ─── */
+/* ─── ДОДАНО ДЛЯ УРОКУ 8: нового CSS немає — лише класи уроків 1–6 ─── */
+/* ─── ДОДАНО ДЛЯ УРОКУ 9: живі демо позиціонування ───
+   Усе тут — справжній position на слайді: учень бачить результат
+   того самого правила, яке пише. Кольори — лише токени палітри. */
+/* .pz — «сторінка» для демо; сама relative, щоб нічого не втекло зі слайда */
+.pz{position:relative;background:var(--surface);border:1.5px solid var(--border);
+    border-radius:12px;padding:14px;min-height:150px}
+.pz-cap{position:absolute;left:12px;bottom:6px;font-family:var(--f-mono);font-size:13px;color:var(--faint)}
+/* рядок із трьох блоків для relative */
+.prow{display:flex;gap:12px}
+.pb{width:110px;height:64px;border-radius:9px;background:var(--sky);border:1.5px solid #b9c8e6;
+    display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);
+    font-weight:700;font-size:15px;color:var(--blue)}
+.pb.mv{position:relative;top:22px;left:34px;background:#fbe3e8;border-color:var(--pink);color:var(--brand);z-index:1}
+.pb.ghost{position:absolute;background:transparent;border:2px dashed var(--faint);color:var(--faint);font-weight:400}
+/* міні-картка товару */
+.mc{background:var(--surface);border:2px solid var(--blue);border-radius:10px;
+    width:190px;padding:8px;font-size:14.5px;line-height:1.35;color:var(--ink)}
+.mc.rel{position:relative}
+.mc .im{height:70px;border-radius:6px;background:var(--sky);margin-bottom:6px;
+    display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+.mc b{display:block;font-family:var(--f-head);font-size:15px;color:var(--ink)}
+.bdg{position:absolute;top:8px;right:8px;background:var(--rose);color:#fff;
+     font-family:var(--f-mono);font-weight:700;font-size:13px;padding:3px 8px;border-radius:6px}
+.bdg.nw{background:#1c6b4e;right:auto;left:8px}
+.bdg.inl{position:static;display:inline-block;margin:4px 0}
+/* z-index: три квадрати внахлест */
+.zq{position:relative;height:190px}
+.zq span{position:absolute;width:120px;height:120px;border-radius:12px;border:2px solid var(--ink);
+    display:flex;align-items:flex-start;justify-content:flex-start;padding:7px 9px;
+    font-family:var(--f-mono);font-weight:700;font-size:14.5px;color:var(--ink)}
+/* скрол-вікно для sticky: шапка справді прилипає, якщо гортати колесом */
+.sbox{height:250px;overflow:auto;border:2px solid var(--blue);border-radius:12px;background:var(--surface)}
+.sbox .sh2{position:sticky;top:0;z-index:2;background:var(--brand);color:#fff;
+    padding:9px 14px;font-weight:800;font-size:15.5px}
+.sbox .ln2{margin:9px 14px;height:30px;border-radius:7px;background:var(--surf2);border:1px solid var(--border);
+    font-family:var(--f-mono);font-size:13px;color:var(--dim);display:flex;align-items:center;padding:0 10px}
+.ptab td,.ptab th{padding:7px 12px}
+.ptab td:first-child{font-family:var(--f-mono);font-weight:700;color:var(--brand);white-space:nowrap}
+@media print{.sbox{height:auto;overflow:visible}}
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem}
+  .card{padding:14px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .prac{padding:13px 17px} .demo,.solo{padding:10px 13px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .mono{font-size:15px;line-height:1.55}
+  .pc{font-size:15px;line-height:1.55}
+  .tbl th,.tbl td{padding:6px 11px;font-size:15.5px}
+  .bk{padding:9px 12px;font-size:15px}
+  .lv{padding:9px 13px} .lv-t{font-size:16px}
+  .tip{font-size:16px;padding:10px 13px;margin:8px 0}
+  .hbox{font-size:16px;padding:10px 14px}
+  .step{padding:10px 14px} .step-t{font-size:16px}
+  .ck{font-size:15.5px;padding:7px 11px}
+  .sbox{height:215px} .zq{height:170px}
+  .title-h1{font-size:2.7rem}
+}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Позиціонування</h1>
+      <p class="title-sub">Бейдж «-30%» у кутку картки — і шапка, що не зникає<br>
+        Front-end II · 7 клас · Урок 9 з 36 · 11 листопада</p>
+      <div class="chips">
+        <span class="chip">position</span>
+        <span class="chip">relative + absolute</span>
+        <span class="chip">top · right · bottom · left</span>
+        <span class="chip">z-index</span>
+        <span class="chip">⭐⭐⭐ sticky</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 · СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lb">Сьогодні</span>
+      <h2>Каталог із бейджами</h2>
+    </div></div>
+    <div class="two">
+      <div class="themes">
+        <div class="th"><span class="th-n">1</span><span class="th-t"><b>Згадуємо</b> — домашнє на канікули й полиця книжок</span><span class="th-h">7 хв</span></div>
+        <div class="th"><span class="th-n">2</span><span class="th-t"><b>position</b> — п'ять значень, relative і absolute</span><span class="th-h">8 хв</span></div>
+        <div class="th"><span class="th-n">3</span><span class="th-t"><b>Практика</b> — бейджі на картках, z-index, липка шапка</span><span class="th-h">25 хв</span></div>
+        <div class="th"><span class="th-n">4</span><span class="th-t"><b>Перевір і здай</b> · домашнє</span><span class="th-h">5 хв</span></div>
+      </div>
+      <div class="pz" style="display:flex;gap:14px;justify-content:center;padding:20px 14px 30px" role="img" aria-label="Дві картки каталогу: у правому верхньому куті бейдж -30%, у лівому — NEW">
+        <div class="mc rel"><div class="im">🎮</div><b>Minecraft</b>499 грн<span class="bdg">-30%</span></div>
+        <div class="mc rel"><div class="im">🚀</div><b>Portal 2</b>199 грн<span class="bdg nw">NEW</span></div>
+        <span class="pz-cap">так буде в кінці уроку</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 · ЗГАДУЄМО: ДЗ НА КАНІКУЛИ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🏖️</div><div>
+      <span class="label lo">Домашнє на канікули · звіряємо</span>
+      <h2>Каталог на свою тему</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t"><span class="ic">header</span> з <span class="ic">nav</span> (3 посилання), <span class="ic">main</span> з одним <span class="ic">h1</span> і <span class="ic">div.gallery</span> із шести <span class="ic">article</span>, <span class="ic">footer</span></span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t"><span class="ic">.gallery</span> — три однакові колонки, проміжок <span class="ic">1rem</span>. Перша картка — на дві колонки. <span class="ic">main</span> — 80 %, по центру</span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t">⭐⭐⭐ <span class="ic">h2</span> усередині <span class="ic">.gallery</span> — на всю ширину сітки</span></div>
+      </div>
+      <div class="card cm reveal">
+        <h3>CSS — один правильний варіант</h3>
+        <p class="rv-hint">Звір зі своїм — потім клацни.</p>
+        <div class="rv-body">
+          <div class="pc" style="font-size:15.5px">.gallery {
+  <b>display</b>: grid;
+  <b>grid-template-columns</b>: repeat(3, 1fr);
+  <b>gap</b>: 1rem;
+}
+.wide { <b>grid-column</b>: span 2; }
+main { <b>width</b>: 80%; <b>margin</b>: 0 auto; }
+.gallery h2 { <b>grid-column</b>: 1 / -1; }</div>
+          <p style="margin-top:8px">Перша картка — <span class="ic">&lt;article class="wide"&gt;</span></p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 · ЗГАДУЄМО: ПОЛИЦЯ І ШВИДКІ ПИТАННЯ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">⚡</div><div>
+      <span class="label lo">Домашнє уроку 8 · швидкі питання</span>
+      <h2>Полиця книжок і Grid</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="pc">.shelf {
+  display: grid;
+  <span class="cm">/* ДОПИШИ ТУТ 1: дві колонки */</span>
+  <span class="cm">/* ДОПИШИ ТУТ 2: проміжок 1.5rem */</span>
+}</div>
+        <div class="card cm reveal mt">
+          <h3>Що дописати в 1 і 2?</h3>
+          <p class="rv-hint">Скажи вголос — потім клацни.</p>
+          <div class="rv-body"><p><span class="ic">grid-template-columns: repeat(2, 1fr);</span><br><span class="ic">gap: 1.5rem;</span> — 4 книжки = 2 рядки по 2</p></div>
+        </div>
+      </div>
+      <div>
+        <div class="card cp reveal">
+          <h3><span class="ic">gap: 1.5rem</span> — скільки пікселів?</h3>
+          <p class="rv-hint">Порахуй — потім клацни.</p>
+          <div class="rv-body"><p><b>24px</b> — 1.5 × 16</p></div>
+        </div>
+        <div class="card reveal mt">
+          <h3>Полиця вужча за вікно, порожньо однаково зліва й справа. Яке правило?</h3>
+          <p class="rv-hint">Клацни для відповіді.</p>
+          <div class="rv-body"><p><span class="ic">main { width: 80%; margin: 0 auto; }</span></p></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 · ЗАДАЧА ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🏷️</div><div>
+      <span class="label lb">Задача уроку</span>
+      <h2>Як поставити бейдж на картинку?</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <p class="gcap" style="text-align:left;margin:0 0 6px">Зараз: бейдж стоїть у рядок, між іншими тегами</p>
+        <div class="pz" style="min-height:0;padding:14px">
+          <div class="mc"><div class="im">🎮</div><span class="bdg inl">-30%</span><b>Minecraft</b>499 грн</div>
+        </div>
+      </div>
+      <div>
+        <p class="gcap" style="text-align:left;margin:0 0 6px">Треба: бейдж лежить <b>над</b> картинкою, у кутку</p>
+        <div class="pz" style="min-height:0;padding:14px">
+          <div class="mc rel"><div class="im">🎮</div><b>Minecraft</b>499 грн<span class="bdg">-30%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card cp reveal mt">
+      <h3>Чому Grid і <span class="ic">margin</span> тут не допоможуть?</h3>
+      <p class="rv-hint">Подумай — потім клацни.</p>
+      <div class="rv-body"><p>Grid і <span class="ic">margin</span> ставлять теги <b>поруч</b> або один під одним. А бейдж має лягти <b>поверх</b> картинки — для цього є <span class="ic">position</span></p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 · РОДИНА POSITION ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🧭</div><div>
+      <span class="label lb">Уся родина</span>
+      <h2>П'ять значень <span class="ic">position</span></h2>
+    </div></div>
+    <table class="tbl ptab">
+      <tr><th>Значення</th><th>Що робить</th><th>Де трапляється</th></tr>
+      <tr><td>static</td><td>стоїть на своєму місці, як завжди. Так — у всіх тегів</td><td>усе, що ти верстав досі</td></tr>
+      <tr><td>relative</td><td>зсувається від <b>свого</b> місця; місце лишається за ним</td><td>картка — «якір» для бейджа</td></tr>
+      <tr><td>absolute</td><td>виходить з потоку й стає <b>поверх</b>; рахує від найближчого <span class="ic">relative</span></td><td>бейдж «-30%», підпис на фото</td></tr>
+      <tr><td>fixed</td><td>прибитий до <b>вікна</b>, не гортається</td><td>кнопка «вгору», чат у кутку</td></tr>
+      <tr><td>sticky</td><td>їде зі сторінкою, а потім <b>прилипає</b></td><td>шапка, що не зникає</td></tr>
+    </table>
+    <div class="hbox mt">Координати <span class="ic">top</span> · <span class="ic">right</span> · <span class="ic">bottom</span> · <span class="ic">left</span> — відстань від краю. Для <span class="ic">static</span> вони <b>не працюють</b></div>
+  </div></section>
+
+  <!-- ══════════ 7 · RELATIVE ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">↘️</div><div>
+      <span class="label lb">position: relative</span>
+      <h2>Зсув від свого місця</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">style.css</span></div>
+          <div class="dp-code"><span class="st">.b2</span> {
+  position: <span class="ss">relative</span>;
+  top: <span class="sn">22px</span>;   <span class="cm">/* вниз від верху */</span>
+  left: <span class="sn">34px</span>;  <span class="cm">/* вправо від лівого краю */</span>
+}</div>
+        </div>
+        <div class="tip"><span class="tip-ico">💡</span><div><span class="ic">top: 22px</span> — <b>відсунути</b> від верхнього краю, тобто вниз. <span class="ic">left</span> — від лівого, тобто вправо</div></div>
+      </div>
+      <div>
+        <div class="pz" style="min-height:140px">
+          <div class="prow" style="position:relative">
+            <span class="pb">1</span>
+            <span class="pb ghost" style="left:122px;top:0;width:110px;height:64px">тут був 2</span>
+            <span class="pb mv">2</span>
+            <span class="pb">3</span>
+          </div>
+          <span class="pz-cap">живий результат</span>
+        </div>
+        <div class="card cm reveal mt">
+          <h3>Блок 3 посунувся, щоб зайняти місце?</h3>
+          <p class="rv-hint">Подивись на демо — потім клацни.</p>
+          <div class="rv-body"><p><b>Ні.</b> Місце блоку 2 лишається порожнім, сусіди стоять, як стояли</p></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 · РІВНІ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Що має вийти</span>
+        <span class="t">Каталог із бейджами · рівні</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span>
+          <span class="lv-t">Одна картка з бейджем у <b>правому верхньому</b> куті: <span class="ic">relative</span> на картці, <span class="ic">absolute</span> на бейджі, <span class="ic">top</span> і <span class="ic">right</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span>
+          <span class="lv-t">Усе з ⭐, плюс: бейджі на <b>трьох</b> картках; у однієї — два бейджі в різних кутах; <span class="ic">z-index</span> вирішує, хто зверху</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+          <span class="lv-t">Усе з ⭐⭐, плюс: <b>липка шапка</b> — <span class="ic">sticky</span>, <span class="ic">top: 0</span>, фон і <span class="ic">z-index</span> над бейджами. Пояснюєш, навіщо картці <span class="ic">relative</span></span></div>
+      </div>
+      <div class="tip mt" style="margin-bottom:0"><span class="tip-ico">💡</span>
+        <div>Каталогу з уроку 8 немає? Нова папка <span class="ic">u09</span>: <span class="ic">catalog.html</span> з <span class="ic">.gallery</span> на три картки — і далі за кроками.</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 · КРОК 1 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Крок 1 з 4</span>
+        <span class="t">Папка u09 і перший зсув</span><span class="ptime">4 хвилини</span></div>
+      <div class="two">
+        <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+          <div class="mono">u08/   <span style="color:var(--dim)">← не чіпаємо</span>
+u09/   <span style="color:var(--dim)">← копія u08</span>
+  catalog.html
+  style.css
+
+&lt;article class="card <b>try</b>"&gt;
+
+.try {
+  position: relative;
+  top: 20px;
+  left: 30px;
+}</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Скопіюй папку <span class="ic">u08</span> → <span class="ic">u09</span>. Немає? Копіюй <span class="ic">u07</span></li>
+            <li>Першій картці допиши другий клас: <span class="ic">class="card try"</span></li>
+            <li>Правило <span class="ic">.try</span>, як у прикладі. <kbd>Ctrl</kbd>+<kbd>S</kbd> → <kbd>F5</kbd>: куди поїхала картка?</li>
+            <li>Сусідні картки зрушили з місця?</li>
+            <li>Заміни <span class="ic">top: 20px</span> на <span class="ic">top: -20px</span>. Куди тепер?</li>
+            <li>⭐⭐ Прибери <span class="ic">position: relative;</span>, лиш <span class="ic">top</span> і <span class="ic">left</span>. Що сталося? Потім видали <span class="ic">.try</span> зовсім</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 · ABSOLUTE ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">📌</div><div>
+      <span class="label lb">position: absolute</span>
+      <h2>Absolute шукає найближчого relative</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">style.css</span></div>
+          <div class="dp-code"><span class="st">.card</span> {
+  position: <span class="ss">relative</span>;  <span class="cm">/* якір */</span>
+}
+<span class="st">.badge</span> {
+  position: <span class="ss">absolute</span>;
+  top: <span class="sn">8px</span>;
+  right: <span class="sn">8px</span>;
+}</div>
+        </div>
+        <div class="hbox hm">Бейдж <b>виходить з потоку</b>: інші теги його не бачать і стають так, ніби бейджа немає</div>
+      </div>
+      <div>
+        <div class="pz" style="padding:14px 14px 30px">
+          <div class="mc rel"><div class="im">🎮</div><b>Minecraft</b>499 грн<span class="bdg">-30%</span></div>
+          <span class="pz-cap">у .card є relative — бейдж у кутку картки</span>
+        </div>
+        <div class="pz mt" style="padding:14px 14px 30px">
+          <div class="mc"><div class="im">🎮</div><b>Minecraft</b>499 грн<span class="bdg">-30%</span></div>
+          <span class="pz-cap">relative немає — бейдж утік у кут сторінки</span>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 · КРОК 2 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Крок 2 з 4</span>
+        <span class="t">Бейдж «-30%» на картці</span><span class="ptime">9 хвилин</span></div>
+      <div class="two">
+        <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — одна картка</span>
+          <div class="mono" style="font-size:15px">&lt;article class="card"&gt;
+  &lt;img src="…" alt="Minecraft"&gt;
+  <b>&lt;span class="badge"&gt;-30%&lt;/span&gt;</b>
+  &lt;h3&gt;Minecraft&lt;/h3&gt;
+  &lt;p&gt;499 грн&lt;/p&gt;
+&lt;/article&gt;
+
+.card  { position: relative; }
+.badge {
+  position: absolute;
+  top: 8px;  right: 8px;
+  background: #af3b41;  color: white;
+  padding: 0.2rem 0.5rem;
+}</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>У першу картку — <span class="ic">span.badge</span> «-30%», як у прикладі</li>
+            <li>Правило <span class="ic">.badge</span>: <span class="ic">absolute</span>, <span class="ic">top</span> і <span class="ic">right</span>, свій колір. Де бейдж?</li>
+            <li>Бейдж утік у кут сторінки? Чого бракує <span class="ic">.card</span>?</li>
+            <li>Ще дві картки з бейджами: «-50%», «ХІТ». Копія рядка — <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>↓</kbd></li>
+            <li>⭐⭐ Бейдж у <b>нижньому лівому</b> куті: <span class="ic">bottom</span> і <span class="ic">left</span></li>
+            <li>⭐⭐⭐ <span class="ic">border-radius: 50%</span>, однакові <span class="ic">width</span> і <span class="ic">height</span> — круглий бейдж</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 · ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lp">Передбач</span>
+      <h2>Де опиниться бейдж?</h2>
+    </div></div>
+    <p class="note" style="margin:-6px 0 12px">У <span class="ic">.card</span> є <span class="ic">position: relative</span>, у <span class="ic">.badge</span> — <span class="ic">position: absolute</span> і ще:</p>
+    <div class="two">
+      <div class="card reveal">
+        <h3><span class="ic">top: 0; left: 0;</span></h3>
+        <p class="rv-hint">Покажи рукою — потім клацни.</p>
+        <div class="rv-body"><p>Лівий <b>верхній</b> кут картки, впритул</p></div>
+      </div>
+      <div class="card cm reveal">
+        <h3><span class="ic">bottom: 10px; right: 10px;</span></h3>
+        <p class="rv-hint">Покажи рукою — потім клацни.</p>
+        <div class="rv-body"><p>Правий <b>нижній</b> кут, 10px від країв</p></div>
+      </div>
+      <div class="card cp reveal">
+        <h3><span class="ic">top: -10px; right: -10px;</span></h3>
+        <p class="rv-hint">Покажи рукою — потім клацни.</p>
+        <div class="rv-body"><p>Правий верхній кут, але <b>вилазить</b> за край картки на 10px</p></div>
+      </div>
+      <div class="card co reveal">
+        <h3>У <span class="ic">.card</span> стерли <span class="ic">relative</span>, лишилось <span class="ic">top: 0; right: 0;</span></h3>
+        <p class="rv-hint">Покажи рукою — потім клацни.</p>
+        <div class="rv-body"><p>Правий верхній кут <b>сторінки</b> — якоря немає, бейдж шукає далі</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 · Z-INDEX ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🥞</div><div>
+      <span class="label lb">z-index</span>
+      <h2>Хто над ким</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="pz">
+          <div class="zq">
+            <span style="left:10px;top:10px;background:var(--sky);z-index:1">A · 1</span>
+            <span style="left:80px;top:40px;background:#fbe3e8;z-index:3">B · 3</span>
+            <span style="left:150px;top:20px;background:#fdf0d9;z-index:2">C · 2</span>
+          </div>
+        </div>
+        <div class="pc mt" style="font-size:15.5px">.a { position: absolute; <b>z-index</b>: 1; }
+.b { position: absolute; <b>z-index</b>: 3; }
+.c { position: absolute; <b>z-index</b>: 2; }</div>
+      </div>
+      <div>
+        <div class="steps">
+          <div class="step"><span class="step-n">1</span><span class="step-t">Більше число — <b>вище</b>. Просто число, без <span class="ic">px</span></span></div>
+          <div class="step"><span class="step-n">2</span><span class="step-t"><span class="ic">z-index</span> однаковий або немає — вище той, хто <b>нижче в HTML</b></span></div>
+          <div class="step"><span class="step-n">3</span><span class="step-t">Працює тільки з <span class="ic">position</span>: relative, absolute, fixed, sticky</span></div>
+        </div>
+        <div class="card cp reveal mt">
+          <h3>C має стати над B. Що змінити?</h3>
+          <p class="rv-hint">Скажи число — потім клацни.</p>
+          <div class="rv-body"><p>Будь-яке число, більше за 3: <span class="ic">.c { z-index: 4; }</span></p></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 · КРОК 3 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Крок 3 з 4</span>
+        <span class="t">Другий бейдж і z-index</span><span class="ptime">6 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — два бейджі в одній картці</span>
+        <div class="mono">&lt;span class="badge"&gt;-30%&lt;/span&gt;
+&lt;span class="badge <b>new</b>"&gt;NEW&lt;/span&gt;
+
+.new { top: 20px;  right: 20px;  background: green;  <b>z-index: 2</b>; }</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>У картку з «-30%» — другий бейдж <span class="ic">class="badge new"</span>. Обидва в одному куті, внахлест</li>
+          <li>Хто зверху без <span class="ic">z-index</span>? Поміняй два <span class="ic">span</span> місцями в HTML — що змінилось?</li>
+          <li><span class="ic">.new</span> — <span class="ic">z-index: 2</span>, а <span class="ic">.badge</span> — <span class="ic">z-index: 1</span>. Хто тепер зверху?</li>
+          <li>Розведи їх: «NEW» — у лівий верхній кут (<span class="ic">left</span> замість <span class="ic">right</span>; <span class="ic">right: auto</span>)</li>
+          <li>⭐⭐ F12 → Elements → <span class="ic">.badge</span>: у Styles міняй <span class="ic">top</span> стрілками ↑ ↓</li>
+          <li>⭐⭐⭐ Перша картка — <span class="ic">wide</span>: бейдж і там у кутку, а не посередині?</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 · ДОВІДНИК ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lo">Довідник — лишається на дошці</span>
+      <h2>Позиціонування на одному екрані</h2>
+    </div></div>
+    <div class="refg">
+      <div class="rf"><span class="rt">Якір для бейджа</span><span class="rc">.card { position: relative; }</span></div>
+      <div class="rf"><span class="rt">Бейдж поверх</span><span class="rc">.badge { position: absolute; }</span></div>
+      <div class="rf"><span class="rt">Правий верхній кут</span><span class="rc">top: 8px; right: 8px;</span></div>
+      <div class="rf"><span class="rt">Лівий нижній кут</span><span class="rc">bottom: 8px; left: 8px;</span></div>
+      <div class="rf"><span class="rt">Зсув від свого місця</span><span class="rc">position: relative; top: 20px;</span></div>
+      <div class="rf"><span class="rt">Вилізти за край</span><span class="rc">top: -10px; right: -10px;</span></div>
+      <div class="rf"><span class="rt">Хто вище</span><span class="rc">z-index: 2;   /* без px */</span></div>
+      <div class="rf"><span class="rt">Прибитий до вікна</span><span class="rc">position: fixed; bottom: 1rem;</span></div>
+      <div class="rf"><span class="rt">Липка шапка</span><span class="rc">position: sticky; top: 0;</span></div>
+      <div class="rf"><span class="rt">Як завжди</span><span class="rc">position: static;</span></div>
+    </div>
+    <p class="note mt">F12 → Elements → Styles: значення <span class="ic">top</span> міняється стрілками <kbd>↑</kbd> <kbd>↓</kbd> · <kbd>Ctrl</kbd>+<kbd>S</kbd> → <kbd>F5</kbd></p>
+  </div></section>
+
+  <!-- ══════════ 16 · STICKY ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🧲</div><div>
+      <span class="label lb">position: sticky</span>
+      <h2>Шапка, що прилипає</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">style.css</span></div>
+          <div class="dp-code"><span class="sk">header</span> {
+  position: <span class="ss">sticky</span>;
+  top: <span class="sn">0</span>;          <span class="cm">/* де прилипнути */</span>
+  z-index: <span class="sn">10</span>;     <span class="cm">/* над бейджами */</span>
+  background: <span class="ss">#e2e7f6</span>; <span class="cm">/* не прозора */</span>
+}</div>
+        </div>
+        <div class="tip to"><span class="tip-ico">⚠️</span><div>Без <span class="ic">top</span> — не прилипає. Без фону — текст просвічує. Без <span class="ic">z-index</span> — бейджі їдуть <b>поверх</b> шапки</div></div>
+      </div>
+      <div>
+        <div class="sbox" tabindex="0" aria-label="Демо: гортай вікно — шапка лишається вгорі">
+          <div class="ln2">тут був вступ над шапкою</div>
+          <div class="sh2">GameStore · Головна · Каталог · Контакти</div>
+          <div class="ln2">картка 1</div><div class="ln2">картка 2</div><div class="ln2">картка 3</div>
+          <div class="ln2">картка 4</div><div class="ln2">картка 5</div><div class="ln2">картка 6</div>
+          <div class="ln2">картка 7</div><div class="ln2">картка 8</div><div class="ln2">картка 9</div>
+          <div class="ln2">footer · © 2026</div>
+        </div>
+        <p class="gcap">Гортай вікно колесом — шапка їде, а потім прилипає</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 · КРОК 4 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Крок 4 · ⭐⭐⭐</span>
+        <span class="t">Липка шапка каталогу</span><span class="ptime">6 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад</span>
+        <div class="mono">header { position: sticky;  top: 0;  z-index: 10;  background: #e2e7f6; }</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Карток мало й сторінка не гортається? Додай ще 6 — <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>↓</kbd></li>
+          <li>Правило для <span class="ic">header</span>, як у прикладі. Гортай: шапка лишилась угорі?</li>
+          <li>Прибери <span class="ic">z-index: 10</span> і гортай: що роблять бейджі біля шапки? Поверни</li>
+          <li>Прибери <span class="ic">background</span>: що видно крізь шапку? Поверни</li>
+          <li>Заміни <span class="ic">sticky</span> на <span class="ic">fixed</span>: що сталося з <span class="ic">h1</span> під шапкою? Поверни</li>
+          <li>Не на ⭐⭐⭐? Доробляй кроки 2–3: бейджі на <b>трьох</b> картках, «NEW» в іншому куті</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 · ЗНАЙДИ ПОМИЛКИ ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🔎</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Бейджі не там. Знайди чотири помилки</h2>
+    </div></div>
+    <div class="two">
+      <div class="pc"><span style="color:var(--dim)">1</span>  .card { position: relativ; }
+<span style="color:var(--dim)">2</span>  .badge {
+<span style="color:var(--dim)">3</span>    position: absolute;
+<span style="color:var(--dim)">4</span>    top: 8;
+<span style="color:var(--dim)">5</span>    right: 8px;
+<span style="color:var(--dim)">6</span>    z-index: 5px;
+<span style="color:var(--dim)">7</span>  }
+<span style="color:var(--dim)">8</span>  header { position: sticky; }</div>
+      <div class="card cp reveal">
+        <h3>Назви всі чотири з номером рядка</h3>
+        <p class="rv-hint">Знайди всі чотири, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">relative</span> — з <b>e</b> у кінці. Без якоря бейдж тікає</p>
+          <p><b>4.</b> Немає одиниці: <span class="ic">8px</span></p>
+          <p><b>6.</b> <span class="ic">z-index</span> — просто число: <span class="ic">5</span></p>
+          <p><b>8.</b> Немає <span class="ic">top: 0;</span> — шапка не прилипає</p>
+          <p class="mt" style="color:var(--brand)">F12 → Styles: правило з помилкою закреслене або з ⚠️.</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 · БАНК ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Стрічка «Розпродаж».</b> На всю ширину картки зверху: <span class="ic">absolute</span>, <span class="ic">top: 0; left: 0; right: 0;</span>, фон і <span class="ic">text-align: center</span></div>
+      <div class="bk"><b>Бейдж за краєм.</b> <span class="ic">top: -0.5rem; right: -0.5rem;</span> — наліпка, що вилазить за кут</div>
+      <div class="bk"><b>Кнопка «вгору».</b> <span class="ic">&lt;a href="#top" class="up"&gt;↑&lt;/a&gt;</span>, у <span class="ic">header</span> — <span class="ic">id="top"</span>; <span class="ic">.up</span> — <span class="ic">fixed</span>, <span class="ic">bottom</span> і <span class="ic">right</span></div>
+      <div class="bk"><b>Колода.</b> Три <span class="ic">div</span> по 100×140px, <span class="ic">absolute</span>, кожен на 1rem правіше й нижче. Верхній — останній?</div>
+      <div class="bk"><b>Сердечко.</b> Третій бейдж «♥» у правому нижньому куті кожної картки</div>
+      <div class="bk"><b>Сторінка «Контакти».</b> Та сама липка шапка на <span class="ic">contacts.html</span> — правило вже в <span class="ic">style.css</span>?</div>
+      <div class="bk">⭐⭐ <b>Телефон.</b> <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd>, ширина 360: бейджі лишились у кутках? Запиши коментарем</div>
+      <div class="bk">⭐⭐⭐ <b>По центру?</b> Бейдж: <span class="ic">top: 50%; left: 50%;</span>. Він рівно в центрі картки? Чому? Запиши коментарем</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 · ПЕРЕВІР І ЗДАЙ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lb">Останні 2 хвилини</span>
+      <h2>Перевір і здай</h2>
+    </div></div>
+    <div class="chk">
+      <div class="ck"><span class="bx"></span><span>У <span class="ic">.card</span> — <span class="ic">position: relative</span></span></div>
+      <div class="ck"><span class="bx"></span><span>Бейдж — у кутку <b>своєї</b> картки, не сторінки</span></div>
+      <div class="ck"><span class="bx"></span><span>Сусідні картки не зсунулись через бейдж</span></div>
+      <div class="ck"><span class="bx"></span><span><span class="ic">.try</span> з кроку 1 видалено</span></div>
+      <div class="ck"><span class="bx"></span><span>⭐⭐ Три картки з бейджами · два бейджі в різних кутах</span></div>
+      <div class="ck"><span class="bx"></span><span>⭐⭐⭐ Шапка прилипає, бейджі — під нею</span></div>
+    </div>
+    <div class="hbox hm mt"><strong>Здати:</strong> у першому рядку <span class="ic">catalog.html</span> — коментар з іменем і рівнем.
+      <kbd>Ctrl</kbd>+<kbd>S</kbd>. Сторінка відкрита в Chrome, VS Code — поруч.</div>
+  </div></section>
+
+  <!-- ══════════ 21 · ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lo">Домашнє завдання · 10 хвилин</span>
+      <h2>На codepen.io: картка піци з бейджем</h2>
+    </div></div>
+    <div class="hbox hm" style="margin:0 0 12px">Код — на сайті: сторінка уроку → <strong>«Код уроку»</strong> → кнопка <strong>«Скопіювати»</strong>.
+      Посилання на CodePen або код з поля CSS — у <strong>Google Classroom · 7 клас</strong> до <strong>18 листопада</strong></div>
+    <div class="two">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">поле HTML</span></div>
+<div class="dp-code" style="font-size:14px;line-height:1.5;padding:10px 14px">&lt;<span class="sk">article</span> <span class="st">class</span>=<span class="ss">"card"</span>&gt;
+  &lt;<span class="sk">img</span> <span class="st">src</span>=<span class="ss">"https://picsum.photos/seed/pizza/300/200"</span>
+       <span class="st">alt</span>=<span class="ss">"Піца"</span>&gt;
+  &lt;<span class="sk">span</span> <span class="st">class</span>=<span class="ss">"badge"</span>&gt;-30%&lt;/<span class="sk">span</span>&gt;
+  &lt;<span class="sk">span</span> <span class="st">class</span>=<span class="ss">"new"</span>&gt;NEW&lt;/<span class="sk">span</span>&gt;
+  &lt;<span class="sk">h3</span>&gt;Піца «Маргарита»&lt;/<span class="sk">h3</span>&gt;
+  &lt;<span class="sk">p</span>&gt;199 грн&lt;/<span class="sk">p</span>&gt;
+&lt;/<span class="sk">article</span>&gt;</div>
+</div>
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">поле CSS · частина</span></div>
+<div class="dp-code" style="font-size:14px;line-height:1.5;padding:10px 14px"><span class="st">.card</span> {
+  width: <span class="sn">300px</span>;
+  <span class="cm">/* ДОПИШИ ТУТ 1: якір для бейджа */</span>
+}
+<span class="st">.badge</span> {
+  background: red;  color: white;
+  <span class="cm">/* ДОПИШИ ТУТ 2: правий верхній кут,</span>
+<span class="cm">     10px від країв */</span>
+}</div>
+</div>
+    </div>
+    <div class="steps" style="gap:8px;margin-top:12px">
+      <div class="step" style="padding:7px 16px"><span class="step-n">1</span><span class="step-t">
+        <b>ДОПИШИ ТУТ 1 і 2.</b> Має вийти: червоний бейдж «-30%» — <b>на картинці</b>, у правому верхньому куті.
+        Підказка — крок 2: <span class="ic">relative</span> картці, <span class="ic">absolute</span>, <span class="ic">top</span> і <span class="ic">right</span> бейджу</span></div>
+      <div class="step" style="padding:7px 16px"><span class="step-n">2</span><span class="step-t">
+        ⭐⭐⭐ <b>ДОПИШИ ТУТ 3</b> у <span class="ic">.new</span>. Має вийти: зелений «NEW» — у <b>лівому</b> верхньому куті.
+        Підказка — крок 3: <span class="ic">left</span> замість <span class="ic">right</span></span></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

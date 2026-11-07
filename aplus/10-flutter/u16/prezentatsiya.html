@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Міні-проєкт II: старт, робота і показ · Мобільна розробка Flutter · 10 клас · Урок 16</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Мобільна розробка Flutter (Flutter I + II за рік)
+  Клас          10
+  Школа         A+ · середа 15:20, Медіатека
+  Урок          16 з 68 · 11.11.2026
+  Тема          Міні-проєкт II: старт, робота і показ
+  Тривалість    45 хв — повторення 7 хв (ДЗ «Радіо» 3 + що виведе 4)
+                + старт 5 хв (тема, клас на листочку) + робота 25 хв
+                (крок 1 ⭐ 10 · крок 2 ⭐⭐ 5 · крок 3 ⭐⭐ 6 · крок 4 ⭐⭐⭐ 4)
+                + показ 8 хв (слайд 8)
+  Акцент        blue (#0253b3)
+  Слайдів       20
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. Учні — DartPad, стартовий код з kod.html, блок 1.
+  ПЛАН          За планом проєкт ішов на уроки 15–16 (старт + фініш).
+                Урок 13 (22.10) не відбувся, його матеріал пішов на 15,
+                тому старт випав: проєкт запускаємо, робимо й показуємо
+                за ОДИН урок. Тема: «консольна модель своєї теми» з плану
+                перенесена на екран Flutter — пройдено u10, u12, u15
+                (setState, Row, сірі кнопки, List<обʼєкт> і номер).
+                Спадкування, enum, static — НЕ пройдено, у рівні не входять.
+  Місток        ДЗ уроку 15 «Радіо» (слайд 2) — той самий каркас.
+                Далі: урок 17 (чт 12.11) — цей код переносимо у VS Code.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ФОРМАТ «ПРИКЛАД → ТЕПЕР САМОСТІЙНО» — слайди 10, 12, 13, 15.
+     ⛔ НЕ РІЗАТИ слайди 7–8 (рівні й критерії) і 10.
+     ЯКЩО НЕ ВСТИГАЄТЕ — повторення (3) усно за 2 хв; крок 4 лишається
+     в рівні ⭐⭐⭐ для охочих; показ тих, хто не встиг, — на початку уроку 17.
+  ✅ КОД ПЕРЕВІРЕНО 07.11.2026 у Docker (Flutter 3.44 · Dart 3.12):
+     flutter analyze + widget-тести стартового й фінального коду
+     (межі, лайки, фільтр, Top, Total). Тексти помилок «зламай» —
+     з аналізатора.
+  ────────────────────────────────────────────────────────────────
+  Код           kod.html — стартовий код (⭐ працює), фінальний ⭐–⭐⭐⭐
+  Аркуш         rozdatka.html — 1 сторінка A4, для сховища
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: акцент курсу — синій із палітри. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#eef1f8; --border:#dcdfe9;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(2,83,179,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lr{background:#fae7e8;color:var(--rose)}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(2,83,179,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#f9fbfd;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:14px 19px;font-family:var(--f-mono);
+        font-size:16px;border-top:1.5px solid var(--border);white-space:pre-wrap}
+.dp-out .lbl{font-family:var(--f-body);font-size:13px;color:var(--faint);
+             text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:6px}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #f9fbfd */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#6b6a72;font-style:italic}/* коментар */
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--blue);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid #b9c8e6;border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--blue);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--blue)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+.uk{color:var(--dim)}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--blue);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .dp-out{font-size:14.5px;padding:11px 15px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .demo,.solo{padding:10px 13px}
+  .demo .dp-code,.solo .dp-code{font-size:14.5px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .bank{gap:8px} .bk{padding:9px 12px;font-size:15px}
+  .refg{gap:6px} .rf{padding:6px 9px}
+  .rf .rt{font-size:13px;flex-basis:110px} .rf .rc{font-size:13px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+.demo .dp-code{border:1px solid var(--border);border-radius:9px;padding:11px 14px;
+  font-size:16px;line-height:1.65}
+
+/* довідник конструкцій — слайд 18 */
+.refg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rf{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+    padding:8px 12px;display:flex;align-items:baseline;gap:10px}
+.rf .rt{font-size:14.5px;color:var(--dim);flex:0 0 128px;line-height:1.3}
+.rf .rc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--brand);
+        line-height:1.35;flex:1}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4 ─── */
+.rv-body .mono{font-family:var(--f-mono);white-space:pre-wrap}
+.hbox.hp{border-color:var(--plum)}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10 (повторення) ─── */
+/* код у рядку не розривається між рядками */
+.en{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10 (лічильник) ─── */
+.vid{position:relative;width:100%;max-width:min(1000px,calc((100vh - 270px) * 16 / 9));margin:0 auto;
+     aspect-ratio:16/9;border-radius:13px;overflow:hidden;border:1.5px solid var(--border);background:#000}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.dp-code.tree{line-height:1.5}
+.demo .dp-code{font-family:var(--f-mono)}
+.dp.small .dp-code{font-size:14px;line-height:1.42;padding:11px 16px}
+@media print{ .vid{display:none !important} }
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 12 ─── */
+.solo li{margin-bottom:3px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 13 ─── */
+.dp.tight .dp-code{font-size:13.5px;line-height:1.36;padding:9px 15px}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Міні-проєкт II: старт, робота і показ</h1>
+      <p class="title-sub">Застосунок на один екран про свою тему: свій клас, список обʼєктів, стан і кнопки<br>Мобільна розробка Flutter · 10 клас · Урок 16 з 68 · 11 листопада</p>
+      <div class="chips">
+        <span class="chip">повторення</span>
+        <span class="chip">class</span>
+        <span class="chip">List&lt;обʼєкт&gt;</span>
+        <span class="chip">setState</span>
+        <span class="chip">◀ ▶ і межі</span>
+        <span class="chip">метод класу</span>
+        <span class="chip">Map — словник</span>
+        <span class="chip">where</span>
+        <span class="chip">показ</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">📻</div><div>
+      <span class="label lb">Повторення · 3 хв</span>
+      <h2>Домашнє «Радіо»: як мало вийти</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · Метод _prev()</h3>
+  <p>Як готовий <span class="en">_next()</span>, тільки в інший бік</p>
+  <p class="rv-hint">Спершу скажи сам, потім клацни.</p>
+  <div class="rv-body">
+      <p class="mono" style="font-size:14px">void _prev() {
+  setState(() {
+    if (_index &gt; 0) {
+      _index--;
+    }
+  });
+}</p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · Шапка</h3>
+  <p>Замість <span class="en">Radio</span> — <span class="en">Station 1 / 4</span></p>
+  <p class="rv-hint">Один рядок — який?</p>
+  <div class="rv-body">
+      <p class="mono" style="font-size:14px">appBar: AppBar(title: Text(
+  'Station ${_index + 1} / ${_stations.length}')),</p>
+      <p class="mt">Без <span class="en">const</span>: у тексті змінна</p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · Перевірка</h3>
+  <p>Тричі <span class="en">Next</span>, потім чотири рази <span class="en">Prev</span></p>
+  <p class="rv-hint">Що на екрані в кінці?</p>
+  <div class="rv-body">
+      <p class="mono">Station 1 / 4
+Jazz FM</p>
+      <p class="mt">Четвертий <span class="en">Prev</span> нічого не робить: кнопка сіра, <span class="en">_index</span> = 0</p>
+  </div>
+</div>
+    </div>
+    <div class="hbox hm mt">Сьогоднішній проєкт — те саме «Радіо», тільки замість рядка в списку — <b>обʼєкт твого класу</b></div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lb">Повторення · 4 хв</span>
+      <h2>Що знадобиться в проєкті: що виведе?</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · Метод класу</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">class Film {
+  final String title;
+  final int year;
+  const Film(this.title, this.year);
+  bool isNew() =&gt; year &gt;= 2020;
+}
+print(Film('Up', 2009).isNew());</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">false</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · Список обʼєктів</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">const films = [
+  Film('Up', 2009),
+  Film('Soul', 2020),
+  Film('Coco', 2017),
+];
+print(films[1].title);</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">Soul</p><p>Номери з нуля</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · where</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">print(films
+  .where((f) =&gt; f.year &gt; 2010)
+  .toList()
+  .length);</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">2</p><p>Soul і Coco</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>4 · Сума циклом</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">int sum = 0;
+for (Film f in films) sum += f.year;
+print(sum ~/ films.length);</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">2015</p><p>6046 ~/ 3 = 2015</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>5 · Map і ??</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">Map&lt;String, int&gt; votes = {};
+votes.update('Up', (v) =&gt; v + 1,
+    ifAbsent: () =&gt; 1);
+print(votes['Coco'] ?? 0);</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">0</p><p><span class="en">votes</span> = <span class="en">{Up: 1}</span>. Немає ключа — <span class="en">null</span>, а <span class="en">?? 0</span> дає 0</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>6 · Межа</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">int i = 2;
+if (i &lt; films.length - 1) i++;
+print(i);</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">2</p><p>2 — уже останній номер, далі не йдемо</p></div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lm">Міні-проєкт II</span>
+      <h2>Що будуємо за урок</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.1fr 1fr">
+      <div>
+        <div class="hbox hm" style="margin-top:0"><b>Застосунок на один екран про свою тему</b> у DartPad: на екрані — один обʼєкт зі списку, кнопки ◀ ▶ гортають, шапка показує <span class="en">3 / 5</span></div>
+        <div class="hbox">Усе з уроків 8–15: <b>class</b>, <b>List</b> обʼєктів, <b>setState</b>, межі, сірі кнопки. Нового синтаксису немає</div>
+        <div class="hbox ho">Тема — <b>своя</b>. Код прикладу про книжки — тільки зразок, здавати книжки не можна</div>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t"><b>Старт · 5 хв</b> — тема, клас на листочку: назва, 3 поля з типами, метод</span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t"><b>Робота · 25 хв</b> — стартовий код, ⭐ → ⭐⭐ → ⭐⭐⭐</span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t"><b>Показ · 8 хв</b> — з місця, на своєму ноутбуці, за критеріями</span></div>
+        <div class="step"><span class="step-n">4</span><span class="step-t"><b>Здача</b> — увесь код у Classroom, першим рядком прізвище, тема, рівень</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lm">Старт · 5 хв</span>
+      <h2>Обери тему і сутність</h2>
+    </div></div>
+
+    <table class="tb">
+      <tr><th>Тема</th><th>Клас</th><th>Три поля</th><th>Метод ⭐⭐</th></tr>
+      <tr><td>Фільми</td><td class="mono">Film</td><td class="mono">title · year · minutes</td><td class="mono">isNew()</td></tr>
+      <tr><td>Магазин</td><td class="mono">Product</td><td class="mono">name · price · count</td><td class="mono">inStock()</td></tr>
+      <tr><td>Міста</td><td class="mono">City</td><td class="mono">name · country · population</td><td class="mono">isBig()</td></tr>
+      <tr><td>Футбольні клуби</td><td class="mono">Club</td><td class="mono">name · city · points</td><td class="mono">info()</td></tr>
+      <tr><td>Телефони</td><td class="mono">Phone</td><td class="mono">model · brand · price</td><td class="mono">isCheap()</td></tr>
+      <tr><td>Рецепти</td><td class="mono">Recipe</td><td class="mono">name · minutes · kcal</td><td class="mono">isQuick()</td></tr>
+      <tr><td>Своя</td><td colspan="3">будь-що, де є <b>5+ однакових за будовою обʼєктів</b>; назви класу й полів — латиницею</td></tr>
+    </table>
+    <div class="tip"><span class="tip-ico">✏️</span><span>На листочку: назва класу, три поля <b>з типами</b> (<span class="en">String</span>, <span class="en">int</span>, <span class="en">double</span>, <span class="en">bool</span>), один метод. Потім — у код</span></div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">⚖️</div><div>
+      <span class="label lp">Правило</span>
+      <h2>Сутність → class, словник → Map</h2>
+    </div></div>
+
+    <div class="two">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">сутність: у кожної книги ті самі поля</span></div>
+<div class="dp-code"><span class="sk">class</span> <span class="sk">Book</span> {
+  <span class="sk">final</span> <span class="sk">String</span> title;
+  <span class="sk">final</span> <span class="sk">String</span> author;
+  <span class="sk">final</span> <span class="sk">int</span> pages;
+  <span class="sk">const</span> <span class="sk">Book</span>(<span class="sk">this</span>.title, <span class="sk">this</span>.author, <span class="sk">this</span>.pages);
+  <span class="sk">bool</span> <span class="sf">isLong</span>() =&gt; pages &gt; <span class="sn">300</span>;
+}</div>
+<div class="dp-out"><span class="lbl">Список обʼєктів</span>const List&lt;Book&gt; books = [ ... ];</div>
+</div>
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">словник: назва → скільки лайків</span></div>
+<div class="dp-code"><span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">int</span>&gt; _likes = {};
+
+<span class="cm">// лайк книзі Dune</span>
+_likes.<span class="sf">update</span>(<span class="ss">'Dune'</span>, (v) =&gt; v + <span class="sn">1</span>,
+    ifAbsent: () =&gt; <span class="sn">1</span>);
+
+<span class="cm">// скільки лайків у Dune</span>
+_likes[<span class="ss">'Dune'</span>] ?? <span class="sn">0</span></div>
+<div class="dp-out"><span class="lbl">Що всередині</span>{Dune: 1}</div>
+</div>
+    </div>
+    <div class="hbox hm mt">Книга — це <b>обʼєкт</b> з полями й методами, а не <span class="en">Map</span> з ключами <span class="en">'title'</span>, <span class="en">'pages'</span>. Лайки — це <b>Map</b>: ключ шукаємо за назвою</div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">⭐</div><div>
+      <span class="label lo">Рівні</span>
+      <h2>Що має бути на кожному рівні</h2>
+    </div></div>
+
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Міні-проєкт II</span><span class="t">Один екран своєї теми</span><span class="tmr">25 хв</span></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">Свій <span class="en">class</span>: 3 поля, конструктор · <span class="en">List</span> із <b>5+ обʼєктів</b> · на екрані всі поля поточного · шапка <span class="en">Film 1 / 5</span> · ◀ ▶ з межами, на краях сірі</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">+ <b>два методи</b> класу на екрані (так/ні і рядок-опис) · кнопка ♥ і <span class="en">Map&lt;String, int&gt;</span> лайків · підсумок циклом: сума або середнє по списку</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">+ кругла кнопка-фільтр через <span class="en">where</span> (номер знову 0) · рядок <span class="en">Top:</span> — у кого найбільше лайків</span></div>
+      </div>
+    </div>
+    <div class="tip"><span class="tip-ico">💡</span><span>Рівні йдуть по черзі: ⭐⭐ рахується, коли весь ⭐ працює. Код прикладу на кожен рівень — сторінка <a href="kod.html" target="_blank" style="text-decoration:underline"><b>«Код»</b></a></span></div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lm">Показ · 8 хв</span>
+      <h2>Критерії показу</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+      <table class="tb">
+        <tr><th>Що перевіряємо</th><th>Рівень</th></tr>
+        <tr><td>Тема своя, клас не <span class="en">Book</span>, 5+ обʼєктів</td><td>⭐</td></tr>
+        <tr><td>▶ до кінця і ◀ до початку — без червоного екрана</td><td>⭐</td></tr>
+        <tr><td>Шапка з одиниці: <span class="en">1 / 5</span> … <span class="en">5 / 5</span></td><td>⭐</td></tr>
+        <tr><td>Методи класу видно на екрані</td><td>⭐⭐</td></tr>
+        <tr><td>♥ на двох різних — у кожного свій лічильник</td><td>⭐⭐</td></tr>
+        <tr><td>Фільтр: шапка <span class="en">1 / 2</span>, ◀ ▶ у межах нового списку</td><td>⭐⭐⭐</td></tr>
+        <tr><td><span class="en">Top:</span> міняється після лайків</td><td>⭐⭐⭐</td></tr>
+      </table>
+      <div>
+        <div class="hbox hm" style="margin-top:0">Показуємо з місця: учитель підходить і <b>сам</b> натискає кнопки</div>
+        <div class="hbox">Питання на показі — одне: <b>«де в коді …?»</b> Наприклад, де межа для ▶ або де ключ у Map</div>
+        <div class="hbox ho">Не встиг показати — показ на початку наступного уроку, код — у Classroom наприкінці уроку</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🧱</div><div>
+      <span class="label lm">Стартовий код</span>
+      <h2>Три місця з позначкою ЗАМІНИ</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+<div class="dp small tight">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">«Код» → стартовий код · рівень ⭐ уже працює</span></div>
+<div class="dp-code"><span class="cm">// 1. ЗАМІНИ: свій клас — 3 поля і конструктор.</span>
+<span class="sk">class</span> <span class="sk">Book</span> {
+  <span class="sk">final</span> <span class="sk">String</span> title;
+  <span class="sk">final</span> <span class="sk">String</span> author;
+  <span class="sk">final</span> <span class="sk">int</span> pages;
+  <span class="sk">const</span> <span class="sk">Book</span>(<span class="sk">this</span>.title, <span class="sk">this</span>.author, <span class="sk">this</span>.pages);
+}
+<span class="cm">// 2. ЗАМІНИ: свій список — 5 або більше обʼєктів.</span>
+<span class="sk">const</span> <span class="sk">List</span>&lt;<span class="sk">Book</span>&gt; books = [
+  <span class="sk">Book</span>(<span class="ss">'The Hobbit'</span>, <span class="ss">'J. R. R. Tolkien'</span>, <span class="sn">310</span>),
+  <span class="sk">Book</span>(<span class="ss">'Animal Farm'</span>, <span class="ss">'George Orwell'</span>, <span class="sn">112</span>),
+  <span class="cm">// ... ще три</span>
+];
+<span class="cm">// 3. ЗАМІНИ: шапка і поля на екрані.</span>
+appBar: <span class="sk">AppBar</span>(title: <span class="sk">Text</span>(<span class="ss">'Book ${_index + 1} / ${books.length}'</span>)),
+<span class="sk">Text</span>(b.title, style: ...headlineMedium),
+<span class="sk">Text</span>(b.author),
+<span class="sk">Text</span>(<span class="ss">'${b.pages} pages'</span>),</div>
+</div>
+      <div>
+        <div class="hbox hm" style="margin-top:0"><b>«Код» → блок 1</b> → «Скопіювати» → dartpad.dev → замінити все → Run</div>
+        <div class="hbox">Перейменувати <span class="en">Book</span> на свій клас — <b>скрізь</b>: у класі, у <span class="en">List&lt;Book&gt;</span>, у <span class="en">Book b = …</span></div>
+        <div class="hbox ho">Число в <span class="en">Text</span> — тільки через рядок: <span class="en">'${b.pages} pages'</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Крок 1 · ⭐ · 10 хв</span>
+      <h2>Приклад — і самостійно: свій клас і список</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.15fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · тема «Фільми»</span>
+<div class="dp-code"><span class="sk">class</span> <span class="sk">Film</span> {
+  <span class="sk">final</span> <span class="sk">String</span> title;
+  <span class="sk">final</span> <span class="sk">int</span> year;
+  <span class="sk">final</span> <span class="sk">int</span> minutes;
+  <span class="sk">const</span> <span class="sk">Film</span>(<span class="sk">this</span>.title, <span class="sk">this</span>.year, <span class="sk">this</span>.minutes);
+}
+<span class="sk">const</span> <span class="sk">List</span>&lt;<span class="sk">Film</span>&gt; films = [
+  <span class="sk">Film</span>(<span class="ss">'Up'</span>, <span class="sn">2009</span>, <span class="sn">96</span>),
+  <span class="sk">Film</span>(<span class="ss">'Soul'</span>, <span class="sn">2020</span>, <span class="sn">100</span>),
+  <span class="cm">// ...</span>
+];
+<span class="sk">Film</span> f = films[_index];
+<span class="sk">Text</span>(<span class="ss">'${f.year} · ${f.minutes} min'</span>),</div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно · стартовий код</span>
+        <ul>
+          <li>Клас своєї теми замість <span class="en">Book</span>: 3 поля, <span class="en">const</span> конструктор</li>
+          <li>Список — <b>5 або більше</b> обʼєктів, кома після кожного</li>
+          <li>На екрані — <b>усі три</b> поля поточного обʼєкта</li>
+          <li>Шапка: назва твоєї сутності і <span class="en">${_index + 1} / ${…length}</span></li>
+          <li><b>Перевір:</b> ▶ до кінця — остання кнопка сіра, на екрані останній обʼєкт; ◀ до початку — перший</li>
+          <li><b>Зламай:</b> прибери <span class="en">const</span> перед конструктором — прочитай помилку, поверни</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🔍</div><div>
+      <span class="label lo">Крок 1 · перевір себе</span>
+      <h2>⭐: що має бути</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>Сім разів ▶</h3>
+  <p>Стартовий код, книжок 5</p>
+  <p class="rv-hint">Шапка і назва — які?</p>
+  <div class="rv-body">
+      <p class="mono">Book 5 / 5
+Fahrenheit 451</p>
+      <p class="mt">Після четвертого ▶ кнопка сіра — ще три натискання нічого не роблять</p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>«Зламай»: без const</h3>
+  <p class="mono" style="font-size:15px;font-family:var(--f-mono)">Book(this.title, ...);</p>
+  <p class="rv-hint">Що каже DartPad?</p>
+  <div class="rv-body">
+      <p class="mono" style="font-size:14px">The constructor being called
+isn't a const constructor.</p>
+      <p class="mt"><span class="en">const List</span> вимагає <span class="en">const</span> конструктор</p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>Text(b.pages)</h3>
+  <p>Число просто в <span class="en">Text</span></p>
+  <p class="rv-hint">Що каже DartPad?</p>
+  <div class="rv-body">
+      <p class="mono" style="font-size:14px">The argument type 'int'
+can't be assigned to the
+parameter type 'String'.</p>
+      <p class="mt">Правильно: <span class="en">Text('${b.pages}')</span></p>
+  </div>
+</div>
+    </div>
+    <div class="hbox hm mt">Усе працює — це вже ⭐. Далі методи класу і лайки</div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Крок 2 · ⭐⭐ · 5 хв</span>
+      <h2>Приклад — і самостійно: методи класу на екрані</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.15fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · книжки</span>
+<div class="dp-code"><span class="cm">// у класі Book</span>
+<span class="sk">bool</span> <span class="sf">isLong</span>() =&gt; pages &gt; <span class="sn">300</span>;
+<span class="sk">String</span> <span class="sf">info</span>() =&gt; <span class="ss">'$author · $pages pages'</span>;
+
+<span class="cm">// на екрані</span>
+<span class="sk">Text</span>(b.<span class="sf">info</span>()),
+<span class="sk">Text</span>(b.<span class="sf">isLong</span>() ? <span class="ss">'Long read'</span> : <span class="ss">'Short read'</span>),</div>
+        <div class="dp-out"><span class="lbl">The Hobbit</span>J. R. R. Tolkien · 310 pages
+Long read</div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно · свій клас</span>
+        <ul>
+          <li>Метод <b>так/ні</b>: <span class="en">bool</span> за одним полем — <span class="en">isNew()</span>, <span class="en">isCheap()</span>, <span class="en">isBig()</span></li>
+          <li>Метод <b>опис</b>: <span class="en">String info()</span> — два поля в одному рядку</li>
+          <li>На екрані: <span class="en">info()</span> замість двох окремих <span class="en">Text</span></li>
+          <li>Під ним — відповідь методу так/ні словами через <span class="en">? :</span></li>
+          <li><b>Перевір:</b> гортаючи ◀ ▶, знайди обʼєкт, на якому відповідь міняється</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Крок 3 · ⭐⭐ · 6 хв</span>
+      <h2>Приклад — і самостійно: лайки в Map і підсумок</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.05fr 1.1fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · у стані екрана</span>
+<div class="dp-code"><span class="sk">final</span> <span class="sk">Map</span>&lt;<span class="sk">String</span>, <span class="sk">int</span>&gt; _likes = {};
+
+<span class="sk">void</span> <span class="sf">_like</span>() {
+  <span class="sf">setState</span>(() {
+    <span class="sk">String</span> key = books[_index].title;
+    _likes.<span class="sf">update</span>(key, (v) =&gt; v + <span class="sn">1</span>,
+        ifAbsent: () =&gt; <span class="sn">1</span>);
+  });
+}
+<span class="sk">int</span> <span class="sf">_totalPages</span>() {
+  <span class="sk">int</span> sum = <span class="sn">0</span>;
+  <span class="sk">for</span> (<span class="sk">Book</span> b <span class="sk">in</span> books) sum += b.pages;
+  <span class="sk">return</span> sum;
+}
+<span class="sk">Text</span>(<span class="ss">'Likes: ${_likes[b.title] ?? 0}'</span>),</div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li><span class="en">_likes</span> і <span class="en">_like()</span> — ключ: назва або імʼя твого обʼєкта</li>
+          <li>Третя кнопка в <span class="en">Row</span> між ◀ і ▶: <span class="en">Icons.favorite</span>, <span class="en">onPressed: _like</span></li>
+          <li>Під полями — <span class="en">Likes: 0</span>, після ♥ — <span class="en">Likes: 1</span></li>
+          <li>Підсумок циклом по своєму числовому полю: <span class="en">Total:</span> або <span class="en">Average:</span></li>
+          <li><b>Перевір:</b> ♥ двічі на першому, ▶, ♥ раз — на другому <span class="en">Likes: 1</span>, на першому знову <span class="en">Likes: 2</span></li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🔍</div><div>
+      <span class="label lo">Крок 3 · перевір себе</span>
+      <h2>⭐⭐: що має бути</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>♥ ♥ ▶ ▶ ♥</h3>
+  <p>Фінальний код книжок, з першої</p>
+  <p class="rv-hint">Що в Map?</p>
+  <div class="rv-body">
+      <p class="mono" style="font-size:14px">{The Hobbit: 2, Dune: 1}</p>
+      <p class="mt">На екрані — <span class="en">Book 3 / 5</span>, <span class="en">Dune</span>, <span class="en">Likes: 1</span></p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>Total</h3>
+  <p>310 + 112 + 412 + 96 + 158</p>
+  <p class="rv-hint">Скільки сторінок?</p>
+  <div class="rv-body">
+      <p class="mono">Total: 1088 pages</p>
+      <p class="mt">Від ◀ ▶ не залежить: цикл іде по всьому списку</p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>Чому Map, а не поле</h3>
+  <p>Чому не <span class="en">int likes</span> у класі <span class="en">Book</span>?</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body">
+      <p>Поля книги <span class="en">final</span>, список <span class="en">const</span> — книга не змінюється. Лайки — окремий словник «назва → кількість» у стані екрана</p>
+  </div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Крок 4 · ⭐⭐⭐ · 4 хв</span>
+      <h2>Приклад — і самостійно: фільтр і Top</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.1fr 1.05fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · у стані екрана</span>
+<div class="dp-code"><span class="sk">bool</span> _onlyLong = <span class="sk">false</span>;
+
+<span class="sk">List</span>&lt;<span class="sk">Book</span>&gt; <span class="sf">_shown</span>() {
+  <span class="sk">if</span> (_onlyLong) {
+    <span class="sk">return</span> books.<span class="sf">where</span>((b) =&gt; b.<span class="sf">isLong</span>()).<span class="sf">toList</span>();
+  }
+  <span class="sk">return</span> books;
+}
+<span class="sk">void</span> <span class="sf">_toggleFilter</span>() {
+  <span class="sf">setState</span>(() {
+    _onlyLong = !_onlyLong;
+    _index = <span class="sn">0</span>; <span class="cm">// новий список — з початку</span>
+  });
+}
+<span class="cm">// усюди books → _shown()</span></div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li><span class="en">bool</span> фільтра і <span class="en">_shown()</span> через <span class="en">where</span> зі своїм методом так/ні</li>
+          <li>У <span class="en">_next</span>, <span class="en">_like</span>, у шапці й кнопках <span class="en">books</span> → <span class="en">_shown()</span></li>
+          <li>Кругла кнопка: <span class="en">onPressed: _toggleFilter</span>, <span class="en">Icons.filter_alt</span></li>
+          <li><span class="en">String _top()</span>: <span class="en">_likes.forEach</span>, шукаємо найбільше; лайків немає — <span class="en">-</span></li>
+          <li><b>Зламай:</b> прибери <span class="en">_index = 0</span>, стань на п'яту і ввімкни фільтр — прочитай червоний екран</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🔍</div><div>
+      <span class="label lo">Крок 4 · перевір себе</span>
+      <h2>⭐⭐⭐: що має бути</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>Фільтр увімкнено</h3>
+  <p>Довгі — понад 300 сторінок</p>
+  <p class="rv-hint">Шапка і Total?</p>
+  <div class="rv-body">
+      <p class="mono">Book 1 / 2
+The Hobbit
+Total: 722 pages</p>
+      <p class="mt">Лишились The Hobbit і Dune: 310 + 412</p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>«Зламай»: без _index = 0</h3>
+  <p>Стояли на п'ятій, увімкнули фільтр</p>
+  <p class="rv-hint">Що каже червоний екран?</p>
+  <div class="rv-body">
+      <p class="mono" style="font-size:14px">RangeError (index):
+Index out of range:
+index should be less
+than 2: 4</p>
+      <p class="mt">У новому списку два елементи, номер 4 — поза ним</p>
+  </div>
+</div>
+<div class="card cm reveal">
+  <h3>Top</h3>
+  <p>♥ ♥ на The Hobbit, ♥ на Dune</p>
+  <p class="rv-hint">Що в рядку Top?</p>
+  <div class="rv-body">
+      <p class="mono">Top: The Hobbit</p>
+      <p class="mt">Ще два ♥ на Dune — і стане <span class="en">Top: Dune</span></p>
+  </div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lp">Тримати відкритим</span>
+      <h2>Довідник проєкту</h2>
+    </div></div>
+
+    <div class="refg">
+      <div class="rf"><span class="rt">клас</span><span class="rc">class Film { final String title; ... }</span></div>
+      <div class="rf"><span class="rt">const конструктор</span><span class="rc">const Film(this.title, this.year);</span></div>
+      <div class="rf"><span class="rt">список обʼєктів</span><span class="rc">const List&lt;Film&gt; films = [ ... ];</span></div>
+      <div class="rf"><span class="rt">поточний</span><span class="rc">Film f = films[_index];</span></div>
+      <div class="rf"><span class="rt">шапка</span><span class="rc">Text('Film ${_index + 1} / ${films.length}')</span></div>
+      <div class="rf"><span class="rt">межа для ▶</span><span class="rc">if (_index &lt; films.length - 1) _index++;</span></div>
+      <div class="rf"><span class="rt">сіра на краю</span><span class="rc">onPressed: _index &gt; 0 ? _prev : null</span></div>
+      <div class="rf"><span class="rt">метод так/ні</span><span class="rc">bool isNew() =&gt; year &gt;= 2020;</span></div>
+      <div class="rf"><span class="rt">лайк у Map</span><span class="rc">_likes.update(k, (v) =&gt; v + 1, ifAbsent: () =&gt; 1);</span></div>
+      <div class="rf"><span class="rt">немає ключа → 0</span><span class="rc">_likes[f.title] ?? 0</span></div>
+      <div class="rf"><span class="rt">фільтр</span><span class="rc">films.where((f) =&gt; f.isNew()).toList()</span></div>
+      <div class="rf"><span class="rt">обхід Map</span><span class="rc">_likes.forEach((k, n) { ... });</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🏦</div><div>
+      <span class="label lp">Банк завдань · для тих, хто закінчив</span>
+      <h2>Ще вісім доробок</h2>
+    </div></div>
+
+    <div class="bank">
+      <div class="bk"><b>1.</b> На останньому обʼєкті — напис <span class="en">Last</span>, на першому — <span class="en">First</span></div>
+      <div class="bk"><b>2.</b> ▶ по колу через <span class="en">%</span>: після останнього — знову перший</div>
+      <div class="bk"><b>3.</b> Кнопка <span class="en">Icons.shuffle</span>: випадковий обʼєкт, <span class="en">Random().nextInt(…)</span> з <span class="en">dart:math</span></div>
+      <div class="bk"><b>4.</b> Рядок <span class="en">Max:</span> — обʼєкт із найбільшим числовим полем, циклом</div>
+      <div class="bk"><b>5.</b> Кнопка «скинути лайки»: <span class="en">_likes.clear()</span> у <span class="en">setState</span></div>
+      <div class="bk"><b>6.</b> <span class="en">Liked: 3 of 5</span> — скільки обʼєктів мають хоч один лайк: <span class="en">_likes.length</span></div>
+      <div class="bk"><b>7.</b> Колір назви: зелений, коли метод так/ні дає <span class="en">true</span> — <span class="en">TextStyle(color: …)</span></div>
+      <div class="bk"><b>8.</b> Фільтр показує в шапці стан: <span class="en">Long only</span> або <span class="en">All</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">⚠️</div><div>
+      <span class="label lo">Пастки</span>
+      <h2>Найчастіші проблеми</h2>
+    </div></div>
+
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t"><b>Конструктор без <span class="en">const</span></b> при <span class="en">const List</span> — <span class="en">isn't a const constructor</span>. Додай <span class="en">const</span> перед конструктором</span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t"><b>Перейменував клас не скрізь</b> — <span class="en">Undefined class 'Book'</span>: лишився в <span class="en">List&lt;Book&gt;</span> або <span class="en">Book b = …</span></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t"><b><span class="en">Text(f.year)</span></b> — число замість рядка. Треба <span class="en">Text('${f.year}')</span></span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t"><b>Межа <span class="en">_index &lt; films.length</span></b> без <span class="en">- 1</span> — один зайвий крок і <span class="en">RangeError</span></span></div>
+      <div class="step"><span class="step-n">5</span><span class="step-t"><b>Фільтр без <span class="en">_index = 0</span></b> — номер більший за новий список, червоний екран</span></div>
+      <div class="step"><span class="step-n">6</span><span class="step-t"><b>Кирилиця в назві поля</b> — <span class="en">final String назва;</span> не компілюється: класи й поля тільки латиницею, кирилиця — лише всередині <span class="en">'…'</span></span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">💾</div><div>
+      <span class="label lo">Наприкінці уроку</span>
+      <h2>Домашнього немає — збережи код</h2>
+    </div></div>
+
+    <div class="hbox hm" style="margin-top:0">Завтра — знову Flutter: цей самий код запускаємо вже у <strong>VS Code</strong> як справжній проєкт.</div>
+    <div class="steps mt" style="gap:10px">
+      <div class="step"><span class="step-n">1</span><span class="step-t">
+        У DartPad: <b>Ctrl+A</b>, <b>Ctrl+C</b> — увесь код</span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">
+        Встав у <a href="https://classroom.google.com/u/0/c/ODc1MDg3ODM0Mzk1" target="_blank" style="text-decoration:underline"><strong>Google Classroom · 10 клас</strong></a> — першим рядком <span class="en">// Прізвище · тема · рівень</span></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">
+        Хто не встиг — нічого страшного: завтра доробляємо вже у VS Code</span></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+  /* відео на іншому слайді — на паузу */
+  document.querySelectorAll('.slide:not(.active) iframe').forEach(f => {
+    try { f.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); } catch (e) {}
+  });
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

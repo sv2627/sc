@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Змінна · Розробка мобільних додатків · 6 клас · Урок 10</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Розробка мобільних додатків (MIT App Inventor)
+  Клас          6
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · пʼятниця 13:25
+  Урок          10 з 36 · 13.11.2026
+  Тема          Змінна (тема 2.10 плану) — initialize global, get global,
+                set global … to, Math 0 і + · лічильник із «Скинути»
+  Тривалість    45 хв — ДЗ і повторення уроку 9 6 · нове 9 ·
+                практика 25 · перевірка в парі 2 · підсумок і ДЗ 3
+  Акцент        brand (#591429)
+  ────────────────────────────────────────────────────────────────
+  НОВЕ: змінна (Variables, помаранчеві блоки), Math 0 · + · −,
+  трасування «було → стало», «Скинути» = set global … to 0.
+  ────────────────────────────────────────────────────────────────
+  ♻️ STEAM — steam/6-mobile u10 «Змінні у програмі» ще НЕ зроблено
+     (рядок off, 17.11). Урок написано з нуля за планом 2.10;
+     каркас і CSS — aplus/6-mobile/u09.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ФОРМАТ «ПРИКЛАД → ТЕПЕР САМОСТІЙНО», практика 25 хв із 45:
+     s10 (8 хв) лічильник · s12 (8 хв) скинути і мінус ·
+     s14 (9 хв) голосування · s15 банк на 8 завдань.
+     + s3 швидкі питання, s9 і s13 передбач.
+     ПРИ БРАКУ ЧАСУ РІЖЕТЬСЯ ПОКАЗ, НЕ ПРАКТИКА. Знімати першими:
+     s3 (згадай), s13 (передбач 2), s18 (підсумок). s16 «шість бід» —
+     на дошку за потребою.
+     ⛔ НЕ РІЗАТИ s4–s8 (нове) і s10, s12, s14 (практика).
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • локальних змінних (initialize local) — пізніше, не в плані 2.10
+     • random — урок 11 (20.11); if — III чверть
+     • оцінювання — у конспекті
+  ────────────────────────────────────────────────────────────────
+  ПОВТОРЕННЯ    s2 перевіряємо ДЗ · s3 згадай за 10 секунд
+  НОВЕ          s4 ідея змінної · s5 три блоки · s6 initialize ·
+                s7 score + 1 · s8 показати в Label · s9 передбач ·
+                s11 скинути і мінус · s13 передбач 2
+  ПРАКТИКА      s10 · s12 · s14 · s15 банк · s16 шість бід ·
+                s17 перевірка в парі
+  ОБСЯГ         20 слайдів (s19 — домашнє завдання, 10 хв, на сайті
+                App Inventor, здача в Google Classroom · 6 клас;
+                те саме — u10/dz.html)
+  ВІДЕО         не вставлено: перевірених посилань до уроку не було
+  Аркуш A4      rozdatka.html — для сховища, у класі не видається
+  Конспект      2026-27-teacher/aplus/6-mobile/u10/konspekt.md
+  Збірка        слайди згенеровано скриптом, CSS — копія u09 +
+                блок «ДОДАНО ДЛЯ УРОКУ 10»
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:44%}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.two.wide-l{grid-template-columns:1.4fr 1fr}
+.two.wide-r{grid-template-columns:1fr 1.4fr}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cb h3{color:var(--blue)} .card.cr h3{color:var(--rose)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hb{border-color:var(--blue)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--accent);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:17px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:6px 14px;flex-shrink:0}
+.prac-lead{font-size:18px;line-height:1.65;color:var(--dim);margin-bottom:13px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.uk{color:var(--dim)}
+.vg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:17px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16.5px;line-height:1.45}
+
+/* «я вмію» */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--accent);border-radius:6px;flex-shrink:0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.demo p{font-size:17px;line-height:1.6;color:var(--ink)}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── макет екрана телефона ─────────────────────────────────────
+   Прості плашки замість справжніх компонентів: на дошці має бути
+   видно СТРУКТУРУ, а не красу. Кольори — з палітри A+. */
+.scr{width:210px;border:3px solid var(--ink);border-radius:16px;padding:8px;
+     background:var(--surface);flex-shrink:0}
+.scr .bar{height:14px;border-radius:5px;background:var(--surf2);margin-bottom:7px}
+.el{border-radius:6px;padding:7px 9px;font-family:var(--f-mono);font-size:13px;
+    font-weight:700;text-align:center;margin-bottom:6px;color:#2b2b2b}
+.el:last-child{margin-bottom:0}
+.el-img{background:#e2e7f6;border:1.5px solid #b9c8e6;padding:18px 9px}
+.el-lbl{background:#f6eef0;border:1.5px solid #e3c9d1}
+.el-btn{background:#f4d9a0;border:1.5px solid #d5a04b}
+/* компонувальник — пунктирна рамка навколо групи */
+.box{border:2px dashed var(--brand);border-radius:9px;padding:6px;margin-bottom:6px}
+.box:last-child{margin-bottom:0}
+.box.bh{display:flex;gap:6px;align-items:stretch}
+.box.bh .el{flex:1;margin-bottom:0}
+.box .btag{font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.8px;
+  color:var(--brand);display:block;margin-bottom:4px;text-transform:uppercase}
+.scr-row{display:flex;gap:26px;align-items:flex-start;justify-content:center}
+.scr-cap{font-family:var(--f-mono);font-size:14px;color:var(--dim);
+  text-align:center;margin-top:9px}
+
+/* ─── візуальні блоки App Inventor · перенесено з steam/6-mobile/u01 ───
+   Кольори блоків — справжні кольори App Inventor, не з палітри A+:
+   дитина має впізнати їх на екрані. Текст на них темний, контраст ≥7:1. */
+.blk{font-family:var(--f-body);font-size:16px;color:#2b2b2b;border-radius:7px;
+     padding:9px 14px;display:inline-block;font-weight:600;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.blk-event{background:#d5a04b;border:1px solid #b7863a}
+.blk-set{background:#6fbf5f;border:1px solid #5aa04c}
+.blk-text{background:#e57a72;border:1px solid #c9645d}
+.blk-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:11px}
+.blk-row:last-child{margin-bottom:0}
+.blk-indent{margin-left:34px}
+
+/* ─── макет робочої області Blocks · перенесено з steam/6-mobile/u01 ─── */
+.bl-ide{display:flex;gap:0;border:1.5px solid var(--border);border-radius:13px;overflow:hidden;
+        box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.bl-rail{width:168px;background:var(--surf2);border-right:1.5px solid var(--border);
+         padding:13px 12px;flex-shrink:0}
+.bl-rail-t{font-family:var(--f-mono);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;
+           color:var(--faint);margin-bottom:11px}
+.bl-item{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);
+         padding:7px 10px;border-radius:6px;margin-bottom:5px}
+.bl-item.on{background:#f3e3e7;color:var(--accent);font-weight:700}
+.bl-canvas{flex:1;background:var(--surface);padding:16px 20px;
+           background-image:radial-gradient(rgba(89,20,41,.07) 1px,transparent 1px);
+           background-size:17px 17px}
+.bl-cap{margin-top:12px;font-size:14.5px;color:var(--faint);font-style:italic}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4: блок-«підкова» події ───
+   Кольори — справжні кольори App Inventor (подія — жовта, дія — зелена,
+   текст — червоний), не з палітри школи: дитина має впізнати їх на екрані.
+   Текст на блоках темний, контраст ≥7:1. */
+.cblk{display:inline-block;background:#d5a04b;border:1px solid #b7863a;border-radius:9px;
+      padding:0 0 11px 0;box-shadow:0 2px 0 rgba(0,0,0,.18);font-family:var(--f-body);
+      vertical-align:top}
+.cblk-h{padding:8px 14px 7px;font-weight:700;font-size:16px;color:#2b2b2b;white-space:nowrap}
+.cblk-h .dl{font-weight:600}
+.cblk-b{margin-left:24px;background:var(--surface);border:1px solid #b7863a;border-right:0;
+        border-radius:7px 0 0 7px;padding:8px 10px;display:flex;flex-direction:column;
+        gap:7px;min-height:24px;min-width:220px}
+.cblk-b .blk-row{margin-bottom:0;gap:6px;flex-wrap:nowrap}
+.cblk-b .blk{padding:6px 11px;font-size:15px;white-space:nowrap}
+.blk-num{background:#6f97cf;border:1px solid #577db4}
+.blk-log{background:#8fbf5f;border:1px solid #74a24a}
+.blk-col{background:#e3e3e3;border:1px solid #a9a9a9;padding:6px 9px !important}
+.sw{display:inline-block;width:17px;height:17px;border-radius:4px;border:1px solid rgba(0,0,0,.35);
+    vertical-align:-3px}
+.blk-float{margin-top:10px;margin-left:30px}
+.cblk-pair{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+
+.tb tr.rare td{color:var(--dim)}
+
+/* слайд-довідник: три колонки */
+.ref3{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:14px}
+.ref3 .card{padding:15px 17px}
+.ref3 .card p{font-family:var(--f-mono);font-size:15px;line-height:1.75;color:var(--ink)}
+.ref3 .card .nt{font-family:var(--f-body);font-size:15px;color:var(--dim);margin-top:6px;line-height:1.5}
+
+.bank.b4{grid-template-columns:1fr 1fr}
+.bank.b4 .bk{padding:9px 14px;font-size:16px;line-height:1.5}
+.errs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.errs .card{padding:15px 16px}
+.errs .card p{font-size:16px;line-height:1.55}
+.errs .mono{font-size:14.5px;line-height:1.55;background:var(--surf2);border-radius:8px;
+            padding:8px 10px;margin:4px 0 8px;white-space:pre-wrap}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+.demo .mono{font-size:15.5px;line-height:1.6}
+.bl-canvas .blk-row .blk{font-size:15px}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .prac-lead{font-size:16px;margin-bottom:10px}
+  .ptime{font-size:15px;padding:5px 11px}
+  .vp{padding:9px 12px} .vp .en{font-size:16px} .vp .uk{font-size:15.5px}
+  .vg{gap:9px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .title-h1{font-size:2.9rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .demo,.solo{padding:10px 13px} .demo p{font-size:15.5px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .bank{gap:8px} .bk{padding:9px 12px;font-size:15px}
+  .scr{width:172px;padding:6px} .el{font-size:12px;padding:5px 7px;margin-bottom:5px}
+  .el-img{padding:13px 7px} .box{padding:5px} .scr-row{gap:18px}
+  .scr-cap{font-size:13px;margin-top:7px}
+  /* ДОДАНО ДЛЯ УРОКУ 4 */
+  .cblk-h{font-size:15px;padding:6px 12px 5px} .cblk-b{padding:6px 9px;gap:5px}
+  .cblk-b .blk{font-size:14px;padding:5px 9px}
+  .ref3 .card{padding:12px 14px} .ref3 .card p{font-size:14px;line-height:1.6}
+  .errs .card{padding:12px 13px} .errs .card p{font-size:15px} .errs .mono{font-size:13.5px}
+  .demo .mono{font-size:14.5px;line-height:1.5}
+  .bank.b4 .bk{font-size:15px;padding:8px 12px}
+  .tb tr td{padding:6px 11px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 5: блок-команда call і невидимі компоненти ───
+   Фіолетовий — справжній колір блоків-команд App Inventor (call …),
+   не з палітри школи: дитина має впізнати його на екрані.
+   Текст темний, контраст ≥7:1. Перенесено з steam/6-mobile/u05. */
+.blk-call{background:#b39ddb;border:1px solid #8e72bd;color:#1a1a1a}
+.nvis{margin-top:8px;border-top:2px dashed var(--border);padding-top:7px;font-family:var(--f-mono);
+      font-size:11.5px;color:var(--dim);text-align:center}
+.nvis b{display:inline-block;margin-top:4px;font-size:13px;color:var(--ink);background:var(--surf2);
+      border:1px solid var(--border);border-radius:6px;padding:2px 8px}
+.scr.wide{width:240px}
+.el-btn.pic{background:#e2e7f6;border:1.5px dashed var(--blue);padding:12px 6px}
+@media (max-height:800px){
+  .scr.wide{width:210px}
+  .nvis{font-size:10.5px} .nvis b{font-size:12px}
+  .el-btn.pic{padding:9px 5px}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6: картинка, повідомлення на телефоні ───
+   Перенесено з steam/6-mobile/u06 під макет .scr A+. Темний тост —
+   так ShowAlert виглядає на Android; вікно-діалог — біле з тінню.
+   Текст на них ≥7:1. Нових кольорів палітри не заводимо. */
+.el-img.pic{font-size:2rem;padding:8px 9px;line-height:1.2}
+.el-toast{margin:8px auto 0;background:#323232;color:#fff;border-radius:14px;padding:6px 11px;
+          font-family:var(--f-body);font-size:12px;font-weight:600;width:fit-content;text-align:center}
+.el-dlg{border:1px solid #b8b8b8;border-radius:8px;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);
+        padding:9px 11px;margin-top:6px;color:#111;font-family:var(--f-body);text-align:left}
+.el-dlg .dt{font-weight:800;font-size:13.5px;margin-bottom:4px}
+.el-dlg .dm{font-size:12.5px;line-height:1.4;margin-bottom:7px}
+.el-dlg .db{text-align:right;font-weight:800;font-size:12px;color:var(--blue);text-transform:uppercase}
+.scr.dim .el,.scr.dim .bar{opacity:.35}
+/* блок-команда з кількома гніздами: ShowMessageDialog */
+.blk-multi{display:inline-flex !important;flex-direction:column;gap:5px;white-space:nowrap}
+.blk-multi .sk{display:flex;align-items:center;justify-content:flex-end;gap:7px;font-size:14px;font-weight:600}
+.blk-multi .sk .blk{font-size:14px !important;padding:4px 9px !important}
+.card .q{font-size:16.5px;line-height:1.55;color:var(--ink);margin-bottom:5px}
+.mini{font-family:var(--f-mono);font-size:14px;color:var(--dim);margin-bottom:6px}
+@media (max-height:800px){
+  .card .q{font-size:15.5px;margin-bottom:3px}
+  .el-img.pic{font-size:1.6rem;padding:6px}
+  .blk-multi .sk{font-size:13px} .blk-multi .sk .blk{font-size:13px !important}
+}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 9: поле TextBox у макеті екрана ───
+   Біле поле з синьою лінією знизу — так TextBox виглядає на Android.
+   Підказка Hint — курсивом кольором --dim (≥4.5:1). Нових кольорів немає.
+   Блок-читач TextBox1.Text — той самий зелений, що й set (в App Inventor
+   блоки властивостей одного кольору). join — червоний, як блоки Text. */
+.el-tb{background:#fff;border:1.5px solid var(--border);border-bottom:2.5px solid var(--blue);
+       border-radius:6px 6px 2px 2px;text-align:left;font-weight:600}
+.el-tb.hint{color:var(--dim);font-style:italic;font-weight:400}
+.el-ans{background:var(--surface);border:1.5px dashed var(--brand)}
+.scr-arrow{font-family:var(--f-mono);font-size:2rem;color:var(--brand);align-self:center}
+@media (max-height:800px){
+  .scr-arrow{font-size:1.6rem}
+}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10: блоки змінних і Math ───
+   Помаранчевий — справжній колір блоків Variables в App Inventor, синій
+   (.blk-num, урок 4) — Math. Не з палітри школи: дитина має впізнати їх
+   на екрані. Текст темний, контраст ≥7:1. Блок «+» — синя рамка з двома
+   гніздами. Коробка-змінна (.vbx) — наліпка-назва над числом. */
+.blk-var{background:#f0a868;border:1px solid #c9803f}
+.blk-op{display:inline-flex !important;align-items:center;gap:7px;white-space:nowrap;padding:5px 10px !important}
+.blk-op .blk{padding:4px 9px !important;font-size:14.5px !important;box-shadow:none}
+.tb td .blk{font-size:15px}
+.vrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.vbx{display:inline-flex;flex-direction:column;align-items:stretch;min-width:84px}
+.vbx .vt{font-family:var(--f-mono);font-size:14px;font-weight:700;text-align:center;
+  background:#f0a868;border:1.5px solid #c9803f;border-radius:7px 7px 0 0;padding:3px 10px;color:#2b2b2b}
+.vbx .vv{font-family:var(--f-mono);font-size:28px;font-weight:700;text-align:center;
+  background:var(--surface);border:2.5px solid var(--ink);border-top:0;border-radius:0 0 9px 9px;padding:6px 10px}
+.pv{gap:14px}
+.pv .card{padding:13px 15px}
+.pv .cblk-b{min-width:0}
+.pv .cblk-b .blk-row{flex-wrap:nowrap}
+.pv .rv-hint{margin-top:6px}
+.dzc .cblk-b{padding:5px 8px;gap:4px}
+.dzc .cblk-h{padding:5px 12px 4px}
+.dzc .cblk{padding-bottom:7px}
+.dzc .mini.mt{margin-top:8px}
+.dzc .cblk-pair{gap:10px}
+@media (max-height:800px){
+  .blk-op .blk{font-size:13.5px !important;padding:3px 8px !important}
+  .vbx .vv{font-size:22px;padding:4px 8px} .vbx{min-width:70px}
+  .pv{gap:10px} .pv .card{padding:10px 12px}
+}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+<div class="title-wrap">
+  <h1 class="title-h1">Змінна</h1>
+  <p class="title-sub">Застосунок запам'ятовує число: лічильник натискань і кнопка «Скинути»<br>
+    Розробка мобільних додатків · 6 клас · Урок 10 з 36 · 13 листопада</p>
+  <div class="chips">
+    <span class="chip">🔁 Згадуємо TextBox і join</span>
+    <span class="chip">📦 Змінна</span>
+    <span class="chip">➕ score + 1</span>
+    <span class="chip">🔄 Скинути</span>
+    <span class="chip">🗳️ Голосування</span>
+  </div>
+</div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+<div class="sh"><div class="si">🎯</div><div>
+  <span class="label lm">Сьогодні</span>
+  <h2>Застосунок, який пам'ятає</h2>
+</div></div>
+<div class="steps">
+  <div class="step"><span class="step-n">1</span>
+    <span class="step-t"><b>Перевіряємо домашнє</b>: кнопка «Бувай» і «Марія вміє програмувати»</span></div>
+  <div class="step"><span class="step-n">2</span>
+    <span class="step-t"><b>Згадуємо урок 9</b>: TextBox, join, length</span></div>
+  <div class="step"><span class="step-n">3</span>
+    <span class="step-t">Нове: <b>змінна</b> — застосунок запам'ятовує число</span></div>
+  <div class="step"><span class="step-n">4</span>
+    <span class="step-t">Збираємо <b>лічильник натискань</b> із кнопкою «Скинути» і <b>«Голосування»</b></span></div>
+</div>
+<div class="tip mt"><span class="tip-ico">🆕</span>
+  <div>Нове сьогодні: <span class="ic">initialize global</span> · <span class="ic">get global</span> ·
+  <span class="ic">set global … to</span> · блоки Math <span class="ic">0</span> і <span class="ic">+</span>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+<div class="sh"><div class="si">🏠</div><div>
+  <span class="label lo">Перевіряємо домашнє</span>
+  <h2>«Бувай» і «Марія»</h2>
+</div></div>
+<div class="two">
+  <div class="card cb reveal"><h3>1 · Кнопка «Бувай»</h3><p class="q">Ввели <b>Оля</b>, натиснули ButtonBuvai — у Label2 <b>«Бувай, Оля»</b>. Який блок у підкові?</p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><div class="cblk"><div class="cblk-h">when ButtonBuvai.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-set">set Label2.Text to</span> <span class="blk blk-text blk-multi"><span class="sk">join <span class="blk blk-text">"Бувай, "</span></span><span class="sk"><span class="blk blk-set">TextBox1.Text</span></span></span></div></div></div><p class="q mt">Пробіл після коми — усередині <span class="ic">"Бувай, "</span></p></div></div>
+  <div>
+    <p class="mini">Пункт 2 · у полі <b>Марія</b>, натиснули Button1</p>
+    <div class="cblk"><div class="cblk-h">when Button1.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-set">set Label2.Text to</span> <span class="blk blk-text blk-multi"><span class="sk">join <span class="blk blk-set">TextBox1.Text</span></span><span class="sk"><span class="blk blk-text">" вміє програмувати"</span></span></span></div><div class="blk-row"><span class="blk blk-set">set Label3.Text to</span> <span class="blk blk-text">length</span> <span class="blk blk-set">TextBox1.Text</span></div></div></div>
+    <div class="card cr reveal mt"><p class="q">Що в Label2 і що в Label3?</p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p>Label2: <b>Марія вміє програмувати</b> · Label3: <b>5</b> — length рахує лише те, що в полі</p></div></div>
+  </div>
+</div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+<div class="sh"><div class="si">⚡</div><div>
+  <span class="label lo">Згадуємо урок 9</span>
+  <h2>Згадай за 10 секунд</h2>
+</div></div>
+<div class="two">
+  <div class="card cr reveal"><h3>1</h3><p class="q">Чим <span class="ic">Label</span> відрізняється від <span class="ic">TextBox</span>?</p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p>Label <b>показує</b> текст, TextBox текст <b>приймає</b></p></div></div>
+  <div class="card cr reveal"><h3>2</h3><p class="q">Де шукати блоки <span class="ic">join</span> і <span class="ic">length</span>?</p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p>Built-in → <b>Text</b>, червоні блоки</p></div></div>
+  <div class="card cr reveal"><h3>3</h3><p class="q">У полі <b>Оля Ко</b>. Що покаже <span class="ic">length</span>?</p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>6</b> — пробіл теж знак</p></div></div>
+  <div class="card cr reveal"><h3>4</h3><p class="q">У полі <b>Петро</b>. Що покаже <span class="ic">join&nbsp;"Привіт,"&nbsp;TextBox1.Text</span>?</p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>Привіт,Петро</b> — злиплося, немає пробілу</p></div></div>
+</div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+<div class="sh"><div class="si">📦</div><div>
+  <span class="label lm">Нове · ідея</span>
+  <h2>Скільки разів натиснули кнопку?</h2>
+</div></div>
+<div class="scr-row">
+  <div>
+    <div class="scr">
+      <div class="bar"></div>
+      <div class="el el-lbl" style="font-size:26px">3</div>
+      <div class="el el-btn">+1</div>
+    </div>
+    <div class="scr-cap">натиснули тричі</div>
+  </div>
+  <div style="flex:1">
+    <div class="hbox">Щоб рахувати, застосунок має <b>пам'ятати число</b> і щоразу додавати до нього 1.
+      Пам'ять для числа — це <b>змінна</b>.</div>
+    <div class="vrow mt">
+      <div class="vbx"><span class="vt">score</span><span class="vv">0</span></div>
+      <div class="scr-arrow">→</div>
+      <div class="vbx"><span class="vt">score</span><span class="vv">1</span></div>
+      <div class="scr-arrow">→</div>
+      <div class="vbx"><span class="vt">score</span><span class="vv">2</span></div>
+      <div class="scr-arrow">→</div>
+      <div class="vbx"><span class="vt">score</span><span class="vv">3</span></div>
+    </div>
+    <div class="hbox hb mt">Змінна — <b>коробка з наліпкою</b>. На наліпці — назва <span class="ic">score</span>,
+      усередині — число. Число можна <b>взяти</b> і <b>замінити</b> новим.</div>
+  </div>
+</div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+<div class="sh"><div class="si">🟧</div><div>
+  <span class="label lm">Нове · Built-in → Variables</span>
+  <h2>Три помаранчеві блоки</h2>
+</div></div>
+<table class="tb">
+  <tr><th style="width:44%">Блок</th><th>Що робить</th></tr>
+  <tr><td><span class="blk blk-var blk-op">initialize global score to <span class="blk blk-num">0</span></span></td><td><b>створює</b> змінну score і кладе в неї перше число — 0</td></tr>
+  <tr><td><span class="blk blk-var">get global score</span></td><td><b>бере</b> число зі змінної — щоб додати, показати, сказати</td></tr>
+  <tr><td><span class="blk blk-var">set global score to</span></td><td><b>кладе</b> у змінну нове число. Старе зникає</td></tr>
+</table>
+<div class="tip mt"><span class="tip-ico">🧰</span>
+  <div>Число <span class="ic">0</span> і знак <span class="ic">+</span> — у Built-in → <b>Math</b>, сині блоки.</div></div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+<div class="sh"><div class="si">🏷️</div><div>
+  <span class="label lm">Нове · створюємо змінну</span>
+  <h2>initialize лежить окремо</h2>
+</div></div>
+<div class="two wide-r">
+  <div class="steps">
+    <div class="step"><span class="step-n">1</span>
+      <span class="step-t">Variables → <span class="ic">initialize&nbsp;global&nbsp;name&nbsp;to</span> — на <b>порожнє місце</b>, не в підкову</span></div>
+    <div class="step"><span class="step-n">2</span>
+      <span class="step-t">Клац по слову <b>name</b> → пиши <span class="ic">score</span></span></div>
+    <div class="step"><span class="step-n">3</span>
+      <span class="step-t">Math → блок <span class="ic">0</span> — у гніздо праворуч</span></div>
+  </div>
+  <div>
+    <div class="bl-ide">
+      <div class="bl-rail">
+        <div class="bl-rail-t">Built-in</div>
+        <div class="bl-item">Control</div><div class="bl-item">Logic</div>
+        <div class="bl-item">Math</div><div class="bl-item">Text</div>
+        <div class="bl-item on">Variables</div><div class="bl-item">Procedures</div>
+      </div>
+      <div class="bl-canvas">
+        <div class="blk-row"><span class="blk blk-var blk-op">initialize global score to <span class="blk blk-num">0</span></span></div>
+        <div class="mt"><div class="cblk"><div class="cblk-h">when Button1.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-var">set global score to</span> …</div></div></div></div>
+      </div>
+    </div>
+    <div class="hbox hr mt"><b>Назва</b> — латиницею, одним словом: <span class="ic">score</span>, <span class="ic">klik</span>,
+      <span class="ic">koty</span>. Не «мій рахунок».</div>
+  </div>
+</div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+<div class="sh"><div class="si">➕</div><div>
+  <span class="label lm">Нове · Math</span>
+  <h2>score + 1 — додаємо один</h2>
+</div></div>
+<div class="two wide-l">
+  <div>
+    <p class="mini">У підкові Button1</p>
+    <div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num blk-op"><span class="blk blk-var">get global score</span> + <span class="blk blk-num">1</span></span></div>
+    <div class="hbox mt">Читаємо: <b>візьми</b> число з score, <b>додай</b> 1, <b>поклади</b> назад у score</div>
+    <div class="hbox hb">Синій блок <span class="ic">+</span>: Math → <span class="ic">+</span>, у ліве гніздо
+      <span class="ic">get&nbsp;global&nbsp;score</span>, у праве — число <span class="ic">1</span></div>
+  </div>
+  <table class="tb">
+    <tr><th>Натискання</th><th>Було</th><th>Стало</th></tr>
+    <tr><td class="mono">1-ше</td><td class="mono">0</td><td class="mono">0 + 1 = 1</td></tr>
+    <tr><td class="mono">2-ге</td><td class="mono">1</td><td class="mono">1 + 1 = 2</td></tr>
+    <tr><td class="mono">3-тє</td><td class="mono">2</td><td class="mono">2 + 1 = 3</td></tr>
+    <tr><td class="mono">4-те</td><td class="mono">3</td><td class="mono">3 + 1 = 4</td></tr>
+  </table>
+</div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+<div class="sh"><div class="si">📲</div><div>
+  <span class="label lm">Нове · вся програма</span>
+  <h2>Змінну не видно — показуємо в Label</h2>
+</div></div>
+<div class="two wide-l">
+  <div>
+    <div class="blk-row"><span class="blk blk-var blk-op">initialize global score to <span class="blk blk-num">0</span></span></div>
+    <div class="cblk mt"><div class="cblk-h">when Button1.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num blk-op"><span class="blk blk-var">get global score</span> + <span class="blk blk-num">1</span></span></div><div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-var">get global score</span></div></div></div>
+    <div class="hbox hb mt">Перший блок <b>змінює</b> число в пам'яті. Другий <b>показує</b> його на екрані.
+      Порядок саме такий: спершу додати, потім показати</div>
+  </div>
+  <div class="scr-row">
+    <div>
+      <div class="scr">
+        <div class="bar"></div>
+        <div class="el el-lbl" style="font-size:26px">0</div>
+        <div class="el el-btn">+1</div>
+      </div>
+      <div class="scr-cap">на старті</div>
+    </div>
+    <div class="scr-arrow">→</div>
+    <div>
+      <div class="scr">
+        <div class="bar"></div>
+        <div class="el el-lbl" style="font-size:26px">1</div>
+        <div class="el el-btn">+1</div>
+      </div>
+      <div class="scr-cap">натиснули раз</div>
+    </div>
+  </div>
+</div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+<div class="sh"><div class="si">🤔</div><div>
+  <span class="label lo">Передбач · на старті score = 0, Label1 показує 0</span>
+  <h2>Button1 натиснули 3 рази. Що в Label1?</h2>
+</div></div>
+<div class="two pv">
+  <div class="card cr reveal"><h3>1</h3><div class="cblk"><div class="cblk-h">when Button1.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num blk-op"><span class="blk blk-var">get global score</span> + <span class="blk blk-num">2</span></span></div><div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-var">get global score</span></div></div></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>6</b> — щоразу додаємо 2: 2, 4, 6</p></div></div>
+  <div class="card cr reveal"><h3>2</h3><div class="cblk"><div class="cblk-h">when Button1.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num">1</span></div><div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-var">get global score</span></div></div></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>1</b> — і так завжди: кладемо 1, а не «було + 1»</p></div></div>
+  <div class="card cr reveal"><h3>3</h3><div class="cblk"><div class="cblk-h">when Button1.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-var">get global score</span></div><div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num blk-op"><span class="blk blk-var">get global score</span> + <span class="blk blk-num">1</span></span></div></div></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>2</b> — Label показує число <b>до</b> додавання: на 1 менше</p></div></div>
+  <div class="card cr reveal"><h3>4</h3><div class="cblk"><div class="cblk-h">when Button1.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num blk-op"><span class="blk blk-var">get global score</span> + <span class="blk blk-num">1</span></span></div></div></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>0</b> — score уже 3, але Label ніхто не змінив</p></div></div>
+</div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+<div class="prac">
+  <div class="prac-h"><span class="badge">Practice 1</span>
+    <span class="t">Лічильник натискань</span><span class="ptime">8 хвилин</span></div>
+  <div class="demo"><span class="lbl">Приклад — робимо разом</span>
+    <div class="mono">Designer · Label1 · Text: 0 · FontSize: 40 · Button1 «+1»
+Blocks   · initialize global score to 0
+         · when Button1.Click do  set global score to  get global score + 1
+                                  set Label1.Text to  get global score</div></div>
+  <div class="solo"><span class="lbl">Тепер самостійно</span>
+    <ul>
+      <li>Новий проєкт <span class="ic">Lichylnyk</span>. Screen1 → Title <b>«Лічильник»</b></li>
+      <li><span class="ic">Label1</span>: Text <b>0</b>, FontSize <b>40</b>. Під ним кнопка <b>«+1»</b></li>
+      <li>Змінна <span class="ic">score</span> зі стартом 0 — <b>окремо</b>, поза підковою</li>
+      <li>Підкова Button1: два блоки — додати 1 і показати. Перевір: 5 натискань — на екрані <b>5</b></li>
+      <li>⭐⭐ На екрані <b>«Натиснули: 5»</b> — <span class="ic">join</span> «Натиснули: » і <span class="ic">get&nbsp;global&nbsp;score</span></li>
+      <li>⭐⭐⭐ Кожне натискання ще й <b>вібрує</b>: <span class="ic">call&nbsp;Sound1.Vibrate</span>, millisecs 100</li>
+    </ul>
+  </div>
+</div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+<div class="sh"><div class="si">🔄</div><div>
+  <span class="label lm">Нове · ще дві кнопки</span>
+  <h2>«Скинути» і «−1»</h2>
+</div></div>
+<div class="two">
+  <div>
+    <div class="cblk"><div class="cblk-h">when ButtonReset.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num">0</span></div><div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-var">get global score</span></div></div></div>
+    <div class="hbox mt"><b>Скинути</b> — кладемо 0 у <b>ту саму</b> змінну. Нова змінна не потрібна</div>
+  </div>
+  <div>
+    <div class="cblk"><div class="cblk-h">when ButtonMinus.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num blk-op"><span class="blk blk-var">get global score</span> − <span class="blk blk-num">1</span></span></div><div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-var">get global score</span></div></div></div>
+    <div class="hbox hb mt">Знак <span class="ic">−</span> — теж у Math. Нижче нуля можна: −1, −2</div>
+  </div>
+</div>
+<div class="tip tm mt"><span class="tip-ico">💡</span>
+  <div><span class="ic">initialize</span> — лише <b>один</b> на змінну. Він працює один раз, коли застосунок відкрився.</div></div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+<div class="prac">
+  <div class="prac-h"><span class="badge">Practice 2</span>
+    <span class="t">Скинути і мінус</span><span class="ptime">8 хвилин</span></div>
+  <div class="demo"><span class="lbl">Приклад — робимо разом</span>
+    <div class="mono">when ButtonReset.Click do  set global score to  0
+                           set Label1.Text to  get global score</div></div>
+  <div class="solo"><span class="lbl">Тепер самостійно</span>
+    <ul>
+      <li>У Лічильнику — кнопка <b>«Скинути»</b> (<span class="ic">ButtonReset</span>): число знову 0</li>
+      <li>Кнопка <b>«−1»</b> (<span class="ic">ButtonMinus</span>): <span class="ic">get&nbsp;global&nbsp;score</span> <b>−</b> 1</li>
+      <li>Три кнопки — в один ряд: <span class="ic">HorizontalArrangement</span></li>
+      <li>Перевір: +1 +1 +1 −1 → <b>2</b>; «Скинути» → <b>0</b>; −1 → <b>−1</b></li>
+      <li>⭐⭐ Застосунок <b>каже</b> число: <span class="ic">call&nbsp;TextToSpeech1.Speak</span>, у message — <span class="ic">get&nbsp;global&nbsp;score</span></li>
+      <li>⭐⭐⭐ Кнопка <b>«×2»</b>: Math → <span class="ic">×</span>, score подвоюється: 3 → 6 → 12</li>
+    </ul>
+  </div>
+</div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+<div class="sh"><div class="si">🧮</div><div>
+  <span class="label lo">Передбач · кнопки +1, −1 і «Скинути» · на старті 0</span>
+  <h2>Яке число в кінці?</h2>
+</div></div>
+<div class="two">
+  <div class="card cr reveal"><h3>а</h3><p class="q"><b>+1 · +1 · +1</b></p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>3</b></p></div></div>
+  <div class="card cr reveal"><h3>б</h3><p class="q"><b>+1 · +1 · −1 · +1</b></p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>2</b> — 1, 2, 1, 2</p></div></div>
+  <div class="card cr reveal"><h3>в</h3><p class="q"><b>+1 · +1 · Скинути · +1</b></p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>1</b> — після «Скинути» рахуємо від 0</p></div></div>
+  <div class="card cr reveal"><h3>г</h3><p class="q"><b>−1 · −1 · −1</b></p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>−3</b> — нижче нуля теж можна</p></div></div>
+</div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+<div class="prac">
+  <div class="prac-h"><span class="badge">Practice 3</span>
+    <span class="t">Голосування: коти чи собаки</span><span class="ptime">9 хвилин</span></div>
+  <div class="demo"><span class="lbl">Приклад — робимо разом</span>
+    <div class="mono">initialize global koty to 0      initialize global sobaky to 0
+when ButtonKoty.Click do  set global koty to  get global koty + 1
+                          set LabelKoty.Text to  get global koty</div></div>
+  <div class="solo"><span class="lbl">Тепер самостійно</span>
+    <ul>
+      <li>Новий проєкт <span class="ic">Holosuvannya</span>: кнопки <b>«Коти»</b> і <b>«Собаки»</b>, під кожною свій Label з <b>0</b></li>
+      <li>Дві змінні: <span class="ic">koty</span> і <span class="ic">sobaky</span> — кожна зі своїм <span class="ic">initialize</span></li>
+      <li>Кожна кнопка додає 1 до <b>своєї</b> змінної і показує її у <b>своєму</b> Label</li>
+      <li>Перевір: 3 рази «Коти», 2 рази «Собаки» → <b>3</b> і <b>2</b></li>
+      <li>⭐⭐ Кнопка «Скинути»: обидві змінні — 0, обидва Label — 0</li>
+      <li>⭐⭐⭐ Label <b>«Усього: 5»</b> — join «Усього: » і <span class="ic">get&nbsp;global&nbsp;koty</span> <b>+</b> <span class="ic">get&nbsp;global&nbsp;sobaky</span></li>
+    </ul>
+  </div>
+</div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+<div class="sh"><div class="si">🎒</div><div>
+  <span class="label lb">Закінчив раніше?</span>
+  <h2>Банк завдань — бери будь-яке</h2>
+</div></div>
+<div class="bank b4">
+  <div class="bk"><b>Крок 5.</b> Кнопка «+5»: score росте 5, 10, 15</div>
+  <div class="bk"><b>Довге натискання.</b> <span class="ic">when&nbsp;Button1.LongClick</span> додає одразу 10</div>
+  <div class="bk"><b>Зворотний відлік.</b> <span class="ic">initialize</span> зі стартом 10, Label1 Text: 10, кнопка «−1»: 10, 9, 8…</div>
+  <div class="bk"><b>Число в заголовку.</b> <span class="ic">set&nbsp;Screen1.Title&nbsp;to</span> <span class="ic">get&nbsp;global&nbsp;score</span></div>
+  <div class="bk"><b>Привітайка рахує.</b> У <span class="ic">Pryvitaika</span> змінна <span class="ic">skilky</span>: кожне вітання +1, Label3 «Привітань: 3»</div>
+  <div class="bk"><b>Скільки букв усього.</b> Кнопка додає до score <span class="ic">length&nbsp;TextBox1.Text</span>: «Оля», потім «Петро» → 8</div>
+  <div class="bk"><b>Голосом.</b> TextToSpeech каже join «Рахунок » і число</div>
+  <div class="bk">⭐⭐⭐ <b>Скарбничка.</b> TextBox з <span class="ic">NumbersOnly</span> і кнопка «Покласти»: score + число з поля</div>
+</div>
+<div class="tip tm mt"><span class="tip-ico">🧰</span>
+  <div>Усі вісім робляться <strong>тільки тим, що було сьогодні й раніше</strong>.</div></div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+<div class="sh"><div class="si">🛠️</div><div>
+  <span class="label lo">Якщо щось пішло не так</span>
+  <h2>Шість бід і як їх полагодити</h2>
+</div></div>
+<div class="two">
+  <div>
+    <div class="hbox hr"><b>initialize не лізе в підкову</b> — так і має бути: він лежить окремо</div>
+    <div class="hbox"><b>Натискаю, а на екрані 0</b> — немає <span class="ic">set&nbsp;Label1.Text&nbsp;to</span> <span class="ic">get&nbsp;global&nbsp;score</span></div>
+    <div class="hbox hb"><b>Завжди 1</b> — у гнізді просто <span class="ic">1</span>, а треба <span class="ic">get&nbsp;global&nbsp;score&nbsp;+&nbsp;1</span></div>
+  </div>
+  <div>
+    <div class="hbox ho"><b>На екрані на 1 менше</b> — блок Label стоїть вище, ніж <span class="ic">set&nbsp;global</span>. Поміняй місцями</div>
+    <div class="hbox"><b>У get порожньо, на блоці ⚠️</b> — клац ▾ на get → вибери <b>global score</b></div>
+    <div class="hbox hb"><b>Не знайду 0 і +</b> — Built-in → <b>Math</b>, сині блоки</div>
+  </div>
+</div>
+<div class="tip mt"><span class="tip-ico">🔌</span>
+  <div>Телефон не бачить проєкт — <b>Connect → Reset Connection</b>, потім знову AI Companion.</div></div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+<div class="sh"><div class="si">📲</div><div>
+  <span class="label lb">Перевірка в парі</span>
+  <h2>Сусід натискає твої кнопки</h2>
+</div></div>
+<div class="two">
+  <div class="steps">
+    <div class="step"><span class="step-n">1</span>
+      <span class="step-t">На старті на екрані <b>0</b></span></div>
+    <div class="step"><span class="step-n">2</span>
+      <span class="step-t">5 разів «+1» — на екрані <b>5</b>, не 4</span></div>
+    <div class="step"><span class="step-n">3</span>
+      <span class="step-t">«Скинути», потім «+1» — <b>1</b></span></div>
+  </div>
+  <div class="steps">
+    <div class="step"><span class="step-n">4</span>
+      <span class="step-t">З нуля «−1» — <b>−1</b></span></div>
+    <div class="step"><span class="step-n">5</span>
+      <span class="step-t">Голосування: кожна кнопка рахує <b>своє</b></span></div>
+    <div class="step"><span class="step-n">6</span>
+      <span class="step-t">Сусід скаже вголос: <b>що працює</b> і <b>що полагодити</b></span></div>
+  </div>
+</div>
+<div class="tip mt"><span class="tip-ico">⌨️</span>
+  <div>Телефона немає — сусід натискає <b>на твоєму екрані</b>, у вікні Companion або в емуляторі.</div></div>
+  </div></section>
+
+  <!-- ══════════ 19 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+<div class="sh"><div class="si">✅</div><div>
+  <span class="label lb">I can…</span>
+  <h2>Що є після десятого уроку</h2>
+</div></div>
+<div class="can">
+  <div class="can-i"><div class="can-b"></div><div>Я створюю змінну: <b>initialize global score to 0</b>.</div></div>
+  <div class="can-i"><div class="can-b"></div><div>Я додаю до неї: <b>set global score to</b> get + 1.</div></div>
+  <div class="can-i"><div class="can-b"></div><div>Я показую число на екрані: <b>set Label1.Text to</b> get global score.</div></div>
+  <div class="can-i"><div class="can-b"></div><div>Я скидаю рахунок у <b>0</b> і рахую дві змінні окремо.</div></div>
+</div>
+<div class="hbox hb mt">Наступного разу — <strong>математика й випадковість</strong>: кубик, який сам вибирає число.</div>
+<p class="center mt" style="color:var(--faint);font-size:16px">Урок 11 · 20 листопада · Математика й випадковість</p>
+  </div></section>
+
+  <!-- ══════════ ЯК ЗДАТИ ДЗ ══════════ -->
+  <section class="slide" id="s18z"><div class="slide-inner">
+<div class="sh"><div class="si">📤</div><div>
+  <span class="label lo">Робимо зараз разом · 3 хвилини</span>
+  <h2>Як здати домашнє з App Inventor</h2>
+</div></div>
+<div class="steps">
+  <div class="step"><span class="step-n">1</span><div class="step-t">
+    <b>Вдома:</b> <strong>ai2.appinventor.mit.edu</strong> → увійти <b>тим самим Google-акаунтом</b>, що в класі → <b>My Projects</b> → <span class="ic">Lichylnyk</span>.
+    Інший акаунт — проєкту там не буде.</div></div>
+  <div class="step"><span class="step-n">2</span><div class="step-t">
+    <b>Blocks</b> → <b>правий клік</b> на порожньому місці → <b>Download Blocks as Image</b> → картинка PNG у «Завантаженнях».</div></div>
+  <div class="step"><span class="step-n">3</span><div class="step-t">
+    <b>Google Classroom · 6 клас</b> → завдання цього уроку → <b>«Додати або створити»</b> → <b>«Файл»</b> → вибрати PNG → <b>«Здати»</b>.</div></div>
+</div>
+<div class="hbox hb mt"><strong>Зараз:</strong> кожен робить кроки 2 і 3 зі своїм проєктом з уроку. Вдома — те саме, тільки з домашнім.</div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+<div class="sh"><div class="si">🏠</div><div>
+  <span class="label lo">Homework · 10 хвилин</span>
+  <h2>Домашнє завдання</h2>
+</div></div>
+<div class="hbox hb">Сайт <strong>ai2.appinventor.mit.edu</strong>, проєкт <span class="ic">Lichylnyk</span>.
+  Картинку блоків і число з пункту 2 — <strong>у Google Classroom · 6 клас</strong> до <strong>20 листопада</strong>.</div>
+<div class="two wide-l mt">
+  <div class="steps">
+    <div class="step"><span class="step-n">1</span><div class="step-t">
+      <b>Що зробити:</b> нова кнопка <span class="ic">Button10</span> з написом «+10».
+      <b>Що має вийти:</b> на екрані 0 → «+10» → <b>10</b> → «+1» → <b>11</b>.
+      <b>Де:</b> Blocks → шухляда Button10 → <span class="ic">when&nbsp;Button10.Click</span>, у неї — два блоки
+      праворуч. Як у Button1, тільки 10 замість 1.</div></div>
+    <div class="step"><span class="step-n">2</span><div class="step-t">
+      На старті 0. Натиснули <b>Button1</b> тричі, потім <b>ButtonReset</b>, потім <b>Button1</b> ще двічі.
+      Яке число в Label1 у кінці?</div></div>
+  </div>
+  <div class="dzc">
+    <p class="mini">До пункту 1</p>
+    <div class="cblk"><div class="cblk-h">when Button10.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num blk-op"><span class="blk blk-var">get global score</span> + <span class="blk blk-num">10</span></span></div><div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-var">get global score</span></div></div></div>
+    <p class="mini mt">До пункту 2</p>
+    <div class="cblk-pair">
+      <div class="cblk"><div class="cblk-h">when Button1.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num blk-op"><span class="blk blk-var">get global score</span> + <span class="blk blk-num">2</span></span></div><div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-var">get global score</span></div></div></div>
+      <div class="cblk"><div class="cblk-h">when ButtonReset.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num">0</span></div><div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-var">get global score</span></div></div></div>
+    </div>
+  </div>
+</div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Перший Flutter-проєкт: VS Code і Chrome · Мобільна розробка Flutter · 10 клас · Урок 17</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Мобільна розробка Flutter (Flutter I + II за рік)
+  Клас          10
+  Школа         A+ · четвер 14:20, к. 309
+  Урок          17 з 68 · 12.11.2026
+  Тема          Перший Flutter-проєкт: VS Code і Chrome
+  Тривалість    45 хв — повторення і показ тих, хто не встиг, 5 хв
+                + DartPad і проєкт, doctor, create, будова 8 хв
+                + запуск і hot reload 5 хв + практика 1 12 хв
+                + дерево і шаблон 4 хв + практика 2 10 хв + пастки й ДЗ 1 хв
+  Акцент        blue (#0253b3)
+  Слайдів       18
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. VS Code + Flutter SDK, запуск у Chrome.
+     Емулятор телефона НЕ використовуємо.
+  ПЛАН          Рядок плану: flutter create, lib/main.dart, pubspec.yaml,
+                flutter run -d chrome, hot reload, MaterialApp → Scaffold
+                → AppBar. git init з плану НЕ взято: завдання уроку —
+                тільки VS Code і Chrome. Якщо Git потрібен — додати окремо.
+  Місток        Практика 2 — міні-проєкт II (урок 16) переїжджає з DartPad
+                у lib/main.dart. Далі: урок 18 (ср 18.11) — компонування.
+  План Б        SDK не запускається на машині — учень працює в DartPad
+                (практика 1 — шаблон ?sample=counter), hot reload показує
+                вчитель зі свого ноутбука.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ФОРМАТ «ПРИКЛАД → ТЕПЕР САМОСТІЙНО» — слайди 10 і 14.
+     ⛔ НЕ РІЗАТИ слайди 9–11.
+     ЯКЩО НЕ ВСТИГАЄТЕ — банк (16) і pubspec (7) — усно.
+  ✅ ПЕРЕВІРЕНО 07.11.2026 у Docker (Flutter 3.44 · Dart 3.12):
+     flutter create --platforms web, вміст шаблону й pubspec.yaml,
+     текст помилки назви; analyze + widget-тест фінального коду і ДЗ.
+     Запуск у Chrome і hot reload у Docker НЕ перевірялись.
+  ────────────────────────────────────────────────────────────────
+  Код           kod.html — ДЗ, команди, pubspec.yaml, lib/main.dart
+  Аркуш         rozdatka.html — 1 сторінка A4, для сховища
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: акцент курсу — синій із палітри. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#eef1f8; --border:#dcdfe9;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(2,83,179,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lr{background:#fae7e8;color:var(--rose)}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(2,83,179,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#f9fbfd;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:14px 19px;font-family:var(--f-mono);
+        font-size:16px;border-top:1.5px solid var(--border);white-space:pre-wrap}
+.dp-out .lbl{font-family:var(--f-body);font-size:13px;color:var(--faint);
+             text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:6px}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #f9fbfd */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#6b6a72;font-style:italic}/* коментар */
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--blue);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid #b9c8e6;border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--blue);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--blue)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+.uk{color:var(--dim)}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--blue);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .dp-out{font-size:14.5px;padding:11px 15px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .demo,.solo{padding:10px 13px}
+  .demo .dp-code,.solo .dp-code{font-size:14.5px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .bank{gap:8px} .bk{padding:9px 12px;font-size:15px}
+  .refg{gap:6px} .rf{padding:6px 9px}
+  .rf .rt{font-size:13px;flex-basis:110px} .rf .rc{font-size:13px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+.demo .dp-code{border:1px solid var(--border);border-radius:9px;padding:11px 14px;
+  font-size:16px;line-height:1.65}
+
+/* довідник конструкцій — слайд 18 */
+.refg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rf{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+    padding:8px 12px;display:flex;align-items:baseline;gap:10px}
+.rf .rt{font-size:14.5px;color:var(--dim);flex:0 0 128px;line-height:1.3}
+.rf .rc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--brand);
+        line-height:1.35;flex:1}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4 ─── */
+.rv-body .mono{font-family:var(--f-mono);white-space:pre-wrap}
+.hbox.hp{border-color:var(--plum)}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10 (повторення) ─── */
+/* код у рядку не розривається між рядками */
+.en{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10 (лічильник) ─── */
+.vid{position:relative;width:100%;max-width:min(1000px,calc((100vh - 270px) * 16 / 9));margin:0 auto;
+     aspect-ratio:16/9;border-radius:13px;overflow:hidden;border:1.5px solid var(--border);background:#000}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.dp-code.tree{line-height:1.5}
+.demo .dp-code{font-family:var(--f-mono)}
+.dp.small .dp-code{font-size:14px;line-height:1.42;padding:11px 16px}
+@media print{ .vid{display:none !important} }
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 12 ─── */
+.solo li{margin-bottom:3px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 13 ─── */
+.dp.tight .dp-code{font-size:13.5px;line-height:1.36;padding:9px 15px}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Перший Flutter-проєкт: VS Code і Chrome</h1>
+      <p class="title-sub">Із DartPad — у справжній проєкт: створити, запустити в Chrome, змінювати на ходу<br>Мобільна розробка Flutter · 10 клас · Урок 17 з 68 · 12 листопада</p>
+      <div class="chips">
+        <span class="chip">повторення</span>
+        <span class="chip">flutter create</span>
+        <span class="chip">lib/main.dart</span>
+        <span class="chip">pubspec.yaml</span>
+        <span class="chip">flutter run -d chrome</span>
+        <span class="chip">hot reload</span>
+        <span class="chip">hot restart</span>
+        <span class="chip">MaterialApp → Scaffold → AppBar</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lb">Повторення · 5 хв</span>
+      <h2>Міні-проєкт II: три питання</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · Межа</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">if (_index &lt; films.length - 1) {
+  _index++;
+}</p>
+  <p>Навіщо <span class="en">- 1</span>?</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p>Останній номер — <span class="en">length - 1</span>. Без нього ▶ робить зайвий крок і <span class="en">RangeError</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · class чи Map</h3>
+  <p>Фільм із назвою, роком і тривалістю — і лайки за назвою</p>
+  <p class="rv-hint">Що з них class, що Map?</p>
+  <div class="rv-body"><p>Фільм — <b>сутність</b>, <span class="en">class Film</span>. Лайки — <b>словник</b> «назва → кількість», <span class="en">Map&lt;String, int&gt;</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · Що виведе</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:15px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">Map&lt;String, int&gt; likes =
+    {'Up': 2};
+print(likes['Soul'] ?? 0);</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono">0</p><p>Ключа <span class="en">Soul</span> немає — <span class="en">null</span>, <span class="en">?? 0</span> дає 0</p></div>
+</div>
+    </div>
+    <div class="hbox hm mt">Хто вчора не встиг показати — показ зараз. Цей самий код сьогодні переїде в проєкт</div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🧭</div><div>
+      <span class="label lb">Навіщо</span>
+      <h2>DartPad і проєкт: у чому різниця</h2>
+    </div></div>
+
+    <table class="tb">
+      <tr><th></th><th>DartPad</th><th>Проєкт у VS Code</th></tr>
+      <tr><td>Де код</td><td>одне вікно, один файл</td><td>папка з файлами на диску</td></tr>
+      <tr><td>Пакети з pub.dev</td><td>не підключає</td><td><span class="en">flutter pub add …</span></td></tr>
+      <tr><td>Картинки й файли</td><td>немає</td><td>папка <span class="en">assets</span> (урок 24)</td></tr>
+      <tr><td>Запуск</td><td>Run у браузері</td><td>Chrome на своєму компʼютері</td></tr>
+      <tr><td>Зміни на ходу</td><td>Run — усе з нуля</td><td><b>hot reload</b> — стан лишається</td></tr>
+      <tr><td>Готовий сайт</td><td>—</td><td><span class="en">flutter build web</span></td></tr>
+    </table>
+    <div class="hbox hm mt">YouTube-плеєр з уроку 15 був саме таким проєктом. Тепер — свій. Емулятор телефона не потрібен: запускаємо в <b>Chrome</b></div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🩺</div><div>
+      <span class="label lm">Крок 0 · 2 хв</span>
+      <h2>Перевірка: flutter doctor</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.25fr 1fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">термінал VS Code · Ctrl + `</span></div>
+<div class="dp-code">flutter doctor</div>
+<div class="dp-out"><span class="lbl">Нам досить</span>[✓] Flutter
+[✓] Chrome - develop for the web
+[✓] VS Code
+[✗] Android toolchain   — не потрібен
+[✗] Xcode / Visual Studio — не потрібен</div>
+</div>
+      <div>
+        <div class="hbox hm" style="margin-top:0"><b>Flutter SDK</b> — сам Flutter і Dart, команда <span class="en">flutter</span> у терміналі</div>
+        <div class="hbox">У VS Code — розширення <b>Dart</b> і <b>Flutter</b> (ліва панель → Extensions)</div>
+        <div class="hbox ho">Червоні рядки про Android і Xcode — норма: телефон і емулятор сьогодні не потрібні</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🆕</div><div>
+      <span class="label lm">Крок 1</span>
+      <h2>Створити проєкт: два способи</h2>
+    </div></div>
+
+    <div class="two">
+      <div class="card">
+        <h3>Термінал</h3>
+        <p class="mono" style="font-family:var(--f-mono);font-size:15.5px;color:var(--ink);white-space:pre-wrap;line-height:1.55;font-style:normal">flutter create --platforms web first_app
+cd first_app
+code .</p>
+        <p class="mt"><span class="en">--platforms web</span> — тільки веб, без папок Android та iOS. <span class="en">code .</span> — відкрити цю папку у VS Code</p>
+      </div>
+      <div class="card">
+        <h3>Меню VS Code</h3>
+        <p><span class="en">Ctrl + Shift + P</span> → <span class="en">Flutter: New Project</span> → <span class="en">Application</span> → папка → назва → Enter</p>
+        <p class="mt">VS Code сам відкриє новий проєкт у вікні</p>
+      </div>
+    </div>
+    <div class="hbox hm mt"><b>Назва проєкту</b> — малі латинські літери, цифри й <span class="en">_</span>: <span class="en">first_app</span>. Не можна <span class="en">First-App</span>, <span class="en">2app</span>, <span class="en">class</span></div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">📁</div><div>
+      <span class="label lm">Що в папці</span>
+      <h2>Будова проєкту</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.25fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">first_app/</span></div>
+<div class="dp-code tree">first_app/
+├── <b>lib/</b>
+│   └── <b>main.dart</b>
+├── test/
+│   └── widget_test.dart
+├── web/
+│   └── index.html
+├── <b>pubspec.yaml</b>
+├── pubspec.lock
+├── analysis_options.yaml
+└── .dart_tool/</div>
+</div>
+      <table class="tb">
+        <tr><th>Файл</th><th>Що там</th></tr>
+        <tr><td class="mono">lib/main.dart</td><td><b>наш код</b> — те, що було у вікні DartPad</td></tr>
+        <tr><td class="mono">pubspec.yaml</td><td>паспорт: назва, версія Dart, пакети</td></tr>
+        <tr><td class="mono">web/</td><td>сторінка, у якій живе застосунок у браузері</td></tr>
+        <tr><td class="mono">test/</td><td>автоматичні тести — поки не чіпаємо</td></tr>
+        <tr><td class="mono">pubspec.lock<br>.dart_tool/</td><td>Flutter пише сам — руками не правимо</td></tr>
+      </table>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🪪</div><div>
+      <span class="label lm">pubspec.yaml</span>
+      <h2>Паспорт проєкту</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">pubspec.yaml · без коментарів</span></div>
+<div class="dp-code">name: first_app
+description: <span class="ss">"A new Flutter project."</span>
+publish_to: <span class="ss">'none'</span>
+version: <span class="sn">1.0.0+1</span>
+
+environment:
+  sdk: ^<span class="sn">3.12.0</span>
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^<span class="sn">1.0.8</span>
+
+flutter:
+  uses-material-design: <span class="sk">true</span></div>
+</div>
+      <div>
+        <div class="hbox hm" style="margin-top:0"><b>name</b> — назва пакета, та сама, що в <span class="en">flutter create</span></div>
+        <div class="hbox"><b>dependencies</b> — пакети. Сюди <span class="en">flutter pub add</span> дописав рядок плеєра на уроці 15</div>
+        <div class="hbox ho"><b>Відступи — пробілами, по 2.</b> Зсунув рядок — проєкт не збирається</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">▶️</div><div>
+      <span class="label lm">Крок 2</span>
+      <h2>Запуск у Chrome</h2>
+    </div></div>
+
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t">Унизу праворуч у VS Code — пристрій. Клацни → <b>Chrome (web-javascript)</b></span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t">Відкрий <span class="en">lib/main.dart</span> → <span class="en">F5</span> або меню <b>Run → Start Debugging</b></span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t">Відкриється окреме вікно Chrome з лічильником. Перший запуск — <b>1–3 хвилини</b></span></div>
+        <div class="step"><span class="step-n">4</span><span class="step-t">Зверху зʼявиться панель: ⚡ hot reload · 🔄 hot restart · ⏹ стоп</span></div>
+      </div>
+      <div>
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">або в терміналі, у папці проєкту</span></div>
+<div class="dp-code">flutter run -d chrome</div>
+<div class="dp-out"><span class="lbl">Поки працює</span>r  — hot reload
+R  — hot restart
+q  — зупинити</div>
+</div>
+        <div class="hbox ho">Запустилось — не тисни <span class="en">F5</span> вдруге: зміни бачимо через hot reload</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">⚡</div><div>
+      <span class="label lb">Головне сьогодні</span>
+      <h2>Hot reload і hot restart</h2>
+    </div></div>
+
+    <table class="tb">
+      <tr><th></th><th>⚡ Hot reload</th><th>🔄 Hot restart</th></tr>
+      <tr><td>Як</td><td><span class="en">Ctrl + S</span> у VS Code · <span class="en">r</span> у терміналі</td><td>кнопка 🔄 · <span class="en">Ctrl + Shift + F5</span> · <span class="en">R</span></td></tr>
+      <tr><td>Що робить</td><td>підставляє новий код і перемальовує</td><td>запускає застосунок наново</td></tr>
+      <tr><td>Стан (<span class="en">_counter</span>)</td><td><b>лишається</b> — було 5, лишилось 5</td><td>з нуля — знову 0</td></tr>
+      <tr><td>Швидкість</td><td>секунда</td><td>кілька секунд</td></tr>
+      <tr><td>Коли</td><td>змінив вигляд: текст, колір, віджет</td><td>змінив <span class="en">main()</span>, початкове значення поля, весь файл</td></tr>
+    </table>
+    <div class="hbox hm mt">Hot reload <b>не перезапускає</b> <span class="en">main()</span> і не рахує наново <span class="en">int _counter = 0</span> — для цього hot restart</div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Практика 1 · 12 хв</span>
+      <h2>Приклад — і самостійно: свій перший проєкт</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.15fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · учитель на дошці</span>
+<div class="dp-code">flutter create --platforms web first_app
+cd first_app
+code .
+<span class="cm">// F5 → лічильник у Chrome → + до 5</span>
+<span class="cm">// у main.dart:</span>
+seedColor: <span class="sk">Colors</span>.teal,
+<span class="cm">// Ctrl+S → шапка бірюзова, число 5</span></div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Створи <span class="en">first_app</span> у своїй папці, відкрий у VS Code</li>
+          <li>Пристрій <b>Chrome</b>, <span class="en">F5</span>, дочекайся лічильника</li>
+          <li>Натисни <span class="en">+</span> пʼять разів</li>
+          <li>Зміни <span class="en">seedColor</span> на свій колір, <span class="en">Ctrl + S</span> — число має лишитись 5</li>
+          <li>Заголовок <span class="en">'Flutter Demo Home Page'</span> → <span class="en">'My first Flutter project'</span>, <span class="en">Ctrl + S</span></li>
+          <li>🔄 hot restart — число стало 0</li>
+          <li>⭐⭐ <span class="en">centerTitle: true</span> в <span class="en">AppBar</span>, речення над числом → <span class="en">'Clicks:'</span></li>
+          <li>⭐⭐⭐ <span class="en">debugShowCheckedModeBanner: false</span> і <span class="en">title: 'First app'</span> — назва вкладки</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🔍</div><div>
+      <span class="label lo">Практика 1 · перевір себе</span>
+      <h2>Reload чи restart?</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · Колір</h3>
+  <p>Число 5. Змінив <span class="en">Colors.teal</span> на <span class="en">Colors.orange</span>, <span class="en">Ctrl + S</span></p>
+  <p class="rv-hint">Що на екрані?</p>
+  <div class="rv-body"><p>Шапка помаранчева, число <b>5</b> — hot reload зберіг стан</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · Початкове значення</h3>
+  <p>Число 5. Змінив <span class="en">int _counter = 0;</span> на <span class="en">= 10;</span>, <span class="en">Ctrl + S</span></p>
+  <p class="rv-hint">Що на екрані?</p>
+  <div class="rv-body"><p>Досі <b>5</b>: стан не рахується наново. Після 🔄 hot restart — <b>10</b></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · Помилка</h3>
+  <p>Стер <span class="en">;</span> у кінці рядка, <span class="en">Ctrl + S</span></p>
+  <p class="rv-hint">Що буде?</p>
+  <div class="rv-body"><p>Червона хвиля в коді, рядок у вкладці <b>Problems</b>. У Chrome — стара версія, поки не виправиш</p></div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🌳</div><div>
+      <span class="label lm">Дерево віджетів</span>
+      <h2>MaterialApp → Scaffold → AppBar</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.2fr">
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">що в що вкладено</span></div>
+<div class="dp-code tree"><span class="sk">MaterialApp</span>          весь застосунок
+└── home: <span class="sk">MyHomePage</span>   перший екран
+    └── <span class="sk">Scaffold</span>       каркас сторінки
+        ├── appBar: <span class="sk">AppBar</span>
+        │   └── title: <span class="sk">Text</span>
+        ├── body: <span class="sk">Center</span>
+        │   └── <span class="sk">Column</span>
+        │       ├── <span class="sk">Text</span>
+        │       └── <span class="sk">Text</span>
+        └── floatingActionButton:
+            <span class="sk">FloatingActionButton</span></div>
+</div>
+      <table class="tb">
+        <tr><th>Віджет</th><th>Головні параметри</th></tr>
+        <tr><td class="mono">MaterialApp</td><td><span class="en">title</span> — вкладка · <span class="en">theme</span> — кольори · <span class="en">home</span> — перший екран</td></tr>
+        <tr><td class="mono">Scaffold</td><td><span class="en">appBar</span> — шапка · <span class="en">body</span> — тіло · <span class="en">floatingActionButton</span></td></tr>
+        <tr><td class="mono">AppBar</td><td><span class="en">title</span> · <span class="en">backgroundColor</span> · <span class="en">centerTitle</span></td></tr>
+      </table>
+    </div>
+    <div class="hbox hm mt">Це те саме дерево, що в DartPad. Нового нічого — змінилось тільки <b>де</b> лежить код</div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🧱</div><div>
+      <span class="label lm">Код шаблону</span>
+      <h2>lib/main.dart: що створив flutter create</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+<div class="dp small tight">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">lib/main.dart · скорочено · повний — «Код», блок 3</span></div>
+<div class="dp-code"><span class="sk">void</span> <span class="sf">main</span>() {
+  <span class="sf">runApp</span>(<span class="sk">const</span> <span class="sk">MyApp</span>());
+}
+
+<span class="sk">class</span> <span class="sk">MyApp</span> <span class="sk">extends</span> <span class="sk">StatelessWidget</span> {
+  @override
+  <span class="sk">Widget</span> <span class="sf">build</span>(<span class="sk">BuildContext</span> context) {
+    <span class="sk">return</span> <span class="sk">MaterialApp</span>(
+      title: <span class="ss">'Flutter Demo'</span>,
+      theme: <span class="sk">ThemeData</span>(
+        colorScheme: .<span class="sf">fromSeed</span>(seedColor: <span class="sk">Colors</span>.deepPurple),
+      ),
+      home: <span class="sk">const</span> <span class="sk">MyHomePage</span>(title: <span class="ss">'Flutter Demo Home Page'</span>),
+    );
+  }
+}
+<span class="cm">// далі MyHomePage і _MyHomePageState —</span>
+<span class="cm">// той самий лічильник, що dartpad.dev/?sample=counter</span></div>
+</div>
+      <div>
+        <div class="hbox hm" style="margin-top:0">У шаблоні — довгі англійські коментарі. Можна стерти: на роботу не впливають</div>
+        <div class="hbox"><span class="en">colorScheme: .fromSeed(seedColor: …)</span> — те саме, що <span class="en">colorSchemeSeed: …</span> у DartPad</div>
+        <div class="hbox ho">У <span class="en">AppBar</span> шаблону: <span class="en">backgroundColor: …inversePrimary</span> — світлий відтінок кольору теми</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Практика 2 · 10 хв</span>
+      <h2>Приклад — і самостійно: міні-проєкт II у проєкті</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.15fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · той самий first_app</span>
+<div class="dp-code"><span class="cm">// 1. Classroom або DartPad → весь код</span>
+<span class="cm">//    міні-проєкту → Ctrl+A, Ctrl+C</span>
+<span class="cm">// 2. lib/main.dart → Ctrl+A → Ctrl+V</span>
+<span class="cm">// 3. Ctrl+S, потім 🔄 hot restart</span>
+<span class="cm">//    (замінили весь файл)</span>
+<span class="cm">// 4. У Chrome — свій каталог, ◀ ▶ працюють</span></div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Перенеси свій міні-проєкт II у <span class="en">lib/main.dart</span>, hot restart</li>
+          <li>Перевір усе, що було на показі: ▶ до кінця, ◀ до початку, ♥</li>
+          <li>Додай у список <b>шостий обʼєкт</b>, <span class="en">Ctrl + S</span> — шапка стала <span class="en">/ 6</span>?</li>
+          <li>Ні — зроби 🔄 hot restart. Запиши собі: що допомогло</li>
+          <li>⭐⭐ Зміни колір теми і заголовок без перезапуску — тільки <span class="en">Ctrl + S</span></li>
+          <li>⭐⭐⭐ Вкладка <b>Problems</b> (<span class="en">Ctrl + Shift + M</span>) — має бути порожня; жовте прибрати</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lp">Тримати відкритим</span>
+      <h2>Довідник уроку</h2>
+    </div></div>
+
+    <div class="refg">
+      <div class="rf"><span class="rt">перевірка</span><span class="rc">flutter doctor</span></div>
+      <div class="rf"><span class="rt">новий проєкт</span><span class="rc">flutter create --platforms web first_app</span></div>
+      <div class="rf"><span class="rt">відкрити папку</span><span class="rc">cd first_app · code .</span></div>
+      <div class="rf"><span class="rt">через меню</span><span class="rc">Ctrl+Shift+P → Flutter: New Project</span></div>
+      <div class="rf"><span class="rt">запуск</span><span class="rc">F5 · flutter run -d chrome</span></div>
+      <div class="rf"><span class="rt">термінал</span><span class="rc">Ctrl + `</span></div>
+      <div class="rf"><span class="rt">hot reload</span><span class="rc">Ctrl+S · ⚡ · r</span></div>
+      <div class="rf"><span class="rt">hot restart</span><span class="rc">Ctrl+Shift+F5 · 🔄 · R</span></div>
+      <div class="rf"><span class="rt">зупинити</span><span class="rc">Shift+F5 · ⏹ · q</span></div>
+      <div class="rf"><span class="rt">помилки</span><span class="rc">Problems · Ctrl+Shift+M</span></div>
+      <div class="rf"><span class="rt">наш код</span><span class="rc">lib/main.dart</span></div>
+      <div class="rf"><span class="rt">паспорт</span><span class="rc">pubspec.yaml</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🏦</div><div>
+      <span class="label lp">Банк завдань · для тих, хто закінчив</span>
+      <h2>Ще вісім доробок</h2>
+    </div></div>
+
+    <div class="bank">
+      <div class="bk"><b>1.</b> Створи другий проєкт <b>через меню</b> <span class="en">Flutter: New Project</span> — порівняй папки: що зайве?</div>
+      <div class="bk"><b>2.</b> Спробуй <span class="en">flutter create First-App</span> — прочитай, яку назву пропонує Flutter</div>
+      <div class="bk"><b>3.</b> Запусти з термінала <span class="en">flutter run -d chrome</span>; зроби <span class="en">r</span>, <span class="en">R</span>, <span class="en">q</span></div>
+      <div class="bk"><b>4.</b> У шаблоні: кругла кнопка — <span class="en">Icons.favorite</span>, підказка <span class="en">tooltip: 'Like'</span></div>
+      <div class="bk"><b>5.</b> Число — <span class="en">displayLarge</span> замість <span class="en">headlineMedium</span>: hot reload чи restart?</div>
+      <div class="bk"><b>6.</b> У <span class="en">pubspec.yaml</span> знайди версію Dart і назву. Чи збігається назва з папкою?</div>
+      <div class="bk"><b>7.</b> Зсунь у <span class="en">pubspec.yaml</span> рядок <span class="en">sdk: flutter</span> лівіше, збережи — прочитай помилку, поверни</div>
+      <div class="bk"><b>8.</b> Зітри всі англійські коментарі шаблону — лишився тільки код. Чи змінився застосунок?</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">⚠️</div><div>
+      <span class="label lo">Пастки</span>
+      <h2>Найчастіші проблеми</h2>
+    </div></div>
+
+    <div class="steps" style="gap:9px">
+      <div class="step"><span class="step-n">1</span><span class="step-t"><b><span class="en">'flutter' is not recognized</span></b> — Flutter не в PATH. Закрий і відкрий VS Code; не допомогло — до вчителя</span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t"><b><span class="en">is not a valid Dart package name</span></b> — назва з великими літерами або <span class="en">-</span>. Тільки <span class="en">first_app</span></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t"><b><span class="en">No pubspec.yaml file found</span></b> — команда не в папці проєкту. Спершу <span class="en">cd first_app</span></span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t"><b>Відкрита не та папка</b> — батьківська замість <span class="en">first_app</span>: F5 не знає, що запускати. <b>File → Open Folder</b> → саме <span class="en">first_app</span></span></div>
+      <div class="step"><span class="step-n">5</span><span class="step-t"><b>Пристрій не Chrome</b> — у правому нижньому куті вибери <b>Chrome</b>, не Web Server і не Windows</span></div>
+      <div class="step"><span class="step-n">6</span><span class="step-t"><b>«Зміни не видно»</b> — змінив <span class="en">main()</span> або початкове значення поля: потрібен 🔄 hot restart, а не <span class="en">Ctrl + S</span></span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>Каркас екрана</h2>
+    </div></div>
+
+    <div class="hbox hm" style="margin-top:0">У <strong>DartPad</strong> — вдома Flutter SDK не потрібен. Стартовий код — <a href="kod.html" target="_blank" style="text-decoration:underline"><strong>сторінка «Код»</strong></a> (сайт → урок 17): скопіюй, встав, Run.
+      Код — у <strong>Google Classroom</strong> до <strong>18 листопада</strong>, першим рядком — коментар із прізвищем.</div>
+    <div class="steps mt" style="gap:10px">
+      <div class="step"><span class="step-n">1</span><span class="step-t">
+        Допиши в <span class="en">Scaffold</span> шапку <span class="en">My profile</span> по центру: готовий рядок <span class="en">appBar: AppBar(…)</span> лежить у коментарі — прибери перед ним <span class="en">//</span></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">
+        Замість <span class="en">'Name'</span> — своє імʼя латиницею. Замість <span class="en">Colors.grey</span> — свій колір</span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">
+        <b>Перевір:</b> кольорова шапка <span class="en">My profile</span> по центру, під нею посередині — імʼя великими літерами і <span class="en">10 class · Flutter</span></span></div>
+    </div>
+    <div class="tip"><span class="tip-ico">💡</span><span>Місця позначені <span class="en">ДОПИШИ ТУТ</span>. Хто має Flutter удома — можна і в проєкті, з hot reload</span></div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+  /* відео на іншому слайді — на паузу */
+  document.querySelectorAll('.slide:not(.active) iframe').forEach(f => {
+    try { f.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); } catch (e) {}
+  });
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

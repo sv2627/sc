@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Повторення. Проєкт чверті «Моя гра» · Розробка мобільних додатків · 6 клас · Урок 9</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Розробка мобільних додатків (MIT App Inventor)
+  Клас          6
+  Школа         STEAM (Республіка) · вівторок, 2-й урок 09:55 · к. 324-ц
+  Урок          9 з 35 · 10.11.2026 · перший урок II чверті
+  Тема          Повторення. Проєкт чверті «Моя гра»
+  Тривалість    45 хв — ДЗ канікул ~3 · згадуємо ~10 · проєкт ~7 ·
+                практика ~19 · підсумок і ДЗ ~3
+  Акцент        goldink (#8a5a10) — як у всьому курсі
+  ────────────────────────────────────────────────────────────────
+  ✅ НОВОГО НЕМАЄ. Полотно, змінні, таймер — з уроку 10. Сьогодні
+     перший екран гри тільки тим, що було в I чверті.
+  ────────────────────────────────────────────────────────────────
+  ДЗ КАНІКУЛ    s2  проєкт Kanikuly — блоки й екран на слайді
+  ЗГАДУЄМО      s3 компоненти й властивості · s4 коробки ·
+                s5 події · s6 звук і вібрація · s7 швидкі питання ·
+                s8 знайди помилку в блоках · s9 довідник
+  ПРОЄКТ        s10 заставка і дорога уроків 10–15 · s11 якою буде
+                гра · s12 картка проєкту ⭐ / ⭐⭐ / ⭐⭐⭐ · s13 банк ідей
+  ПРАКТИКА      s14–s16 практики 1–3 · s17 перевірка на телефоні
+  ОБСЯГ         20 слайдів (s19 — домашнє завдання, 10 хв, на сайті
+                App Inventor, здача в Google Classroom до 17.11, dz.html)
+     ПРИ БРАКУ ЧАСУ ріжуться s7 і s4, НЕ картка проєкту й не s14–s16.
+  ⚠️ Рівні ⭐ — вимоги картки проєкту, не бали. Оцінювання — у конспекті.
+  ────────────────────────────────────────────────────────────────
+  ВІДЕО         не вставлено: перевірених посилань до уроку не було
+  План          ~/Desktop/plan/Розробка мобільних додатків — 6 клас — II чверть.docx
+  Аркуш A4      rozdatka.html — для сховища, у класі не видається
+  Конспект      2026-27-teacher/steam/6-mobile/u09/konspekt.md
+  Каркас        HTML/CSS — копія u08 + блок «ДОДАНО ДЛЯ УРОКУ 9»
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --surf2:#f1f3f7; --border:#e0e3e9;
+  --brand:#591429; --green:#227354; --forest:#154734; --gold:#f2c75c;
+  --goldink:#8a5a10; --brick:#a8392f; --steel:#3c5a72;
+  --teal:#227354; --blue:#3c5a72; --pink:#a8392f; --yellow:#8a5a10;
+  --purple:#8a5a10; --green2:#154734;
+  --text:#282a29; --ink:#282a29; --dim:#5c605e; --faint:#84888a;
+  --accent:var(--goldink);
+  --f-head:'Source Serif 4','Meta Serif Pro',Georgia,'Times New Roman',serif;
+  --f-body:'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(208,168,245,.025) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(208,168,245,.025) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--pink));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(40,42,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:rgba(208,168,245,.13)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:#e3efe9;color:var(--teal)}
+.lb{background:#e4eaf0;color:var(--blue)}
+.ly{background:#f7eeda;color:var(--yellow)}
+.lp{background:#f6e5e3;color:var(--pink)}
+.lg{background:#e2ebe6;color:var(--green)}
+.lpu{background:rgba(208,168,245,.13);color:var(--purple)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cy h3{color:var(--yellow)}
+.card.cp h3{color:var(--pink)} .card.cg h3{color:var(--green)} .card.cb h3{color:var(--blue)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--text);line-height:1.7}
+.hbox.ht{border-color:var(--teal)} .hbox.hy{border-color:var(--yellow)}
+.hbox.hp{border-color:var(--pink)} .hbox.hg{border-color:var(--green)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:rgba(208,168,245,.07);
+     border:1px solid rgba(208,168,245,.25);border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7}
+.tip.ty{background:#fbf6ea;border-color:#e8d5a8}
+.tip.tp{background:#fbf1f0;border-color:#e6c6c2}
+.tip.tg{background:#eef3f0;border-color:#c3d6cc}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+/* ─── макет телефона ─── */
+.phone{width:190px;border:3px solid var(--border);border-radius:22px;background:#fff;
+       padding:26px 14px 20px;position:relative;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.phone::before{content:'';position:absolute;top:9px;left:50%;transform:translateX(-50%);
+       width:52px;height:5px;border-radius:3px;background:#d0d0d0}
+.ph-label{color:#111;font-size:17px;font-weight:700;text-align:center;margin-bottom:14px;font-family:var(--f-body)}
+.ph-btn{background:#e8e8e8;border:1px solid #b8b8b8;border-radius:5px;color:#111;
+        font-size:15px;text-align:center;padding:8px 10px;font-family:var(--f-body)}
+
+/* ─── візуальні блоки App Inventor ─── */
+.blk{font-family:var(--f-body);font-size:16px;color:#2b2b2b;border-radius:7px;
+     padding:9px 14px;display:inline-block;font-weight:600;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.blk-event{background:#d5a04b;border:1px solid #b7863a}
+.blk-set{background:#6fbf5f;border:1px solid #5aa04c}
+.blk-text{background:#e57a72;border:1px solid #c9645d}
+.blk-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+.blk-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:11px}
+.blk-row:last-child{margin-bottom:0}
+.blk-indent{margin-left:34px}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:rgba(208,168,245,.15);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:#f9f2e2;border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+/* ─── макет робочої області Blocks ─── */
+.bl-ide{display:flex;gap:0;border:1px solid var(--border);border-radius:13px;overflow:hidden}
+.bl-rail{width:172px;background:var(--surf2);border-right:1px solid var(--border);
+         padding:13px 12px;flex-shrink:0}
+.bl-rail-t{font-family:var(--f-mono);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;
+           color:var(--faint);margin-bottom:11px}
+.bl-item{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);
+         padding:7px 10px;border-radius:6px;margin-bottom:5px}
+.bl-item.on{background:rgba(208,168,245,.15);color:var(--purple);font-weight:700}
+.bl-canvas{flex:1;background:var(--surface);padding:18px 20px;
+           background-image:radial-gradient(rgba(40,42,41,.05) 1px,transparent 1px);
+           background-size:17px 17px}
+.bl-cap{margin-top:13px;font-size:14.5px;color:var(--faint);font-style:italic}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.prac{background:var(--surf2);border:2px solid var(--accent);border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.pbadge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+  background:var(--accent);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--accent)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:var(--goldink);background:#f9f2e2;
+  border:1px solid var(--gold);border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16px;flex-shrink:0;letter-spacing:1px;min-width:54px}
+.lv-t{font-size:17px;line-height:1.6;color:var(--text)}
+.vs{font-family:var(--f-mono);font-size:14px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:7px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid}
+.wrong{border-color:var(--brick);background:var(--surface)}
+.right{border-color:var(--forest);background:var(--surface)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--text)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3: «приклад → тепер самостійно» ─── */
+.demo{border:2px solid var(--steel);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--steel);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--accent);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--text,var(--ink))}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--brick)} .right{border-color:var(--forest)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6}
+.bk b{color:var(--accent)}
+
+
+/* ─── дерево компонентів (панель Components) ─── */
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:700}
+.cm{color:#6b6f6d;font-style:italic}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4: блок-«підкова» події ───
+   Кольори — справжні кольори App Inventor (подія — жовта, дія — зелена,
+   текст — червоний), не з палітри школи: дитина має впізнати їх на екрані.
+   Текст на блоках темний, контраст ≥7:1. */
+.cblk{display:inline-block;background:#d5a04b;border:1px solid #b7863a;border-radius:9px;
+      padding:0 0 11px 0;box-shadow:0 2px 0 rgba(0,0,0,.18);font-family:var(--f-body);
+      vertical-align:top}
+.cblk-h{padding:8px 14px 7px;font-weight:700;font-size:16px;color:#2b2b2b;white-space:nowrap}
+.cblk-h .dl{font-weight:600}
+.cblk-b{margin-left:24px;background:var(--surface);border:1px solid #b7863a;border-right:0;
+        border-radius:7px 0 0 7px;padding:8px 10px;display:flex;flex-direction:column;
+        gap:7px;min-height:24px;min-width:220px}
+.cblk-b .blk-row{margin-bottom:0;gap:6px;flex-wrap:nowrap}
+.cblk-b .blk{padding:6px 11px;font-size:15px;white-space:nowrap}
+.blk-num{background:#6f97cf;border:1px solid #577db4}
+.blk-log{background:#8fbf5f;border:1px solid #74a24a}
+.blk-col{background:#e3e3e3;border:1px solid #a9a9a9;padding:6px 9px !important}
+.sw{display:inline-block;width:17px;height:17px;border-radius:4px;border:1px solid rgba(0,0,0,.35);
+    vertical-align:-3px}
+.blk-float{margin-top:10px;margin-left:30px}
+.cblk-pair{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.45;color:var(--text)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--accent);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono);font-size:15.5px;white-space:nowrap}
+.tb tr:last-child td{border-bottom:0}
+.tb tr.rare td{color:var(--dim)}
+
+/* слайд-довідник: три колонки */
+.ref3{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:14px}
+.ref3 .card{padding:15px 17px}
+.ref3 .card p{font-family:var(--f-mono);font-size:15px;line-height:1.75;color:var(--text)}
+.ref3 .card .nt{font-family:var(--f-body);font-size:15px;color:var(--dim);margin-top:6px;line-height:1.5}
+
+.bank.b4{grid-template-columns:1fr 1fr}
+.bank.b4 .bk{padding:9px 14px;font-size:16px;line-height:1.5}
+.errs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.errs .card{padding:15px 16px}
+.errs .card p{font-size:16px;line-height:1.55}
+.errs .mono{font-size:14.5px;line-height:1.55;background:var(--surf2);border-radius:8px;
+            padding:8px 10px;margin:4px 0 8px;white-space:pre-wrap}
+.hbox.hb{border-color:var(--blue)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 5: блок-команда call і невидимі компоненти ───
+   Фіолетовий — справжній колір блоків-команд App Inventor (call …),
+   не з палітри школи: дитина має впізнати його на екрані.
+   Текст темний, контраст ≥ 6.5:1. */
+.blk-call{background:#b39ddb;border:1px solid #8e72bd;color:#1a1a1a}
+.nvis{margin-top:12px;border-top:2px dashed var(--border);padding-top:9px;font-size:14px;
+      color:var(--dim);text-align:center}
+.nvis b{display:inline-block;margin-top:5px;font-family:var(--f-mono);font-size:14px;
+      color:var(--text);background:var(--surf2);border:1px solid var(--border);
+      border-radius:6px;padding:3px 9px}
+.ph-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ph-grid .ph-btn{padding:10px 4px;font-size:14px}
+.phone.wide{width:230px}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6: картинка, факти, повідомлення на телефоні ───
+   Сірий тост — так ShowAlert виглядає на Android; вікно-діалог — біле
+   з тінню. Текст на них ≥7:1. Нових кольорів палітри не заводимо. */
+.ph-img{height:74px;border:2px dashed var(--steel);border-radius:8px;display:flex;
+        align-items:center;justify-content:center;font-size:2rem;margin-bottom:8px;background:var(--surf2)}
+.ph-fact{color:#111;font-size:13px;text-align:center;margin-bottom:3px;font-family:var(--f-body)}
+.ph-row{display:flex;gap:6px;margin:8px 0 6px}
+.ph-row .ph-btn{flex:1;padding:7px 3px;font-size:13px}
+.ph-toast{margin:10px auto 0;background:#323232;color:#fff;border-radius:16px;padding:7px 12px;
+          font-size:13px;text-align:center;font-family:var(--f-body);width:fit-content}
+.ph-dlg{border:1px solid #b8b8b8;border-radius:8px;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);
+        padding:10px 12px;margin-top:8px;color:#111;font-family:var(--f-body);text-align:left}
+.ph-dlg .dt{font-weight:700;font-size:15px;margin-bottom:5px}
+.ph-dlg .dm{font-size:13.5px;line-height:1.4;margin-bottom:8px}
+.ph-dlg .db{text-align:right;font-weight:700;font-size:13.5px;color:var(--steel);text-transform:uppercase}
+.phone.dim .ph-label,.phone.dim .ph-img,.phone.dim .ph-btn{opacity:.35}
+/* блок-команда з кількома гніздами: ShowMessageDialog */
+.blk-multi{display:inline-flex !important;flex-direction:column;gap:5px;white-space:nowrap}
+.blk-multi .sk{display:flex;align-items:center;justify-content:flex-end;gap:7px;font-size:14px;font-weight:600}
+.blk-multi .sk .blk{font-size:14px !important;padding:4px 9px !important}
+.tree.sm{font-size:15px;line-height:1.55;padding:12px 18px;white-space:pre}
+.card .q{font-size:16.5px;line-height:1.55;color:var(--text);margin-bottom:5px}
+.mini{font-family:var(--f-mono);font-size:14px;color:var(--dim);margin-bottom:6px}
+/* ─── ДОДАНО ДЛЯ УРОКУ 8: слайд «Контрольна — як заповнювати» ───
+   Тільки змінні палітри курсу, нових кольорів немає. */
+.fillrow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fillrow .card{padding:14px 18px}
+.fillrow .card h3{font-size:1.2rem;margin-bottom:6px}
+.smp{font-size:18px !important;line-height:1.9 !important;color:var(--text) !important}
+.circ{display:inline-block;border:3px solid var(--brick);border-radius:50%;padding:0 8px;line-height:1.4}
+.wr{display:inline-block;min-width:44px;border-bottom:2px solid var(--text);text-align:center;
+    font-family:var(--f-mono);font-weight:700;color:var(--brick)}
+.frm{display:inline-block;border:2px solid var(--text);border-radius:6px;padding:0 10px}
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО ДЛЯ УРОКУ 9: полотно гри на телефоні, дорога проєкту ───
+   Тільки змінні палітри курсу, нових кольорів немає. */
+.cnv{position:relative;height:150px;border:2px dashed var(--steel);border-radius:8px;
+     background:var(--surf2);margin:6px 0 8px}
+.cnv .spr{position:absolute;font-size:2rem;line-height:1}
+.cnv .cap{position:absolute;left:6px;bottom:4px;font-family:var(--f-mono);font-size:11px;color:var(--dim)}
+.road{display:grid;grid-template-columns:repeat(6,1fr);gap:9px}
+.road .rd{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--accent);
+    border-radius:10px;padding:9px 11px;text-align:center}
+.road .d{font-family:var(--f-mono);font-size:14px;color:var(--dim)}
+.road .w{font-size:16px;line-height:1.35;margin-top:3px}
+.road .rd.fin{border-top-color:var(--brand)}
+.idea{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.idea .card{padding:13px 16px}
+.idea .card h3{font-size:1.15rem;margin-bottom:5px}
+.idea .card p{font-size:16px;line-height:1.5}
+.idea .em{font-size:1.8rem;line-height:1;margin-bottom:4px}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1">Повторення. Проєкт чверті «Моя гра»</div>
+    <div class="title-sub">Розробка мобільних додатків · 6 клас · Урок 9 · 10 листопада 2026</div>
+    <div class="chips">
+      <span class="chip">🔁 Згадуємо</span>
+      <span class="chip">🔎 Знайди помилку</span>
+      <span class="chip">🎮 Проєкт чверті</span>
+      <span class="chip">📲 Старт гри</span>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label ly">Сьогодні</span>
+      <h2>Згадуємо — і починаємо свою гру</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Згадуємо</b> I чверть: компоненти, коробки, події, звук</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Знайди помилку</b> в блоках</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Проєкт чверті</b> «Моя гра»: що будемо робити до 22 грудня</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><b>За ноутбуками</b>: обираємо ідею і робимо екран гри</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ДЗ НА КАНІКУЛИ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🏖️</div><div>
+      <span class="label lp">Перевіряємо завдання на канікули</span>
+      <h2>Проєкт Kanikuly</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <p class="mini">Designer · Label1 · Text: Канікули · Button1 · Text: Звук · Sound1 · Source: свій звук</p>
+        <div class="cblk">
+          <div class="cblk-h">when Button1.Click <span class="dl">do</span></div>
+          <div class="cblk-b">
+            <div class="blk-row"><span class="blk blk-call">call Sound1.Play</span></div>
+            <div class="blk-row"><span class="blk blk-set">set Label1.Text to</span>
+              <span class="blk blk-text">"Ура!"</span></div>
+          </div>
+        </div>
+        <div class="phone mt">
+          <div class="ph-label">Ура!</div>
+          <div class="ph-btn">Звук</div>
+          <div class="nvis">Non-visible components<br><b>Sound1</b></div>
+        </div>
+      </div>
+      <div class="quiz" style="display:flex;flex-direction:column;gap:12px">
+        <div class="card cp reveal"><h3>1</h3>
+          <p class="q">Що на екрані <b>до</b> натискання?</p>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p><b>Канікули</b> — так написано в Designer</p></div></div>
+        <div class="card cp reveal"><h3>2</h3>
+          <p class="q">Що станеться, коли натиснули «Звук»?</p>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p>Грає звук, напис стає <b>«Ура!»</b></p></div></div>
+        <div class="card cp reveal"><h3>3</h3>
+          <p class="q">Де вибрати, який звук грає?</p>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p><b>Sound1 → Source</b> у Designer</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── КОМПОНЕНТИ І ВЛАСТИВОСТІ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🧩</div><div>
+      <span class="label lt">Згадуємо 1 з 4 · уроки 2–3</span>
+      <h2>Компоненти і їхні властивості</h2>
+    </div></div>
+    <table class="tb">
+      <tr><th>Компонент</th><th>Що це</th><th>Властивості</th></tr>
+      <tr><td class="mono">Label</td><td>напис</td><td class="mono">Text · FontSize · TextColor</td></tr>
+      <tr><td class="mono">Button</td><td>кнопка</td><td class="mono">Text · BackgroundColor · Width</td></tr>
+      <tr><td class="mono">Image</td><td>картинка</td><td class="mono">Picture · Width</td></tr>
+      <tr><td class="mono">Screen1</td><td>сам екран</td><td class="mono">Title · BackgroundColor</td></tr>
+    </table>
+    <div class="two mt">
+      <div class="card reveal"><h3>Де змінюють властивості?</h3>
+        <p class="rv-hint">Клацніть, щоб перевірити.</p>
+        <div class="rv-body"><p>панель <b>Properties</b> у Designer</p></div></div>
+      <div class="card reveal"><h3>Яка властивість — розмір букв?</h3>
+        <p class="rv-hint">Клацніть, щоб перевірити.</p>
+        <div class="rv-body"><p><b>FontSize</b></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ── КОМПОНУВАЛЬНИКИ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lt">Згадуємо 2 з 4 · урок 3</span>
+      <h2>Коробки: у рядок і в стовпчик</h2>
+    </div></div>
+    <div class="two">
+      <div class="phone wide">
+        <div class="ph-label">Бали: 0</div>
+        <div class="ph-row"><div class="ph-btn">Старт</div><div class="ph-btn">Скинути</div></div>
+        <div class="mini" style="text-align:center">HorizontalArrangement1</div>
+      </div>
+      <div class="quiz" style="display:flex;flex-direction:column;gap:12px">
+        <div class="card reveal"><h3>Дві кнопки <b>поруч</b> — яка коробка?</h3>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p><b>HorizontalArrangement</b> — у рядок</p></div></div>
+        <div class="card reveal"><h3>Три написи <b>один під одним</b>?</h3>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p><b>VerticalArrangement</b> — у стовпчик</p></div></div>
+        <div class="card reveal"><h3>Де лежать коробки в Palette?</h3>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p>розділ <b>Layout</b></p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ПОДІЇ ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🟨</div><div>
+      <span class="label ly">Згадуємо 3 з 4 · уроки 4–5</span>
+      <h2>Подія і що в ній робиться</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="cblk">
+          <div class="cblk-h">when ButtonStart.Click <span class="dl">do</span></div>
+          <div class="cblk-b">
+            <div class="blk-row"><span class="blk blk-set">set Label1.Text to</span>
+              <span class="blk blk-text">"Поїхали!"</span></div>
+          </div>
+        </div>
+        <div class="mt"><div class="cblk">
+          <div class="cblk-h">when Screen1.Initialize <span class="dl">do</span></div>
+          <div class="cblk-b">
+            <div class="blk-row"><span class="blk blk-call">call Notifier1.ShowAlert</span>
+              <span class="blk blk-text">"Привіт!"</span></div>
+          </div>
+        </div></div>
+      </div>
+      <div class="quiz" style="display:flex;flex-direction:column;gap:12px">
+        <div class="card reveal"><h3>Якого кольору блок події?</h3>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p><b>жовтий</b> — «коли… зроби…»</p></div></div>
+        <div class="card reveal"><h3>Коли спрацює <span class="ic">Screen1.Initialize</span>?</h3>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p>щойно застосунок <b>відкрився</b></p></div></div>
+        <div class="card reveal"><h3>Довге натискання — яка подія?</h3>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p><b>LongClick</b></p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ЗВУК І ВІБРАЦІЯ ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🔊</div><div>
+      <span class="label lb">Згадуємо 4 з 4 · уроки 5–6</span>
+      <h2>Звук і вібрація</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="cblk">
+          <div class="cblk-h">when Button1.Click <span class="dl">do</span></div>
+          <div class="cblk-b">
+            <div class="blk-row"><span class="blk blk-call">call Sound1.Play</span></div>
+          </div>
+        </div>
+        <div class="mt"><div class="cblk">
+          <div class="cblk-h">when Button1.LongClick <span class="dl">do</span></div>
+          <div class="cblk-b">
+            <div class="blk-row"><span class="blk blk-call">call Sound1.Vibrate</span>
+              <span class="blk blk-num">500</span></div>
+          </div>
+        </div></div>
+      </div>
+      <div class="quiz" style="display:flex;flex-direction:column;gap:12px">
+        <div class="card reveal"><h3>Звідки береться файл звуку?</h3>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p><b>Media → Upload File…</b>, потім <b>Sound1 → Source</b></p></div></div>
+        <div class="card reveal"><h3>500 у <span class="ic">Vibrate</span> — це скільки?</h3>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p><b>пів секунди</b>: 1000 мс = 1 секунда</p></div></div>
+        <div class="card reveal"><h3>Яка команда зупиняє звук?</h3>
+          <p class="rv-hint">Клацніть, щоб перевірити.</p>
+          <div class="rv-body"><p><b>call Sound1.Stop</b></p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ШВИДКІ ПИТАННЯ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">⚡</div><div>
+      <span class="label lp">Швидкі питання</span>
+      <h2>Згадай за 10 секунд</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cp reveal"><h3>1</h3>
+        <p class="q">Де розставляємо компоненти на екрані?</p>
+        <p class="rv-hint">Клацніть, щоб перевірити.</p>
+        <div class="rv-body"><p><b>Designer</b></p></div></div>
+      <div class="card cp reveal"><h3>2</h3>
+        <p class="q">Де складаємо програму з блоків?</p>
+        <p class="rv-hint">Клацніть, щоб перевірити.</p>
+        <div class="rv-body"><p><b>Blocks</b></p></div></div>
+      <div class="card cp reveal"><h3>3</h3>
+        <p class="q">Який компонент показує повідомлення на екрані?</p>
+        <p class="rv-hint">Клацніть, щоб перевірити.</p>
+        <div class="rv-body"><p><b>Notifier</b> — <span class="ic">ShowAlert</span></p></div></div>
+      <div class="card cp reveal"><h3>4</h3>
+        <p class="q">Як подивитися проєкт на телефоні?</p>
+        <p class="rv-hint">Клацніть, щоб перевірити.</p>
+        <div class="rv-body"><p><b>Connect → AI Companion</b> і QR-код</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ЗНАЙДИ ПОМИЛКУ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🔎</div><div>
+      <span class="label lp">Знайди помилку</span>
+      <h2>Чому кнопка не працює?</h2>
+    </div></div>
+    <div class="errs">
+      <div class="card reveal"><h3>1 · Тиша</h3>
+        <div class="cblk">
+          <div class="cblk-h">when Button1.Click <span class="dl">do</span></div>
+          <div class="cblk-b"></div>
+        </div>
+        <div class="blk-float"><span class="blk blk-call">call Sound1.Play</span></div>
+        <p class="rv-hint">Клацніть, щоб перевірити.</p>
+        <div class="rv-body"><p>Блок лежить <b>поза підковою</b>. Встав його всередину</p></div></div>
+      <div class="card reveal"><h3>2 · Картинка не змінюється</h3>
+        <p class="mini">Media: kit.jpg</p>
+        <div class="blk-row"><span class="blk blk-set">set Image1.Picture to</span>
+          <span class="blk blk-text">"kit.png"</span></div>
+        <p class="rv-hint">Клацніть, щоб перевірити.</p>
+        <div class="rv-body"><p>Назва не та: у Media <b>kit.jpg</b>, а в блоці — .png</p></div></div>
+      <div class="card reveal"><h3>3 · Не та кнопка</h3>
+        <p class="mini">Натискаємо ButtonStart</p>
+        <div class="cblk">
+          <div class="cblk-h">when Button2.Click <span class="dl">do</span></div>
+          <div class="cblk-b">
+            <div class="blk-row"><span class="blk blk-call">call Sound1.Play</span></div>
+          </div>
+        </div>
+        <p class="rv-hint">Клацніть, щоб перевірити.</p>
+        <div class="rv-body"><p>Підкова — <b>іншої кнопки</b>. Треба <span class="ic" style="white-space:nowrap">when ButtonStart.Click</span></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">📌</div><div>
+      <span class="label ly">Довідник — лишається на дошці</span>
+      <h2>I чверть: подія · встанови · команда</h2>
+    </div></div>
+    <div class="ref3">
+      <div class="card cy"><h3>Подія — жовта</h3>
+        <p>when Button1.Click<br>when Button1.LongClick<br>when Screen1.Initialize</p>
+        <div class="nt">«коли… зроби…»: усередину кладемо інші блоки</div></div>
+      <div class="card cg"><h3>Встанови — зелена</h3>
+        <p>set Label1.Text to<br>set Image1.Picture to<br>set Screen1.BackgroundColor to</p>
+        <div class="nt">змінює властивість. Текст — червоний блок " "</div></div>
+      <div class="card"><h3>Команда — фіолетова</h3>
+        <p>call Sound1.Play<br>call Sound1.Vibrate<br>call Notifier1.ShowAlert</p>
+        <div class="nt">компонент щось робить</div></div>
+    </div>
+    <div class="tip mt"><span class="tip-ico">🧭</span>
+      <div>Порядок: <strong>Media</strong> — файли, <strong>Designer</strong> — компоненти,
+      <strong>Blocks</strong> — підкови, <strong>телефон</strong> — перевірка.</div></div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПРОЄКТ ЧВЕРТІ: ЗАСТАВКА ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="big">
+      <div class="big-ico">🎮</div>
+      <h2>Проєкт чверті «Моя гра»</h2>
+      <div class="big-time">10 листопада → 22 грудня</div>
+    </div>
+    <div class="hbox">Твоя власна гра на телефоні: персонаж на полотні, торкнувся — <strong>+1 бал</strong>.
+      Кожен урок додає одну частину.</div>
+    <div class="road mt">
+      <div class="rd"><div class="d">17.11</div><div class="w">бали в змінній</div></div>
+      <div class="rd"><div class="d">24.11</div><div class="w">випадкові числа</div></div>
+      <div class="rd"><div class="d">01.12</div><div class="w">полотно і персонаж</div></div>
+      <div class="rd"><div class="d">08.12</div><div class="w">таймер: рух сам</div></div>
+      <div class="rd"><div class="d">15.12</div><div class="w">скидання гри</div></div>
+      <div class="rd fin"><div class="d">22.12</div><div class="w">тло, звук, показ</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ЯКОЮ БУДЕ ГРА ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">📱</div><div>
+      <span class="label lt">Що вийде в грудні</span>
+      <h2>«Злови жука»</h2>
+    </div></div>
+    <div class="two">
+      <div class="phone wide">
+        <div class="ph-label">Бали: 3</div>
+        <div class="cnv"><span class="spr" style="left:62%;top:28%">🐞</span>
+          <span class="cap">Canvas1</span></div>
+        <div class="ph-row"><div class="ph-btn">Старт</div><div class="ph-btn">Скинути</div></div>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t">Натискаєш <b>Старт</b> — жук бігає по полотну</span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t">Торкнувся жука — <b>+1 бал</b>, жук стрибає в інше місце</span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t"><b>Скинути</b> — знову «Бали: 0»</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── КАРТКА ПРОЄКТУ ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label ly">Картка проєкту</span>
+      <h2>Що має бути на 22 грудня</h2>
+    </div></div>
+    <div class="lvl">
+      <div class="lv"><span class="lv-s">⭐</span><span class="lv-t"><b>Гра на полотні</b>: персонаж, торкнувся — +1 бал.
+        Бали видно на екрані. Кнопка «Скинути» ставить 0</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t"><b>+</b> після дотику персонаж стрибає у <b>випадкове</b> місце.
+        Таймер: персонаж рухається сам. Кнопки «Старт» і «Стоп»</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t"><b>+</b> звук на дотик, своє тло полотна,
+        скидання гри — окремою процедурою. Щось своє: другий персонаж, рекорд, швидшає з часом</span></div>
+    </div>
+    <div class="tip tg mt"><span class="tip-ico">🧭</span>
+      <div>Сьогодні — <b>без полотна</b>. Сьогодні: ідея гри та її перший екран.</div></div>
+  </div></section>
+
+  <!-- ══════════ 14 ── БАНК ІДЕЙ ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">💡</div><div>
+      <span class="label lt">Банк ідей</span>
+      <h2>Обери свою гру</h2>
+    </div></div>
+    <div class="idea">
+      <div class="card"><div class="em">🐞</div><h3>Злови жука</h3><p>торкнись жука, поки він не втік</p></div>
+      <div class="card cb"><div class="em">🎈</div><h3>Лопни кульку</h3><p>кулька пливе — лопни її</p></div>
+      <div class="card cg"><div class="em">🐟</div><h3>Спіймай рибку</h3><p>рибка пливе по морю</p></div>
+      <div class="card cp"><div class="em">🍎</div><h3>Збери яблука</h3><p>яблуко зʼявляється на дереві</p></div>
+      <div class="card cy"><div class="em">⭐</div><h3>Збери зірку</h3><p>зірка блимає в різних місцях</p></div>
+      <div class="card ct"><div class="em">👾</div><h3>Своя ідея</h3><p>один персонаж, дотик — бал</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 1</span>
+        <span class="t">Екран гри</span><span class="tmr">7 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — робимо разом</span>
+        <div class="mono">Projects → Start new project → MoyaGra
+Screen1 · Title: Злови жука
+Label1 · Text: Бали: 0 · FontSize 24 · FontBold ✔
+HorizontalArrangement1 · ButtonStart «Старт» · ButtonSkynuty «Скинути»</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Новий проєкт <span class="ic">MoyaGra</span>. <span class="ic">Title</span> — назва <b>твоєї</b> гри</li>
+          <li><span class="ic">Label1</span> — «Бали: 0», великим і жирним</li>
+          <li>Дві кнопки <b>поруч</b>: «Старт» і «Скинути»</li>
+          <li>⭐⭐ Свій колір тла екрана і колір кнопок — під свою гру</li>
+          <li>⭐⭐⭐ Кнопкам — зрозумілі імена: <span class="ic">ButtonStart</span>, <span class="ic">ButtonSkynuty</span> (Rename)</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 2</span>
+        <span class="t">Персонаж і звук</span><span class="tmr">7 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — робимо разом</span>
+        <div class="mono">Media → Upload File… → zhuk.png · klats.mp3
+Image1 · Picture: zhuk.png · Width 100 pixels
+Sound1 · Source: klats.mp3     Notifier1</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Картинка твого персонажа → <span class="ic">Image1</span>. Назва файлу — <b>латиницею</b></li>
+          <li>Звук → <span class="ic">Sound1</span>, і ще <span class="ic">Notifier1</span></li>
+          <li>«Старт»: повідомлення <b>«Гра починається!»</b> і звук — два блоки в одній підкові</li>
+          <li>⭐⭐ Довге натискання на «Старт» — телефон вібрує 300 мс</li>
+        </ul>
+      </div>
+      <div class="cblk-pair mt">
+        <div class="cblk">
+          <div class="cblk-h">when ButtonStart.Click <span class="dl">do</span></div>
+          <div class="cblk-b">
+            <div class="blk-row"><span class="blk blk-call">call Notifier1.ShowAlert</span>
+              <span class="blk blk-text">"Гра починається!"</span></div>
+            <div class="blk-row"><span class="blk blk-call">call Sound1.Play</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика 3</span>
+        <span class="t">Кнопка «Скинути»</span><span class="tmr">5 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад — робимо разом</span>
+        <div class="cblk">
+          <div class="cblk-h">when ButtonSkynuty.Click <span class="dl">do</span></div>
+          <div class="cblk-b">
+            <div class="blk-row"><span class="blk blk-set">set Label1.Text to</span>
+              <span class="blk blk-text">"Бали: 0"</span></div>
+          </div>
+        </div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>«Скинути» пише <b>«Бали: 0»</b>. Перевір: спершу «Старт», потім «Скинути»</li>
+          <li>⭐⭐ «Старт» ще й міняє напис на «Гра йде!»</li>
+          <li>⭐⭐⭐ <span class="ic">when Screen1.Initialize</span> — повідомлення «Натисни Старт» одразу при запуску</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ПЕРЕВІРКА НА ТЕЛЕФОНІ ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">📲</div><div>
+      <span class="label lt">Перевірка на пристрої</span>
+      <h2>Пройди свою гру на телефоні</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t">Назва гри — <b>угорі</b>, «Бали: 0» добре видно</span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t">Персонаж видно <b>повністю</b></span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t">«Старт» — повідомлення і звук. «Скинути» — «Бали: 0»</span></div>
+      </div>
+      <div>
+        <div class="hbox hp"><b>Звук не грає</b> — у <span class="ic">Source</span> нічого не вибрано</div>
+        <div class="hbox"><b>Кнопка нічого не робить</b> — блок поза підковою</div>
+        <div class="hbox ht"><b>Телефон не бачить проєкт</b> — Connect → Reset Connection</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── ПІДСУМОК ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label ly">Підсумок</span>
+      <h2>Що є після девʼятого уроку</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Зроблено</h3><ul>
+        <li>обрано ідею гри</li>
+        <li>проєкт <span class="ic">MoyaGra</span>: назва, «Бали: 0», «Старт» і «Скинути»</li>
+        <li>персонаж і звук завантажено</li>
+      </ul></div>
+      <div class="card cb"><h3>Наступного разу · 17 листопада</h3><ul>
+        <li>змінна — памʼять застосунку</li>
+        <li>бали рахуються самі</li>
+      </ul></div>
+    </div>
+    <div class="hbox hb mt">Проєкт <span class="ic">MoyaGra</span> зберігається в акаунті —
+      увесь проєкт чверті робимо в ньому.</div>
+  </div></section>
+
+  <!-- ══════════ ЯК ЗДАТИ ДЗ ══════════ -->
+  <section class="slide" id="s18z"><div class="slide-inner">
+<div class="sh"><div class="si">📤</div><div>
+  <span class="label lb">Робимо зараз разом · 3 хвилини</span>
+  <h2>Як здати домашнє з App Inventor</h2>
+</div></div>
+<div class="steps">
+  <div class="step"><span class="step-n">1</span><div class="step-t">
+    <b>Вдома:</b> <strong>ai2.appinventor.mit.edu</strong> → увійти <b>тим самим Google-акаунтом</b>, що в класі → <b>My Projects</b> → <span class="ic">MoyaGra</span>.
+    Інший акаунт — проєкту там не буде.</div></div>
+  <div class="step"><span class="step-n">2</span><div class="step-t">
+    <b>Blocks</b> → <b>правий клік</b> на порожньому місці → <b>Download Blocks as Image</b> → картинка PNG у «Завантаженнях».</div></div>
+  <div class="step"><span class="step-n">3</span><div class="step-t">
+    <b>Google Classroom</b> → завдання цього уроку → <b>«Додати або створити»</b> → <b>«Файл»</b> → вибрати PNG → <b>«Здати»</b>.</div></div>
+</div>
+<div class="hbox hb mt"><strong>Зараз:</strong> кожен робить кроки 2 і 3 зі своїм проєктом з уроку. Вдома — те саме, тільки з домашнім.</div>
+  </div></section>
+
+  <!-- ══════════ 20 · ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lp">Додому · 10 хвилин</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox">Робимо на сайті <strong>ai2.appinventor.mit.edu</strong>. Відповідь і картинку блоків —
+      у <strong>Google Classroom</strong> до <strong>17 листопада</strong>.</div>
+    <div class="steps mt">
+      <div class="step"><div class="step-n">1</div><div class="step-t"><b>Моя гра</b> трьома рядками:
+        назва гри · хто персонаж · що зробити, щоб отримати бал.
+        Наприклад: <i>Злови жука · жук · торкнутися жука</i>.</div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-t">У <span class="ic">MoyaGra</span>:
+        «Скинути» пише «Бали: 0», «Старт» показує «Гра починається!». Надішли картинку блоків:
+        <b>Download Blocks as Image</b>.</div></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+goTo(0);
+</script>
+</body>
+</html>

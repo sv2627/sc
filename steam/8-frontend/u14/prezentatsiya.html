@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Повторення. Проєкт чверті «Адаптивний сайт» · Front-end · 8 клас · Урок 14</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Front-end
+  Клас          8
+  Школа         STEAM (Республіка) · вівторок
+  Урок          14 з 27 · 10.11.2026 · перший урок дня (подвійний вівторок)
+                · перший після канікул
+  Тема          Повторення. Проєкт чверті «Адаптивний сайт»
+  Акцент        green (#154734) — --accent:var(--forest), як уроки 1–13
+  Слайдів       19 (s0…s18)
+  ────────────────────────────────────────────────────────────────
+  ⛔ БЕЗ НОУТБУКІВ. Відповіді вголос, ескіз — на листочку.
+     Ноутбуки — з уроку 15 (після перерви), ескіз лежить поруч.
+  ⚠️ НОВОГО КОДУ НЕМАЄ. Насиченість −20 % (II чверть).
+  ⚠️ ДОМАШНЄ — ОДНЕ НА ОБИДВА УРОКИ ДНЯ, у u15 (s20 + u15/dz.html).
+     У цій колоді слайда ДЗ немає — так само, як u12 → u13.
+  ⚠️ 10-хв блок «як влаштовано» — за планом з уроку 16, тут його немає.
+  ────────────────────────────────────────────────────────────────
+  ЗГАДУЄМО      s2  перевірка ДЗ канікул — код на слайді    3 хв
+                s3  семантичний каркас (reveal)
+                s4  правило CSS і підключення (reveal)
+                s5  клас чи id (reveal)
+                s6  коробка (reveal)                         разом ≈ 10 хв
+                s7  знайди помилку — шість карток           4 хв
+  ПРОЄКТ        s8  що це · s9 картка ⭐/⭐⭐/⭐⭐⭐ · s10 шлях  5 хв
+                s11 банк ідей · s12 п'ять частин головної   3 хв
+  ЕСКІЗ         s13 умовні знаки · s14 приклад «Зерно»       3 хв
+                s15 практика на листочку                    15 хв
+                s16 перевір себе · s17 банк · s18 підсумок   2 хв
+  РІЗАТИ ПЕРШИМ s4 і s6 (проговорити), s10 (лише показати), s17.
+                s14–s16 НЕ різати — без ескізу урок 15 не піде.
+  ⚠️ ОЦІНЮВАННЯ — тільки в конспекті, на слайдах його немає.
+  ────────────────────────────────────────────────────────────────
+  Аркуш A4      rozdatka.html — тільки сховище
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --surf2:#f1f3f7; --border:#e0e3e9;
+  --brand:#591429; --green:#227354; --forest:#154734; --gold:#f2c75c;
+  --goldink:#8a5a10; --brick:#a8392f; --steel:#3c5a72;
+  --teal:#227354; --blue:#3c5a72; --pink:#a8392f; --yellow:#8a5a10;
+  --purple:#8a5a10; --green2:#154734;
+  --text:#282a29; --ink:#282a29; --dim:#5c605e; --faint:#84888a;
+  --accent:var(--forest);
+  --f-head:'Source Serif 4','Meta Serif Pro',Georgia,'Times New Roman',serif;
+  --f-body:'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(110,231,160,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(110,231,160,.022) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(40,42,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:#e2ebe6}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:#e3efe9;color:var(--teal)}
+.lb{background:#e4eaf0;color:var(--blue)}
+.ly{background:#f7eeda;color:var(--yellow)}
+.lp{background:#f6e5e3;color:var(--pink)}
+.lg{background:#e2ebe6;color:var(--green)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cb h3{color:var(--blue)}
+.card.cp h3{color:var(--pink)} .card.cy h3{color:var(--yellow)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--text);line-height:1.7}
+.hbox.ht{border-color:var(--teal)} .hbox.hb{border-color:var(--blue)}
+.hbox.hp{border-color:var(--pink)} .hbox.hy{border-color:var(--yellow)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:#eef3f0;
+     border:1px solid rgba(110,231,160,.25);border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7}
+.tip.ty{background:#fbf6ea;border-color:#e8d5a8}
+.tip.tp{background:#fbf1f0;border-color:#e6c6c2}
+.tip.tb{background:#eef2f6;border-color:rgba(99,197,255,.28)}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+.dp{border-radius:13px;overflow:hidden;border:1px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(40,42,41,.08);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdfcfa;padding:15px 19px;font-size:16px;line-height:1.6;white-space:pre-wrap}
+.dp-out{background:#fff;color:#111;padding:18px 22px;font-family:var(--f-body)}
+.dp-out h1{font-size:1.9rem;color:#111;font-family:var(--f-head)}
+.sk{color:#3c5a72}.ss{color:#a8392f}.sn{color:#154734}
+.cm{color:#6b6f6d;font-style:italic}
+.sa{color:#227354}
+
+/* ─── розбір каркаса: рядок «тег → що робить» ─── */
+.brk{display:flex;flex-direction:column;gap:9px}
+.brow{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:11px;padding:11px 16px}
+.btag{font-family:var(--f-mono);font-size:16px;color:var(--accent);flex-shrink:0;
+      min-width:172px;font-weight:700}
+.bwhat{font-size:17px;line-height:1.6;color:var(--dim)}
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:400}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:rgba(110,231,160,.15);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:#f9f2e2;border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.prac{background:var(--surf2);border:2px solid var(--accent);border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.pbadge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+  background:var(--accent);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--accent)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:var(--goldink);background:#f9f2e2;
+  border:1px solid var(--gold);border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16px;flex-shrink:0;letter-spacing:1px;min-width:54px}
+.lv-t{font-size:17px;line-height:1.6;color:var(--text)}
+.vs{font-family:var(--f-mono);font-size:14px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:7px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid}
+.wrong{border-color:var(--brick);background:var(--surface)}
+.right{border-color:var(--forest);background:var(--surface)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--text)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3: «приклад → тепер самостійно» ─── */
+.demo{border:2px solid var(--steel);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--steel);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--accent);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--text,var(--ink))}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--brick)} .right{border-color:var(--forest)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6}
+.bk b{color:var(--accent)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4: сайт через ШІ ─── */
+.now{display:inline-block;font-family:var(--f-mono);font-size:15px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;background:var(--brick);color:#fff;padding:7px 16px;border-radius:8px;margin-bottom:12px}
+.chat{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:18px 22px;
+  font-size:25px;line-height:1.45;box-shadow:0 2px 10px rgba(40,42,41,.08)}
+.chat .who{font-family:var(--f-mono);font-size:13px;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--dim);display:block;margin-bottom:8px}
+.chat.bad{border-color:var(--brick)} .chat.good{border-color:var(--forest)}
+.chat.sm{font-size:19px;line-height:1.55}
+.mock{background:#fff;border:1px solid var(--border);border-radius:13px;overflow:hidden;
+  box-shadow:0 2px 10px rgba(40,42,41,.08)}
+.mock .m-hd{background:#3b3b3b;color:#fff;padding:12px 18px;display:flex;justify-content:space-between;
+  font-size:16px;font-weight:700}
+.mock .m-hd span{font-weight:400;opacity:.9}
+.mock .m-body{padding:18px 20px;text-align:center}
+.mock .m-h1{font-family:var(--f-head);font-size:30px;font-weight:800;color:#282a29;margin-bottom:10px}
+.mock .m-img{height:96px;border-radius:10px;background:#f1e3cf;display:flex;align-items:center;
+  justify-content:center;font-size:48px;margin-bottom:12px}
+.mock .m-btn{display:inline-block;background:#d9822b;color:#fff;font-weight:700;padding:9px 20px;border-radius:9px;font-size:17px}
+.mock .m-ft{border-top:1px solid var(--border);padding:9px 18px;font-size:14px;color:var(--dim);text-align:center}
+.tags{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
+.tg{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--accent);
+  border-radius:10px;padding:12px 10px;text-align:center}
+.tg code{font-family:var(--f-mono);font-size:21px;font-weight:700;color:var(--accent);display:block;margin-bottom:4px}
+.tg span{font-size:16px;color:var(--dim);line-height:1.35;display:block}
+.nope{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.nope div{border:2px solid var(--brick);border-radius:12px;padding:16px 10px;font-size:22px;font-weight:700;
+  text-align:center;color:var(--brick);background:#fbf1f0}
+.fm{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.fm div{background:var(--surface);border:2px solid var(--accent);border-radius:14px;padding:16px 10px;text-align:center}
+.fm .n{font-family:var(--f-mono);font-size:15px;color:var(--dim);display:block}
+.fm b{display:block;font-family:var(--f-head);font-size:25px;color:var(--accent);margin:4px 0 8px}
+.fm span.e{font-size:16px;color:var(--text);line-height:1.4;display:block}
+.steps.lg .step-t{font-size:23px;line-height:1.45}
+.steps.lg .step-n{width:42px;height:42px;font-size:20px}
+.steps.lg .step{padding:15px 20px;align-items:center}
+.bigsay{font-family:var(--f-head);font-size:2.3rem;font-weight:800;color:var(--accent);line-height:1.25;text-align:center}
+kbd{font-family:var(--f-mono);font-size:.9em;background:var(--surface);border:1px solid var(--border);
+  border-bottom-width:3px;border-radius:7px;padding:1px 8px;white-space:nowrap}
+/* частина 2: розділювач, карта сторінки */
+.divider{text-align:center}
+.divider .dv-n{font-family:var(--f-mono);font-size:18px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.divider .dv-t{font-family:var(--f-head);font-size:3.4rem;font-weight:900;color:var(--accent);line-height:1.1;margin-bottom:22px}
+.map{display:flex;flex-direction:column;gap:9px;font-family:var(--f-mono);font-weight:700;font-size:17px}
+.mp{border:2px solid var(--accent);border-radius:10px;padding:9px 13px;background:var(--surface);color:var(--accent)}
+.mp .mp{margin-top:7px}
+.mrow{display:grid;grid-template-columns:3fr 1fr;gap:9px}
+.mp.alt{border-color:var(--steel);color:var(--steel);background:#f4f7fa}
+.mp.gold{border-color:var(--goldink);color:var(--goldink);background:#fbf6ea}
+.mp.dash{border-style:dashed}
+.mp small{font-family:var(--f-body);font-weight:400;font-size:15px;color:var(--dim);margin-left:8px}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО ДЛЯ УРОКУ 9: схема коробки ─── */
+.bm-m,.bm-b,.bm-p,.bm-c{position:relative;border-radius:8px;text-align:center}
+.bm-m{background:#fbf6ea;border:2px dashed var(--goldink);padding:34px 30px}
+.bm-b{background:#e9ecef;border:6px solid var(--ink);padding:30px 28px}
+.bm-p{background:#e3efe9;border:2px dashed var(--green);padding:30px 28px}
+.bm-c{background:#fff;border:1px solid var(--border);padding:18px 10px;font-size:19px;font-weight:700}
+.bm-c small{font-weight:400;font-size:15px;color:var(--dim)}
+.bm-l{position:absolute;top:6px;left:10px;font-family:var(--f-mono);font-size:14px;font-weight:700}
+.bm-m>.bm-l{color:var(--goldink)} .bm-b>.bm-l{color:var(--ink);top:4px} .bm-p>.bm-l{color:var(--green)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 11: інлайн-код ніколи не розривається ─── */
+.ic{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 14: повторення, проєкт чверті, ескіз ─── */
+.ic{white-space:nowrap}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 14px;font-size:18px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{font-family:var(--f-mono);font-weight:700;color:var(--accent);white-space:nowrap}
+.map .nb{display:inline-flex;width:28px;height:28px;border-radius:7px;background:var(--accent);color:#fff;
+  align-items:center;justify-content:center;font-size:15px;margin-right:8px}
+.mp.gold .nb{background:var(--goldink)} .mp.alt .nb{background:var(--steel)}
+.mp.alt{border-color:var(--steel);color:var(--steel);background:#eef2f6}
+.anat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.an-code{font-family:var(--f-mono);font-size:30px;font-weight:700;text-align:center;margin-bottom:10px}
+.an-lbl{display:flex;justify-content:space-around;font-family:var(--f-mono);font-size:15px;font-weight:700}
+.an-lbl span{border-top:3px solid;padding-top:4px}
+.an-s{color:var(--steel)} .an-p{color:var(--brick)} .an-v{color:var(--forest)}
+.road{display:grid;grid-template-columns:repeat(7,1fr);gap:9px}
+.rd-i{background:var(--surface);border:1px solid var(--border);border-top:5px solid var(--accent);
+  border-radius:10px;padding:12px 10px;display:flex;flex-direction:column;gap:5px;text-align:center}
+.rd-i .rd-d{font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--accent)}
+.rd-i b{font-family:var(--f-head);font-size:19px;color:var(--ink);line-height:1.2}
+.rd-i span:last-child{font-size:15px;color:var(--dim);line-height:1.35}
+.rd-i.cur{border-top-color:var(--brick);background:#fbf1f0}
+.rd-i.cur .rd-d{color:var(--brick)}
+.rd-i.fin{border-top-color:var(--steel);background:#eef2f6}
+.rd-i.fin .rd-d{color:var(--steel)}
+.ideas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.idea{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+  border-radius:0 10px 10px 0;padding:10px 14px}
+.idea b{display:block;font-family:var(--f-head);font-size:19px;color:var(--ink)}
+.idea span{font-size:16px;color:var(--dim)}
+/* макети пристроїв */
+.devs{display:flex;gap:20px;align-items:flex-start}
+.dev{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.dev.wide{width:400px} .dev.narrow{width:150px;border-radius:18px}
+.d-cap{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);text-align:center}
+.d-hd{background:#3e2723;color:#fff;border-radius:6px;padding:6px 9px;display:flex;justify-content:space-between;font-size:13px;gap:6px}
+.d-hd b{font-size:15px;color:#fff}
+.d-hd.col{flex-direction:column;gap:1px}
+.d-hero{background:#efebe9;border-radius:6px;padding:12px 8px;font-family:var(--f-head);font-weight:800;font-size:15px;text-align:center;color:#3e2723}
+.d-row{display:flex;gap:6px}
+.d-card{flex:1;height:58px;border:2px solid #8d6e63;border-radius:6px;background:#fff}
+.dev.narrow .d-card{flex:none;height:44px}
+.d-form{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.d-form span{flex:1;min-width:50px;height:18px;border:1.5px solid #8d6e63;border-radius:4px}
+.d-form i{font-style:normal;background:#3e2723;color:#fff;font-size:12px;padding:3px 8px;border-radius:5px}
+/* ескіз */
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.lg-i{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;gap:14px;align-items:center}
+.lg-i span{font-size:17px;line-height:1.4}
+.lg-pic{width:110px;flex-shrink:0}
+.wf-box,.wf-img,.wf-btn,.wf-in,.wf-card,.wf-hero,.wf-nav{border:2px solid var(--ink);border-radius:4px;background:#fff}
+.wf-box{font-family:var(--f-mono);font-size:13px;text-align:center;padding:6px 4px}
+.wf-img{height:44px;background:
+  linear-gradient(to top right,transparent calc(50% - 1px),var(--ink) 50%,transparent calc(50% + 1px)),
+  linear-gradient(to top left,transparent calc(50% - 1px),var(--ink) 50%,transparent calc(50% + 1px)),#fff}
+.wf-txt{display:flex;flex-direction:column;gap:5px;padding:2px 0}
+.wf-txt i{display:block;height:3px;background:var(--ink);border-radius:2px;width:100%}
+.wf-btn{display:inline-block;font-size:13px;font-weight:700;padding:3px 10px;border-radius:12px}
+.wf-in{height:20px}
+.wf-h{font-family:var(--f-mono);font-weight:700;font-size:15px;letter-spacing:1px}
+.wf-nav{font-family:var(--f-mono);font-size:12px;padding:3px 8px;border-style:dashed}
+.sk2{display:flex;gap:18px;align-items:flex-start}
+.wf{background:#fffef8;border:2px solid var(--border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:7px}
+.wf.wide{width:440px} .wf.narrow{width:160px}
+.wf-cap{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);text-align:center}
+.wf-row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.wf-row .wf-card,.wf-row .wf-in{flex:1}
+.wf-hero{padding:8px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.wf-card{padding:5px;display:flex;flex-direction:column;gap:5px}
+.wf.narrow .wf-img{height:34px}
+.sheet{background:#fff;border:2px solid var(--ink);border-radius:6px;padding:10px;font-size:15px}
+.sh-t{font-family:var(--f-mono);font-size:14px;font-weight:700;border-bottom:1px dashed var(--ink);padding-bottom:6px;margin-bottom:8px}
+.sh-r{display:flex;gap:10px}
+.sh-w,.sh-n{border:2px solid var(--ink);border-radius:4px;padding:8px;font-weight:700;min-height:130px}
+.sh-w{flex:3} .sh-n{flex:1}
+.sh-r small{font-weight:400;font-size:13px;color:var(--dim)}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1" style="font-size:3rem">Повторення. Проєкт чверті «Адаптивний сайт»</div>
+    <div class="title-sub">Front-end · 8 клас · Урок 14 · 10 листопада 2026</div>
+    <div class="chips">
+      <span class="chip">семантика</span>
+      <span class="chip">правило CSS</span>
+      <span class="chip">класи й id</span>
+      <span class="chip">коробка</span>
+      <span class="chip">ескіз сайту</span>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 · СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lb">Сьогодні · два уроки</span>
+      <h2>Згадуємо, обираємо тему, малюємо — і верстаємо</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Урок 14 · без ноутбуків</h3><ul>
+        <li>згадуємо I чверть: каркас, CSS, класи, коробка</li>
+        <li>знайди помилку</li>
+        <li>проєкт чверті «Адаптивний сайт»</li>
+        <li>тема з банку ідей і <b>ескіз</b> на листочку</li>
+      </ul></div>
+      <div class="card ct"><h3>Урок 15 · за ноутбуками</h3><ul>
+        <li>блочні й рядкові елементи</li>
+        <li>блок-обгортка з обмеженою шириною</li>
+        <li>каркас свого сайту <b>за ескізом</b></li>
+      </ul></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 · ДЗ КАНІКУЛ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📬</div><div>
+      <span class="label lp">Перевіряємо завдання на канікули</span>
+      <h2>Розділ «Поїздки» з двома картками</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">один із варіантів</span></div>
+        <div class="dp-code" style="font-size:14px;line-height:1.42;padding:11px 16px">&lt;<span class="sk">nav</span>&gt;&lt;<span class="sk">a</span> <span class="sa">href</span>=<span class="ss">"#trips"</span>&gt;Поїздки&lt;/<span class="sk">a</span>&gt;&lt;/<span class="sk">nav</span>&gt;
+&lt;<span class="sk">section</span> <span class="sa">id</span>=<span class="ss">"trips"</span>&gt;
+  &lt;<span class="sk">h2</span>&gt;Поїздки&lt;/<span class="sk">h2</span>&gt;
+  &lt;<span class="sk">article</span> <span class="sa">class</span>=<span class="ss">"card"</span>&gt;&lt;<span class="sk">h3</span>&gt;Карпати&lt;/<span class="sk">h3</span>&gt;&lt;<span class="sk">p</span>&gt;Похід&lt;/<span class="sk">p</span>&gt;&lt;/<span class="sk">article</span>&gt;
+  &lt;<span class="sk">article</span> <span class="sa">class</span>=<span class="ss">"card"</span>&gt;&lt;<span class="sk">h3</span>&gt;Одеса&lt;/<span class="sk">h3</span>&gt;&lt;<span class="sk">p</span>&gt;Море&lt;/<span class="sk">p</span>&gt;&lt;/<span class="sk">article</span>&gt;
+&lt;/<span class="sk">section</span>&gt;
+
+<span class="sk">.card</span> {
+  <span class="sa">padding</span>: <span class="ss">15px</span>;
+  <span class="sa">border</span>: <span class="ss">3px solid teal</span>;
+  <span class="sa">border-radius</span>: <span class="ss">12px</span>;
+  <span class="sa">box-shadow</span>: <span class="ss">0 4px 10px gray</span>;
+  <span class="sa">margin-bottom</span>: <span class="ss">20px</span>;
+}
+<span class="sk">section</span> { <span class="sa">max-width</span>: <span class="ss">600px</span>; <span class="sa">margin</span>: <span class="ss">0 auto</span>; }</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:19px">Пункт 3: <span class="ic">width: 250px; padding: 15px; border: 3px solid;</span> — яка ширина?</h3>
+          <p class="rv-hint">Порахуй, потім клацни</p><div class="rv-body"><p style="font-size:17px"><b>286px</b> = 250 + 15 + 15 + 3 + 3</p></div></div>
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:19px">Чому меню веде саме на цей розділ?</h3>
+          <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><span class="ic">href="#trips"</span> і <span class="ic">id="trips"</span> — те саме слово</p></div></div>
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:19px">Що поставило розділ посередині?</h3>
+          <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><span class="ic">max-width</span> разом із <span class="ic">margin: 0 auto</span></p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 · ЗГАДУЄМО: КАРКАС ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🏷️</div><div>
+      <span class="label ly">Згадуємо · уроки 5–6</span>
+      <h2>Семантичний каркас</h2>
+    </div></div>
+    <div class="two" style="align-items:center">
+      <div class="map" role="img" aria-label="Схема сторінки з номерами частин від 1 до 6">
+        <div class="mp"><span class="nb">1</span> Кав'ярня «Зерно»
+          <div class="mp alt"><span class="nb">2</span> Меню · Акції · Контакти</div></div>
+        <div class="mp"><span class="nb">3</span> головне на сторінці
+          <div class="mp gold"><span class="nb">4</span> Наші напої <small>розділ з h2</small></div>
+          <div class="mp gold"><span class="nb">5</span> Капучино · 55 грн <small>картка</small></div></div>
+        <div class="mp"><span class="nb">6</span> © 2026 · вул. Соборна, 1</div>
+      </div>
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <h3>Який тег у кожної цифри?</h3>
+        <p class="rv-hint">Назвіть усі шість, потім клацни.</p>
+        <div class="rv-body"><table class="tbl">
+          <tr><td class="c">1</td><td class="c">&lt;header&gt;</td><td class="c">4</td><td class="c">&lt;section&gt;</td></tr>
+          <tr><td class="c">2</td><td class="c">&lt;nav&gt;</td><td class="c">5</td><td class="c">&lt;article&gt;</td></tr>
+          <tr><td class="c">3</td><td class="c">&lt;main&gt;</td><td class="c">6</td><td class="c">&lt;footer&gt;</td></tr>
+        </table></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 · ЗГАДУЄМО: ПРАВИЛО CSS ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🎨</div><div>
+      <span class="label ly">Згадуємо · урок 7</span>
+      <h2>Правило CSS і підключення</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="anat">
+          <div class="an-code"><span class="an-s">h2</span> { <span class="an-p">color</span>: <span class="an-v">#1b5e20</span>; }</div>
+          <div class="an-lbl"><span class="an-s">селектор</span><span class="an-p">властивість</span><span class="an-v">значення</span></div>
+        </div>
+        <div class="dp mt">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">index.html · у head</span></div>
+          <div class="dp-code sm">&lt;<span class="sk">link</span> <span class="sa">rel</span>=<span class="ss">"stylesheet"</span> <span class="sa">href</span>=<span class="ss">"css/style.css"</span>&gt;</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:19px">У рядку <span class="ic">p { margin: 0; }</span> — що селектор?</h3>
+          <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><span class="ic">p</span> — усі абзаци сторінки</p></div></div>
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:19px">Чому один файл стилів, а не <span class="ic">style</span> у кожній сторінці?</h3>
+          <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px">Міняєш колір <b>один раз</b> — змінюються всі сторінки</p></div></div>
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:19px">Як записати фон для всієї сторінки?</h3>
+          <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><span class="ic">body { background-color: #f5f5f5; }</span></p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 · ЗГАДУЄМО: КЛАСИ Й ID ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🔖</div><div>
+      <span class="label lt">Згадуємо · уроки 8, 12</span>
+      <h2>Клас чи id?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:17px">.card { … }</h3>
+        <p class="rv-hint">Кого оформлює?</p><div class="rv-body"><p style="font-size:17px">Усі елементи з <span class="ic">class="card"</span></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:17px">#top { … }</h3>
+        <p class="rv-hint">Кого оформлює?</p><div class="rv-body"><p style="font-size:17px">Один елемент з <span class="ic">id="top"</span></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:18px">Скільки разів на сторінці можна написати <span class="ic">id="top"</span>?</h3>
+        <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><b>Один.</b> id — унікальний</p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:18px">Меню веде на розділ <span class="ic">id="menu"</span>. Що в href?</h3>
+        <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><span class="ic">href="#menu"</span></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:17px">class="card hot"</h3>
+        <p class="rv-hint">Скільки тут класів?</p><div class="rv-body"><p style="font-size:17px"><b>Два</b>: <span class="ic">card</span> і <span class="ic">hot</span>, через пробіл</p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:18px">Шість однакових карток товарів — клас чи id?</h3>
+        <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><b>Клас</b> — однакове для багатьох</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 · ЗГАДУЄМО: КОРОБКА ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lb">Згадуємо · уроки 9, 13</span>
+      <h2>Кожен елемент — коробка</h2>
+    </div></div>
+    <div class="two" style="align-items:center">
+      <div class="bm-m"><span class="bm-l">margin</span>
+        <div class="bm-b"><span class="bm-l">border</span>
+          <div class="bm-p"><span class="bm-l">padding</span>
+            <div class="bm-c">вміст</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><p class="mono" style="font-size:16.5px">width: 300px; padding: 20px; border: 2px solid;</p>
+          <p class="rv-hint">Яка ширина на екрані?</p><div class="rv-body"><p style="font-size:17px"><b>344px</b> = 300 + 20 + 20 + 2 + 2</p></div></div>
+        <div class="card reveal" onclick="this.classList.toggle('open')"><p class="mono" style="font-size:16.5px">* { box-sizing: border-box; }</p>
+          <p class="rv-hint">А тепер?</p><div class="rv-body"><p style="font-size:17px"><b>300px.</b> Відступ і рамка — всередині</p></div></div>
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:19px">Між картками треба відстань. padding чи margin?</h3>
+          <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><span class="ic">margin</span> — зовні, поза рамкою</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 · ЗНАЙДИ ПОМИЛКУ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🐞</div><div>
+      <span class="label lp">Знайди помилку</span>
+      <h2>Чому не працює?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:15px">&lt;link rel="stylesheet"
+      href="style.css"&gt;</h3><p style="font-size:15px">а файл лежить у папці <span class="ic">css</span></p>
+        <p class="rv-hint">Подумай, потім клацни</p><div class="rv-body"><p style="font-size:17px">Шлях з папкою: <span class="ic">css/style.css</span></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:16px">.card { color red; }</h3>
+        <p class="rv-hint">Подумай, потім клацни</p><div class="rv-body"><p style="font-size:17px">Бракує двокрапки: <span class="ic">color: red;</span></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:16px">.Card { … }</h3><p style="font-size:15px">а в HTML <span class="ic">class="card"</span></p>
+        <p class="rv-hint">Подумай, потім клацни</p><div class="rv-body"><p style="font-size:17px">Великі й малі літери — різні: <span class="ic">.card</span></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:16px">&lt;a href="facts"&gt;Факти&lt;/a&gt;</h3><p style="font-size:15px">має вести на <span class="ic">id="facts"</span></p>
+        <p class="rv-hint">Подумай, потім клацни</p><div class="rv-body"><p style="font-size:17px">Бракує решітки: <span class="ic">href="#facts"</span></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:16px">padding: 20 px;</h3>
+        <p class="rv-hint">Подумай, потім клацни</p><div class="rv-body"><p style="font-size:17px">Число й px — разом: <span class="ic">20px</span></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:16px">&lt;p id="price"&gt;</h3><p style="font-size:15px">у кожній із шести карток</p>
+        <p class="rv-hint">Подумай, потім клацни</p><div class="rv-body"><p style="font-size:17px">id — лише один. Тут потрібен клас: <span class="ic">class="price"</span></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 · ПРОЄКТ ЧВЕРТІ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">📱</div><div>
+      <span class="label lg">Проєкт II чверті</span>
+      <h2>«Адаптивний сайт» — на комп'ютері й на телефоні</h2>
+    </div></div>
+    <div class="devs">
+      <div class="dev wide">
+        <div class="d-cap">комп'ютер</div>
+        <div class="d-hd"><b>Зерно</b><span>Меню · Акції · Контакти</span></div>
+        <div class="d-hero">Кава поруч зі школою</div>
+        <div class="d-row"><div class="d-card"></div><div class="d-card"></div><div class="d-card"></div></div>
+        <div class="d-form"><span></span><span></span><i>Замовити</i></div>
+      </div>
+      <div class="dev narrow">
+        <div class="d-cap">телефон</div>
+        <div class="d-hd col"><b>Зерно</b><span>Меню</span><span>Акції</span><span>Контакти</span></div>
+        <div class="d-hero">Кава поруч зі школою</div>
+        <div class="d-card"></div><div class="d-card"></div>
+        <div class="d-form"><span></span><i>Замовити</i></div>
+      </div>
+      <div class="steps" style="flex:1">
+        <div class="step"><div class="step-n">1</div><div class="step-t">Сайт на <b>свою</b> тему</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-t">Шапка з <b>меню</b></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-t"><b>Каталог</b> карток</div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-t"><b>Форма</b> запису чи замовлення</div></div>
+        <div class="step"><div class="step-n">5</div><div class="step-t">На телефоні — без прокрутки вбік</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 · КАРТКА ПРОЄКТУ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lg">Картка проєкту</span>
+      <h2>Три рівні — обери свій</h2>
+    </div></div>
+    <div class="lvl">
+      <div class="lv"><span class="lv-s">⭐</span><span class="lv-t"><b>Робимо всі.</b> Каркас сторінки за ескізом, меню в рядок і сітка карток — за прикладом з уроку</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t"><b>Сам, без прикладу:</b> шапка з меню, каталог на сітці, форма з перевіркою полів, реакція на наведення, вигляд для телефона без прокрутки вбік, дві сторінки з одним файлом стилів</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">Ще й шапка, що не зникає під час прокрутки, меню-стовпчик на телефоні — і ти пояснюєш, чому в кожному місці обрав саме такий спосіб розкладки</span></div>
+    </div>
+    <div class="hbox hg mt">Кожен вівторок додає до сайту нову частину. Захист — <b>22 грудня</b>.</div>
+  </div></section>
+
+  <!-- ══════════ 11 · ШЛЯХ ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lb">Шлях проєкту</span>
+      <h2>Що отримає сайт щовівторка</h2>
+    </div></div>
+    <div class="road">
+      <div class="rd-i cur"><span class="rd-d">10.11</span><b>Ескіз і каркас</b><span>сьогодні</span></div>
+      <div class="rd-i"><span class="rd-d">17.11</span><b>Меню й картки</b><span>Flexbox</span></div>
+      <div class="rd-i"><span class="rd-d">24.11</span><b>Каталог</b><span>сітка CSS Grid</span></div>
+      <div class="rd-i"><span class="rd-d">01.12</span><b>Форма</b><span>і наведення</span></div>
+      <div class="rd-i"><span class="rd-d">08.12</span><b>Телефон</b><span>вузький екран</span></div>
+      <div class="rd-i"><span class="rd-d">15.12</span><b>Друга сторінка</b><span>перевірка</span></div>
+      <div class="rd-i fin"><span class="rd-d">22.12</span><b>Захист</b><span>показ класу</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 · БАНК ІДЕЙ ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">💡</div><div>
+      <span class="label lt">Банк ідей</span>
+      <h2>Тема: що в каталозі й що у формі?</h2>
+    </div></div>
+    <div class="ideas">
+      <div class="idea"><b>Кав'ярня</b><span>напої · бронь столика</span></div>
+      <div class="idea"><b>Кінотеатр</b><span>фільми · квиток</span></div>
+      <div class="idea"><b>Притулок тварин</b><span>тварини · «хочу забрати»</span></div>
+      <div class="idea"><b>Спортклуб</b><span>секції · запис</span></div>
+      <div class="idea"><b>Магазин ігор</b><span>ігри · замовлення</span></div>
+      <div class="idea"><b>Турагенція</b><span>тури · заявка</span></div>
+      <div class="idea"><b>Книжковий клуб</b><span>книги · реєстрація</span></div>
+      <div class="idea"><b>Музичний гурт</b><span>концерти · квиток</span></div>
+      <div class="idea"><b>Кулінарія</b><span>рецепти · підписка</span></div>
+      <div class="idea"><b>Гурток роботів</b><span>проєкти · запис</span></div>
+      <div class="idea"><b>Кросівки</b><span>моделі · замовлення</span></div>
+      <div class="idea"><b>Своя тема</b><span>каталог · форма</span></div>
+    </div>
+    <div class="hbox mt">Тема з I чверті теж годиться — якщо в ній є що показати картками.</div>
+  </div></section>
+
+  <!-- ══════════ 13 · ЩО НА ГОЛОВНІЙ ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🧩</div><div>
+      <span class="label lb">Головна сторінка</span>
+      <h2>П'ять частин — зверху вниз</h2>
+    </div></div>
+    <div class="two" style="align-items:center">
+      <div class="map">
+        <div class="mp"><span class="nb">1</span> шапка <small>назва + меню</small></div>
+        <div class="mp gold"><span class="nb">2</span> перший екран <small>заголовок, фраза, кнопка</small></div>
+        <div class="mp alt"><span class="nb">3</span> каталог <small>6 карток</small></div>
+        <div class="mp gold"><span class="nb">4</span> форма <small>2–3 поля і кнопка</small></div>
+        <div class="mp"><span class="nb">5</span> підвал <small>контакти, ©</small></div>
+      </div>
+      <table class="tbl">
+        <tr><th>Частина</th><th>Тег</th></tr>
+        <tr><td>шапка</td><td class="c">&lt;header&gt; + &lt;nav&gt;</td></tr>
+        <tr><td>перший екран</td><td class="c">&lt;section&gt;</td></tr>
+        <tr><td>каталог</td><td class="c">&lt;section&gt; + &lt;article&gt;</td></tr>
+        <tr><td>форма</td><td class="c">&lt;section&gt;</td></tr>
+        <tr><td>підвал</td><td class="c">&lt;footer&gt;</td></tr>
+      </table>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 · ЯК МАЛЮВАТИ ЕСКІЗ ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">✏️</div><div>
+      <span class="label ly">Ескіз</span>
+      <h2>Ескіз — не малюнок, а схема</h2>
+    </div></div>
+    <div class="legend">
+      <div class="lg-i"><div class="lg-pic"><div class="wf-box">header</div></div><span>прямокутник з підписом — частина сторінки</span></div>
+      <div class="lg-i"><div class="lg-pic"><div class="wf-img"></div></div><span>прямокутник з хрестом — картинка</span></div>
+      <div class="lg-i"><div class="lg-pic"><div class="wf-txt"><i></i><i></i><i style="width:60%"></i></div></div><span>лінії — текст</span></div>
+      <div class="lg-i"><div class="lg-pic"><div class="wf-btn">Купити</div></div><span>рамка зі словом — кнопка</span></div>
+      <div class="lg-i"><div class="lg-pic"><div class="wf-in"></div></div><span>довгий прямокутник — поле форми</span></div>
+      <div class="lg-i"><div class="lg-pic"><div class="wf-h">АКЦІЇ</div></div><span>слово великими літерами — заголовок</span></div>
+    </div>
+    <div class="hbox mt">Кольори, шрифти й справжні картинки — потім. Зараз — <b>що де стоїть</b>.</div>
+  </div></section>
+
+  <!-- ══════════ 15 · ПРИКЛАД ЕСКІЗУ ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🖼️</div><div>
+      <span class="label ly">Приклад · кав'ярня «Зерно»</span>
+      <h2>Той самий сайт — два ескізи</h2>
+    </div></div>
+    <div class="sk2">
+      <div class="wf wide">
+        <div class="wf-cap">широкий екран</div>
+        <div class="wf-row"><div class="wf-h">ЗЕРНО</div><div class="wf-nav">Меню · Акції · Контакти</div></div>
+        <div class="wf-hero"><div class="wf-h">КАВА ПОРУЧ</div><div class="wf-txt"><i></i></div><div class="wf-btn">Замовити</div></div>
+        <div class="wf-row"><div class="wf-card"><div class="wf-img"></div><div class="wf-txt"><i></i></div></div><div class="wf-card"><div class="wf-img"></div><div class="wf-txt"><i></i></div></div><div class="wf-card"><div class="wf-img"></div><div class="wf-txt"><i></i></div></div></div>
+        <div class="wf-row"><div class="wf-in"></div><div class="wf-in"></div><div class="wf-btn">Надіслати</div></div>
+        <div class="wf-box">footer</div>
+      </div>
+      <div class="wf narrow">
+        <div class="wf-cap">вузький екран</div>
+        <div class="wf-h">ЗЕРНО</div><div class="wf-nav">Меню<br>Акції<br>Контакти</div>
+        <div class="wf-hero"><div class="wf-h">КАВА ПОРУЧ</div><div class="wf-btn">Замовити</div></div>
+        <div class="wf-card"><div class="wf-img"></div><div class="wf-txt"><i></i></div></div>
+        <div class="wf-card"><div class="wf-img"></div><div class="wf-txt"><i></i></div></div>
+        <div class="wf-in"></div><div class="wf-btn">Надіслати</div>
+        <div class="wf-box">footer</div>
+      </div>
+      <div class="steps" style="flex:1">
+        <div class="step"><div class="step-n">→</div><div class="step-t" style="font-size:17px">Меню: у рядок → у стовпчик</div></div>
+        <div class="step"><div class="step-n">→</div><div class="step-t" style="font-size:17px">Картки: три в ряд → одна під одною</div></div>
+        <div class="step"><div class="step-n">→</div><div class="step-t" style="font-size:17px">Поля форми: поруч → одне під одним</div></div>
+        <div class="step"><div class="step-n">=</div><div class="step-t" style="font-size:17px">Частини й порядок — <b>ті самі</b></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 · ПРАКТИКА: ЕСКІЗ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Практика</span>
+        <span class="t">Ескіз свого сайту — на листочку</span><span class="tmr">15 хвилин</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад — листочок</span>
+          <div class="sheet"><div class="sh-t">Кав'ярня «Зерно» · Олена К.</div>
+            <div class="sh-r"><div class="sh-w">широкий екран<br><small>header · section × 3 · footer</small></div>
+            <div class="sh-n">вузький<br><small>те саме стовпчиком</small></div></div></div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Угорі листочка — тема сайту й назва</li>
+            <li>Ліворуч — широкий екран: п'ять частин головної</li>
+            <li>Підпиши кожну частину тегом: <span class="ic">header</span>, <span class="ic">nav</span>, <span class="ic">section</span>, <span class="ic">footer</span></li>
+            <li>Праворуч — вузький екран: ті самі частини, одна під одною</li>
+            <li>⭐⭐ Біля каталогу — назви шести карток</li>
+            <li>⭐⭐⭐ Окремо — одна картка великим планом: картинка, заголовок, ціна, кнопка</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 · ПЕРЕВІР ЕСКІЗ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lp">Перевір себе</span>
+      <h2>За цим ескізом можна верстати?</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t">Є тема й назва сайту</span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t">Усі <b>п'ять</b> частин — на обох ескізах</span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t">Біля кожної частини — тег</span></div>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-n">4</span><span class="step-t">Видно, що з чого складається картка</span></div>
+        <div class="step"><span class="step-n">5</span><span class="step-t">На вузькому — нічого не стоїть поруч, крім дрібниць</span></div>
+        <div class="step"><span class="step-n">6</span><span class="step-t">Порядок частин на обох ескізах <b>однаковий</b></span></div>
+      </div>
+    </div>
+    <div class="hbox mt">Покажи ескіз сусідові: чи зрозуміло йому, де меню, каталог і форма?</div>
+  </div></section>
+
+  <!-- ══════════ 18 · БАНК ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lg">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Гасло.</b> Одне речення для першого екрана: чим твій сайт корисний</div>
+      <div class="bk"><b>Каталог.</b> Список шести карток: назва й одна деталь — ціна, рік, вік</div>
+      <div class="bk"><b>Форма.</b> Які три поля в ній будуть? Що з них обовʼязкове?</div>
+      <div class="bk"><b>Друга сторінка.</b> Ескіз сторінки «Про нас» або «Контакти»</div>
+      <div class="bk"><b>Кольори.</b> Три кольори сайту: фон, текст, акцент — словами</div>
+      <div class="bk"><b>Справжній сайт.</b> Згадай сайт, яким користуєшся з телефона: що в ньому змінюється на вузькому екрані?</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 · ПІДСУМОК ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lb">Підсумок</span>
+      <h2>Що ви зробили на цьому уроці</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Зроблено</h3><ul>
+        <li>згадали каркас, CSS, класи, коробку</li>
+        <li>знайшли шість помилок</li>
+        <li>тема проєкту чверті</li>
+        <li>ескіз для широкого й вузького екрана</li>
+      </ul></div>
+      <div class="card ct"><h3>Після перерви · урок 15</h3><ul>
+        <li>ноутбуки, VS Code і Chrome</li>
+        <li>листочок з ескізом — <b>поруч</b></li>
+        <li>верстаємо каркас за ескізом</li>
+      </ul></div>
+    </div>
+  </div></section>
+
+</div>
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

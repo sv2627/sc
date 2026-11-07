@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7.10 Finding errors and correcting them · IT-англійська · 11 клас · Урок 10</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge IGCSE & O Level Computer Science
+                0478 / 0984 / 2210)
+  Клас          11
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · пʼятниця
+  Урок          10 з 36 · 13.11.2026
+  Тема          7.10 Finding errors in a program and correcting the errors ·
+                SKILLS FOCUS 7.7 (trace table) · SKILLS FOCUS 7.8 (reading the code)
+  Акцент        plum (#602857)
+  Тривалість    45 хв, тесту немає · 22 слайди (s0–s21), останній — ДЗ
+  Формат        від 14.10.2026: більше читати вголос по черзі й
+                перекладати, менше писати на листочок. Переклад — під клацанням.
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — ТІЛЬКИ КНИЖКА. Нічого не вигадано.
+     Coursebook, розділ 7.10 «Finding errors in a program and correcting
+     the errors», с. 187–191 (+ Summary с. 192 для повторення).
+     Скани: office/igcse-0478/rozdil-07-algorithm-design/s187–s191.jpeg
+     Дослівно взято:
+       • алгоритм ДЗ уроку 9 — SKILLS FOCUS 7.5 (с. 184)               → s1
+       • Summary, 5 пунктів (с. 192) — повторення                       → s2
+       • вступ 7.10 (с. 187)                                            → s4
+       • COMPUTER SCIENCE IN CONTEXT (с. 187)                           → s5
+       • SKILLS FOCUS 7.7: текст, програма 01–08, дані 1, 2, 3, 4, 5,
+         «1+2+3+4+5 = 15» (с. 187)                                       → s6
+       • трасувальна таблиця книжки, три проблеми (с. 188)              → s7, s8
+       • три виправлення, «Either Line 02 … or line 03» (с. 188)        → s9
+       • SKILLS FOCUS 7.8: вступ, алгоритм 01–12 (с. 188)               → s12, s13
+       • три розділи → пʼять вимог (с. 189)                              → s13
+       • вимоги 1–2, пункти a, b, c (с. 189)                             → s14
+       • вимоги 3–5, «combine this with using test data» (с. 189–190)   → s15
+       • Questions 1, 2a, 2b, 3 (с. 190–191)                             → s16, s17, s18
+     Наше (не книжка): переклади; рядок OUTPUT «4» у таблиці s7 (книжка
+     лишає клітинку порожньою — 4 виходить прогоном); прогін виправленої
+     програми (s10); тестові дані 5, 9, 4 і два виходи (s15); ⭐⭐⭐ в s18
+     (INPUT continue ≠ Continue); вхідні дані ДЗ (3).
+     Відповідей до Questions книжка не дає — наші, за текстом с. 187–190.
+     Таблиці перевірено прогоном тих самих алгоритмів у node.
+  ⚠️ НЕТОЧНІСТЬ КНИЖКИ (с. 190): «Line 08 … uses the wrong identifier, it
+     should be data not DATA», але в коді с. 188 рядок 08 уже надруковано
+     `Total ← Total + Data`. На слайді s15 — цитата + «ідентифікатор має
+     збігатися з рядком 04 (Data)», без вигаданої четвертої помилки в коді.
+  ⚠️ Q1 с. 190: `WHILE Counter <= 5` при 5 числах просить шосте — книжка
+     цього не коментує. На s16 це ⭐⭐/⭐⭐⭐ (тема уроку — пошук помилок);
+     виправлення `Counter < 5` — наше.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • Компʼютер і IDE — на IT-англійській їх немає; IDE лише як слово.
+     • Summary / Exam-style questions (с. 192–195) — урок 11, 20.11.
+  ────────────────────────────────────────────────────────────────
+  ПОВТОРЕННЯ    s1–s2, ≈ 7 хв (ДЗ уроку 9 · Summary)
+  СЛОВНИК       тричі: s3 (4 слова) · s11 (word bank, 10) · s19 (18 слів)
+  ЧИТАННЯ ВГОЛОС  s2, s4, s5, s12 (по реченню на учня, переклад — клацнути)
+  ПРИКЛАД → САМОСТІЙНО
+                s6–s9 (SF 7.7) → s10 (прогін виправленої програми) → s16 (Q1)
+                s12–s15 (SF 7.8) → s17 (Q2) → s18 (Q3)
+  РІЗАТИ ПЕРШИМ s18 (Q3 — на ДЗ наступного разу), s5, ⭐⭐⭐ s10
+  НЕ РІЗАТИ     s7–s9, s13–s14, s16
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: IGCSE-англійська 10 і 11 класів іде на plum. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f4eef3; --border:#e3d7e0;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--plum);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(96,40,87,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(96,40,87,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(96,40,87,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:44%}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2rem}
+h3{font-weight:700;font-size:1.28rem}
+p{font-size:18.5px;line-height:1.72;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:18.5px;line-height:1.75;color:var(--ink);margin-bottom:6px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:2.9rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.28rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:18px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--surf2)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.two.wide-l{grid-template-columns:1.35fr 1fr}
+.two.wide-r{grid-template-columns:1fr 1.35fr}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:19px 21px;
+      box-shadow:0 1px 3px rgba(96,40,87,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.65;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cb h3{color:var(--blue)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:13px 17px;margin:10px 0;font-size:17.5px;color:var(--ink);line-height:1.65;
+      box-shadow:0 1px 3px rgba(96,40,87,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--surf2);
+     border:1.5px solid var(--border);border-radius:11px;padding:13px 16px;
+     margin:11px 0;font-size:17.5px;line-height:1.65;color:var(--ink)}
+.tip.tb2{background:var(--sky);border-color:#c6d2ee}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.35rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── псевдокод: світлий блок, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(96,40,87,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:9px 14px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-title{flex:1;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9fc;color:var(--ink);padding:15px 18px;font-size:16px;line-height:1.7;white-space:pre-wrap}
+/* підсвітка — усі пари перевірені на ≥5:1 щодо #fdf9fc */
+.sk{color:#591429;font-weight:700}  /* ключове слово псевдокоду */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* ідентифікатор */
+.cm{color:#6f6570;font-style:italic}/* коментар */
+.bad{color:#a01818;font-weight:700}
+.codes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.codes .dp-code{font-size:14.5px;line-height:1.6}
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:16.5px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--accent);background:var(--surf2);font-size:15.5px}
+.tb td.mono{font-family:var(--f-mono);font-weight:700}
+.tb td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+.tb tr:last-child td{border-bottom:0}
+
+.qs{display:flex;flex-direction:column;gap:10px}
+.qs .q{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--accent);
+       border-radius:0 10px 10px 0;padding:11px 16px;font-size:17px;line-height:1.55}
+.qs .q b{color:var(--accent)}
+
+.steps{display:flex;flex-direction:column;gap:11px}
+.step{display:flex;align-items:flex-start;gap:14px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:13px 17px}
+.step-n{width:32px;height:32px;border-radius:9px;background:var(--surf2);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:15px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:17.5px;line-height:1.55;color:var(--ink)}
+
+/* ─── практичний блок ─── */
+.prac{background:var(--surf2);border:2px solid #d9bfd2;border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--plum);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--plum)}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:16.5px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:5px 13px;flex-shrink:0}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--dim);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16.5px;flex-shrink:0;letter-spacing:1px;min-width:74px;
+      font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.lv-t{font-size:17px;line-height:1.6;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:11px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:15px}
+.note{font-size:16px;color:var(--faint);line-height:1.55}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.uk{color:var(--dim)}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:16.5px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16px;line-height:1.42}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.mw{background:var(--surface);border:2px solid #d9bfd2;border-radius:14px;padding:14px 18px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.35rem;color:var(--accent);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:16px;color:var(--dim);line-height:1.45}
+
+/* «я вмію» */
+.can{display:flex;flex-direction:column;gap:9px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:11px 16px;
+       font-size:17px;line-height:1.45}
+.can-b{width:22px;height:22px;border:2px solid var(--accent);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.72rem} h3{font-size:1.14rem}
+  .sh{margin-bottom:11px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:16.5px;line-height:1.55}
+  .card{padding:14px 16px} .card p,.card li{font-size:15.5px;line-height:1.5}
+  .hbox{font-size:16px;padding:10px 14px;margin:7px 0}
+  .tip{font-size:16px;padding:10px 13px;margin:8px 0}
+  .tip-ico{font-size:1.15rem}
+  .label{margin-bottom:7px}
+  .mt{margin-top:10px}
+  .two{gap:15px} .three{gap:11px}
+  .step{padding:10px 13px} .step-t{font-size:16px}
+  .step-n{width:28px;height:28px;font-size:14px}
+  .can-i{font-size:15.5px;padding:9px 13px}
+  .prac{padding:13px 16px} .lv{padding:9px 12px} .lv-t{font-size:15.5px}
+  .prac-lead{font-size:15.5px;margin-bottom:9px}
+  .ptime{font-size:14.5px;padding:4px 10px}
+  .mw{padding:11px 14px} .mw .w{font-size:1.15rem} .mw .t{font-size:14.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:15.5px} .vp .uk{font-size:15px}
+  .vg{gap:9px}
+  .tb th,.tb td{padding:6px 10px;font-size:15px}
+  .qs .q{font-size:15.5px;padding:9px 13px}
+  .dp-code{font-size:14px;line-height:1.55} .dp-bar{padding:6px 11px}
+  .codes .dp-code{font-size:13px;line-height:1.5}
+  .title-h1{font-size:2.3rem} .title-sub{font-size:1.12rem;margin-bottom:20px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 4: ряд «карт» для пошуку ═══ */
+.deck{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0}
+.cd{min-width:58px;height:74px;padding:0 8px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface);border:2px solid var(--plum);border-radius:9px;
+  font-family:var(--f-mono);font-weight:700;font-size:1.45rem;color:var(--ink);
+  box-shadow:0 2px 5px rgba(96,40,87,.08)}
+.deck.sm .cd{min-width:40px;height:50px;font-size:1.1rem;border-radius:7px}
+@media (max-height:800px){.cd{height:60px;min-width:50px;font-size:1.25rem}
+  .deck.sm .cd{height:42px;min-width:36px;font-size:1rem}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО: Words in use ─── */
+.wu{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px}
+.wu-i{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:8px 13px}
+.wu-w{display:block;font-family:var(--f-mono);font-weight:700;font-size:15.5px;
+      color:var(--accent);margin-bottom:3px}
+.wu-p{display:block;font-size:15px;line-height:1.34;margin-bottom:1px}
+.wu-p::before{content:"· ";color:var(--faint)}
+
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 8: читання вголос і трасувальні таблиці ═══ */
+.rl{display:flex;flex-direction:column;gap:8px}
+.rl .r{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+  border:1.5px solid var(--border);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:9px 15px}
+.rl .n{font-family:var(--f-mono);font-weight:700;color:var(--accent);font-size:15px;min-width:22px;padding-top:2px}
+.rl .tx{flex:1}
+.rl .en-s{font-size:17.5px;line-height:1.5;color:var(--ink)}
+.rl .rv-hint{font-size:14px}
+.rl .rv-body{margin-top:4px;font-size:16px;line-height:1.45;color:var(--dim)}
+.tt{border-collapse:collapse;background:var(--surface);border:1.5px solid var(--border)}
+.tt th,.tt td{border:1px solid var(--border);padding:5px 14px;font-family:var(--f-mono);
+  font-size:16px;text-align:center;min-width:64px;height:33px;color:var(--ink)}
+.tt th{background:var(--surf2);color:var(--accent);font-weight:700;font-size:14.5px}
+.tt td.o{text-align:left;min-width:210px}
+.tt tr.nw td{background:#fdf0d9;font-weight:700}
+.tt td.x{color:#a01818;font-weight:700;background:#fae7e8}
+.hl{background:#fdf0d9;font-weight:700;border-radius:3px}
+.tt td,.tt th{white-space:nowrap} .ic{white-space:nowrap}
+@media (max-height:800px){
+  .rl{gap:6px} .rl .r{padding:7px 12px} .rl .en-s{font-size:15.5px;line-height:1.42}
+  .rl .rv-body{font-size:14.5px}
+  .tt th,.tt td{padding:3px 10px;font-size:14px;height:27px;min-width:54px}
+  .tt th{font-size:13px} .tt td.o{min-width:180px}
+}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 9: пари «опис чи ні» ═══ */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:10px 14px;
+  font-size:16.5px;line-height:1.5}
+.opt b.l{font-family:var(--f-mono);color:var(--accent);margin-right:6px}
+.dsc{font-family:var(--f-ser);font-style:italic;font-size:18px;line-height:1.6;color:var(--ink)}
+@media (max-height:800px){.opt{font-size:15px;padding:8px 12px}.dsc{font-size:16px}}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">7.10 Finding errors in a program</h1>
+      <p class="title-sub">Як знайти помилки в алгоритмі й виправити їх · SKILLS FOCUS 7.7 і 7.8<br>
+        IT-англійська · 11 клас · Урок 10 з 36 · 13 листопада · с. 187–191</p>
+      <div class="chips">
+        <span class="chip">error</span>
+        <span class="chip">trace table</span>
+        <span class="chip">requirement</span>
+        <span class="chip">identifier</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── ПОВТОРЕННЯ: ДЗ УРОКУ 9 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lo">Повторення · домашнє завдання уроку 9</span>
+      <h2>Skills Focus 7.5: перевіримо</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">Skills Focus 7.5 · input values 4, 8, 2</span></div>
+        <div class="dp-code" style="font-size:14.5px;line-height:1.55"><span class="sk">INPUT</span> <span class="sf">Value1</span>
+<span class="sk">INPUT</span> <span class="sf">Value2</span>
+<span class="sk">INPUT</span> <span class="sf">Value3</span>
+<span class="sk">IF</span> <span class="sf">Value1</span> &gt; <span class="sf">Value2</span> <span class="sk">AND</span> <span class="sf">Value1</span> &gt; <span class="sf">Value3</span> <span class="sk">THEN</span>
+    <span class="sk">OUTPUT</span>(<span class="sf">Value1</span>)
+<span class="sk">ELSEIF</span> <span class="sf">Value2</span> &gt; <span class="sf">Value1</span> <span class="sk">AND</span> <span class="sf">Value2</span> &gt; <span class="sf">Value3</span> <span class="sk">THEN</span>
+    <span class="sk">OUTPUT</span>(<span class="sf">Value2</span>)
+<span class="sk">ELSE</span>
+    <span class="sk">OUTPUT</span>(<span class="sf">Value3</span>)
+<span class="sk">ENDIF</span>
+<span class="sk">OUTPUT</span>(<span class="sf">Value1</span> + <span class="sf">Value2</span> + <span class="sf">Value3</span>)</div>
+      </div>
+      <div>
+        <div class="qs">
+          <div class="q"><b>1</b> · Два числа в колонці <span class="en">OUTPUT</span>?</div>
+          <div class="q"><b>2</b> · «It outputs the … number input and then outputs the … of the 3 numbers input.»</div>
+          <div class="q"><b>3</b> · <span class="en">purpose</span> · <span class="en">describe</span> · <span class="en">pattern</span> · <span class="en">a set of data</span></div>
+        </div>
+        <div class="card reveal mt"><h3>Відповіді</h3><p class="rv-hint">Спершу вголос — потім клацни.</p>
+          <div class="rv-body"><p><b>1</b> · 8 &gt; 4 AND 8 &gt; 2 → <b>ELSEIF</b> → <b>8</b>, потім 4 + 8 + 2 = <b>14</b><br>
+            <b>2</b> · <b>largest</b> · <b>total</b><br>
+            <b>3</b> · призначення · описати · закономірність · набір даних</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ПОВТОРЕННЯ: SUMMARY ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🗣️</div><div>
+      <span class="label lb">Read aloud · повторення · Summary, с. 192</span>
+      <h2>Що знадобиться сьогодні</h2>
+    </div></div>
+    <div class="rl">
+      <div class="r reveal"><span class="n">1</span><div class="tx"><div class="en-s">Totalling is adding together the values.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Підсумовування — це додавання значень.</div></div></div>
+      <div class="r reveal"><span class="n">2</span><div class="tx"><div class="en-s">Counting is adding 1 to the count for each item.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Підрахунок — це додавання 1 до лічильника за кожен елемент.</div></div></div>
+      <div class="r reveal"><span class="n">3</span><div class="tx"><div class="en-s">To find the minimum value, a variable needs to be initialised with a large value.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Щоб знайти мінімальне значення, змінній треба задати велике початкове значення.</div></div></div>
+      <div class="r reveal"><span class="n">4</span><div class="tx"><div class="en-s">To find the maximum value, a variable needs to be initialised with a small value.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Щоб знайти максимальне значення, змінній треба задати мале початкове значення.</div></div></div>
+      <div class="r reveal"><span class="n">5</span><div class="tx"><div class="en-s">A trace table is used to dry run an algorithm. It can be used to find the purpose of an algorithm and to find errors in the algorithm.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Трасувальну таблицю використовують для ручного прогону алгоритму. З її допомогою можна знайти призначення алгоритму й помилки в ньому.</div></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── MINI-VOCAB ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">New words · с. 187–190</span>
+      <h2>Чотири слова, перш ніж почнемо</h2>
+    </div></div>
+    <div class="mini">
+      <div class="mw"><div class="w">error</div>
+        <div class="t">помилка в алгоритмі чи програмі</div></div>
+      <div class="mw"><div class="w">correct</div>
+        <div class="t">виправити (дієслово) · правильний (прикметник)</div></div>
+      <div class="mw"><div class="w">overwrite</div>
+        <div class="t">перезаписати: нове значення стирає старе</div></div>
+      <div class="mw"><div class="w">identifier</div>
+        <div class="t">ідентифікатор — імʼя змінної: <span class="ic">Total</span>, <span class="ic">Largest</span></div></div>
+    </div>
+    <div class="hbox hb mt">Вимовити всім класом: <span class="en">error</span> · <span class="en">correct</span> · <span class="en">overwrite</span> · <span class="en">identifier</span>.</div>
+  </div></section>
+
+  <!-- ══════════ 5 ── READ ALOUD: ВСТУП 7.10 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🗣️</div><div>
+      <span class="label lb">Read aloud · 7.10 · с. 187</span>
+      <h2>Finding errors in a program and correcting the errors</h2>
+    </div></div>
+    <div class="rl">
+      <div class="r reveal"><span class="n">1</span><div class="tx"><div class="en-s">To find an error in an algorithm you need to know the purpose of the algorithm.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Щоб знайти помилку в алгоритмі, треба знати його призначення.</div></div></div>
+      <div class="r reveal"><span class="n">2</span><div class="tx"><div class="en-s">You can then test the algorithm with different data, completing trace tables if needed, to find out what the algorithm actually does.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Потім можна перевірити алгоритм на різних даних, заповнюючи трасувальні таблиці, якщо треба, щоб зʼясувати, що алгоритм робить насправді.</div></div></div>
+      <div class="r reveal"><span class="n">3</span><div class="tx"><div class="en-s">Once you know the difference between what it does and should do, you can start to identify the errors and the changes you need to make.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Коли ви знаєте різницю між тим, що він робить, і тим, що має робити, можна шукати помилки й зміни, які треба внести.</div></div></div>
+    </div>
+    <div class="tip to"><span class="tip-ico">☝️</span><div><b>does</b> ≠ <b>should do</b> → <span class="en">error</span></div></div>
+  </div></section>
+
+  <!-- ══════════ 6 ── READ ALOUD: CS IN CONTEXT ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🗣️</div><div>
+      <span class="label lb">Read aloud · Computer science in context · с. 187</span>
+      <h2>Two methods</h2>
+    </div></div>
+    <div class="rl">
+      <div class="r reveal"><span class="n">1</span><div class="tx"><div class="en-s">Computer programmers will come across errors all the time.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Програмісти постійно натраплятимуть на помилки.</div></div></div>
+      <div class="r reveal"><span class="n">2</span><div class="tx"><div class="en-s">These could be ones that they have made, or that they are testing or fixing for other people.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Це можуть бути їхні власні помилки або ті, які вони тестують чи виправляють для інших людей.</div></div></div>
+      <div class="r reveal"><span class="n">3</span><div class="tx"><div class="en-s">Many of them will use the two methods used here; using a trace table, and dry running by reading the code.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Багато хто з них використовує два методи з цього розділу: трасувальну таблицю й ручний прогін через читання коду.</div></div></div>
+      <div class="r reveal"><span class="n">4</span><div class="tx"><div class="en-s">Features within the Integrated Development Environment (IDE) allow the programmer to see the values of variables and the outputs at each stage, without having to trace them manually.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Можливості середовища розробки (IDE) дозволяють програмістові бачити значення змінних і виведення на кожному кроці, не трасуючи їх вручну.</div></div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><b>Method 1</b> · Skills Focus 7.7 · <span class="en">using a trace table</span></div>
+      <div class="hbox hm"><b>Method 2</b> · Skills Focus 7.8 · <span class="en">reading the code</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── SKILLS FOCUS 7.7: ЗАДАЧА ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🔎</div><div>
+      <span class="label lb">Skills focus 7.7 · с. 187</span>
+      <h2>Using a trace table to find errors</h2>
+    </div></div>
+    <div class="two wide-r">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">«This program should take 5 numbers as input and output the total of all the numbers.»</span></div>
+        <div class="dp-code" style="font-size:17px"><span class="cm">01</span> <span class="sf">Total</span> &#8592; <span class="sn">1</span>
+<span class="cm">02</span> <span class="sf">Quantity</span> &#8592; <span class="sn">1</span>
+<span class="cm">03</span> <span class="sk">WHILE</span> <span class="sf">Quantity</span> &lt; <span class="sn">5</span> <span class="sk">DO</span>
+<span class="cm">04</span>     <span class="sk">INPUT</span> <span class="sf">Number</span>
+<span class="cm">05</span>     <span class="sf">Total</span> &#8592; <span class="sf">Number</span>
+<span class="cm">06</span>     <span class="sf">Quantity</span> &#8592; <span class="sf">Quantity</span> + <span class="sn">1</span>
+<span class="cm">07</span> <span class="sk">ENDWHILE</span>
+<span class="cm">08</span> <span class="sk">OUTPUT</span>(<span class="sf">Total</span>)</div>
+      </div>
+      <div>
+        <p style="font-size:16.5px;line-height:1.55">«Using a trace table will allow you to follow each step in the algorithm and by comparing this to the <b>intended outcome</b> you can find where it goes wrong.»</p>
+        <div class="steps mt">
+          <div class="step"><span class="step-n">1</span><div class="step-t">«First dry run the algorithm. If not provided, you will need to identify some <b>test data</b> to use.»</div></div>
+          <div class="step"><span class="step-n">2</span><div class="step-t">«This algorithm should take 5 numbers as input, so you could use <b>1, 2, 3, 4, 5</b>.»</div></div>
+        </div>
+        <div class="card reveal mt"><h3>3 · What should it output?</h3><p class="rv-hint">Спершу вголос — потім клацни.</p>
+          <div class="rv-body"><p>«It outputs the total, so it should output: 1 + 2 + 3 + 4 + 5 = <b>15</b>»</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── SKILLS FOCUS 7.7: ТРАСУВАННЯ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Skills focus 7.7 · с. 188</span>
+        <span class="t">Draw a trace table</span><span class="ptime">4 хвилини</span></div>
+      <div class="two">
+        <div>
+          <p class="prac-lead">«Now draw a trace table for the algorithm and then run each step of the algorithm, writing the values in the table.» Input <b>1, 2, 3, 4, 5</b>. Таблиця — на листочок.</p>
+          <div class="dp"><div class="dp-code" style="font-size:15.5px;line-height:1.55"><span class="cm">01</span> <span class="sf">Total</span> &#8592; <span class="sn">1</span>
+<span class="cm">02</span> <span class="sf">Quantity</span> &#8592; <span class="sn">1</span>
+<span class="cm">03</span> <span class="sk">WHILE</span> <span class="sf">Quantity</span> &lt; <span class="sn">5</span> <span class="sk">DO</span>
+<span class="cm">04</span>     <span class="sk">INPUT</span> <span class="sf">Number</span>
+<span class="cm">05</span>     <span class="sf">Total</span> &#8592; <span class="sf">Number</span>
+<span class="cm">06</span>     <span class="sf">Quantity</span> &#8592; <span class="sf">Quantity</span> + <span class="sn">1</span>
+<span class="cm">07</span> <span class="sk">ENDWHILE</span>
+<span class="cm">08</span> <span class="sk">OUTPUT</span>(<span class="sf">Total</span>)</div></div>
+        </div>
+        <div class="card reveal"><h3>Trace table · с. 188</h3><p class="rv-hint">Спершу листочок — потім клацни.</p>
+          <div class="rv-body"><table class="tt">
+            <tr><th>Total</th><th>Quantity</th><th>Number</th><th>OUTPUT</th></tr>
+            <tr><td>1</td><td>1</td><td></td><td></td></tr>
+            <tr><td>1</td><td>2</td><td>1</td><td></td></tr>
+            <tr><td>2</td><td>3</td><td>2</td><td></td></tr>
+            <tr><td>3</td><td>4</td><td>3</td><td></td></tr>
+            <tr><td>4</td><td>5</td><td>4</td><td></td></tr>
+            <tr><td></td><td></td><td></td><td class="x">4</td></tr>
+          </table>
+          <p class="note mt">Має бути <b>15</b> — вийшло <b>4</b>. Число <b>5</b> так і не введено.</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── SKILLS FOCUS 7.7: ДЕ ПОМИЛКИ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Skills focus 7.7 · с. 188</span>
+        <span class="t">Where has it gone wrong?</span><span class="ptime">4 хвилини</span></div>
+      <p class="prac-lead">«Now look at the results and where it has gone wrong.» Знайди <b>три</b> проблеми. Кажи англійською, вголос.</p>
+      <div class="two wide-r">
+        <div>
+          <div class="dp"><div class="dp-code" style="font-size:15.5px;line-height:1.55"><span class="cm">01</span> <span class="sf">Total</span> &#8592; <span class="sn">1</span>
+<span class="cm">02</span> <span class="sf">Quantity</span> &#8592; <span class="sn">1</span>
+<span class="cm">03</span> <span class="sk">WHILE</span> <span class="sf">Quantity</span> &lt; <span class="sn">5</span> <span class="sk">DO</span>
+<span class="cm">04</span>     <span class="sk">INPUT</span> <span class="sf">Number</span>
+<span class="cm">05</span>     <span class="sf">Total</span> &#8592; <span class="sf">Number</span>
+<span class="cm">06</span>     <span class="sf">Quantity</span> &#8592; <span class="sf">Quantity</span> + <span class="sn">1</span>
+<span class="cm">07</span> <span class="sk">ENDWHILE</span>
+<span class="cm">08</span> <span class="sk">OUTPUT</span>(<span class="sf">Total</span>)</div></div>
+          <table class="tt mt">
+            <tr><th>Total</th><th>Quantity</th><th>Number</th><th>OUTPUT</th></tr>
+            <tr><td>1</td><td>1</td><td></td><td></td></tr>
+            <tr><td>1</td><td>2</td><td>1</td><td></td></tr>
+            <tr><td>2</td><td>3</td><td>2</td><td></td></tr>
+            <tr><td>3</td><td>4</td><td>3</td><td></td></tr>
+            <tr><td>4</td><td>5</td><td>4</td><td>4</td></tr>
+          </table>
+        </div>
+        <div class="steps">
+          <div class="step reveal"><span class="step-n">1</span><div class="step-t">⭐ What happens to <span class="en">Total</span> each time?
+            <p class="rv-hint">клацни</p><div class="rv-body">«The total is <b>overwritten</b> each time, it should be added to.»</div></div></div>
+          <div class="step reveal"><span class="step-n">2</span><div class="step-t">⭐⭐ What does <span class="en">Total</span> start with?
+            <p class="rv-hint">клацни</p><div class="rv-body">«Total starts with 1 but this will add another 1 to the total, so it should be <b>0</b>.»</div></div></div>
+          <div class="step reveal"><span class="step-n">3</span><div class="step-t">⭐⭐⭐ How many numbers can be input?
+            <p class="rv-hint">клацни</p><div class="rv-body">«Only <b>four</b> numbers can be input, it should be five.»</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── SKILLS FOCUS 7.7: ВИПРАВЛЕННЯ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🛠️</div><div>
+      <span class="label lb">Skills focus 7.7 · с. 188</span>
+      <h2>Take each of the problems one at a time</h2>
+    </div></div>
+    <div class="two wide-l">
+      <div class="steps">
+        <div class="step reveal"><span class="step-n">1</span><div class="step-t">«The total should not be overwritten. <b>Line 05</b> overwrites the total.» — як виправити?
+          <p class="rv-hint">клацни</p><div class="rv-body"><span class="ic">Total ← Total + Number</span></div></div></div>
+        <div class="step reveal"><span class="step-n">2</span><div class="step-t">«The total should not start at 1, it should be 0. <b>Line 01</b> writes 1 to total.» — як виправити?
+          <p class="rv-hint">клацни</p><div class="rv-body"><span class="ic">Total ← 0</span></div></div></div>
+        <div class="step reveal"><span class="step-n">3</span><div class="step-t">«Only 4 numbers are input, it should be 5. There are <b>two ways</b> this can be changed, both are valid.»
+          <p class="rv-hint">клацни</p><div class="rv-body">«Either <b>Line 02</b> can be <span class="ic">Quantity ← 0</span> or <b>line 03</b> can be <span class="ic">WHILE Quantity &lt; 6</span>.»</div></div></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">The original algorithm</span></div>
+        <div class="dp-code" style="font-size:15.5px;line-height:1.55"><span class="cm">01</span> <span class="sf">Total</span> &#8592; <span class="sn">1</span>
+<span class="cm">02</span> <span class="sf">Quantity</span> &#8592; <span class="sn">1</span>
+<span class="cm">03</span> <span class="sk">WHILE</span> <span class="sf">Quantity</span> &lt; <span class="sn">5</span> <span class="sk">DO</span>
+<span class="cm">04</span>     <span class="sk">INPUT</span> <span class="sf">Number</span>
+<span class="cm">05</span>     <span class="sf">Total</span> &#8592; <span class="sf">Number</span>
+<span class="cm">06</span>     <span class="sf">Quantity</span> &#8592; <span class="sf">Quantity</span> + <span class="sn">1</span>
+<span class="cm">07</span> <span class="sk">ENDWHILE</span>
+<span class="cm">08</span> <span class="sk">OUTPUT</span>(<span class="sf">Total</span>)</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПЕРЕВІР ВИПРАВЛЕНУ ПРОГРАМУ ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Skills focus 7.7 · твоя черга</span>
+        <span class="t">Тепер самостійно</span><span class="ptime">5 хвилин</span></div>
+      <div class="two">
+        <div>
+          <div class="dp"><div class="dp-bar"><span class="dp-title">Corrected · Line 02 = Quantity ← 0</span></div>
+            <div class="dp-code" style="font-size:15px;line-height:1.5"><span class="cm">01</span> <span class="sf">Total</span> &#8592; <span class="sn">0</span>
+<span class="cm">02</span> <span class="sf">Quantity</span> &#8592; <span class="sn">0</span>
+<span class="cm">03</span> <span class="sk">WHILE</span> <span class="sf">Quantity</span> &lt; <span class="sn">5</span> <span class="sk">DO</span>
+<span class="cm">04</span>     <span class="sk">INPUT</span> <span class="sf">Number</span>
+<span class="cm">05</span>     <span class="sf">Total</span> &#8592; <span class="sf">Total</span> + <span class="sf">Number</span>
+<span class="cm">06</span>     <span class="sf">Quantity</span> &#8592; <span class="sf">Quantity</span> + <span class="sn">1</span>
+<span class="cm">07</span> <span class="sk">ENDWHILE</span>
+<span class="cm">08</span> <span class="sk">OUTPUT</span>(<span class="sf">Total</span>)</div></div>
+          <div class="lvl mt">
+            <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">Trace table для 1, 2, 3, 4, 5 — на листочок. OUTPUT = 15?</span></div>
+            <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">Другий спосіб: <span class="ic">Quantity ← 1</span> і <span class="ic">WHILE Quantity &lt; 6</span>. Яким буде <span class="en">Quantity</span> після циклу?</span></div>
+            <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">Скажи англійською три помилки: «Line 05 …», «Line 01 …», «Line 02 …».</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="card reveal"><h3>⭐ Trace table</h3><p class="rv-hint">Спершу листочок — потім клацни.</p>
+            <div class="rv-body"><table class="tt">
+              <tr><th>Total</th><th>Quantity</th><th>Number</th><th>OUTPUT</th></tr>
+              <tr><td>0</td><td>0</td><td></td><td></td></tr>
+              <tr><td>1</td><td>1</td><td>1</td><td></td></tr>
+              <tr><td>3</td><td>2</td><td>2</td><td></td></tr>
+              <tr><td>6</td><td>3</td><td>3</td><td></td></tr>
+              <tr><td>10</td><td>4</td><td>4</td><td></td></tr>
+              <tr><td>15</td><td>5</td><td>5</td><td></td></tr>
+              <tr class="nw"><td></td><td></td><td></td><td>15</td></tr>
+            </table></div></div>
+          <div class="card reveal mt"><h3>⭐⭐ · ⭐⭐⭐</h3><p class="rv-hint">Спершу вголос — потім клацни.</p>
+            <div class="rv-body"><p>⭐⭐ <span class="en">Quantity</span> = <b>6</b>, OUTPUT теж <b>15</b>.<br>
+              ⭐⭐⭐ Line 05 overwrites the total. Line 01 writes 1 to total. Line 02: only 4 numbers are input.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── WORD BANK ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lo">Word bank · с. 187–190</span>
+      <h2>Робочі слова 7.10</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">test data</span><span class="uk">дані для перевірки</span></div>
+      <div class="vp"><span class="en">intended outcome</span><span class="uk">результат, який мав вийти</span></div>
+      <div class="vp"><span class="en">go wrong</span><span class="uk">піти не так</span></div>
+      <div class="vp"><span class="en">compare</span><span class="uk">порівняти</span></div>
+      <div class="vp"><span class="en">dry run</span><span class="uk">ручний прогін алгоритму</span></div>
+      <div class="vp"><span class="en">overwritten</span><span class="uk">перезаписаний</span></div>
+      <div class="vp"><span class="en">initialise</span><span class="uk">задати початкове значення</span></div>
+      <div class="vp"><span class="en">requirement</span><span class="uk">вимога</span></div>
+      <div class="vp"><span class="en">wrong identifier</span><span class="uk">неправильне імʼя змінної</span></div>
+      <div class="vp"><span class="en">it has been met</span><span class="uk">її виконано (про вимогу)</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── READ ALOUD: SKILLS FOCUS 7.8 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🗣️</div><div>
+      <span class="label lb">Read aloud · Skills focus 7.8 · с. 188</span>
+      <h2>Finding errors by reading the code</h2>
+    </div></div>
+    <div class="rl">
+      <div class="r reveal"><span class="n">1</span><div class="tx"><div class="en-s">You may not always need to use a trace table, or you may not want to.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Трасувальна таблиця потрібна не завжди — або ви можете не захотіти її складати.</div></div></div>
+      <div class="r reveal"><span class="n">2</span><div class="tx"><div class="en-s">There are many different ways of finding the errors.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Є багато різних способів знайти помилки.</div></div></div>
+      <div class="r reveal"><span class="n">3</span><div class="tx"><div class="en-s">In this example you will look for each of the requirements in the algorithm to determine whether it has been met.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">У цьому прикладі ви шукатимете в алгоритмі кожну вимогу, щоб визначити, чи її виконано.</div></div></div>
+      <div class="r reveal"><span class="n">4</span><div class="tx"><div class="en-s">The following algorithm should take 3 numbers as input, and output the largest value and the average value.</div>
+        <p class="rv-hint">переклад — клацни</p><div class="rv-body">Цей алгоритм має взяти 3 числа на вхід і вивести найбільше значення та середнє значення.</div></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── SKILLS FOCUS 7.8: ВИМОГИ ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🧩</div><div>
+      <span class="label lb">Skills focus 7.8 · с. 188–189</span>
+      <h2>Split the description into requirements</h2>
+    </div></div>
+    <div class="two wide-r">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">«take 3 numbers as input, and output the largest value and the average value»</span></div>
+        <div class="dp-code" style="font-size:15px;line-height:1.5"><span class="cm">01</span> <span class="sf">Total</span> &#8592; <span class="sn">0</span>
+<span class="cm">02</span> <span class="sf">Largest</span> &#8592; <span class="sn">999</span>
+<span class="cm">03</span> <span class="sk">FOR</span> <span class="sf">X</span> &#8592; <span class="sn">0</span> <span class="sk">TO</span> <span class="sn">2</span>
+<span class="cm">04</span>     <span class="sk">INPUT</span> <span class="sf">Data</span>
+<span class="cm">05</span>     <span class="sk">IF</span> <span class="sf">Data</span> &lt; <span class="sn">999</span> <span class="sk">THEN</span>
+<span class="cm">06</span>         <span class="sf">Large</span> &#8592; <span class="sf">Data</span>
+<span class="cm">07</span>     <span class="sk">ENDIF</span>
+<span class="cm">08</span>     <span class="sf">Total</span> &#8592; <span class="sf">Total</span> + <span class="sf">Data</span>
+<span class="cm">09</span> <span class="sk">NEXT</span> <span class="sf">X</span>
+<span class="cm">10</span> <span class="sk">OUTPUT</span> <span class="sf">Largest</span>
+<span class="cm">11</span> <span class="sf">Average</span> &#8592; <span class="sf">Total</span> / <span class="sn">3</span>
+<span class="cm">12</span> <span class="sk">OUTPUT</span> <span class="sf">Average</span></div>
+      </div>
+      <div>
+        <div class="card reveal"><h3>⭐ Three sections</h3><p class="rv-hint">«Re-read the description» — розбий на 3 частини вголос, потім клацни.</p>
+          <div class="rv-body"><p>1 Take 3 numbers as input. · 2 Output the largest value. · 3 Output the average value.</p></div></div>
+        <div class="card reveal mt"><h3>⭐⭐ Five requirements</h3><p class="rv-hint">«The two outputs need to be calculated before being output» — яких двох вимог бракує?</p>
+          <div class="rv-body"><ol style="margin-left:20px">
+            <li>Take 3 numbers as input.</li>
+            <li><b>Calculate</b> the largest value.</li>
+            <li>Output the largest value.</li>
+            <li><b>Calculate</b> the average value.</li>
+            <li>Output the average value.</li>
+          </ol></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── SKILLS FOCUS 7.8: ВИМОГИ 1–2 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Skills focus 7.8 · с. 189</span>
+        <span class="t">Check each requirement</span><span class="ptime">6 хвилин</span></div>
+      <div class="two wide-r">
+        <div class="dp"><div class="dp-code" style="font-size:15px;line-height:1.5"><span class="cm">01</span> <span class="sf">Total</span> &#8592; <span class="sn">0</span>
+<span class="cm">02</span> <span class="sf">Largest</span> &#8592; <span class="sn">999</span>
+<span class="cm">03</span> <span class="sk">FOR</span> <span class="sf">X</span> &#8592; <span class="sn">0</span> <span class="sk">TO</span> <span class="sn">2</span>
+<span class="cm">04</span>     <span class="sk">INPUT</span> <span class="sf">Data</span>
+<span class="cm">05</span>     <span class="sk">IF</span> <span class="sf">Data</span> &lt; <span class="sn">999</span> <span class="sk">THEN</span>
+<span class="cm">06</span>         <span class="sf">Large</span> &#8592; <span class="sf">Data</span>
+<span class="cm">07</span>     <span class="sk">ENDIF</span>
+<span class="cm">08</span>     <span class="sf">Total</span> &#8592; <span class="sf">Total</span> + <span class="sf">Data</span>
+<span class="cm">09</span> <span class="sk">NEXT</span> <span class="sf">X</span>
+<span class="cm">10</span> <span class="sk">OUTPUT</span> <span class="sf">Largest</span>
+<span class="cm">11</span> <span class="sf">Average</span> &#8592; <span class="sf">Total</span> / <span class="sn">3</span>
+<span class="cm">12</span> <span class="sk">OUTPUT</span> <span class="sf">Average</span></div></div>
+        <div>
+          <div class="card reveal"><h3>1 · Does it take 3 numbers as input?</h3><p class="rv-hint">Спершу вголос — потім клацни.</p>
+            <div class="rv-body"><p>«The for loop goes from 0 to 2, so it will run 0, 1, 2 = 3 times. Inside the loop it inputs a value each time. <b>This is correct.</b>»</p></div></div>
+          <p class="prac-lead mt" style="margin-bottom:8px"><b>2 · Calculate the largest value.</b> «To find the largest it needs to:» — знайди три помилки.</p>
+          <div class="steps">
+            <div class="step reveal"><span class="step-n">a</span><div class="step-t">Initialise a largest variable with a low number. Line 02?
+              <p class="rv-hint">клацни</p><div class="rv-body">«This is <b>not</b> met. Line 02 largest is set to 999 but this should be a very small value» — <span class="ic">Largest ← -1</span></div></div></div>
+            <div class="step reveal"><span class="step-n">b</span><div class="step-t">Check if the data input is larger than the data in largest. Line 05?
+              <p class="rv-hint">клацни</p><div class="rv-body">«This is <b>not</b> met. Line 05 checks if data is less than 999. It should be larger.» — <span class="ic">IF Data &gt; Largest THEN</span></div></div></div>
+            <div class="step reveal"><span class="step-n">c</span><div class="step-t">Line 06?
+              <p class="rv-hint">клацни</p><div class="rv-body">«Line 06 replaces the value in Large with data, but the <b>identifier is incorrect</b>, the variable is named largest.» — <span class="ic">Largest ← Data</span></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── SKILLS FOCUS 7.8: ВИМОГИ 3–5 + ТЕСТОВІ ДАНІ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lb">Skills focus 7.8 · с. 189–190</span>
+      <h2>Requirements 3–5 · test data</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="steps">
+          <div class="step reveal"><span class="step-n">3</span><div class="step-t">Output the largest value. Line 10?
+            <p class="rv-hint">клацни</p><div class="rv-body">«Line 10 outputs the largest value, this is <b>correct</b>.»</div></div></div>
+          <div class="step reveal"><span class="step-n">4</span><div class="step-t">Calculate the average value. Lines 08 і 11?
+            <p class="rv-hint">клацни</p><div class="rv-body">«The average is calculated by totalling the inputs and then dividing by the number of inputs.» Line 08 totals the data entered — ідентифікатор має бути той самий, що в рядку 04: <span class="ic">Data</span> (книжка: «it should be data not DATA»). «Line 11 works out the average <b>correctly</b>.»</div></div></div>
+          <div class="step reveal"><span class="step-n">5</span><div class="step-t">Output the average value. Line 12?
+            <p class="rv-hint">клацни</p><div class="rv-body">«Line 12 outputs the average <b>correctly</b>.»</div></div></div>
+        </div>
+        <div class="tip to"><span class="tip-ico">☝️</span><div>«You can also combine this with using <b>test data</b> to check both the original algorithm and to check that your corrections are accurate.»</div></div>
+      </div>
+      <div>
+        <div class="dp"><div class="dp-bar"><span class="dp-title">Corrected</span></div>
+          <div class="dp-code" style="font-size:14px;line-height:1.45"><span class="cm">01</span> <span class="sf">Total</span> &#8592; <span class="sn">0</span>
+<span class="cm">02</span> <span class="sf">Largest</span> &#8592; -<span class="sn">1</span>
+<span class="cm">03</span> <span class="sk">FOR</span> <span class="sf">X</span> &#8592; <span class="sn">0</span> <span class="sk">TO</span> <span class="sn">2</span>
+<span class="cm">04</span>     <span class="sk">INPUT</span> <span class="sf">Data</span>
+<span class="cm">05</span>     <span class="sk">IF</span> <span class="sf">Data</span> &gt; <span class="sf">Largest</span> <span class="sk">THEN</span>
+<span class="cm">06</span>         <span class="sf">Largest</span> &#8592; <span class="sf">Data</span>
+<span class="cm">07</span>     <span class="sk">ENDIF</span>
+<span class="cm">08</span>     <span class="sf">Total</span> &#8592; <span class="sf">Total</span> + <span class="sf">Data</span>
+<span class="cm">09</span> <span class="sk">NEXT</span> <span class="sf">X</span>
+<span class="cm">10</span> <span class="sk">OUTPUT</span> <span class="sf">Largest</span>
+<span class="cm">11</span> <span class="sf">Average</span> &#8592; <span class="sf">Total</span> / <span class="sn">3</span>
+<span class="cm">12</span> <span class="sk">OUTPUT</span> <span class="sf">Average</span></div></div>
+        <div class="card reveal mt"><h3>Test data 5, 9, 4: OUTPUT?</h3><p class="rv-hint">Спершу вголос — потім клацни.</p>
+          <div class="rv-body"><p>Original: <b>999</b> і <b>6</b> — 999 не найбільше з 5, 9, 4.<br>Corrected: <b>9</b> і <b>6</b>.</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── QUESTION 1 с. 190 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Question 1 · с. 190</span>
+        <span class="t">Тепер самостійно</span><span class="ptime">6 хвилин</span></div>
+      <div class="two wide-r">
+        <div>
+          <p class="prac-lead">«Complete the trace table for the following algorithm with the input data: <b>20 50 60 25 35</b>.» Таблиця — на листочок.</p>
+          <div class="dp"><div class="dp-code" style="font-size:14.5px;line-height:1.5"><span class="sf">Total</span> &#8592; <span class="sn">0</span>
+<span class="sf">Average</span> &#8592; <span class="sn">0</span>
+<span class="sf">Counter</span> &#8592; <span class="sn">0</span>
+<span class="sk">WHILE</span> <span class="sf">Counter</span> &lt;= <span class="sn">5</span> <span class="sk">DO</span>
+    <span class="sk">INPUT</span> <span class="sf">Mark</span>
+    <span class="sf">Total</span> &#8592; <span class="sf">Total</span> + <span class="sf">Mark</span>
+    <span class="sf">Counter</span> &#8592; <span class="sf">Counter</span> + <span class="sn">1</span>
+<span class="sk">ENDWHILE</span>
+<span class="sf">Average</span> &#8592; <span class="sf">Total</span> / <span class="sf">Counter</span>
+<span class="sk">OUTPUT</span> <span class="ss">"The total is "</span>, <span class="sf">Total</span>
+<span class="sk">OUTPUT</span> <span class="ss">"The average is "</span>, <span class="sf">Average</span></div></div>
+        </div>
+        <div>
+          <div class="lvl">
+            <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">Trace table: <span class="en">Total · Average · Counter · Mark · OUTPUT</span>.</span></div>
+            <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">After <b>35</b>: <span class="ic">Counter</span> = ? Is <span class="ic">Counter &lt;= 5</span> TRUE or FALSE?</span></div>
+            <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">Find the error and correct the line.</span></div>
+          </div>
+          <div class="card reveal mt"><h3>Перевірка</h3><p class="rv-hint">Спершу листочок — потім клацни.</p>
+            <div class="rv-body"><table class="tt">
+              <tr><th>Total</th><th>Average</th><th>Counter</th><th>Mark</th></tr>
+              <tr><td>0</td><td>0</td><td>0</td><td></td></tr>
+              <tr><td>20</td><td></td><td>1</td><td>20</td></tr>
+              <tr><td>70</td><td></td><td>2</td><td>50</td></tr>
+              <tr><td>130</td><td></td><td>3</td><td>60</td></tr>
+              <tr><td>155</td><td></td><td>4</td><td>25</td></tr>
+              <tr><td>190</td><td></td><td>5</td><td>35</td></tr>
+            </table>
+            <p class="note mt">⭐⭐ Counter = 5, <span class="ic">5 &lt;= 5</span> — <b>TRUE</b>: INPUT Mark просить <b>шосте</b> число.<br>
+              ⭐⭐⭐ <span class="ic">WHILE Counter &lt; 5 DO</span> → OUTPUT «The total is 190», «The average is 38».</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── QUESTION 2 с. 191 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Question 2 · с. 191</span>
+        <span class="t">Тепер самостійно</span><span class="ptime">4 хвилини</span></div>
+      <div class="two">
+        <div>
+          <p class="prac-lead"><b>a</b> «Complete the trace table for the following algorithm using the input data: <b>7</b>.»<br>
+            <b>b</b> «State the purpose of the algorithm.» — англійською, вголос.</p>
+          <div class="dp"><div class="dp-code" style="font-size:18px"><span class="sk">INPUT</span> <span class="sf">Number</span>
+<span class="sk">WHILE</span> <span class="sf">Number</span> &gt;= <span class="sn">0</span> <span class="sk">DO</span>
+    <span class="sk">OUTPUT</span> <span class="sf">Number</span>
+    <span class="sf">Number</span> &#8592; <span class="sf">Number</span> - <span class="sn">1</span>
+<span class="sk">ENDWHILE</span></div></div>
+        </div>
+        <div class="two" style="grid-template-columns:1fr 1.2fr">
+          <div class="card reveal"><h3>a</h3><p class="rv-hint">Спершу листочок — потім клацни.</p>
+            <div class="rv-body"><table class="tt">
+              <tr><th>Number</th><th>OUTPUT</th></tr>
+              <tr><td>7</td><td>7</td></tr><tr><td>6</td><td>6</td></tr><tr><td>5</td><td>5</td></tr>
+              <tr><td>4</td><td>4</td></tr><tr><td>3</td><td>3</td></tr><tr><td>2</td><td>2</td></tr>
+              <tr><td>1</td><td>1</td></tr><tr><td>0</td><td>0</td></tr><tr><td>-1</td><td></td></tr>
+            </table></div></div>
+          <div class="card reveal"><h3>b</h3><p class="rv-hint">Спершу вголос — потім клацни.</p>
+            <div class="rv-body"><p class="dsc">The algorithm takes a number from the user, and then outputs all of the numbers from the number input down to 0.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── QUESTION 3 с. 191 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Question 3 · с. 191</span>
+        <span class="t">Explain the purpose</span><span class="ptime">4 хвилини</span></div>
+      <div class="two wide-l">
+        <div class="dp"><div class="dp-code" style="font-size:14px;line-height:1.42"><span class="cm">01</span> <span class="sf">Valid</span> &#8592; <span class="sn">0</span>
+<span class="cm">02</span> <span class="sf">Invalid</span> &#8592; <span class="sn">0</span>
+<span class="cm">03</span> <span class="sf">Continue</span> &#8592; <span class="ss">"Y"</span>
+<span class="cm">04</span> <span class="sk">WHILE</span> <span class="sf">Continue</span> = <span class="ss">"Y"</span> <span class="sk">DO</span>
+<span class="cm">05</span>     <span class="sk">INPUT</span> <span class="sf">Value</span>
+<span class="cm">06</span>     <span class="sk">IF</span> <span class="sf">Value</span> &gt;= <span class="sn">10</span> <span class="sk">AND</span> <span class="sf">Value</span> &lt;= <span class="sn">20</span> <span class="sk">THEN</span>
+<span class="cm">07</span>         <span class="sf">Valid</span> &#8592; <span class="sf">Valid</span> + <span class="sn">1</span>
+<span class="cm">08</span>     <span class="sk">ELSE</span>
+<span class="cm">09</span>         <span class="sf">Invalid</span> &#8592; <span class="sf">Invalid</span> + <span class="sn">1</span>
+<span class="cm">10</span>     <span class="sk">ENDIF</span>
+<span class="cm">11</span>     <span class="sk">OUTPUT</span> <span class="ss">"Continue?"</span>
+<span class="cm">12</span>     <span class="sk">INPUT</span> <span class="sf">continue</span>
+<span class="cm">13</span> <span class="sk">ENDWHILE</span>
+<span class="cm">14</span> <span class="sk">OUTPUT</span> <span class="ss">"valid = "</span>, <span class="sf">Valid</span>
+<span class="cm">15</span> <span class="sk">OUTPUT</span> <span class="ss">"invalid = "</span>, <span class="sf">Invalid</span></div></div>
+        <div>
+          <div class="lvl">
+            <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">Lines 06–10: which values are <span class="en">Valid</span>?</span></div>
+            <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">«Explain the purpose of the following algorithm.» — одне речення англійською.</span></div>
+            <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">Порівняй ідентифікатори в рядках 03, 04 і 12. Що не так?</span></div>
+          </div>
+          <div class="card reveal mt"><h3>Перевірка</h3><p class="rv-hint">Спершу вголос — потім клацни.</p>
+            <div class="rv-body"><p>⭐ Values from <b>10 to 20</b>.</p>
+              <p class="dsc">⭐⭐ The algorithm takes values from the user until the user does not enter "Y". It counts how many values are valid (10 to 20) and how many are invalid, and then outputs the two counts.</p>
+              <p>⭐⭐⭐ Line 12 <span class="ic">INPUT continue</span> — <b>wrong identifier</b>: має бути <span class="ic">Continue</span>, інакше цикл не зупиниться.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key vocabulary</span>
+      <h2>Слова уроку</h2>
+    </div></div>
+    <div class="vg" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="vp"><span class="en">error</span><span class="uk">помилка</span></div>
+      <div class="vp"><span class="en">correct</span><span class="uk">виправити; правильний</span></div>
+      <div class="vp"><span class="en">overwrite</span><span class="uk">перезаписати</span></div>
+      <div class="vp"><span class="en">identifier</span><span class="uk">ідентифікатор, імʼя змінної</span></div>
+      <div class="vp"><span class="en">wrong identifier</span><span class="uk">неправильне імʼя змінної</span></div>
+      <div class="vp"><span class="en">requirement</span><span class="uk">вимога</span></div>
+      <div class="vp"><span class="en">it has been met</span><span class="uk">вимогу виконано</span></div>
+      <div class="vp"><span class="en">test data</span><span class="uk">дані для перевірки</span></div>
+      <div class="vp"><span class="en">intended outcome</span><span class="uk">очікуваний результат</span></div>
+      <div class="vp"><span class="en">go wrong</span><span class="uk">піти не так</span></div>
+      <div class="vp"><span class="en">compare</span><span class="uk">порівняти</span></div>
+      <div class="vp"><span class="en">dry run</span><span class="uk">ручний прогін</span></div>
+      <div class="vp"><span class="en">trace table</span><span class="uk">трасувальна таблиця</span></div>
+      <div class="vp"><span class="en">initialise</span><span class="uk">задати початкове значення</span></div>
+      <div class="vp"><span class="en">reading the code</span><span class="uk">читання коду</span></div>
+      <div class="vp"><span class="en">actually</span><span class="uk">насправді</span></div>
+      <div class="vp"><span class="en">manually</span><span class="uk">вручну</span></div>
+      <div class="vp"><span class="en">split into sections</span><span class="uk">розбити на частини</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ── I CAN ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">☑️</div><div>
+      <span class="label lr">I can…</span>
+      <h2>Чек-лист уроку</h2>
+    </div></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div><div>I can find an <span class="en">error</span> with a <span class="en">trace table</span>: what it does ≠ what it should do.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can split a description into <span class="en">requirements</span> and check each one.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can find a <span class="en">wrong identifier</span> and correct the line.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can use <span class="en">test data</span> to check my corrections.</div></div>
+    </div>
+    <div class="hbox hm mt">Summary, с. 192: «A trace table is used to dry run an algorithm. It can be used to find the purpose of an algorithm and to find
+      errors in the algorithm.»</div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 11 · 20 листопада · Summary · Exam-style questions, с. 192–195</p>
+  </div></section>
+
+  <!-- ══════════ 22 ── ДЗ ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh"><div class="si">🏠</div><div>
+      <span class="label lo">Homework</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox hm">Відповіді — <strong>повідомленням на платформі</strong> до <strong>20 листопада</strong>.</div>
+    <div class="two wide-l mt">
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><div class="step-t">
+        Алгоритм <b>Question 2</b> (с. 191), input <span class="ic">3</span>. Напиши всі числа, які будуть у колонці <span class="en">OUTPUT</span>.</div></div>
+      <div class="step"><span class="step-n">2</span><div class="step-t">
+        Програма <b>Skills Focus 7.7</b> має вивести суму 5 чисел. Напиши три виправлені рядки: номер рядка і новий рядок.</div></div>
+      <div class="step"><span class="step-n">3</span><div class="step-t">
+        <span class="en">Translate:</span> <span class="en">error</span> · <span class="en">overwrite</span> ·
+        <span class="en">requirement</span> · <span class="en">identifier</span>.</div></div>
+    </div>
+    <div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-title">Question 2 · с. 191</span></div>
+        <div class="dp-code" style="font-size:14px;line-height:1.45"><span class="sk">INPUT</span> <span class="sf">Number</span>
+<span class="sk">WHILE</span> <span class="sf">Number</span> &gt;= <span class="sn">0</span> <span class="sk">DO</span>
+    <span class="sk">OUTPUT</span> <span class="sf">Number</span>
+    <span class="sf">Number</span> &#8592; <span class="sf">Number</span> - <span class="sn">1</span>
+<span class="sk">ENDWHILE</span></div>
+      </div>
+      <div class="dp mt">
+        <div class="dp-bar"><span class="dp-title">Skills Focus 7.7 · с. 187</span></div>
+        <div class="dp-code" style="font-size:14px;line-height:1.45"><span class="cm">01</span> <span class="sf">Total</span> &#8592; <span class="sn">1</span>
+<span class="cm">02</span> <span class="sf">Quantity</span> &#8592; <span class="sn">1</span>
+<span class="cm">03</span> <span class="sk">WHILE</span> <span class="sf">Quantity</span> &lt; <span class="sn">5</span> <span class="sk">DO</span>
+<span class="cm">04</span>     <span class="sk">INPUT</span> <span class="sf">Number</span>
+<span class="cm">05</span>     <span class="sf">Total</span> &#8592; <span class="sf">Number</span>
+<span class="cm">06</span>     <span class="sf">Quantity</span> &#8592; <span class="sf">Quantity</span> + <span class="sn">1</span>
+<span class="cm">07</span> <span class="sk">ENDWHILE</span>
+<span class="cm">08</span> <span class="sk">OUTPUT</span>(<span class="sf">Total</span>)</div>
+      </div>
+    </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

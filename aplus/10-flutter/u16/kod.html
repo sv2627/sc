@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 16 · код уроку · Flutter 10 клас</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#eef1f8;--border:#dcdfe9;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--blue);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#aab4cc}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:760px}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+padding:24px 26px;display:block;box-shadow:0 1px 3px rgba(2,83,179,.05);
+transition:border-color .18s,background .18s,transform .18s,box-shadow .18s}
+a.card:hover{border-color:var(--accent);background:var(--surf2);transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(2,83,179,.09)}
+.card .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);display:block;margin-bottom:9px}
+.card h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin-bottom:7px;line-height:1.2}
+.card p{font-size:16.5px;color:var(--dim)}
+.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:26px;
+box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--accent);display:block;margin-bottom:8px}
+.hero p{font-size:17px;color:var(--dim)}
+.hero ul{margin:0;padding-left:22px;font-size:17px;color:var(--dim)}
+.hero li{margin-bottom:6px}
+.hero li:last-child{margin-bottom:0}
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 7px;border-radius:5px}
+.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+font-size:15px;color:var(--dim)}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}
+.card{padding:19px 20px}.hero{padding:18px 20px}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:18px;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;
+  background:var(--surf2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.codebar b{font-family:var(--f-head);color:var(--accent)}
+.copy{font:700 16px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:10px 18px;min-height:44px;cursor:pointer}
+.copy.ok{background:#1d7a3a}
+pre.dart{font-family:var(--f-mono);font-size:15px;line-height:1.55;padding:18px;overflow-x:auto;
+  white-space:pre;tab-size:2;color:var(--ink)}
+.cm{color:#5c6b5e;font-style:italic}
+
+.steps-note{font-size:16.5px;color:var(--dim);margin-top:10px}
+.open{display:inline-block;font:700 16px var(--f-body);background:#1d7a3a;color:#fff;border-radius:10px;
+  padding:10px 18px;min-height:44px;margin-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">10 клас · Flutter</a><span class="sep">/</span><a href="./">Урок 16</a><span class="sep">/</span><span>Код</span></nav>
+<div class="kicker">Урок 16 / 68 · 11.11.2026 · код уроку</div>
+<h1>Код уроку</h1>
+<p class="lead">Обидва блоки — для DartPad: «Скопіювати», відкрий <a href="https://dartpad.dev/?sample=counter" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px solid">dartpad.dev</a>, заміни весь код і натисни Run. Стартовий код уже працює на прикладі книжок — твоє завдання зробити з нього свою тему. Фінальний код — зразок усіх рівнів на тих самих книжках. Пояснення — у коментарях після <code>//</code>.</p>
+<div class="kicker" style="margin-top:28px">Міні-проєкт II · урок 16</div>
+<div class="codebox"><div class="codebar"><b>1 · Стартовий код · рівень ⭐ уже працює</b>
+  <button class="copy" data-for="start">Скопіювати</button></div>
+<pre class="dart" id="start"><span class="cm">// Міні-проєкт II · урок 16 · стартовий код (рівень ⭐ уже працює на книжках).</span>
+<span class="cm">// Прізвище: ...   Тема: ...   Рівень: ⭐</span>
+<span class="cm">// Зроби своє: заміни три місця з позначкою ЗАМІНИ — клас, список, тексти на екрані.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+<span class="cm">// 1. ЗАМІНИ: свій клас. Сутність своєї теми — 3 поля і конструктор.</span>
+<span class="cm">//    Книга: назва, автор, сторінки. Твоя тема — свої поля й типи.</span>
+class Book {
+  final String title;
+  final String author;
+  final int pages;
+
+  const Book(this.title, this.author, this.pages);
+}
+
+<span class="cm">// 2. ЗАМІНИ: свій список — 5 або більше обʼєктів твого класу.</span>
+<span class="cm">//    Порядок важливий, ходимо за номером -&gt; List.</span>
+const List&lt;Book&gt; books = [
+  Book('The Hobbit', 'J. R. R. Tolkien', 310),
+  Book('Animal Farm', 'George Orwell', 112),
+  Book('Dune', 'Frank Herbert', 412),
+  Book('The Little Prince', 'Antoine de Saint-Exupery', 96),
+  Book('Fahrenheit 451', 'Ray Bradbury', 158),
+];
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo), <span class="cm">// свій колір</span>
+      home: const CatalogPage(),
+    );
+  }
+}
+
+class CatalogPage extends StatefulWidget {
+  const CatalogPage({super.key});
+
+  @override
+  State&lt;CatalogPage&gt; createState() =&gt; _CatalogPageState();
+}
+
+class _CatalogPageState extends State&lt;CatalogPage&gt; {
+  int _index = 0; <span class="cm">// номер обʼєкта у списку, з нуля</span>
+
+  <span class="cm">// Наступний — не далі останнього.</span>
+  void _next() {
+    setState(() {
+      if (_index &lt; books.length - 1) {
+        _index++;
+      }
+    });
+  }
+
+  <span class="cm">// Попередній — не раніше першого.</span>
+  void _prev() {
+    setState(() {
+      if (_index &gt; 0) {
+        _index--;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Book b = books[_index]; <span class="cm">// поточний обʼєкт</span>
+    return Scaffold(
+      <span class="cm">// 3. ЗАМІНИ: 'Book' -&gt; назва твоєї сутності. Номер людині — з одиниці.</span>
+      appBar: AppBar(title: Text('Book ${_index + 1} / ${books.length}')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: .center,
+          children: [
+            <span class="cm">// 3. ЗАМІНИ: поля свого класу замість title, author, pages.</span>
+            Text(b.title, style: Theme.of(context).textTheme.headlineMedium),
+            Text(b.author),
+            Text('${b.pages} pages'),
+            Row(
+              mainAxisAlignment: .center,
+              children: [
+                <span class="cm">// На краях кнопка сіра: null — «натискати нічого».</span>
+                ElevatedButton(
+                  onPressed: _index &gt; 0 ? _prev : null,
+                  child: const Icon(Icons.skip_previous),
+                ),
+                ElevatedButton(
+                  onPressed: _index &lt; books.length - 1 ? _next : null,
+                  child: const Icon(Icons.skip_next),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</pre></div>
+<p class="steps-note">Заміни три місця з позначкою <code>ЗАМІНИ</code> своєю темою: клас, список, тексти на екрані. Перейменуй <code>Book</code> на свій клас скрізь.</p>
+<div class="kicker" style="margin-top:34px">Урок · зразок усіх рівнів</div>
+<div class="codebox"><div class="codebar"><b>2 · Фінальний код прикладу «Книги» ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="final">Скопіювати</button></div>
+<pre class="dart" id="final"><span class="cm">// Міні-проєкт II · урок 16 · фінальна версія прикладу «Книги», рівні ⭐–⭐⭐⭐.</span>
+<span class="cm">// Тема своя у кожного — тут лише зразок, як може виглядати кожен рівень.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+<span class="cm">// ⭐ Книга — сутність: поля + поведінка -&gt; class.</span>
+class Book {
+  final String title;
+  final String author;
+  final int pages;
+
+  const Book(this.title, this.author, this.pages);
+
+  <span class="cm">// ⭐⭐ Метод класу: відповідь про саму книгу.</span>
+  bool isLong() =&gt; pages &gt; 300;
+
+  <span class="cm">// ⭐⭐ Метод класу: рядок для екрана.</span>
+  String info() =&gt; '$author · $pages pages';
+}
+
+<span class="cm">// ⭐ Порядок важливий, ходимо за номером -&gt; List.</span>
+const List&lt;Book&gt; books = [
+  Book('The Hobbit', 'J. R. R. Tolkien', 310),
+  Book('Animal Farm', 'George Orwell', 112),
+  Book('Dune', 'Frank Herbert', 412),
+  Book('The Little Prince', 'Antoine de Saint-Exupery', 96),
+  Book('Fahrenheit 451', 'Ray Bradbury', 158),
+];
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: const CatalogPage(),
+    );
+  }
+}
+
+class CatalogPage extends StatefulWidget {
+  const CatalogPage({super.key});
+
+  @override
+  State&lt;CatalogPage&gt; createState() =&gt; _CatalogPageState();
+}
+
+class _CatalogPageState extends State&lt;CatalogPage&gt; {
+  int _index = 0; <span class="cm">// номер у списку, який зараз на екрані, з нуля</span>
+
+  <span class="cm">// ⭐⭐ Лайки: словник «назва -&gt; скільки лайків» -&gt; Map.</span>
+  final Map&lt;String, int&gt; _likes = {};
+
+  <span class="cm">// ⭐⭐⭐ Перемикач: показувати всі книги чи тільки довгі.</span>
+  bool _onlyLong = false;
+
+  <span class="cm">// ⭐⭐⭐ Список, який зараз на екрані: усі або відфільтровані через where.</span>
+  List&lt;Book&gt; _shown() {
+    if (_onlyLong) {
+      return books.where((b) =&gt; b.isLong()).toList();
+    }
+    return books;
+  }
+
+  <span class="cm">// ⭐ Наступна — не далі останньої.</span>
+  void _next() {
+    setState(() {
+      if (_index &lt; _shown().length - 1) {
+        _index++;
+      }
+    });
+  }
+
+  <span class="cm">// ⭐ Попередня — не раніше першої.</span>
+  void _prev() {
+    setState(() {
+      if (_index &gt; 0) {
+        _index--;
+      }
+    });
+  }
+
+  <span class="cm">// ⭐⭐ Лайк поточній книзі: немає ключа — стане 1, є — +1.</span>
+  void _like() {
+    setState(() {
+      String key = _shown()[_index].title;
+      _likes.update(key, (v) =&gt; v + 1, ifAbsent: () =&gt; 1);
+    });
+  }
+
+  <span class="cm">// ⭐⭐⭐ Перемкнути фільтр. Номер — знову 0: у новому списку інша довжина.</span>
+  void _toggleFilter() {
+    setState(() {
+      _onlyLong = !_onlyLong;
+      _index = 0;
+    });
+  }
+
+  <span class="cm">// ⭐⭐ Підсумок циклом: скільки сторінок у списку на екрані.</span>
+  int _totalPages() {
+    int sum = 0;
+    for (Book b in _shown()) {
+      sum += b.pages;
+    }
+    return sum;
+  }
+
+  <span class="cm">// ⭐⭐⭐ Найпопулярніша: прохід по Map, у кого найбільше лайків.</span>
+  String _top() {
+    String best = '-';
+    int max = 0;
+    _likes.forEach((title, n) {
+      if (n &gt; max) {
+        max = n;
+        best = title;
+      }
+    });
+    return best;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List&lt;Book&gt; list = _shown();
+    Book b = list[_index]; <span class="cm">// поточна книга</span>
+    return Scaffold(
+      <span class="cm">// ⭐ Номер людині — з одиниці.</span>
+      appBar: AppBar(title: Text('Book ${_index + 1} / ${list.length}')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: .center,
+          children: [
+            Text(b.title, style: Theme.of(context).textTheme.headlineMedium),
+            Text(b.info()), <span class="cm">// ⭐⭐ метод класу</span>
+            Text(b.isLong() ? 'Long read' : 'Short read'), <span class="cm">// ⭐⭐ метод класу</span>
+            Text('Likes: ${_likes[b.title] ?? 0}'), <span class="cm">// ⭐⭐ немає в Map -&gt; 0</span>
+            Row(
+              mainAxisAlignment: .center,
+              children: [
+                ElevatedButton(
+                  onPressed: _index &gt; 0 ? _prev : null,
+                  child: const Icon(Icons.skip_previous),
+                ),
+                ElevatedButton(
+                  onPressed: _like,
+                  child: const Icon(Icons.favorite),
+                ),
+                ElevatedButton(
+                  onPressed: _index &lt; list.length - 1 ? _next : null,
+                  child: const Icon(Icons.skip_next),
+                ),
+              ],
+            ),
+            Text('Total: ${_totalPages()} pages'), <span class="cm">// ⭐⭐ підсумок</span>
+            Text('Top: ${_top()}'), <span class="cm">// ⭐⭐⭐ найбільше лайків</span>
+          ],
+        ),
+      ),
+      <span class="cm">// ⭐⭐⭐ Кругла кнопка — фільтр «тільки довгі» / «усі».</span>
+      floatingActionButton: FloatingActionButton(
+        onPressed: _toggleFilter,
+        tooltip: 'Long only',
+        child: Icon(_onlyLong ? Icons.filter_alt_off : Icons.filter_alt),
+      ),
+    );
+  }
+}</pre></div>
+<p class="steps-note">Позначки <code>⭐</code>, <code>⭐⭐</code>, <code>⭐⭐⭐</code> у коментарях — до якого рівня належить рядок. Перевір: ♥ ♥ ▶ ▶ ♥ → <code>Book 3 / 5</code>, <code>Likes: 1</code>, <code>Top: The Hobbit</code>; фільтр → <code>Book 1 / 2</code>, <code>Total: 722 pages</code>.</p>
+
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.for).innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+  b.textContent = 'Скопійовано ✓'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Скопіювати'; b.classList.remove('ok'); }, 2000);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Блочні та рядкові елементи. Структура сторінки · Front-end · 8 клас · Урок 15</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Front-end
+  Клас          8
+  Школа         STEAM (Республіка) · вівторок
+  Урок          15 з 27 · 10.11.2026 · другий урок дня (подвійний вівторок)
+  Тема          Блочні та рядкові елементи. Структура сторінки
+  Акцент        green (#154734) — --accent:var(--forest), як уроки 1–14
+  Слайдів       20 (s0…s19)
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. VS Code + Chrome. Ескіз з уроку 14 — поруч.
+     НОВИЙ проєкт чверті «Адаптивний сайт» — нова папка.
+  ⚠️ Нове: блочні/рядкові, div, span, display: block, обгортка
+     .container (max-width + margin: 0 auto + padding). outline —
+     лише як «рентген». Flexbox НЕ даємо — 17.11.
+  ⚠️ Насиченість −20 % (II чверть): теорії 6 слайдів, решта — руки.
+  ⚠️ ДОМАШНЄ — s19, ОДНЕ НА ОБИДВА УРОКИ ДНЯ (u14 без ДЗ).
+     dz.html — CodePen, код із кнопкою «Скопіювати»,
+     здача — Google Classroom до 17.11.
+  ⚠️ ТІЛЬКИ ВБУДОВАНЕ У VS CODE + F12, без скорочень, що розгортаються.
+  ────────────────────────────────────────────────────────────────
+  НОВЕ          s2  два види (рамки-«рентген» на прикладі)
+                s3  довідник-таблиця
+                s4–s5 передбач (reveal)
+                s6  div і span · s7 div чи семантичний тег
+                s8  обгортка · s9 обгортка в кожній частині   ≈ 13 хв
+  ПРАКТИКА      s10 що зробимо
+                s11 крок 1 · папка й файли                   4 хв
+                s12 крок 2 · п'ять частин за ескізом         8 хв
+                s13 крок 3 · обгортка                        6 хв
+                s14 крок 4 · рентген, span                   4 хв
+                s15 крок 5 · картки-заготовки                5 хв
+                s16 фініш · s17 банк                         2 хв
+                разом руками ≈ 29 хв із 45
+  РІЗАТИ ПЕРШИМ s5 і s7 (проговорити), s14, s17.
+                s11–s13 і домашнє s19 НЕ різати.
+  ⚠️ ОЦІНЮВАННЯ — тільки в конспекті, на слайдах його немає.
+  ────────────────────────────────────────────────────────────────
+  Аркуш A4      rozdatka.html — тільки сховище
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --surf2:#f1f3f7; --border:#e0e3e9;
+  --brand:#591429; --green:#227354; --forest:#154734; --gold:#f2c75c;
+  --goldink:#8a5a10; --brick:#a8392f; --steel:#3c5a72;
+  --teal:#227354; --blue:#3c5a72; --pink:#a8392f; --yellow:#8a5a10;
+  --purple:#8a5a10; --green2:#154734;
+  --text:#282a29; --ink:#282a29; --dim:#5c605e; --faint:#84888a;
+  --accent:var(--forest);
+  --f-head:'Source Serif 4','Meta Serif Pro',Georgia,'Times New Roman',serif;
+  --f-body:'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(110,231,160,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(110,231,160,.022) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(40,42,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:#e2ebe6}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:#e3efe9;color:var(--teal)}
+.lb{background:#e4eaf0;color:var(--blue)}
+.ly{background:#f7eeda;color:var(--yellow)}
+.lp{background:#f6e5e3;color:var(--pink)}
+.lg{background:#e2ebe6;color:var(--green)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cb h3{color:var(--blue)}
+.card.cp h3{color:var(--pink)} .card.cy h3{color:var(--yellow)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--text);line-height:1.7}
+.hbox.ht{border-color:var(--teal)} .hbox.hb{border-color:var(--blue)}
+.hbox.hp{border-color:var(--pink)} .hbox.hy{border-color:var(--yellow)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:#eef3f0;
+     border:1px solid rgba(110,231,160,.25);border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7}
+.tip.ty{background:#fbf6ea;border-color:#e8d5a8}
+.tip.tp{background:#fbf1f0;border-color:#e6c6c2}
+.tip.tb{background:#eef2f6;border-color:rgba(99,197,255,.28)}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+.dp{border-radius:13px;overflow:hidden;border:1px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(40,42,41,.08);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdfcfa;padding:15px 19px;font-size:16px;line-height:1.6;white-space:pre-wrap}
+.dp-out{background:#fff;color:#111;padding:18px 22px;font-family:var(--f-body)}
+.dp-out h1{font-size:1.9rem;color:#111;font-family:var(--f-head)}
+.sk{color:#3c5a72}.ss{color:#a8392f}.sn{color:#154734}
+.cm{color:#6b6f6d;font-style:italic}
+.sa{color:#227354}
+
+/* ─── розбір каркаса: рядок «тег → що робить» ─── */
+.brk{display:flex;flex-direction:column;gap:9px}
+.brow{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:11px;padding:11px 16px}
+.btag{font-family:var(--f-mono);font-size:16px;color:var(--accent);flex-shrink:0;
+      min-width:172px;font-weight:700}
+.bwhat{font-size:17px;line-height:1.6;color:var(--dim)}
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:400}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:rgba(110,231,160,.15);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:#f9f2e2;border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.prac{background:var(--surf2);border:2px solid var(--accent);border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.pbadge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+  background:var(--accent);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--accent)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:var(--goldink);background:#f9f2e2;
+  border:1px solid var(--gold);border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16px;flex-shrink:0;letter-spacing:1px;min-width:54px}
+.lv-t{font-size:17px;line-height:1.6;color:var(--text)}
+.vs{font-family:var(--f-mono);font-size:14px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:7px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid}
+.wrong{border-color:var(--brick);background:var(--surface)}
+.right{border-color:var(--forest);background:var(--surface)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--text)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3: «приклад → тепер самостійно» ─── */
+.demo{border:2px solid var(--steel);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--steel);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--accent);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--text,var(--ink))}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--brick)} .right{border-color:var(--forest)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6}
+.bk b{color:var(--accent)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4: сайт через ШІ ─── */
+.now{display:inline-block;font-family:var(--f-mono);font-size:15px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;background:var(--brick);color:#fff;padding:7px 16px;border-radius:8px;margin-bottom:12px}
+.chat{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:18px 22px;
+  font-size:25px;line-height:1.45;box-shadow:0 2px 10px rgba(40,42,41,.08)}
+.chat .who{font-family:var(--f-mono);font-size:13px;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--dim);display:block;margin-bottom:8px}
+.chat.bad{border-color:var(--brick)} .chat.good{border-color:var(--forest)}
+.chat.sm{font-size:19px;line-height:1.55}
+.mock{background:#fff;border:1px solid var(--border);border-radius:13px;overflow:hidden;
+  box-shadow:0 2px 10px rgba(40,42,41,.08)}
+.mock .m-hd{background:#3b3b3b;color:#fff;padding:12px 18px;display:flex;justify-content:space-between;
+  font-size:16px;font-weight:700}
+.mock .m-hd span{font-weight:400;opacity:.9}
+.mock .m-body{padding:18px 20px;text-align:center}
+.mock .m-h1{font-family:var(--f-head);font-size:30px;font-weight:800;color:#282a29;margin-bottom:10px}
+.mock .m-img{height:96px;border-radius:10px;background:#f1e3cf;display:flex;align-items:center;
+  justify-content:center;font-size:48px;margin-bottom:12px}
+.mock .m-btn{display:inline-block;background:#d9822b;color:#fff;font-weight:700;padding:9px 20px;border-radius:9px;font-size:17px}
+.mock .m-ft{border-top:1px solid var(--border);padding:9px 18px;font-size:14px;color:var(--dim);text-align:center}
+.tags{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
+.tg{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--accent);
+  border-radius:10px;padding:12px 10px;text-align:center}
+.tg code{font-family:var(--f-mono);font-size:21px;font-weight:700;color:var(--accent);display:block;margin-bottom:4px}
+.tg span{font-size:16px;color:var(--dim);line-height:1.35;display:block}
+.nope{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.nope div{border:2px solid var(--brick);border-radius:12px;padding:16px 10px;font-size:22px;font-weight:700;
+  text-align:center;color:var(--brick);background:#fbf1f0}
+.fm{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.fm div{background:var(--surface);border:2px solid var(--accent);border-radius:14px;padding:16px 10px;text-align:center}
+.fm .n{font-family:var(--f-mono);font-size:15px;color:var(--dim);display:block}
+.fm b{display:block;font-family:var(--f-head);font-size:25px;color:var(--accent);margin:4px 0 8px}
+.fm span.e{font-size:16px;color:var(--text);line-height:1.4;display:block}
+.steps.lg .step-t{font-size:23px;line-height:1.45}
+.steps.lg .step-n{width:42px;height:42px;font-size:20px}
+.steps.lg .step{padding:15px 20px;align-items:center}
+.bigsay{font-family:var(--f-head);font-size:2.3rem;font-weight:800;color:var(--accent);line-height:1.25;text-align:center}
+kbd{font-family:var(--f-mono);font-size:.9em;background:var(--surface);border:1px solid var(--border);
+  border-bottom-width:3px;border-radius:7px;padding:1px 8px;white-space:nowrap}
+/* частина 2: розділювач, карта сторінки */
+.divider{text-align:center}
+.divider .dv-n{font-family:var(--f-mono);font-size:18px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.divider .dv-t{font-family:var(--f-head);font-size:3.4rem;font-weight:900;color:var(--accent);line-height:1.1;margin-bottom:22px}
+.map{display:flex;flex-direction:column;gap:9px;font-family:var(--f-mono);font-weight:700;font-size:17px}
+.mp{border:2px solid var(--accent);border-radius:10px;padding:9px 13px;background:var(--surface);color:var(--accent)}
+.mp .mp{margin-top:7px}
+.mrow{display:grid;grid-template-columns:3fr 1fr;gap:9px}
+.mp.alt{border-color:var(--steel);color:var(--steel);background:#f4f7fa}
+.mp.gold{border-color:var(--goldink);color:var(--goldink);background:#fbf6ea}
+.mp.dash{border-style:dashed}
+.mp small{font-family:var(--f-body);font-weight:400;font-size:15px;color:var(--dim);margin-left:8px}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО ДЛЯ УРОКУ 9: схема коробки ─── */
+.bm-m,.bm-b,.bm-p,.bm-c{position:relative;border-radius:8px;text-align:center}
+.bm-m{background:#fbf6ea;border:2px dashed var(--goldink);padding:34px 30px}
+.bm-b{background:#e9ecef;border:6px solid var(--ink);padding:30px 28px}
+.bm-p{background:#e3efe9;border:2px dashed var(--green);padding:30px 28px}
+.bm-c{background:#fff;border:1px solid var(--border);padding:18px 10px;font-size:19px;font-weight:700}
+.bm-c small{font-weight:400;font-size:15px;color:var(--dim)}
+.bm-l{position:absolute;top:6px;left:10px;font-family:var(--f-mono);font-size:14px;font-weight:700}
+.bm-m>.bm-l{color:var(--goldink)} .bm-b>.bm-l{color:var(--ink);top:4px} .bm-p>.bm-l{color:var(--green)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 11: інлайн-код ніколи не розривається ─── */
+.ic{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 14: повторення, проєкт чверті, ескіз ─── */
+.ic{white-space:nowrap}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 14px;font-size:18px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{font-family:var(--f-mono);font-weight:700;color:var(--accent);white-space:nowrap}
+.map .nb{display:inline-flex;width:28px;height:28px;border-radius:7px;background:var(--accent);color:#fff;
+  align-items:center;justify-content:center;font-size:15px;margin-right:8px}
+.mp.gold .nb{background:var(--goldink)} .mp.alt .nb{background:var(--steel)}
+.mp.alt{border-color:var(--steel);color:var(--steel);background:#eef2f6}
+.anat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.an-code{font-family:var(--f-mono);font-size:30px;font-weight:700;text-align:center;margin-bottom:10px}
+.an-lbl{display:flex;justify-content:space-around;font-family:var(--f-mono);font-size:15px;font-weight:700}
+.an-lbl span{border-top:3px solid;padding-top:4px}
+.an-s{color:var(--steel)} .an-p{color:var(--brick)} .an-v{color:var(--forest)}
+.road{display:grid;grid-template-columns:repeat(7,1fr);gap:9px}
+.rd-i{background:var(--surface);border:1px solid var(--border);border-top:5px solid var(--accent);
+  border-radius:10px;padding:12px 10px;display:flex;flex-direction:column;gap:5px;text-align:center}
+.rd-i .rd-d{font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--accent)}
+.rd-i b{font-family:var(--f-head);font-size:19px;color:var(--ink);line-height:1.2}
+.rd-i span:last-child{font-size:15px;color:var(--dim);line-height:1.35}
+.rd-i.cur{border-top-color:var(--brick);background:#fbf1f0}
+.rd-i.cur .rd-d{color:var(--brick)}
+.rd-i.fin{border-top-color:var(--steel);background:#eef2f6}
+.rd-i.fin .rd-d{color:var(--steel)}
+.ideas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.idea{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+  border-radius:0 10px 10px 0;padding:10px 14px}
+.idea b{display:block;font-family:var(--f-head);font-size:19px;color:var(--ink)}
+.idea span{font-size:16px;color:var(--dim)}
+/* макети пристроїв */
+.devs{display:flex;gap:20px;align-items:flex-start}
+.dev{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.dev.wide{width:400px} .dev.narrow{width:150px;border-radius:18px}
+.d-cap{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);text-align:center}
+.d-hd{background:#3e2723;color:#fff;border-radius:6px;padding:6px 9px;display:flex;justify-content:space-between;font-size:13px;gap:6px}
+.d-hd b{font-size:15px;color:#fff}
+.d-hd.col{flex-direction:column;gap:1px}
+.d-hero{background:#efebe9;border-radius:6px;padding:12px 8px;font-family:var(--f-head);font-weight:800;font-size:15px;text-align:center;color:#3e2723}
+.d-row{display:flex;gap:6px}
+.d-card{flex:1;height:58px;border:2px solid #8d6e63;border-radius:6px;background:#fff}
+.dev.narrow .d-card{flex:none;height:44px}
+.d-form{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.d-form span{flex:1;min-width:50px;height:18px;border:1.5px solid #8d6e63;border-radius:4px}
+.d-form i{font-style:normal;background:#3e2723;color:#fff;font-size:12px;padding:3px 8px;border-radius:5px}
+/* ескіз */
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.lg-i{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;gap:14px;align-items:center}
+.lg-i span{font-size:17px;line-height:1.4}
+.lg-pic{width:110px;flex-shrink:0}
+.wf-box,.wf-img,.wf-btn,.wf-in,.wf-card,.wf-hero,.wf-nav{border:2px solid var(--ink);border-radius:4px;background:#fff}
+.wf-box{font-family:var(--f-mono);font-size:13px;text-align:center;padding:6px 4px}
+.wf-img{height:44px;background:
+  linear-gradient(to top right,transparent calc(50% - 1px),var(--ink) 50%,transparent calc(50% + 1px)),
+  linear-gradient(to top left,transparent calc(50% - 1px),var(--ink) 50%,transparent calc(50% + 1px)),#fff}
+.wf-txt{display:flex;flex-direction:column;gap:5px;padding:2px 0}
+.wf-txt i{display:block;height:3px;background:var(--ink);border-radius:2px;width:100%}
+.wf-btn{display:inline-block;font-size:13px;font-weight:700;padding:3px 10px;border-radius:12px}
+.wf-in{height:20px}
+.wf-h{font-family:var(--f-mono);font-weight:700;font-size:15px;letter-spacing:1px}
+.wf-nav{font-family:var(--f-mono);font-size:12px;padding:3px 8px;border-style:dashed}
+.sk2{display:flex;gap:18px;align-items:flex-start}
+.wf{background:#fffef8;border:2px solid var(--border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:7px}
+.wf.wide{width:440px} .wf.narrow{width:160px}
+.wf-cap{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);text-align:center}
+.wf-row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.wf-row .wf-card,.wf-row .wf-in{flex:1}
+.wf-hero{padding:8px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.wf-card{padding:5px;display:flex;flex-direction:column;gap:5px}
+.wf.narrow .wf-img{height:34px}
+.sheet{background:#fff;border:2px solid var(--ink);border-radius:6px;padding:10px;font-size:15px}
+.sh-t{font-family:var(--f-mono);font-size:14px;font-weight:700;border-bottom:1px dashed var(--ink);padding-bottom:6px;margin-bottom:8px}
+.sh-r{display:flex;gap:10px}
+.sh-w,.sh-n{border:2px solid var(--ink);border-radius:4px;padding:8px;font-weight:700;min-height:130px}
+.sh-w{flex:3} .sh-n{flex:1}
+.sh-r small{font-weight:400;font-size:13px;color:var(--dim)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 15: блочні/рядкові, обгортка ─── */
+.xr{font-family:var(--f-body);padding:14px 16px}
+.xb{border:2px solid var(--forest);border-radius:4px;padding:6px 10px;margin-bottom:8px;position:relative;font-size:18px;color:#111}
+.xb:first-child{font-family:var(--f-head);font-weight:800;font-size:22px}
+.xi{border:2px solid var(--brick);border-radius:3px;padding:0 3px}
+.xi.xa{color:#1a4fd6;text-decoration:underline}
+.xi:not(.xa){font-weight:700}
+.xt{position:absolute;right:6px;top:-11px;background:#fff;font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--forest);padding:0 4px}
+.scr{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:10px 8px;min-height:72px}
+.scr-l{font-size:15px;line-height:1.5;background:#fbf1f0;padding:4px 6px}
+.scr-c{font-size:15px;line-height:1.5;max-width:60%;margin:0 auto;background:#eef3f0;padding:4px 6px;border-left:2px dashed var(--forest);border-right:2px dashed var(--forest)}
+.bw-hd,.bw-sec,.bw-ft{padding:12px 0}
+.bw-hd{background:#3e2723;color:#fff} .bw-sec{background:#fff} .bw-sec.alt{background:#efebe9}
+.bw-ft{background:#3e2723;color:#ddd}
+.bw-c{max-width:62%;margin:0 auto;border-left:2px dashed #b08968;border-right:2px dashed #b08968;padding:0 10px;
+  display:flex;justify-content:space-between;gap:10px;font-size:15px;align-items:baseline;flex-wrap:wrap}
+.bw-c b{font-family:var(--f-head);font-size:18px}
+.bw-hd b{color:#fff}
+.tbl td{vertical-align:top}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1" style="font-size:3rem">Блочні та рядкові елементи. Структура сторінки</div>
+    <div class="title-sub">Front-end · 8 клас · Урок 15 · 10 листопада 2026</div>
+    <div class="chips">
+      <span class="chip">блочні</span>
+      <span class="chip">рядкові</span>
+      <span class="chip">div і span</span>
+      <span class="chip">обгортка .container</span>
+      <span class="chip">каркас за ескізом</span>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 · СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lb">Урок 15 · за ноутбуками</span>
+      <h2>Від ескізу — до каркаса сайту</h2>
+    </div></div>
+    <div class="steps lg">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Блочні й рядкові</b> елементи: хто стає в рядок, а хто — з нового рядка</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>div і span</b> — коробки без назви</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Обгортка</b> — вміст не ширше за потрібне й посередині</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><b>Каркас свого сайту</b> — за ескізом з уроку 14</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 · ДВА ВИДИ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🧱</div><div>
+      <span class="label lt">Нове</span>
+      <h2>Два види елементів</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">код</span></div>
+          <div class="dp-code sm">&lt;<span class="sk">h2</span>&gt;Капучино&lt;/<span class="sk">h2</span>&gt;
+&lt;<span class="sk">p</span>&gt;Кава з &lt;<span class="sk">strong</span>&gt;молоком&lt;/<span class="sk">strong</span>&gt; і &lt;<span class="sk">a</span> <span class="sa">href</span>=<span class="ss">"#"</span>&gt;пінкою&lt;/<span class="sk">a</span>&gt;.&lt;/<span class="sk">p</span>&gt;
+&lt;<span class="sk">p</span>&gt;55 грн&lt;/<span class="sk">p</span>&gt;</div>
+        </div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">у браузері · рамки показують коробки</span></div>
+        <div class="dp-out xr">
+          <div class="xb">Капучино <span class="xt">h2</span></div>
+          <div class="xb xp">Кава з <span class="xi">молоком</span> і <span class="xi xa">пінкою</span>. <span class="xt">p</span></div>
+          <div class="xb xp">55 грн <span class="xt">p</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hg"><b>Блочний</b> (зелена рамка) — з нового рядка, на <b>всю ширину</b></div>
+      <div class="hbox hp"><b>Рядковий</b> (червона рамка) — у рядку з текстом, <b>за розміром вмісту</b></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 · ТАБЛИЦЯ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lt">Довідник · лишається на дошці</span>
+      <h2>Блочні й рядкові</h2>
+    </div></div>
+    <table class="tbl">
+      <tr><th></th><th>Блочні</th><th>Рядкові</th></tr>
+      <tr><td><b>Теги</b></td><td class="c">h1…h6 · p · ul · li · div<br>header · nav · main · section<br>article · footer</td><td class="c">a · strong · em · span</td></tr>
+      <tr><td><b>Де стоїть</b></td><td>з нового рядка</td><td>у рядку, поруч із текстом</td></tr>
+      <tr><td><b>Ширина</b></td><td>уся доступна</td><td>скільки займає вміст</td></tr>
+      <tr><td><b>width, height</b></td><td>працюють</td><td><b>не працюють</b></td></tr>
+      <tr><td><b>Що всередині</b></td><td>і блочні, і рядкові</td><td>лише текст і рядкові</td></tr>
+    </table>
+    <div class="tip ty"><span class="tip-ico">🔁</span><div><span class="ic">display: block;</span> робить рядковий елемент блочним — наприклад, посилання на всю ширину картки.</div></div>
+  </div></section>
+
+  <!-- ══════════ 5 · ПЕРЕДБАЧ: БЛОЧНИЙ ЧИ РЯДКОВИЙ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lp">Передбач</span>
+      <h2>Блочний чи рядковий?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:19px">&lt;section&gt;</h3>
+        <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><b>Блочний</b></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:19px">&lt;a&gt;</h3>
+        <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><b>Рядковий</b></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:19px">&lt;li&gt;</h3>
+        <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><b>Блочний</b> — кожен пункт з нового рядка</p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:19px">&lt;strong&gt;</h3>
+        <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><b>Рядковий</b></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:19px">&lt;nav&gt;</h3>
+        <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><b>Блочний</b></p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3 class="mono" style="font-size:19px">&lt;span&gt;</h3>
+        <p class="rv-hint">Клацни після відповіді</p><div class="rv-body"><p style="font-size:17px"><b>Рядковий</b></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 · ПЕРЕДБАЧ: ЩО ПОБАЧИМО ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🔮</div><div>
+      <span class="label lp">Передбач</span>
+      <h2>Що побачимо?</h2>
+    </div></div>
+    <div class="two">
+      <div class="card reveal" onclick="this.classList.toggle('open')"><p class="mono" style="font-size:16.5px">&lt;a href="#"&gt;Меню&lt;/a&gt;
+&lt;a href="#"&gt;Акції&lt;/a&gt;</p>
+        <p class="rv-hint">В один рядок чи у два?</p><div class="rv-body"><p style="font-size:17px"><b>В один рядок</b> — посилання рядкові</p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><p class="mono" style="font-size:16.5px">&lt;p&gt;Меню&lt;/p&gt;
+&lt;p&gt;Акції&lt;/p&gt;</p>
+        <p class="rv-hint">А тепер?</p><div class="rv-body"><p style="font-size:17px"><b>У два рядки</b> — абзаци блочні</p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><p class="mono" style="font-size:16.5px">a { width: 200px; }</p>
+        <p class="rv-hint">Посилання стане ширшим?</p><div class="rv-body"><p style="font-size:17px"><b>Ні.</b> У рядкового width не працює</p></div></div>
+      <div class="card reveal" onclick="this.classList.toggle('open')"><p class="mono" style="font-size:16.5px">a { display: block; }</p>
+        <p class="rv-hint">А тепер?</p><div class="rv-body"><p style="font-size:17px">Кожне посилання — <b>з нового рядка</b>, на всю ширину</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 · DIV І SPAN ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lt">Нове</span>
+      <h2>div і span — коробки без назви</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+          <div class="dp-code sm">&lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"promo"</span>&gt;
+  &lt;<span class="sk">h3</span>&gt;Акція&lt;/<span class="sk">h3</span>&gt;
+  &lt;<span class="sk">p</span>&gt;Друга кава —
+    &lt;<span class="sk">span</span> <span class="sa">class</span>=<span class="ss">"price"</span>&gt;за 1 грн&lt;/<span class="sk">span</span>&gt;&lt;/<span class="sk">p</span>&gt;
+&lt;/<span class="sk">div</span>&gt;</div>
+        </div>
+        <div class="dp mt">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">style.css</span></div>
+          <div class="dp-code sm"><span class="sk">.promo</span> { <span class="sa">background-color</span>: <span class="ss">#fff3e0</span>; <span class="sa">padding</span>: <span class="ss">15px</span>; }
+<span class="sk">.price</span> { <span class="sa">color</span>: <span class="ss">#c62828</span>; <span class="sa">font-weight</span>: <span class="ss">bold</span>; }</div>
+        </div>
+      </div>
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">у браузері</span></div>
+          <div class="dp-out"><div style="background:#fff3e0;padding:15px"><div style="font-family:var(--f-head);font-weight:800;font-size:22px">Акція</div><p>Друга кава — <b style="color:#c62828">за 1 грн</b></p></div></div>
+        </div>
+        <div class="lvl mt">
+          <div class="lv"><span class="lv-s" style="font-family:var(--f-mono);font-weight:700">div</span><span class="lv-t"><b>блочний</b>: згрупувати кілька елементів в одну коробку</span></div>
+          <div class="lv"><span class="lv-s" style="font-family:var(--f-mono);font-weight:700">span</span><span class="lv-t"><b>рядковий</b>: виділити шматок тексту в рядку</span></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 · DIV ЧИ СЕМАНТИЧНИЙ ТЕГ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">⚖️</div><div>
+      <span class="label lb">Як обрати</span>
+      <h2>Є тег зі змістом — беремо його</h2>
+    </div></div>
+    <div class="two">
+      <table class="tbl">
+        <tr><th>Що це</th><th>Тег</th></tr>
+        <tr><td>шапка сайту</td><td class="c">&lt;header&gt;</td></tr>
+        <tr><td>меню</td><td class="c">&lt;nav&gt;</td></tr>
+        <tr><td>розділ із заголовком</td><td class="c">&lt;section&gt;</td></tr>
+        <tr><td>картка товару</td><td class="c">&lt;article&gt;</td></tr>
+        <tr><td>коробка лише для оформлення</td><td class="c">&lt;div&gt;</td></tr>
+        <tr><td>слово іншим кольором</td><td class="c">&lt;span&gt;</td></tr>
+      </table>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:19px">Блок «Контакти» з заголовком h2</h3>
+          <p class="rv-hint">div чи section?</p><div class="rv-body"><p style="font-size:17px"><span class="ic">&lt;section&gt;</span> — це розділ</p></div></div>
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:19px">Ціна «55 грн» — червоним у рядку</h3>
+          <p class="rv-hint">div чи span?</p><div class="rv-body"><p style="font-size:17px"><span class="ic">&lt;span&gt;</span> — шматок рядка</p></div></div>
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3 style="font-size:19px">Коробка, щоб вміст шапки був посередині</h3>
+          <p class="rv-hint">Який тег?</p><div class="rv-body"><p style="font-size:17px"><span class="ic">&lt;div&gt;</span> — лише для оформлення</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 · ОБГОРТКА ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">↔️</div><div>
+      <span class="label lt">Нове</span>
+      <h2>Обгортка: не ширше — і посередині</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="vs">Широкий монітор без обгортки</div>
+        <div class="scr"><div class="scr-l">Капучино — кава з молоком і пінкою, яку ми готуємо з ранку до вечора щодня, крім неділі.</div></div>
+        <div class="vs mt">З обгорткою .container</div>
+        <div class="scr"><div class="scr-c">Капучино — кава з молоком і пінкою, яку ми готуємо щодня.</div></div>
+      </div>
+      <div>
+        <div class="demo"><span class="lbl">Обгортка · style.css</span>
+          <div class="mono"><span class="sk">.container</span> {
+  <span class="sa">max-width</span>: <span class="ss">1000px</span>; <span class="cm">/* не ширше */</span>
+  <span class="sa">margin</span>: <span class="ss">0 auto</span>;     <span class="cm">/* посередині */</span>
+  <span class="sa">padding</span>: <span class="ss">0 16px</span>;   <span class="cm">/* не до краю телефона */</span>
+}</div></div>
+        <div class="tip"><span class="tip-ico">📱</span><div>Без <span class="ic">padding</span> на телефоні текст прилипає до краю екрана.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 · ОБГОРТКА В КОЖНІЙ ЧАСТИНІ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🧩</div><div>
+      <span class="label lt">Нове</span>
+      <h2>Фон — на всю ширину, вміст — в обгортці</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+        <div class="dp-code sm">&lt;<span class="sk">header</span>&gt;
+  &lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"container"</span>&gt;
+    &lt;<span class="sk">h1</span>&gt;Зерно&lt;/<span class="sk">h1</span>&gt;
+    &lt;<span class="sk">nav</span>&gt;…&lt;/<span class="sk">nav</span>&gt;
+  &lt;/<span class="sk">div</span>&gt;
+&lt;/<span class="sk">header</span>&gt;
+&lt;<span class="sk">main</span>&gt;
+  &lt;<span class="sk">section</span> <span class="sa">id</span>=<span class="ss">"drinks"</span>&gt;
+    &lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"container"</span>&gt;
+      &lt;<span class="sk">h2</span>&gt;Напої&lt;/<span class="sk">h2</span>&gt; …
+    &lt;/<span class="sk">div</span>&gt;
+  &lt;/<span class="sk">section</span>&gt;
+&lt;/<span class="sk">main</span>&gt;</div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">у браузері</span></div>
+        <div class="dp-out" style="padding:0">
+          <div class="bw-hd"><div class="bw-c"><b>Зерно</b><span>Меню · Акції · Контакти</span></div></div>
+          <div class="bw-sec"><div class="bw-c"><b>Напої</b><span>Капучино · Лате · Какао</span></div></div>
+          <div class="bw-sec alt"><div class="bw-c"><b>Акції</b><span>Друга кава — за 1 грн</span></div></div>
+          <div class="bw-ft"><div class="bw-c"><span>© 2026 Зерно</span></div></div>
+        </div>
+        <p style="font-size:16px;color:var(--dim);padding:8px 14px;font-family:var(--f-body)">Пунктир — межі <span class="ic">.container</span>: однакові в усіх частинах</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 · ЩО ЗРОБИМО ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lg">Практика · проєкт чверті</span>
+      <h2>Каркас свого сайту за ескізом</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-t">Папка проєкту, <span class="ic">index.html</span>, <span class="ic">css/style.css</span></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-t">П'ять частин за ескізом</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-t">Обгортка в кожній частині</div></div>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="step-n">4</div><div class="step-t">«Рентген»: побач блочні й рядкові</div></div>
+        <div class="step"><div class="step-n">5</div><div class="step-t">Картки-заготовки в каталозі</div></div>
+        <div class="step"><div class="step-n">✓</div><div class="step-t">Перевір себе · банк завдань</div></div>
+      </div>
+    </div>
+    <p class="center mt" style="font-size:19px">Ескіз з уроку 14 — поруч із ноутбуком</p>
+  </div></section>
+
+  <!-- ══════════ 12 · КРОК 1 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 1</span>
+        <span class="t">Папка й файли проєкту</span><span class="tmr">4 хвилини</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono">zerno-site/
+├── index.html
+├── css/
+│   └── style.css
+└── img/</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Нова папка — назва твого сайту латиницею: <span class="ic">kino-site</span>, <span class="ic">zoo-site</span>…</li>
+            <li>VS Code → File → Open Folder… → ця папка</li>
+            <li>Файл <span class="ic">index.html</span>: каркас документа, <span class="ic">lang="uk"</span>, <span class="ic">title</span> — назва сайту</li>
+            <li>Папки <span class="ic">css</span> і <span class="ic">img</span>, файл <span class="ic">css/style.css</span>, у <span class="ic">head</span> — <span class="ic">link</span> на нього</li>
+            <li>⭐⭐ У <span class="ic">style.css</span> першим рядком — <span class="ic">* { box-sizing: border-box; }</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 · КРОК 2 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 2</span>
+        <span class="t">П'ять частин за ескізом</span><span class="tmr">8 хвилин</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад · у body</span>
+          <div class="mono" style="font-size:15px;line-height:1.5">&lt;header&gt;
+  &lt;h1&gt;Зерно&lt;/h1&gt;
+  &lt;nav&gt;&lt;a href="#drinks"&gt;Напої&lt;/a&gt; …&lt;/nav&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;section id="hero"&gt;…&lt;/section&gt;
+  &lt;section id="drinks"&gt;…&lt;/section&gt;
+  &lt;section id="order"&gt;…&lt;/section&gt;
+&lt;/main&gt;
+&lt;footer&gt;…&lt;/footer&gt;</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Шапка: назва в <span class="ic">h1</span> і меню з 3 посиланнями</li>
+            <li>У <span class="ic">main</span> — три <span class="ic">section</span> з <span class="ic">id</span>: перший екран, каталог, форма</li>
+            <li>У кожному розділі — свій <span class="ic">h2</span> і абзац тексту з ескізу</li>
+            <li>Підвал: контакти й «© 2026»</li>
+            <li>⭐⭐ Пункти меню ведуть на <span class="ic">id</span> розділів</li>
+            <li>⭐⭐⭐ На першому екрані — посилання-кнопка на розділ форми</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hint"><span class="hk">⚡ Швидше</span>
+        <span><span class="ic">&lt;sec</span> → <kbd>Enter</kbd> — підказка VS Code</span>
+        <span>схожий рядок — <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>↓</kbd></span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 · КРОК 3 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 3</span>
+        <span class="t">Обгортка в кожній частині</span><span class="tmr">6 хвилин</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:15px;line-height:1.5">&lt;header&gt;
+  &lt;div class="container"&gt;
+    &lt;h1&gt;Зерно&lt;/h1&gt; …
+  &lt;/div&gt;
+&lt;/header&gt;
+
+.container { max-width: 1000px;
+  margin: 0 auto; padding: 0 16px; }
+header { background-color: #3e2723;
+  color: white; }</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Усередині шапки, кожного розділу й підвалу — <span class="ic">div class="container"</span></li>
+            <li>Правило <span class="ic">.container</span> у <span class="ic">style.css</span></li>
+            <li>Шапці й підвалу — свій фон і колір тексту</li>
+            <li>Розтягни вікно Chrome: фон — на всю ширину, текст — посередині?</li>
+            <li>⭐⭐ Кожному розділу — <span class="ic">padding: 40px 0</span></li>
+            <li>⭐⭐⭐ Розділи через один — інший фон: клас <span class="ic">alt</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 · КРОК 4 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 4</span>
+        <span class="t">«Рентген»: побач усі коробки</span><span class="tmr">4 хвилини</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад · тимчасово, в кінець style.css</span>
+          <div class="mono"><span class="sk">*</span> { <span class="sa">outline</span>: <span class="ss">1px solid red</span>; }</div>
+          <p style="font-size:16px;margin-top:8px"><span class="ic">outline</span> — обвідка, що <b>не</b> змінює розмір коробки</p></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Додай рядок і подивись на сторінку: які коробки на всю ширину?</li>
+            <li>Знайди рядкові: посилання меню, <span class="ic">strong</span></li>
+            <li>У гаслі першого екрана одне слово — у <span class="ic">span class="accent"</span>, інший колір</li>
+            <li>Вимкни рентген: <kbd>Ctrl</kbd>+<kbd>/</kbd> на цьому рядку</li>
+            <li>⭐⭐ Посиланню-кнопці — <span class="ic">display: inline-block</span> і <span class="ic">padding: 10px 20px</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 · КРОК 5 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 5</span>
+        <span class="t">Картки-заготовки в каталозі</span><span class="tmr">5 хвилин</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад · у розділі каталогу</span>
+          <div class="mono" style="font-size:15px;line-height:1.5">&lt;article class="card"&gt;
+  &lt;h3&gt;Капучино&lt;/h3&gt;
+  &lt;p&gt;Кава з молоком&lt;/p&gt;
+  &lt;p&gt;&lt;span class="price"&gt;55 грн&lt;/span&gt;&lt;/p&gt;
+&lt;/article&gt;
+
+.card { border: 2px solid #8d6e63;
+  padding: 15px; margin-bottom: 15px; }</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>У каталозі — три <span class="ic">article class="card"</span> з ескізу</li>
+            <li>У кожній: <span class="ic">h3</span>, опис, деталь у <span class="ic">span</span></li>
+            <li>Рамка, відступ, відстань між картками</li>
+            <li>Картки поки одна під одною — у рядок поставимо <b>17 листопада</b></li>
+            <li>⭐⭐ Шість карток, як на ескізі</li>
+            <li>⭐⭐⭐ У картці — картинка з папки <span class="ic">img</span> і <span class="ic">img { max-width: 100%; }</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 · ФІНІШ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lt">Фініш · 2 хвилини</span>
+      <h2>Перевір свій каркас</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div><div class="step-t">У <span class="ic">body</span> — <span class="ic">header</span>, <span class="ic">main</span>, <span class="ic">footer</span>; у <span class="ic">main</span> — розділи з ескізу</div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-t">У кожній частині — <span class="ic">.container</span>: широке вікно — вміст посередині</div></div>
+      <div class="step"><div class="step-n">3</div><div class="step-t">Вузьке вікно — текст не прилипає до краю, прокрутки вбік немає</div></div>
+      <div class="step"><div class="step-n">4</div><div class="step-t">Рентген вимкнено</div></div>
+      <div class="step"><div class="step-n">5</div><div class="step-t">Повернись до сусіда: <kbd>F12</kbd> → наведи на його <span class="ic">.container</span>. Яка ширина?</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 · БАНК ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lg">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Гасло.</b> Перший екран: <span class="ic">h2</span> з гаслом, одне слово — <span class="ic">span</span> іншим кольором</div>
+      <div class="bk"><b>Меню-блоки.</b> Тимчасово <span class="ic">nav a { display: block; }</span> — що змінилось? Поверни назад</div>
+      <div class="bk"><b>Вузька обгортка.</b> <span class="ic">max-width: 600px</span> лише для розділу форми: клас <span class="ic">narrow</span></div>
+      <div class="bk"><b>Контакти.</b> У підвалі — адреса, телефон, посилання на соцмережу в новій вкладці</div>
+      <div class="bk"><b>Мітка.</b> У картці — <span class="ic">span class="badge"</span> «Новинка»: фон, відступ, кути</div>
+      <div class="bk"><b>Справжній сайт.</b> Будь-який сайт → <kbd>F12</kbd>. Знайди елемент з обмеженою шириною посередині</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 · ПІДСУМОК ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lb">Підсумок</span>
+      <h2>Що ви зробили за два уроки</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Зроблено</h3><ul>
+        <li>згадали I чверть, тема проєкту, ескіз</li>
+        <li>блочні й рядкові, <span class="ic">div</span> і <span class="ic">span</span></li>
+        <li>каркас свого сайту з обгорткою</li>
+        <li>картки-заготовки в каталозі</li>
+      </ul></div>
+      <div class="card ct"><h3>Наступного разу · 17 листопада</h3><ul>
+        <li><b>Flexbox</b>: меню в рядок</li>
+        <li>шапка й картки на своєму сайті</li>
+        <li>папку проєкту й ескіз <b>не губіть</b></li>
+      </ul></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 · ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lp">Додому · 10 хвилин · на обидва уроки</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox">Робимо на <strong>codepen.io</strong>. Код — на сторінці домашнього завдання, кнопка «Скопіювати».
+      Код і відповідь — у <strong>Google Classroom</strong> до <strong>17 листопада</strong>.</div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-t" style="font-size:16.5px">HTML, <span class="ic">ДОПИШИ ТУТ 1</span>: меню <span class="ic">nav</span> з двома посиланнями — «Меню» на <span class="ic">#menu</span>, «Контакти» на <span class="ic">#contacts</span>.</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-t" style="font-size:16.5px">CSS, <span class="ic">ДОПИШИ ТУТ 2</span>: <span class="ic">.container</span> — не ширше 900px, посередині, відступи з боків 16px. Має вийти: темна шапка на всю ширину, текст — посередині.</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-t" style="font-size:16.5px">Під кодом CSS — коментар: <span class="ic">span</span> блочний чи рядковий? Чому ціна стоїть у тому ж рядку, що «Капучино»?</div></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">шматок коду</span></div>
+        <div class="dp-code" style="font-size:14px;line-height:1.4;padding:12px 17px">&lt;<span class="sk">header</span>&gt;
+  &lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"container"</span>&gt;
+    &lt;<span class="sk">h1</span>&gt;Кав'ярня «Зерно»&lt;/<span class="sk">h1</span>&gt;
+    <span class="cm">&lt;!-- ДОПИШИ ТУТ 1 --&gt;</span>
+  &lt;/<span class="sk">div</span>&gt;
+&lt;/<span class="sk">header</span>&gt;
+…
+&lt;<span class="sk">p</span>&gt;Капучино &lt;<span class="sk">span</span> <span class="sa">class</span>=<span class="ss">"price"</span>&gt;55 грн&lt;/<span class="sk">span</span>&gt;&lt;/<span class="sk">p</span>&gt;
+
+<span class="sk">.container</span> {
+  <span class="cm">/* ДОПИШИ ТУТ 2 */</span>
+}</div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
