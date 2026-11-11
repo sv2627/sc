@@ -246,7 +246,179 @@ class _MyHomePageState extends State&lt;MyHomePage&gt; {
     );
   }
 }</pre></div>
-<p class="steps-note">Практика 2 — свій код міні-проєкту II з Classroom або DartPad. Хто не зберіг — стартовий код на <a href="../u16/kod.html" style="color:var(--accent);border-bottom:1px solid">сторінці «Код» уроку 16</a>. Заміни ним увесь <code>lib/main.dart</code>, <code>Ctrl + S</code>, потім hot restart.</p>
+<div class="kicker" style="margin-top:34px">Практика 2 · міні-проєкт II у проєкті</div>
+<p class="steps-note">Свій код міні-проєкту II є (Classroom або DartPad) — бери його. Немає, бо не було на уроці 16 чи не зберіг, — бери блок 4 нижче: це готовий приклад «Книги», працюють ◀ ▶ і ♥. Заміни ним увесь <code>lib/main.dart</code>, <code>Ctrl + S</code>, потім hot restart.</p>
+<div class="codebox"><div class="codebar"><b>4 · Міні-проєкт II — готовий код «Книги» ⭐–⭐⭐⭐ · для lib/main.dart</b>
+  <button class="copy" data-for="mp2">Скопіювати</button></div>
+<pre class="dart" id="mp2"><span class="cm">// Міні-проєкт II · урок 16 · фінальна версія прикладу «Книги», рівні ⭐–⭐⭐⭐.</span>
+<span class="cm">// Тема своя у кожного — тут лише зразок, як може виглядати кожен рівень.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+<span class="cm">// ⭐ Книга — сутність: поля + поведінка -&gt; class.</span>
+class Book {
+  final String title;
+  final String author;
+  final int pages;
+
+  const Book(this.title, this.author, this.pages);
+
+  <span class="cm">// ⭐⭐ Метод класу: відповідь про саму книгу.</span>
+  bool isLong() =&gt; pages &gt; 300;
+
+  <span class="cm">// ⭐⭐ Метод класу: рядок для екрана.</span>
+  String info() =&gt; '$author · $pages pages';
+}
+
+<span class="cm">// ⭐ Порядок важливий, ходимо за номером -&gt; List.</span>
+const List&lt;Book&gt; books = [
+  Book('The Hobbit', 'J. R. R. Tolkien', 310),
+  Book('Animal Farm', 'George Orwell', 112),
+  Book('Dune', 'Frank Herbert', 412),
+  Book('The Little Prince', 'Antoine de Saint-Exupery', 96),
+  Book('Fahrenheit 451', 'Ray Bradbury', 158),
+];
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: const CatalogPage(),
+    );
+  }
+}
+
+class CatalogPage extends StatefulWidget {
+  const CatalogPage({super.key});
+
+  @override
+  State&lt;CatalogPage&gt; createState() =&gt; _CatalogPageState();
+}
+
+class _CatalogPageState extends State&lt;CatalogPage&gt; {
+  int _index = 0; <span class="cm">// номер у списку, який зараз на екрані, з нуля</span>
+
+  <span class="cm">// ⭐⭐ Лайки: словник «назва -&gt; скільки лайків» -&gt; Map.</span>
+  final Map&lt;String, int&gt; _likes = {};
+
+  <span class="cm">// ⭐⭐⭐ Перемикач: показувати всі книги чи тільки довгі.</span>
+  bool _onlyLong = false;
+
+  <span class="cm">// ⭐⭐⭐ Список, який зараз на екрані: усі або відфільтровані через where.</span>
+  List&lt;Book&gt; _shown() {
+    if (_onlyLong) {
+      return books.where((b) =&gt; b.isLong()).toList();
+    }
+    return books;
+  }
+
+  <span class="cm">// ⭐ Наступна — не далі останньої.</span>
+  void _next() {
+    setState(() {
+      if (_index &lt; _shown().length - 1) {
+        _index++;
+      }
+    });
+  }
+
+  <span class="cm">// ⭐ Попередня — не раніше першої.</span>
+  void _prev() {
+    setState(() {
+      if (_index &gt; 0) {
+        _index--;
+      }
+    });
+  }
+
+  <span class="cm">// ⭐⭐ Лайк поточній книзі: немає ключа — стане 1, є — +1.</span>
+  void _like() {
+    setState(() {
+      String key = _shown()[_index].title;
+      _likes.update(key, (v) =&gt; v + 1, ifAbsent: () =&gt; 1);
+    });
+  }
+
+  <span class="cm">// ⭐⭐⭐ Перемкнути фільтр. Номер — знову 0: у новому списку інша довжина.</span>
+  void _toggleFilter() {
+    setState(() {
+      _onlyLong = !_onlyLong;
+      _index = 0;
+    });
+  }
+
+  <span class="cm">// ⭐⭐ Підсумок циклом: скільки сторінок у списку на екрані.</span>
+  int _totalPages() {
+    int sum = 0;
+    for (Book b in _shown()) {
+      sum += b.pages;
+    }
+    return sum;
+  }
+
+  <span class="cm">// ⭐⭐⭐ Найпопулярніша: прохід по Map, у кого найбільше лайків.</span>
+  String _top() {
+    String best = '-';
+    int max = 0;
+    _likes.forEach((title, n) {
+      if (n &gt; max) {
+        max = n;
+        best = title;
+      }
+    });
+    return best;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List&lt;Book&gt; list = _shown();
+    Book b = list[_index]; <span class="cm">// поточна книга</span>
+    return Scaffold(
+      <span class="cm">// ⭐ Номер людині — з одиниці.</span>
+      appBar: AppBar(title: Text('Book ${_index + 1} / ${list.length}')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: .center,
+          children: [
+            Text(b.title, style: Theme.of(context).textTheme.headlineMedium),
+            Text(b.info()), <span class="cm">// ⭐⭐ метод класу</span>
+            Text(b.isLong() ? 'Long read' : 'Short read'), <span class="cm">// ⭐⭐ метод класу</span>
+            Text('Likes: ${_likes[b.title] ?? 0}'), <span class="cm">// ⭐⭐ немає в Map -&gt; 0</span>
+            Row(
+              mainAxisAlignment: .center,
+              children: [
+                ElevatedButton(
+                  onPressed: _index &gt; 0 ? _prev : null,
+                  child: const Icon(Icons.skip_previous),
+                ),
+                ElevatedButton(
+                  onPressed: _like,
+                  child: const Icon(Icons.favorite),
+                ),
+                ElevatedButton(
+                  onPressed: _index &lt; list.length - 1 ? _next : null,
+                  child: const Icon(Icons.skip_next),
+                ),
+              ],
+            ),
+            Text('Total: ${_totalPages()} pages'), <span class="cm">// ⭐⭐ підсумок</span>
+            Text('Top: ${_top()}'), <span class="cm">// ⭐⭐⭐ найбільше лайків</span>
+          ],
+        ),
+      ),
+      <span class="cm">// ⭐⭐⭐ Кругла кнопка — фільтр «тільки довгі» / «усі».</span>
+      floatingActionButton: FloatingActionButton(
+        onPressed: _toggleFilter,
+        tooltip: 'Long only',
+        child: Icon(_onlyLong ? Icons.filter_alt_off : Icons.filter_alt),
+      ),
+    );
+  }
+}</pre></div>
 
 </div>
 <script>
