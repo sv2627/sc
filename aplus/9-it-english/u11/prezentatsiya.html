@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arrays in code · IT-англійська · 9 клас · Урок 11</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge Lower Secondary Computing 0860)
+  Клас          9
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · четвер
+  Урок          11 з 36 · 19.11.2026
+  Тема          Arrays in code · Масиви в коді
+  Ціль          9P.04 Know how to access data from an array using a
+                text-based language.
+  Тривалість    45 хв, 21 слайд, без компʼютерів — код пишемо на листочку
+  Акцент        rose (#af3b41)
+  ФОРМАТ        Більше читання вголос і перекладу (14.10.2026); 9 кл. —
+                найскладніші приклади схеми + відповіді повним реченням
+                (15.10.2026). Read aloud — s6, s7, s12, s15, s17 (id).
+  ────────────────────────────────────────────────────────────────
+  ПОВТОРЕННЯ (s2–s3, ≈ 6 хв): перевірка ДЗ уроку 10 (слайд 22 колоди
+     u10, дослівно) · слова масиву з уроку 5 (блок 9P.01).
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — ТІЛЬКИ СХЕМА CAMBRIDGE.
+     `0860 Computing Stage 9 Scheme of Work.docx`, юніт 9.3 Programming,
+     блок 9P.04 — увесь. Звідти дослівно:
+       • «Display an array as a table» (картинка в .docx: index 0–4,
+         data 30 · 5 · 25 · 10 · 6) + три питання з відповідями:
+         index 0 → 30 · index 2 + index 3 → 35 · OUTPUT(array[4]) → 6 — s5
+       • «Most arrays start with index 0 … the first element is in
+         index 0, the second in index 1» — s5
+       • «Python does not have an inbuilt array data structure. Instead it
+         uses lists …» · «the array name, followed by square brackets with
+         the index inside: myArray[0]» · «Some learners may identify that
+         some languages start at 1. Also rounded brackets are used in some
+         other programming languages.» — s6
+       • «Learners’ notes should include: how to output the value · how to
+         store it in a variable …» · print(myArray[0]) · myVar =
+         myArray[0] + 2 — s7
+       • «myArray = [1, 4, 5, 3, 15, 64, 27, 54]» + питання з рішеннями:
+         second element · index 0 · index 0 + index 5 (два рішення) — s8,
+         s10; «Use a count-controlled loop to output each of the array
+         items in turn: for x in range(0, 8)» — s11
+       • numberArray / colourArray + «Output the third element in the
+         number array with the second colour» — s12, s13
+       • Обговорення: «How do you access data in an array (list) in
+         Python? · What is the first index? · What types of bracket?» — s15
+       • Resources: «Array as a table · Program with a numeric array, and
+         list of questions · Program with two arrays» — s5, s8, s13
+       • Language юніта 9.3: Array · Index
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО ЗМІНЕНО / ДОДАНО ПОНАД СХЕМУ (і чому)
+     • ВИПРАВЛЕНО: у схемі «Add together all the elements in the array.
+       Solution: print(myArray[1])» — це не сума, а один елемент.
+       На s11 ⭐⭐⭐ — сума циклом (total = total + myArray[x], прийом з
+       уроку 10), перевірено python3: 173.
+     • Без компʼютера: «write code to produce an answer» → код на
+       листочку, вивід передбачаємо (9 кл.: найважчі запитання схеми —
+       комбінації елементів і цикл — ⭐⭐⭐).
+     • Наші: s13 «the first colour» / «the last number» / colourArray[4]
+       (немає такого індексу) · s14 задачі в парі на масивах схеми ·
+       s16 чотири рядки з однією помилкою · питання s17 · ДЗ п. 2–3.
+       Відповіді перевірено python3.
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • зміна елемента в коді, append, len(), зрізи, від'ємні індекси —
+       у блоці 9P.04 їх немає (план курсу їх згадує; len() — 9P.05,
+       урок 12 «Strings»)
+     • max / min / average масиву — у блоці схеми немає
+     • компʼютер: IT-англійська без ноутбуків (14.09.2026)
+  ────────────────────────────────────────────────────────────────
+  СЛОВНИК       ТРИЧІ: s4 (вхід, 4) · s9 (word bank, 10) · s18 (вихід, 16)
+  ПРАКТИКИ      s5, s8, s10, s11, s13, s14, s16; відповіді в .reveal
+  ДОМАШНЄ       s20 = dz.html — 3 пункти, ≈ 10 хв, відповіді текстом
+  ────────────────────────────────────────────────────────────────
+  Аркуш A4      rozdatka.html — видається в кінці уроку, слайди на нього не посилаються
+  Конспект      2026-27-teacher/aplus/9-it-english/u11/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: IT-англійська всіх класів іде на rose. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--rose);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--rose)}
+.uk{color:var(--dim)}
+
+/* ═══ СЛОВНИК ═══ */
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mw{background:var(--surface);border:2px solid var(--pink);border-radius:14px;padding:15px 19px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.5rem;color:var(--rose);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:17px;color:var(--dim);line-height:1.5}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:17px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16.5px;line-height:1.45}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--rose);border-radius:6px;flex-shrink:0}
+
+/* ─── успадковано з уроків 4 і 8 ─── */
+/* графіки хвилі (inline SVG) */
+.gw{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:8px 10px 4px}
+.card .gw{border:0;padding:4px 0 0}
+.gw svg{display:block}
+/* слайд «тест» */
+.big-test{text-align:center}
+.big-test h2{font-size:2.6rem}
+/* словник на 16 слів — чотири колонки */
+.vg4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.defn{font-family:var(--f-ser);font-size:1.3rem;line-height:1.6;color:var(--ink)}
+
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 13px;font-size:17px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+.tbl td.m{font-family:var(--f-mono);font-weight:700}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .mw{padding:12px 15px} .mw .w{font-size:1.3rem} .mw .t{font-size:15.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:16px} .vp .uk{font-size:15.5px}
+  .vg{gap:9px} .vg3{gap:8px} .vg4{gap:8px}
+  .big-test h2{font-size:2.2rem} .defn{font-size:1.15rem}
+  .gw{padding:6px 8px 2px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .tbl th,.tbl td{padding:7px 11px;font-size:15.5px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО: Words in use ─── */
+.wu{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px}
+.wu-i{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:8px 13px}
+.wu-w{display:block;font-family:var(--f-mono);font-weight:700;font-size:15.5px;
+      color:var(--accent);margin-bottom:3px}
+.wu-p{display:block;font-size:15px;line-height:1.34;margin-bottom:1px}
+.wu-p::before{content:"· ";color:var(--faint)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 8: логічні схеми й читання вголос ─── */
+.lc{display:block;width:100%;height:auto;color:var(--ink)}
+.cw{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px}
+.cw .ex{font-family:var(--f-mono);font-weight:700;font-size:18px;color:var(--brand);margin-bottom:6px}
+.shp{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.shp .cw{text-align:center}
+.shp .cw .lc{max-height:92px}
+.shp .nm{font-family:var(--f-mono);font-weight:700;font-size:20px;color:var(--rose);margin-top:4px}
+.quiz{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.quiz .cw{text-align:center;padding:8px 6px}
+.quiz .q-n{font-family:var(--f-mono);font-weight:700;color:var(--faint);font-size:15px}
+.quiz .rv-body{margin-top:4px;font-family:var(--f-mono);font-weight:700;color:var(--rose);font-size:18px}
+.quiz .rv-hint{font-size:14px}
+.ra{display:flex;flex-direction:column;gap:9px}
+.ra-i{display:flex;align-items:flex-start;gap:14px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:11px;padding:10px 16px}
+.ra-n{width:30px;height:30px;border-radius:8px;background:#f0e5ee;color:var(--plum);
+      font-family:var(--f-mono);font-weight:700;font-size:15px;display:flex;
+      align-items:center;justify-content:center;flex-shrink:0}
+.ra-e{font-size:19px;line-height:1.5;color:var(--ink);font-weight:600}
+.ra-i .rv-body{margin-top:3px;font-size:17px;color:var(--dim);line-height:1.45}
+.ra-i .rv-hint{font-size:14px}
+.tt{border-collapse:collapse;background:var(--surface);border:1.5px solid var(--border);width:100%}
+.tt th,.tt td{border:1px solid var(--border);padding:5px 10px;text-align:center;font-family:var(--f-mono);font-size:17px}
+.tt th{font-size:13px;letter-spacing:1px;color:var(--faint)}
+.tt td.o{color:var(--brand);font-weight:700}
+.g6{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.g6 .cw{padding:8px 12px}
+.g6 .cw .ex{font-size:15.5px;margin-bottom:2px}
+.g6 .cw .lc{max-height:118px}
+.g6 .rv-body p{font-size:15.5px;line-height:1.4}
+.g6 .rv-hint{font-size:14px}
+@media (max-height:800px){
+  .ra-e{font-size:17px} .ra-i{padding:8px 13px} .ra{gap:7px}
+  .ra-i .rv-body{font-size:15.5px}
+  .cw .ex{font-size:16px}
+  .shp .cw .lc{max-height:74px}
+  .g6 .cw .lc{max-height:96px} .g6{gap:8px}
+  .tt th,.tt td{padding:4px 8px;font-size:15.5px}
+}
+/* ─── ДОДАНО ДЛЯ УРОКУ 9: блок-схеми циклу (inline SVG) ─── */
+.fcs{display:block;width:100%;height:auto;color:var(--ink)}
+.fcw{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px}
+.fcw .fcs{max-height:430px;width:auto;max-width:100%;margin:0 auto}
+.fcw.sm .fcs{max-height:360px}
+.fcw.big .fcs{max-height:480px}
+.shp4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.shp4 .cw{text-align:center}
+.shp4 .fcs{max-height:74px;width:auto;margin:0 auto}
+.shp4 .nm{font-family:var(--f-mono);font-weight:700;font-size:16px;color:var(--rose);margin-top:4px}
+.dp-code .k{color:#591429;font-weight:700}
+.vote{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vote .dp-code{font-size:16px;line-height:1.55;padding:10px 14px}
+.vote .rv-body p{font-size:16px;line-height:1.45}
+.vote .rv-hint{font-size:14px;padding:0 14px 8px}
+.vote .rv-body{padding:0 14px 10px;margin-top:0;font-family:var(--f-body)}
+code.nw,.nw{white-space:nowrap}
+@media (max-height:800px){
+  .fcw .fcs{max-height:340px} .fcw.sm .fcs{max-height:290px} .fcw.big .fcs{max-height:395px}
+  .shp4 .fcs{max-height:58px}
+  .vote .dp-code{font-size:14.5px;line-height:1.45;padding:8px 12px}
+  .vote .rv-body p{font-size:14.5px}
+}
+/* ─── ДОДАНО ДЛЯ УРОКУ 10: help sheet, розбір рядка for, чотири програми ─── */
+.anat{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.anat span{background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:6px 11px;font-size:16px;line-height:1.35}
+.anat b{font-family:var(--f-mono);color:var(--rose)}
+.hs{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.hs .dp-code{font-size:15.5px;line-height:1.55;padding:9px 14px}
+.hs .dp-bar{padding:6px 12px}
+.sent9{font-family:var(--f-ser);font-size:1.55rem;line-height:1.6;text-align:center;
+  background:var(--surface);border:2px solid var(--pink);border-radius:14px;padding:18px 24px}
+.vote.v4 .dp-code{font-size:14.5px;line-height:1.5;padding:8px 12px}
+.vote.v4 .dp-bar{padding:5px 12px}
+@media (max-height:800px){
+  .anat span{font-size:14.5px;padding:4px 9px}
+  .hs .dp-code{font-size:14px;line-height:1.45;padding:7px 11px} .hs{gap:8px}
+  .sent9{font-size:1.3rem;padding:13px 18px}
+  .vote.v4 .dp-code{font-size:13px;line-height:1.4;padding:6px 10px}
+  .vote.v4 .rv-body p{font-size:13.5px}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Arrays in code</h1>
+      <p class="title-sub">Масиви в коді · список Python як масив, індекс, цикл по масиву<br>
+        IT-англійська · 9 клас · Урок 11 з 36 · 19 листопада</p>
+      <div class="chips">
+        <span class="chip">array · list</span>
+        <span class="chip">index</span>
+        <span class="chip">square brackets</span>
+        <span class="chip">element</span>
+        <span class="chip">9P.04</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🗓️</div><div>
+      <span class="label lm">Today</span>
+      <h2>Сьогодні</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t"><b>Remember</b> — домашнє уроку 10 і слова масиву з уроку 5</span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t"><span class="en">Array as a table</span> · індекс 0 · список у Python</span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">Вивести елемент, зберегти у змінну, скласти два елементи</span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t">Цикл по масиву · два масиви: числа й кольори — на листочку</span></div>
+      <div class="step"><span class="step-n">5</span><span class="step-t"><span class="en">How do you access data in an array?</span> — відповіді повним реченням</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ПЕРЕВІРКА ДЗ УРОКУ 10 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lo">Check · homework lesson 10</span>
+      <h2>Домашнє уроку 10</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal">
+        <h3>1 · Full sentence</h3>
+        <p><span class="en">Why is print(total) after the loop, not inside the loop?</span></p>
+        <p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p>Because the total must be output <b>once</b>, after all the costs are added. Inside the loop it is output every time.</p></div>
+      </div>
+      <div class="card reveal">
+        <h3>2 · 5 items, not 20</h3>
+        <div class="dp"><div class="dp-code" style="font-size:14px;white-space:pre">total = <span class="sn">0</span>
+<span class="k">for</span> count <span class="k">in</span> range(<span class="sn">0</span>, <span class="sn">20</span>):
+  cost = float(input(<span class="ss">"Enter the cost"</span>))
+  total = total + cost
+average = total / <span class="sn">20</span></div></div>
+        <p class="rv-hint">Два рядки. Клацни.</p>
+        <div class="rv-body"><p><span class="ic nw">for count in range(0, 5):</span><br><span class="ic nw">average = total / 5</span></p></div>
+      </div>
+      <div class="card reveal">
+        <h3>3 · Numbers 1 to 10</h3>
+        <div class="dp"><div class="dp-code"><span class="k">for</span> x <span class="k">in</span> range(<span class="sn">1</span>, <span class="sn">10</span>):
+  print(x)</div></div>
+        <p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p>The error is <span class="ic nw">range(1, 10)</span>. It should be <span class="ic nw">range(1, 11)</span>.</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ПОВТОРЕННЯ: СЛОВА МАСИВУ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lp">Remember · lesson 5</span>
+      <h2>Слова масиву — перекладаємо по черзі</h2>
+    </div></div>
+    <div class="vg4">
+      <div class="vp reveal"><span class="en">array</span><span class="rv-hint">?</span><span class="rv-body uk">масив</span></div>
+      <div class="vp reveal"><span class="en">index · indices</span><span class="rv-hint">?</span><span class="rv-body uk">індекс · індекси</span></div>
+      <div class="vp reveal"><span class="en">identifier</span><span class="rv-hint">?</span><span class="rv-body uk">ідентифікатор, ім'я</span></div>
+      <div class="vp reveal"><span class="en">item of data</span><span class="rv-hint">?</span><span class="rv-body uk">елемент даних</span></div>
+      <div class="vp reveal"><span class="en">to store</span><span class="rv-hint">?</span><span class="rv-body uk">зберігати</span></div>
+      <div class="vp reveal"><span class="en">variable</span><span class="rv-hint">?</span><span class="rv-body uk">змінна</span></div>
+      <div class="vp reveal"><span class="en">hard-coded</span><span class="rv-hint">?</span><span class="rv-body uk">«зашитий» у код</span></div>
+      <div class="vp reveal"><span class="en">to replace</span><span class="rv-hint">?</span><span class="rv-body uk">замінити</span></div>
+    </div>
+    <div class="card reveal mt">
+      <h3>⭐⭐⭐ Why do we use an array, and not 600 variables? Answer in a full sentence.</h3>
+      <p class="rv-hint">Спершу вголос, потім клацни.</p>
+      <div class="rv-body"><p>An array stores <b>multiple items of data under one identifier</b>, so we do not need a variable for each item.</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ── MINI-VOCAB ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Words first</span>
+      <h2>Чотири слова, які сьогодні прозвучать</h2>
+    </div></div>
+    <div class="mini">
+      <div class="mw"><div class="w">element</div>
+        <div class="t">елемент масиву — одне значення в ньому</div></div>
+      <div class="mw"><div class="w">square brackets [ ]</div>
+        <div class="t">квадратні дужки — у них пишемо індекс</div></div>
+      <div class="mw"><div class="w">list</div>
+        <div class="t">список — так у Python роблять масив</div></div>
+      <div class="mw"><div class="w">to access data</div>
+        <div class="t">отримати доступ до даних — прочитати елемент</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── ПРАКТИКА 1: ARRAY AS A TABLE ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="prac" style="padding:12px 18px">
+      <div class="prac-h" style="margin-bottom:4px"><span class="badge">Practice 1</span>
+        <span class="t">An array as a table</span><span class="tmr">3 хвилини</span></div>
+      <p class="prac-lead" style="margin-bottom:0"><span class="en">Most arrays start with index 0: the first element is in index 0, the second in index 1.</span> — прочитай і переклади. Тоді відповідай повним реченням.</p>
+    </div>
+    <table class="tt mt" style="font-size:20px">
+      <tr><th>Index</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+      <tr><th>Data</th><td class="o">30</td><td class="o">5</td><td class="o">25</td><td class="o">10</td><td class="o">6</td></tr>
+    </table>
+    <div class="ra mt">
+      <div class="ra-i reveal"><span class="ra-n">⭐</span><div><div class="ra-e">What data is in index 0?</div>
+        <div class="rv-hint">відповідь</div><div class="rv-body">The data in index 0 is 30.</div></div></div>
+      <div class="ra-i reveal"><span class="ra-n">⭐⭐</span><div><div class="ra-e">What is the result of the data in index 2 + the data in index 3?</div>
+        <div class="rv-hint">відповідь</div><div class="rv-body">The result is 35: 25 + 10.</div></div></div>
+      <div class="ra-i reveal"><span class="ra-n">⭐⭐</span><div><div class="ra-e">What will be output if the pseudocode statement <span class="ic nw">OUTPUT(array[4])</span> is run?</div>
+        <div class="rv-hint">відповідь</div><div class="rv-body">6 will be output. It is the fifth element.</div></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── READ ALOUD 1: LISTS IN PYTHON ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🗣️</div><div>
+      <span class="label lp">Read aloud · по черзі</span>
+      <h2>Arrays in Python</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1.25fr;align-items:center">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">syntax · Python</span></div>
+          <div class="dp-code" style="font-size:19px">myArray[<span class="sn">0</span>]</div>
+        </div>
+        <div class="anat mt" style="grid-template-columns:1fr">
+          <span><b>myArray</b> — the array name (identifier)</span>
+          <span><b>[ ]</b> — square brackets</span>
+          <span><b>0</b> — the index inside</span>
+        </div>
+      </div>
+      <div class="ra">
+        <div class="ra-i reveal"><span class="ra-n">1</span><div><div class="ra-e">Python does not have an inbuilt array data structure. Instead it uses <b>lists</b>.</div>
+          <div class="rv-hint">переклад</div><div class="rv-body">У Python немає вбудованої структури «масив». Замість неї — списки.</div></div></div>
+        <div class="ra-i reveal"><span class="ra-n">2</span><div><div class="ra-e">Lists have similar functionality and can be used in place of arrays.</div>
+          <div class="rv-hint">переклад</div><div class="rv-body">Списки працюють схоже, і їх можна використовувати замість масивів.</div></div></div>
+        <div class="ra-i reveal"><span class="ra-n">3</span><div><div class="ra-e">Python syntax involves the array name, followed by <b>square brackets</b> with the index inside.</div>
+          <div class="rv-hint">переклад</div><div class="rv-body">У Python пишуть імʼя масиву, а за ним квадратні дужки з індексом усередині.</div></div></div>
+        <div class="ra-i reveal"><span class="ra-n">4</span><div><div class="ra-e">Some languages start at 1. Also rounded brackets are used in some other programming languages.</div>
+          <div class="rv-hint">переклад</div><div class="rv-body">Деякі мови починають з 1. А в деяких інших мовах — круглі дужки.</div></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── HELP SHEET: OUTPUT AND STORE ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">📄</div><div>
+      <span class="label lb">Your notes · read aloud</span>
+      <h2>Output the value · store it in a variable</h2>
+    </div></div>
+    <div class="dp" style="margin-bottom:12px"><div class="dp-bar"><span class="dp-title">an array declared, with values inserted</span></div>
+      <div class="dp-code" style="font-size:19px">myArray = [<span class="sn">1</span>, <span class="sn">4</span>, <span class="sn">5</span>, <span class="sn">3</span>, <span class="sn">15</span>, <span class="sn">64</span>, <span class="sn">27</span>, <span class="sn">54</span>]</div></div>
+    <div class="hs">
+      <div class="dp"><div class="dp-bar"><span class="dp-title">1 · to output it</span></div>
+        <div class="dp-code">print(myArray[<span class="sn">0</span>])</div></div>
+      <div class="dp"><div class="dp-bar"><span class="dp-title">2 · to store it and perform a calculation with it</span></div>
+        <div class="dp-code">myVar = myArray[<span class="sn">0</span>] + <span class="sn">2</span>
+print(myVar)</div></div>
+    </div>
+    <div class="two mt">
+      <div class="ra-i reveal"><span class="ra-n">?</span><div><div class="ra-e">What does program 1 output?</div>
+        <div class="rv-hint">відповідь</div><div class="rv-body">Program 1 outputs 1 — the data in index 0.</div></div></div>
+      <div class="ra-i reveal"><span class="ra-n">?</span><div><div class="ra-e">What does program 2 output?</div>
+        <div class="rv-hint">відповідь</div><div class="rv-body">Program 2 outputs 3: 1 + 2.</div></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРАКТИКА 2: WRITE THE CODE ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac" style="padding:12px 18px">
+      <div class="prac-h" style="margin-bottom:4px"><span class="badge">Practice 2 · in pairs</span>
+        <span class="t">Write code to produce an answer</span><span class="tmr">4 хвилини</span></div>
+      <p class="prac-lead" style="margin-bottom:0">На листочку — один рядок коду і що він виведе.</p>
+    </div>
+    <div class="dp mt"><div class="dp-code" style="font-size:19px">myArray = [<span class="sn">1</span>, <span class="sn">4</span>, <span class="sn">5</span>, <span class="sn">3</span>, <span class="sn">15</span>, <span class="sn">64</span>, <span class="sn">27</span>, <span class="sn">54</span>]</div></div>
+    <div class="ra mt">
+      <div class="ra-i reveal"><span class="ra-n">⭐</span><div><div class="ra-e">Output the second element in the array.</div>
+        <div class="rv-hint">код і вивід</div><div class="rv-body"><span class="ic nw">print(myArray[1])</span> — it outputs 4. The second element is in index 1.</div></div></div>
+      <div class="ra-i reveal"><span class="ra-n">⭐</span><div><div class="ra-e">Output the data in index 0 in the array.</div>
+        <div class="rv-hint">код і вивід</div><div class="rv-body"><span class="ic nw">print(myArray[0])</span> — it outputs 1.</div></div></div>
+      <div class="ra-i reveal"><span class="ra-n">⭐⭐</span><div><div class="ra-e">Output the last element. Which index is it in?</div>
+        <div class="rv-hint">код і вивід</div><div class="rv-body"><span class="ic nw">print(myArray[7])</span> — it outputs 54. There are 8 elements, so the last index is 7.</div></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── WORD BANK ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🗂️</div><div>
+      <span class="label lp">Word bank · говоримо вголос</span>
+      <h2>Слова, якими говорять про масив у коді</h2>
+    </div></div>
+    <div class="vg">
+      <div class="vp"><span class="en">inbuilt</span><span class="uk">вбудований</span></div>
+      <div class="vp"><span class="en">data structure</span><span class="uk">структура даних</span></div>
+      <div class="vp"><span class="en">in place of</span><span class="uk">замість</span></div>
+      <div class="vp"><span class="en">to declare</span><span class="uk">оголосити</span></div>
+      <div class="vp"><span class="en">to insert values</span><span class="uk">вставити значення</span></div>
+      <div class="vp"><span class="en">to output</span><span class="uk">вивести</span></div>
+      <div class="vp"><span class="en">to perform a calculation</span><span class="uk">виконати обчислення</span></div>
+      <div class="vp"><span class="en">rounded brackets ( )</span><span class="uk">круглі дужки</span></div>
+      <div class="vp"><span class="en">in turn</span><span class="uk">по черзі</span></div>
+      <div class="vp"><span class="en">combination</span><span class="uk">поєднання, комбінація</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПРАКТИКА 3: COMBINE ELEMENTS ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac" style="padding:12px 18px">
+      <div class="prac-h" style="margin-bottom:4px"><span class="badge">Practice 3</span>
+        <span class="t">A combination of elements</span><span class="tmr">4 хвилини</span></div>
+      <p class="prac-lead" style="margin-bottom:0"><span class="en">Output the value in index 0 added to the value in index 5.</span> — переклади. Тоді код на листочку.</p>
+    </div>
+    <div class="dp mt"><div class="dp-code" style="font-size:19px">myArray = [<span class="sn">1</span>, <span class="sn">4</span>, <span class="sn">5</span>, <span class="sn">3</span>, <span class="sn">15</span>, <span class="sn">64</span>, <span class="sn">27</span>, <span class="sn">54</span>]</div></div>
+    <div class="two mt" style="align-items:start">
+      <div class="card reveal">
+        <h3>⭐⭐ Solution 1 · one line</h3>
+        <p class="rv-hint">Клацни після листочка.</p>
+        <div class="rv-body"><div class="dp"><div class="dp-code">print(myArray[<span class="sn">0</span>] + myArray[<span class="sn">5</span>])</div></div>
+          <p class="note mt">It outputs 65: 1 + 64.</p></div>
+      </div>
+      <div class="card reveal">
+        <h3>⭐⭐⭐ Solution 2 · store in variables</h3>
+        <p class="rv-hint">Чотири рядки. Клацни.</p>
+        <div class="rv-body"><div class="dp"><div class="dp-code">firstNum = myArray[<span class="sn">0</span>]
+secondNum = myArray[<span class="sn">5</span>]
+total = firstNum + secondNum
+print(total)</div></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ПРАКТИКА 4: LOOP ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="prac" style="padding:12px 18px">
+      <div class="prac-h" style="margin-bottom:4px"><span class="badge">Practice 4</span>
+        <span class="t">An array and a count-controlled loop</span><span class="tmr">5 хвилин</span></div>
+      <p class="prac-lead" style="margin-bottom:0"><span class="en">Use a count-controlled loop to output each of the array items in turn.</span> — переклади вголос.</p>
+    </div>
+    <div class="two mt" style="grid-template-columns:1fr 1.1fr;align-items:start">
+      <div>
+        <div class="dp"><div class="dp-bar"><span class="dp-title">each item in turn</span></div>
+          <div class="dp-code">myArray = [<span class="sn">1</span>, <span class="sn">4</span>, <span class="sn">5</span>, <span class="sn">3</span>, <span class="sn">15</span>, <span class="sn">64</span>, <span class="sn">27</span>, <span class="sn">54</span>]
+<span class="k">for</span> x <span class="k">in</span> range(<span class="sn">0</span>, <span class="sn">8</span>):
+  print(myArray[x])</div></div>
+        <div class="ra-i reveal mt"><span class="ra-n">⭐</span><div><div class="ra-e">Why is the end value 8?</div>
+          <div class="rv-hint">відповідь</div><div class="rv-body">There are 8 elements. The loop counts x from 0 to 7 — the indices of the array.</div></div></div>
+        <div class="ra-i reveal mt"><span class="ra-n">⭐⭐</span><div><div class="ra-e">What is output first? What is output last?</div>
+          <div class="rv-hint">відповідь</div><div class="rv-body">1 is output first. 54 is output last.</div></div></div>
+      </div>
+      <div class="card reveal">
+        <h3>⭐⭐⭐ Add together all the elements in the array.</h3>
+        <p class="note">Підказка: <span class="ic nw">total = total + …</span> — як у задачі «20 items».</p>
+        <p class="rv-hint">Клацни після листочка.</p>
+        <div class="rv-body"><div class="dp"><div class="dp-code">total = <span class="sn">0</span>
+<span class="k">for</span> x <span class="k">in</span> range(<span class="sn">0</span>, <span class="sn">8</span>):
+  total = total + myArray[x]
+print(total)</div></div>
+          <p class="note mt">It outputs 173.</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── READ ALOUD 2: TWO ARRAYS ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">🎨</div><div>
+      <span class="label lp">Read aloud · two arrays</span>
+      <h2>One with numbers, one with text</h2>
+    </div></div>
+    <div class="dp"><div class="dp-bar"><span class="dp-title">two arrays</span></div>
+      <div class="dp-code" style="font-size:19px">numberArray = [<span class="sn">10</span>, <span class="sn">5</span>, <span class="sn">22</span>, <span class="sn">100</span>, <span class="sn">55</span>, <span class="sn">82</span>, <span class="sn">1</span>]
+colourArray = [<span class="ss">"red"</span>, <span class="ss">"purple"</span>, <span class="ss">"blue"</span>, <span class="ss">"green"</span>]</div></div>
+    <div class="ra mt">
+      <div class="ra-i reveal"><span class="ra-n">1</span><div><div class="ra-e">The program makes use of two arrays: one with text and one with numbers.</div>
+        <div class="rv-hint">переклад</div><div class="rv-body">Програма використовує два масиви: один з текстом, другий з числами.</div></div></div>
+      <div class="ra-i reveal"><span class="ra-n">2</span><div><div class="ra-e">How many elements are in each array? What is the last index of each?</div>
+        <div class="rv-hint">відповідь</div><div class="rv-body">numberArray has 7 elements, so the last index is 6. colourArray has 4 elements, so the last index is 3.</div></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРАКТИКА 5: TWO ARRAYS ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac" style="padding:12px 18px">
+      <div class="prac-h" style="margin-bottom:4px"><span class="badge">Practice 5</span>
+        <span class="t">Code that involves both arrays</span><span class="tmr">5 хвилин</span></div>
+      <div class="dp" style="margin-top:6px"><div class="dp-code" style="font-size:16px">numberArray = [<span class="sn">10</span>, <span class="sn">5</span>, <span class="sn">22</span>, <span class="sn">100</span>, <span class="sn">55</span>, <span class="sn">82</span>, <span class="sn">1</span>]
+colourArray = [<span class="ss">"red"</span>, <span class="ss">"purple"</span>, <span class="ss">"blue"</span>, <span class="ss">"green"</span>]</div></div>
+    </div>
+    <div class="ra mt">
+      <div class="ra-i reveal"><span class="ra-n">⭐</span><div><div class="ra-e">Output the first colour.</div>
+        <div class="rv-hint">код і вивід</div><div class="rv-body"><span class="ic nw">print(colourArray[0])</span> — it outputs red.</div></div></div>
+      <div class="ra-i reveal"><span class="ra-n">⭐</span><div><div class="ra-e">Output the last number.</div>
+        <div class="rv-hint">код і вивід</div><div class="rv-body"><span class="ic nw">print(numberArray[6])</span> — it outputs 1.</div></div></div>
+      <div class="ra-i reveal"><span class="ra-n">⭐⭐</span><div><div class="ra-e">Output the third element in the number array with the second colour.</div>
+        <div class="rv-hint">код і вивід</div><div class="rv-body"><span class="ic nw">print(numberArray[2], " ", colourArray[1])</span> — it outputs 22 purple.</div></div></div>
+      <div class="ra-i reveal"><span class="ra-n">⭐⭐⭐</span><div><div class="ra-e"><span class="ic nw">print(colourArray[4])</span> — will it work? Why?</div>
+        <div class="rv-hint">відповідь</div><div class="rv-body">No, it will not work. colourArray has 4 elements, so there is no index 4. The last index is 3.</div></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ПРАКТИКА 6: IN PAIRS ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Practice 6 · in pairs</span>
+        <span class="t">Your tasks · на листочку</span><span class="tmr">6 хвилин</span></div>
+      <div class="dp" style="margin-bottom:10px"><div class="dp-code" style="font-size:16px">numberArray = [<span class="sn">10</span>, <span class="sn">5</span>, <span class="sn">22</span>, <span class="sn">100</span>, <span class="sn">55</span>, <span class="sn">82</span>, <span class="sn">1</span>]
+colourArray = [<span class="ss">"red"</span>, <span class="ss">"purple"</span>, <span class="ss">"blue"</span>, <span class="ss">"green"</span>]</div></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">Output <b>100</b> from the number array.</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">Store the first number + the second number in the variable <span class="ic nw">total</span>. Output <span class="ic nw">total</span>.</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">Use a count-controlled loop to output each colour in turn.</span></div>
+      </div>
+      <div class="card reveal mt">
+        <h3>Check</h3>
+        <p class="rv-hint">Спершу листочок, потім клацни.</p>
+        <div class="rv-body"><div class="hs">
+          <div class="dp"><div class="dp-code">print(numberArray[<span class="sn">3</span>])
+total = numberArray[<span class="sn">0</span>] + numberArray[<span class="sn">1</span>]
+print(total)</div></div>
+          <div class="dp"><div class="dp-code"><span class="k">for</span> x <span class="k">in</span> range(<span class="sn">0</span>, <span class="sn">4</span>):
+  print(colourArray[x])</div></div>
+        </div>
+        <p class="note mt">100 · 15 · red, purple, blue, green</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── READ ALOUD 3: DISCUSSION ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">💬</div><div>
+      <span class="label lp">Discussion · answer in English</span>
+      <h2>How do you access data in an array?</h2>
+    </div></div>
+    <p class="note">Відповідай повним реченням. Клацни — зразок відповіді.</p>
+    <div class="ra mt">
+      <div class="ra-i reveal"><span class="ra-n">1</span><div><div class="ra-e">How do you access data in an array (list) in Python?</div>
+        <div class="rv-hint">зразок</div><div class="rv-body">You write the array’s identifier and the index in square brackets: <span class="ic nw">myArray[0]</span>.</div></div></div>
+      <div class="ra-i reveal"><span class="ra-n">2</span><div><div class="ra-e">What is the first index in an array?</div>
+        <div class="rv-hint">зразок</div><div class="rv-body">The first index in an array is 0.</div></div></div>
+      <div class="ra-i reveal"><span class="ra-n">3</span><div><div class="ra-e">What types of bracket do you surround the index with?</div>
+        <div class="rv-hint">зразок</div><div class="rv-body">In Python, square brackets are used.</div></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ПРАКТИКА 7: FIND THE ERROR ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="prac" style="padding:10px 18px">
+      <div class="prac-h" style="margin-bottom:2px"><span class="badge">Practice 7</span>
+        <span class="t">One error in each</span><span class="tmr">5 хвилин</span></div>
+      <p class="prac-lead" style="margin-bottom:0"><span class="ic nw">myArray = [1, 4, 5, 3, 15, 64, 27, 54]</span>. Знайди помилку і скажи: <i>The error is … It should be …</i></p>
+    </div>
+    <div class="vote v4 mt">
+      <div class="dp reveal"><div class="dp-bar"><span class="dp-title">A · output the first element</span></div>
+        <div class="dp-code">print(myArray(<span class="sn">0</span>))</div><div class="rv-hint">?</div><div class="rv-body"><p>The error is the rounded brackets. It should be <span class="ic nw">myArray[0]</span>.</p></div></div>
+      <div class="dp reveal"><div class="dp-bar"><span class="dp-title">B · output the first element</span></div>
+        <div class="dp-code">print(myArray[<span class="sn">1</span>])</div><div class="rv-hint">?</div><div class="rv-body"><p>The error is index 1 — it is the second element. It should be <span class="ic nw">myArray[0]</span>.</p></div></div>
+      <div class="dp reveal"><div class="dp-bar"><span class="dp-title">C · output the last element</span></div>
+        <div class="dp-code">print(myArray[<span class="sn">8</span>])</div><div class="rv-hint">?</div><div class="rv-body"><p>The error is index 8 — there is no index 8. It should be <span class="ic nw">myArray[7]</span>.</p></div></div>
+      <div class="dp reveal"><div class="dp-bar"><span class="dp-title">D · output each item in turn</span></div>
+        <div class="dp-code"><span class="k">for</span> x <span class="k">in</span> range(<span class="sn">1</span>, <span class="sn">8</span>):
+  print(myArray[x])</div><div class="rv-hint">?</div><div class="rv-body"><p>The first element is not output. It should be <span class="ic nw">range(0, 8)</span>.</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── READ ALOUD: ТЕКСТ І ПИТАННЯ ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">📄</div><div>
+      <span class="label lp">Read aloud · answer in English</span>
+      <h2>Arrays in code</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.15fr 1fr;align-items:start">
+      <div class="card reveal">
+        <p style="font-size:19px;line-height:1.5;font-weight:600">Python does not have an inbuilt array data structure. Instead it uses lists.
+          To access data in an array, we write the array name, followed by square brackets with the index inside.
+          The first element is in index 0. We can output the value, or store it in a variable to perform a calculation.
+          We can use a count-controlled loop to output each of the array items in turn.</p>
+        <p class="rv-hint">Читаємо по реченню по черзі. Переклад — клацни.</p>
+        <div class="rv-body"><p style="font-size:15px">У Python немає вбудованої структури «масив». Замість неї — списки. Щоб отримати дані з масиву, пишемо імʼя масиву, а за ним квадратні дужки з індексом. Перший елемент — в індексі 0. Значення можна вивести або зберегти у змінну, щоб із ним рахувати. Цикл із лічильником виводить усі елементи масиву по черзі.</p></div>
+      </div>
+      <div>
+        <p class="note" style="margin-bottom:8px">Відповідай <b>повним реченням</b> англійською.</p>
+        <div class="ra">
+          <div class="ra-i reveal"><span class="ra-n">1</span><div><div class="ra-e">What does Python use in place of arrays?</div>
+            <div class="rv-hint">відповідь</div><div class="rv-body">Python uses lists in place of arrays.</div></div></div>
+          <div class="ra-i reveal"><span class="ra-n">2</span><div><div class="ra-e">Where is the first element?</div>
+            <div class="rv-hint">відповідь</div><div class="rv-body">The first element is in index 0.</div></div></div>
+          <div class="ra-i reveal"><span class="ra-n">3</span><div><div class="ra-e">Why do we store a value in a variable?</div>
+            <div class="rv-hint">відповідь</div><div class="rv-body">We store a value in a variable to perform a calculation with it.</div></div></div>
+          <div class="ra-i reveal"><span class="ra-n">⭐</span><div><div class="ra-e">What is the last index of an array with 8 elements?</div>
+            <div class="rv-hint">відповідь</div><div class="rv-body">The last index of an array with 8 elements is 7.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key vocabulary</span>
+      <h2>Шістнадцять слів цього уроку</h2>
+    </div></div>
+    <div class="vg4">
+      <div class="vp"><span class="en">array</span><span class="uk">масив</span></div>
+      <div class="vp"><span class="en">list</span><span class="uk">список</span></div>
+      <div class="vp"><span class="en">index</span><span class="uk">індекс</span></div>
+      <div class="vp"><span class="en">element</span><span class="uk">елемент</span></div>
+      <div class="vp"><span class="en">identifier</span><span class="uk">ідентифікатор, імʼя</span></div>
+      <div class="vp"><span class="en">square brackets</span><span class="uk">квадратні дужки</span></div>
+      <div class="vp"><span class="en">rounded brackets</span><span class="uk">круглі дужки</span></div>
+      <div class="vp"><span class="en">to access data</span><span class="uk">отримати доступ до даних</span></div>
+      <div class="vp"><span class="en">inbuilt</span><span class="uk">вбудований</span></div>
+      <div class="vp"><span class="en">data structure</span><span class="uk">структура даних</span></div>
+      <div class="vp"><span class="en">in place of</span><span class="uk">замість</span></div>
+      <div class="vp"><span class="en">to declare</span><span class="uk">оголосити</span></div>
+      <div class="vp"><span class="en">to insert values</span><span class="uk">вставити значення</span></div>
+      <div class="vp"><span class="en">to perform a calculation</span><span class="uk">виконати обчислення</span></div>
+      <div class="vp"><span class="en">in turn</span><span class="uk">по черзі</span></div>
+      <div class="vp"><span class="en">combination</span><span class="uk">поєднання</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">☑️</div><div>
+      <span class="label lr">I can…</span>
+      <h2>Чек-лист уроку</h2>
+    </div></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div><div>I can say what data is in an index of an <span class="en">array</span> shown as a table.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can <span class="en">access data</span> in a Python list: the identifier and the index in <span class="en">square brackets</span>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can output an element, or store it in a variable and perform a calculation.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can use a count-controlled loop to output each element <span class="en">in turn</span>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can find an error with an index or brackets — and say it in a full sentence.</div></div>
+    </div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 12 · 26 листопада · Strings</p>
+  </div></section>
+
+  <!-- ══════════ 21 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lo">Homework</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox hm">Відповіді — <strong>повідомленням на платформі</strong> до <strong>26 листопада</strong>.</div>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t">Дай відповідь <b>повним реченням</b> англійською:
+          <span class="en">What does Python use in place of arrays, and why?</span></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><span class="ic nw">myArray = [1, 4, 5, 3, 15, 64, 27, 54]</span><br>
+          а) Напиши рядок коду, що виводить <b>третій</b> елемент. &#160; б) Що виведе <span class="ic nw">print(myArray[2] + myArray[7])</span>?</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><span class="ic nw">colourArray = ["red", "purple", "blue", "green"]</span><br>Рядок має вивести <b>перший</b> колір: <span class="ic nw">print(colourArray[1])</span><br>
+          Знайди помилку й напиши англійською: <span class="en">The error is … It should be …</span></span></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Масив → сторінка · JavaScript · 11 клас · Урок 18</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (основа мови)
+  Клас          11 (16–17 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум)
+  Урок          18 з 35 · 18.11.2026 · СЕРЕДА
+  Тема          Масив → сторінка (тема 3.19 плану)
+  Тривалість    45 хв — згадуємо 4 · показ ~13 · практика ~28
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       31
+  ────────────────────────────────────────────────────────────────
+  СПИРАЄТЬСЯ НА уроки 16–17: querySelector · textContent / innerHTML ·
+     classList · querySelectorAll + цикл; уроки 8–10: for / for...of,
+     масив, push, функція з параметром
+  ⚠️ ОБʼЄКТИ НЕ ПРОВЕДЕНО (тема «Обʼєкти» у II чверті випала — урок 12
+     став повторенням). План 3.19 бере масив обʼєктів GameStore, тому
+     сл. 7–11 — мінімум обʼєктів: літерал { ключ: значення }, крапка,
+     зміна й нова властивість, масив обʼєктів, console.table. Методи
+     обʼєкта, for...in, деструктуризація — НЕ сьогодні.
+  НОВЕ          обʼєкт · масив обʼєктів · console.table · innerHTML +=
+                з шаблонним рядком · очищення innerHTML = '' ·
+                document.createElement · append · огляд родини вставки
+                (сл. 18): append, prepend, appendChild, before, after,
+                remove, insertAdjacentHTML · чому чужий текст — лише
+                через textContent (сл. 19) · функція render(list)
+  ⚠️ САМОДОСТАТНІЙ: старт (index.html, style.css, script.js з масивом
+     games) — kod.html ЦЬОГО уроку, живе посилання сл. 5.
+  ⚠️ Події — урок 19 (23.11). Фільтр сьогодні — без кнопок: render
+     викликаємо з різними масивами.
+  ⚠️ ДЗ — CodePen (HTML + JS), до 23.11. Здача — Google Classroom.
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  ЗГАДУЄМО      сл. 2–3 — 4 хв · ЩО ВИЙДЕ сл. 4 · СТАРТ сл. 5 · НАВІЩО сл. 6
+  ОБʼЄКТ        сл. 7–10 → ПРАКТИКА 1 сл. 11 (6 хв)
+  INNERHTML +=  сл. 12–14 → ПРАКТИКА 2 сл. 15 (8 хв)
+  CREATEELEMENT сл. 16–20 → ПРАКТИКА 3 сл. 21 (8 хв)
+  RENDER        сл. 22–24 → ПРАКТИКА 4 сл. 25 (6 хв)
+  ДОВІДНИК сл. 26 (на дошці з П2) · ТЕСТИ 27 · БАНК 28 · ЗДАЧА 29 ·
+  ДАЛІ 30 · ДЗ 31
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО РІЗАТИ ПЕРШИМ: сл. 6 (усно); сл. 14 і 20 (передбач — по
+     одній картці); сл. 18 (родина — лише показати таблицю); сл. 24
+     (виправ — тим, хто закінчив). Сл. 19 (безпека) — НЕ різати.
+  ────────────────────────────────────────────────────────────────
+  План          office/plany/05-javascript-8.md, тема 3.19
+  Роздатка      rozdatka.html — 1 сторінка A4, сховище
+  Код           kod.html — старт, ДЗ, фінальний script.js
+  Конспект      2026-27-teacher/aplus/11-javascript/u18/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:96px}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6 ─── */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.tree{font-family:var(--f-mono);font-size:16px;line-height:1.6;white-space:pre;color:var(--ink)}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8 ─── */
+.dp-out.con{font-family:var(--f-mono);font-size:16px;line-height:1.55;white-space:pre-wrap;padding:10px 19px}
+.dp-out.con b{color:var(--faint);font-family:var(--f-body);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+.three .mono{font-size:15.5px;line-height:1.55;margin-bottom:6px}
+table.ops td.c{text-align:center;font-family:var(--f-mono)}
+.ic{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 12 ─── інлайн-код не розривається між рядками */
+.ic{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 16 ─── */
+/* «вікно браузера» — як виглядає сторінка */
+.br{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);background:#fff;
+    box-shadow:0 2px 10px rgba(89,20,41,.07)}
+.br-body{padding:14px 20px;font-family:Arial,Helvetica,sans-serif;color:#222}
+.br-body .bh1{font-size:26px;font-weight:700;color:#591429;margin-bottom:6px}
+.br-body p{font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.45;margin:5px 0;color:#222}
+.br-body p.g{font-size:19px}
+.br-body p.s{background:#ffe9a8;display:inline-block;padding:0 4px}
+.br-body p.n{color:#555;font-style:italic}
+.br-body .chg{outline:2px dashed #0253b3;outline-offset:2px}
+.dp-code.sm{font-size:14px;line-height:1.5;padding:10px 14px}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 18 ─── картки каталогу в «вікні браузера» */
+.cat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.cat .cd{border:1px solid #c9b8bd;border-radius:9px;padding:7px 10px;font-family:Arial,Helvetica,sans-serif}
+.cat .cd h4{font-size:16px;color:#591429;margin:0 0 2px}
+.cat .cd .pr{font-size:15px;font-weight:700;color:#222}
+.cat .cd .gn{font-size:13px;color:#555}
+.cat .cd.sl{border-left:5px solid #1d7a3a;background:#eef7f0}
+a.lnk{color:var(--blue);font-family:var(--f-mono);font-size:.9em;border-bottom:1.5px solid var(--blue);text-decoration:none;word-break:break-all}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ── ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Масив → сторінка</h1>
+      <p class="title-sub">Каталог GameStore будує JavaScript<br>
+        JavaScript · 11 клас · Урок 18 з 35 · 18 листопада</p>
+      <div class="chips">
+        <span class="chip">{ name, price }</span>
+        <span class="chip">масив обʼєктів</span>
+        <span class="chip">innerHTML +=</span>
+        <span class="chip">createElement</span>
+        <span class="chip">append</span>
+        <span class="chip">render(list)</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── ЗГАДУЄМО: УРОК 17 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lb">Згадуємо · урок 17</span>
+      <h2>Що станеться?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">// &lt;p class="game"&gt;
+p.classList.toggle('hit');
+p.classList.toggle('hit');
+p.className</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>'game'</b> — перший <span class="ic">toggle</span> додав, другий прибрав</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">t.style.fontSize = 24;</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>Нічого</b> — без <span class="ic">'px'</span> браузер ігнорує значення. Треба <span class="ic">'24px'</span></p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">document
+  .querySelectorAll('.game')
+  .classList.add('card');</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>TypeError</b> — у списку немає <span class="ic">classList</span>: потрібен цикл</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ЗГАДУЄМО: ДЗ УРОКУ 17 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏠</div><div>
+      <span class="label lb">Згадуємо · домашнє уроку 17</span>
+      <h2>Нічна візитка</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">CodePen · JS · що треба було дописати</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.6;padding:12px 16px"><span class="sk">if</span> (hour <span class="st">&gt;=</span> <span class="sn">18</span>) {
+  document.body.classList.<span class="sf">add</span>(<span class="ss">'dark'</span>);
+}
+document.<span class="sf">querySelector</span>(<span class="ss">'#name'</span>).style.color = <span class="ss">'orange'</span>;
+document.<span class="sf">querySelector</span>(<span class="ss">'.city'</span>).classList.<span class="sf">add</span>(<span class="ss">'big'</span>);</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3><span class="ic">classList.add('.big')</span></h3>
+          <p class="rv-hint">Чому шрифт не більшає? Клацни</p><div class="rv-body"><p>Клас став «.big» з крапкою — правило <span class="ic">.big</span> шукає «big»</p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3>Вдень усе світле</h3>
+          <p class="rv-hint">Як перевірити? Клацни</p><div class="rv-body"><p>Тимчасово <span class="ic">const hour = 20;</span>, потім повернути <span class="ic">getHours()</span></p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ЩО ВИЙДЕ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🎯</div><div>
+      <span class="label lm">Що вийде наприкінці</span>
+      <h2>У HTML — порожній <span class="ic">div</span>. Картки малює JavaScript</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1.7fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">index.html · body</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.6;padding:12px 16px"><span class="sk">&lt;h1</span> id=<span class="ss">"title"</span><span class="sk">&gt;</span>GameStore<span class="sk">&lt;/h1&gt;</span>
+<span class="sk">&lt;p</span> id=<span class="ss">"info"</span><span class="sk">&gt;&lt;/p&gt;</span>
+<span class="sk">&lt;div</span> id=<span class="ss">"catalog"</span><span class="sk">&gt;&lt;/div&gt;</span>
+<span class="cm">&lt;!-- порожньо! --&gt;</span></div>
+</div>
+      <div class="br"><div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">index.html · зі script.js</span></div><div class="br-body"><div class="bh1">GameStore</div><p>Ігор: 5 · разом 1945 грн · дешевих: 2</p>
+        <div class="cat">
+          <div class="cd"><h4>Minecraft</h4><div class="gn">пісочниця</div><div class="pr">699 грн</div></div>
+          <div class="cd"><h4>Stardew Valley</h4><div class="gn">ферма</div><div class="pr">319 грн</div></div>
+          <div class="cd sl"><h4>Terraria</h4><div class="gn">пригоди</div><div class="pr">199 грн</div></div>
+          <div class="cd"><h4>Celeste</h4><div class="gn">платформер</div><div class="pr">449 грн</div></div>
+          <div class="cd sl"><h4>Portal 2</h4><div class="gn">головоломка</div><div class="pr">279 грн</div></div>
+        </div></div></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🧩</span><div>Додав гру в масив — картка зʼявилась сама. HTML не чіпаєш</div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ── СТАРТ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📁</div><div>
+      <span class="label lm">Старт</span>
+      <h2>Нова папка — три файли</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t">Папка <span class="ic">js-11/katalog</span>: <span class="ic">index.html</span>, <span class="ic">style.css</span>, <span class="ic">script.js</span></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">Усі три — блоки «Старт» на сторінці, кнопка <b>Скопіювати</b>:<br>
+        <a class="lnk" href="https://sv2627.github.io/sc/aplus/11-javascript/u18/kod.html">https://sv2627.github.io/sc/aplus/11-javascript/u18/kod.html</a></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">Відкрий <span class="ic">index.html</span> у Chrome: поки лише заголовок. <b>F12</b> → Console</span></div>
+    </div>
+    <div class="hbox hp mt">У стартовому <span class="ic">script.js</span> уже лежить масив <span class="ic">games</span> — пʼять ігор. Що це за запис — за два слайди</div>
+  </div></section>
+
+  <!-- ══════════ 6 ── НАВІЩО ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">⚖️</div><div>
+      <span class="label lo">Навіщо</span>
+      <h2>Сто ігор — сто блоків HTML?</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">руками в HTML</span>
+        <div class="mono">&lt;div class="card"&gt;
+  &lt;h3&gt;Minecraft&lt;/h3&gt;
+  &lt;p class="price"&gt;699 грн&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+  &lt;h3&gt;Terraria&lt;/h3&gt; …
+// нова ціна — шукай і правь</div></div>
+      <div class="right"><span class="lbl">дані — у масиві, картки — циклом</span>
+        <div class="mono">const games = [ … ];   // дані
+
+for (const g of games) {
+  // одна картка на гру
+}
+// нова гра — один рядок у масиві</div></div>
+    </div>
+    <div class="hbox hm mt">Так працюють справжні магазини: дані приходять списком, сторінку будує код</div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ОБʼЄКТ ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📇</div><div>
+      <span class="label lm">Нове · обʼєкт</span>
+      <h2>Одна гра — кілька властивостей під одним імʼям</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.25fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:17px;line-height:1.75;padding:14px 18px"><span class="sk">const</span> game = {
+  name: <span class="ss">'Terraria'</span>,
+  price: <span class="sn">199</span>,
+  genre: <span class="ss">'пригоди'</span>,
+};
+
+console.<span class="sf">log</span>(game.name);    <span class="cm">// Terraria</span>
+console.<span class="sf">log</span>(game.price);   <span class="cm">// 199</span></div>
+</div>
+      <table class="ops">
+        <tr><th>Частина</th><th>Тут</th></tr>
+        <tr><td>фігурні дужки</td><td class="o" style="width:auto">{ … }</td></tr>
+        <tr><td>ключ (назва)</td><td class="o" style="width:auto">name · price</td></tr>
+        <tr><td>двокрапка, значення</td><td class="o" style="width:auto">: 'Terraria'</td></tr>
+        <tr><td>між парами</td><td class="o" style="width:auto">,</td></tr>
+        <tr><td>прочитати</td><td class="o" style="width:auto">game.name</td></tr>
+      </table>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><b>Масив</b> — список за номером: <span class="ic">[0]</span>, <span class="ic">[1]</span>. <b>Обʼєкт</b> — набір за назвою: <span class="ic">.name</span>, <span class="ic">.price</span></div>
+      <div class="hbox hp">Ключ — без лапок, латиницею. Значення — будь-що: рядок, число, <span class="ic">true</span>, навіть масив</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ЧИТАТИ Й ЗМІНЮВАТИ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">✏️</div><div>
+      <span class="label lm">Властивості</span>
+      <h2>Прочитати, змінити, додати нову</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">Console</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.75;padding:14px 18px"><span class="sk">const</span> game = { name: <span class="ss">'Terraria'</span>, price: <span class="sn">199</span> };
+
+game.price = <span class="sn">149</span>;          <span class="cm">// змінили</span>
+game.sale = <span class="sk">true</span>;          <span class="cm">// нова властивість</span>
+console.<span class="sf">log</span>(game);
+<span class="cm">// {name: 'Terraria', price: 149, sale: true}</span>
+
+game.year              <span class="cm">// undefined — такої немає</span>
+<span class="ss">`${game.name} — ${game.price} грн`</span>
+<span class="cm">// 'Terraria — 149 грн'</span></div>
+</div>
+      <div>
+        <div class="hbox hm">Крапка + назва — як у <span class="ic">games.length</span> чи <span class="ic">el.textContent</span>: це теж властивості обʼєктів</div>
+        <div class="hbox hp"><span class="ic">const</span> не заважає міняти властивості — як вміст масиву на уроці 9</div>
+        <div class="hbox hr">Немає властивості — <span class="ic">undefined</span>, не помилка. Перевір назву: <span class="ic">game.Price</span> — це інша</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── МАСИВ ОБʼЄКТІВ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🗃️</div><div>
+      <span class="label lm">Масив обʼєктів</span>
+      <h2>Каталог — масив, у кожній клітинці — гра</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js · старт</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.6;padding:12px 16px"><span class="sk">const</span> games = [
+  { name: <span class="ss">'Minecraft'</span>, price: <span class="sn">699</span>, genre: <span class="ss">'пісочниця'</span> },
+  { name: <span class="ss">'Stardew Valley'</span>, price: <span class="sn">319</span>, genre: <span class="ss">'ферма'</span> },
+  { name: <span class="ss">'Terraria'</span>, price: <span class="sn">199</span>, genre: <span class="ss">'пригоди'</span> },
+  { name: <span class="ss">'Celeste'</span>, price: <span class="sn">449</span>, genre: <span class="ss">'платформер'</span> },
+  { name: <span class="ss">'Portal 2'</span>, price: <span class="sn">279</span>, genre: <span class="ss">'головоломка'</span> },
+];
+
+games[<span class="sn">2</span>].name               <span class="cm">// 'Terraria'</span>
+games.length                <span class="cm">// 5</span>
+<span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> games) {
+  console.<span class="sf">log</span>(g.name, g.price);
+}
+console.<span class="sf">table</span>(games);        <span class="cm">// таблицею в Console</span></div>
+</div>
+      <div>
+        <div class="hbox hm"><span class="ic">games[2]</span> — обʼєкт, <span class="ic">games[2].name</span> — його назва. Спершу номер, потім крапка</div>
+        <div class="hbox hp">У циклі <span class="ic">g</span> — <b>уся гра</b> цілком: <span class="ic">g.name</span>, <span class="ic">g.price</span></div>
+        <div class="hbox ho">Кома після останнього обʼєкта — дозволена, зручно дописувати</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПЕРЕДБАЧ: ОБʼЄКТИ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач · масив games зі старту</span>
+      <h2>Що в консолі?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">games[0].price + games[1].price</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>1018</b> — 699 + 319</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">games[games.length - 1].name</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>'Portal 2'</b> — останній обʼєкт масиву</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">let n = 0;
+for (const g of games) {
+  if (g.price &lt; 300) n++;
+}
+n</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>2</b> — Terraria і Portal 2</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Обʼєкти в консоль</span><span class="tmr">6 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — у script.js</span>
+        <div class="mono">for (const g of games) {
+  console.log(`${g.name} — ${g.price} грн`);
+}</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Виведи всі ігри в Console, як у прикладі, і <span class="ic">console.table(games)</span></li>
+          <li>Свою гру — обʼєкт <span class="ic">{ name, price, genre }</span> — додай у кінець через <span class="ic">games.push(…)</span></li>
+          <li>Зміни ціну Minecraft на 649: <span class="ic">games[0].price = 649;</span></li>
+          <li>Сума всіх цін — накопичувач <span class="ic">sum += g.price</span></li>
+          <li>Виведи <span class="ic">games[0].Name</span> з великої — що повернулось і чому?</li>
+          <li>⭐⭐ Найдешевша гра — <b>назва</b>, а не лише ціна: запамʼятовуй увесь обʼєкт</li>
+          <li>⭐⭐⭐ Кожній грі дорожчій за 400 — нова властивість <span class="ic">top: true</span>; перевір у <span class="ic">console.table</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── INNERHTML += ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🧱</div><div>
+      <span class="label lb">Спосіб 1 · innerHTML +=</span>
+      <h2>Картка — шаблонним рядком з тегами</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> catalog = document.<span class="sf">querySelector</span>(<span class="ss">'#catalog'</span>);
+<span class="sk">const</span> g = games[<span class="sn">0</span>];
+
+catalog.innerHTML <span class="st">+=</span> <span class="ss">`
+  &lt;div class="card"&gt;
+    &lt;h3&gt;${g.name}&lt;/h3&gt;
+    &lt;p class="price"&gt;${g.price} грн&lt;/p&gt;
+  &lt;/div&gt;`</span>;</div>
+</div>
+      <div>
+        <div class="hbox hm">Зворотні лапки <span class="ic">`</span> — рядок можна писати <b>на кількох рядках</b>, а <span class="ic">${…}</span> підставляє дані</div>
+        <div class="hbox hp"><span class="ic">innerHTML</span> (урок 16) розбирає теги: зʼявляється справжній <span class="ic">div</span> з класом <span class="ic">card</span></div>
+        <div class="hbox ho"><span class="ic">+=</span> — <b>дописати</b> до того, що вже є. <span class="ic">=</span> — замінити все</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ЦИКЛ + INNERHTML ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔁</div><div>
+      <span class="label lb">Спосіб 1 · у циклі</span>
+      <h2>Одна картка на кожну гру</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> catalog = document.<span class="sf">querySelector</span>(<span class="ss">'#catalog'</span>);
+
+<span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> games) {
+  catalog.innerHTML <span class="st">+=</span> <span class="ss">`
+    &lt;div class="card"&gt;
+      &lt;h3&gt;${g.name}&lt;/h3&gt;
+      &lt;p&gt;${g.genre}&lt;/p&gt;
+      &lt;p class="price"&gt;${g.price} грн&lt;/p&gt;
+    &lt;/div&gt;`</span>;
+}</div>
+</div>
+      <div>
+        <div class="hbox hm">Пʼять ігор — пʼять карток. Шоста гра в масиві — шоста картка, код той самий</div>
+        <div class="hbox hp">Як виглядає картка — у <span class="ic">style.css</span> (правило <span class="ic">.card</span> уже є у старті)</div>
+        <div class="hbox ho">F12 → Elements: усередині <span class="ic">#catalog</span> — пʼять <span class="ic">div</span>, яких немає у файлі</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПЕРЕДБАЧ: = ЧИ += ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Скільки карток на сторінці?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">for (const g of games) {
+  catalog.innerHTML =
+    `&lt;h3&gt;${g.name}&lt;/h3&gt;`;
+}</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>Одна</b>: Portal 2. <span class="ic">=</span> щоразу стирає попередню</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">for (const g of games) {
+  catalog.innerHTML +=
+    `&lt;h3&gt;${g.name}&lt;/h3&gt;`;
+}
+// скрипт запустили двічі</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>Десять</b> — <span class="ic">+=</span> дописує до вже намальованих. Перед циклом: <span class="ic">catalog.innerHTML = ''</span></p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">catalog.innerHTML +=
+  '&lt;h3&gt;${g.name}&lt;/h3&gt;';</div>
+        <p class="rv-hint">Що в заголовку?</p>
+        <div class="rv-body"><p>Буквально <b>${g.name}</b> — звичайні лапки не підставляють</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">Каталог через innerHTML</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — лише назви</span>
+        <div class="mono">for (const g of games) {
+  catalog.innerHTML +=
+    `&lt;h3&gt;${g.name}&lt;/h3&gt;`;
+}</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Картка <span class="ic">div.card</span> на кожну гру: назва, жанр, ціна — як на слайді 13</li>
+          <li>Додай у масив ще дві гри — картки зʼявились без змін у циклі?</li>
+          <li>У <span class="ic">#info</span>: «Ігор: 7» — через <span class="ic">games.length</span></li>
+          <li>Заміни <span class="ic">+=</span> на <span class="ic">=</span> — скільки карток? Поверни</li>
+          <li>⭐⭐ Перед циклом <span class="ic">catalog.innerHTML = ''</span> — і в кінці виклич цикл ще раз: дублів немає?</li>
+          <li>⭐⭐⭐ Номер на картці: «1. Minecraft» — цикл <span class="ic">for</span> з індексом і <span class="ic">${i + 1}</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── CREATEELEMENT ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🧩</div><div>
+      <span class="label lm">Спосіб 2 · createElement</span>
+      <h2>Створити елемент — заповнити — вставити</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16.5px;line-height:1.75;padding:14px 18px"><span class="sk">const</span> h = document.<span class="sf">createElement</span>(<span class="ss">'h3'</span>);   <span class="cm">// 1</span>
+h.textContent = <span class="ss">'Minecraft'</span>;               <span class="cm">// 2</span>
+h.classList.<span class="sf">add</span>(<span class="ss">'title'</span>);
+catalog.<span class="sf">append</span>(h);                       <span class="cm">// 3</span></div>
+</div>
+      <div class="steps" style="gap:9px">
+        <div class="step"><span class="step-n">1</span><span class="step-t"><span class="ic">createElement('h3')</span> — новий елемент <b>у памʼяті</b>: на сторінці його ще немає</span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t">Заповнити тим, що вже знаємо: <span class="ic">textContent</span>, <span class="ic">classList</span>, <span class="ic">style</span></span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t"><span class="ic">append</span> — вставити <b>в кінець</b> батька. Тепер видно</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── КАРТКА З ЧАСТИН ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🃏</div><div>
+      <span class="label lm">createElement · у циклі</span>
+      <h2>Картка з трьох частин</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.6;padding:12px 16px"><span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> games) {
+  <span class="sk">const</span> card = document.<span class="sf">createElement</span>(<span class="ss">'div'</span>);
+  card.classList.<span class="sf">add</span>(<span class="ss">'card'</span>);
+
+  <span class="sk">const</span> h = document.<span class="sf">createElement</span>(<span class="ss">'h3'</span>);
+  h.textContent = g.name;
+
+  <span class="sk">const</span> p = document.<span class="sf">createElement</span>(<span class="ss">'p'</span>);
+  p.classList.<span class="sf">add</span>(<span class="ss">'price'</span>);
+  p.textContent = <span class="ss">`${g.price} грн`</span>;
+
+  card.<span class="sf">append</span>(h, p);       <span class="cm">// дітей — у картку</span>
+  catalog.<span class="sf">append</span>(card);     <span class="cm">// картку — на сторінку</span>
+}</div>
+</div>
+      <div>
+        <div class="hbox hm"><span class="ic">append</span> приймає <b>кілька</b> елементів через кому — у такому порядку й стануть</div>
+        <div class="hbox hp">Спершу збираємо картку в памʼяті, потім <b>одним</b> <span class="ic">append</span> ставимо на сторінку</div>
+        <div class="hbox ho">Довше, ніж <span class="ic">innerHTML</span>, але кожен елемент — у змінній: з ним можна працювати далі</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── РОДИНА ВСТАВКИ ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🧰</div><div>
+      <span class="label lb">Уся родина</span>
+      <h2>Вставити, переставити, прибрати</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Запис</th><th>Що робить</th></tr>
+      <tr><td><span class="ic">parent.append(a, b)</span></td><td>у <b>кінець</b> батька; можна кілька і навіть рядок</td></tr>
+      <tr><td><span class="ic">parent.prepend(a)</span></td><td>на <b>початок</b> батька</td></tr>
+      <tr><td><span class="ic">parent.appendChild(a)</span></td><td>старший брат <span class="ic">append</span>: лише один елемент</td></tr>
+      <tr><td><span class="ic">el.before(a)</span> · <span class="ic">el.after(a)</span></td><td>поруч з елементом — перед ним або після</td></tr>
+      <tr><td><span class="ic">el.remove()</span></td><td>прибрати елемент зі сторінки</td></tr>
+      <tr><td><span class="ic">parent.insertAdjacentHTML('beforeend', '…')</span></td><td>як <span class="ic">innerHTML +=</span>, але <b>не перемальовує</b> те, що вже є</td></tr>
+    </table>
+    <div class="hbox hm mt">Елемент, який уже на сторінці, після <span class="ic">append</span> <b>переїжджає</b>, а не копіюється</div>
+  </div></section>
+
+  <!-- ══════════ 19 ── БЕЗПЕКА ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🛡️</div><div>
+      <span class="label lr">innerHTML чи textContent</span>
+      <h2>Чужий текст — лише через <span class="ic">textContent</span></h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">innerHTML — текст стає кодом</span>
+        <div class="mono">const name = prompt('Назва гри?');
+catalog.innerHTML += `&lt;h3&gt;${name}&lt;/h3&gt;`;
+
+// ввели: &lt;img src=x onerror="alert('злам')"&gt;
+// → на сторінці виконався чужий JavaScript</div></div>
+      <div class="right"><span class="lbl">textContent — текст лишається текстом</span>
+        <div class="mono">const name = prompt('Назва гри?');
+const h = document.createElement('h3');
+h.textContent = name;
+catalog.append(h);
+
+// на сторінці просто видно &lt;img src=x …&gt;</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><b>Свої</b> дані з масиву — <span class="ic">innerHTML</span> можна. Те, що <b>ввела людина</b>, — тільки <span class="ic">textContent</span></div>
+      <div class="hbox hr">Так ламають справжні сайти: коментар із «кодом» виконується в кожного, хто його відкрив</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ── ПЕРЕДБАЧ: ПОРЯДОК ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>У якому порядку стануть назви?</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1.1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">#list порожній</span></div>
+<div class="dp-code" style="font-size:16.5px;line-height:1.7;padding:14px 18px"><span class="sk">function</span> <span class="sf">mk</span>(t) {
+  <span class="sk">const</span> p = document.<span class="sf">createElement</span>(<span class="ss">'p'</span>);
+  p.textContent = t;
+  <span class="sk">return</span> p;
+}
+list.<span class="sf">append</span>(<span class="sf">mk</span>(<span class="ss">'B'</span>));
+list.<span class="sf">append</span>(<span class="sf">mk</span>(<span class="ss">'C'</span>));
+list.<span class="sf">prepend</span>(<span class="sf">mk</span>(<span class="ss">'A'</span>));
+list.<span class="sf">append</span>(<span class="ss">'D'</span>);</div>
+</div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Що на сторінці?</h3>
+        <p class="rv-hint">Простеж після кожного рядка, потім клацни</p>
+        <div class="rv-body">
+          <p class="mono">B        ← append
+B C      ← append
+A B C    ← prepend — на початок
+A B C D  ← append рядка</p>
+          <p class="mt"><b>A B C D</b>. D — просто текст, без <span class="ic">&lt;p&gt;</span>: <span class="ic">append</span> приймає й рядок</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">Каталог через createElement</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — назва в картці</span>
+        <div class="mono">const card =
+  document.createElement('div');
+card.classList.add('card');
+const h = document.createElement('h3');
+h.textContent = g.name;
+card.append(h);
+catalog.append(card);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Цикл П2 закоментуй (<b>Ctrl + /</b>). Картки — через <span class="ic">createElement</span>: назва, жанр, ціна</li>
+          <li>Ціні — клас <span class="ic">price</span> через <span class="ic">classList.add</span></li>
+          <li>F12 → Elements: картки такі самі, як з <span class="ic">innerHTML</span>?</li>
+          <li><span class="ic">prompt</span> назви нової гри → ще одна картка через <span class="ic">textContent</span>. Введи <span class="ic">&lt;b&gt;Тест&lt;/b&gt;</span> — що видно?</li>
+          <li>⭐⭐ Заголовок «Новинки» <b>над</b> каталогом: <span class="ic">catalog.before(h2)</span></li>
+          <li>⭐⭐⭐ Найдорожча гра — на <b>початок</b> каталогу через <span class="ic">prepend</span>, решта — <span class="ic">append</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ── УМОВА В ЦИКЛІ ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏷️</div><div>
+      <span class="label lm">Умова + клас з уроку 17</span>
+      <h2>Дешеві — зеленою смугою, у <span class="ic">#info</span> — підсумок</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js · усередині циклу і після</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.6;padding:12px 16px"><span class="sk">let</span> sum = <span class="sn">0</span>;
+<span class="sk">let</span> cheap = <span class="sn">0</span>;
+<span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> games) {
+  <span class="sk">const</span> card = document.<span class="sf">createElement</span>(<span class="ss">'div'</span>);
+  card.classList.<span class="sf">add</span>(<span class="ss">'card'</span>);
+  <span class="sk">if</span> (g.price <span class="st">&lt;</span> <span class="sn">300</span>) {
+    card.classList.<span class="sf">add</span>(<span class="ss">'sale'</span>);
+    cheap<span class="st">++</span>;
+  }
+  sum <span class="st">+=</span> g.price;
+  <span class="cm">// … h3, p, append — як раніше</span>
+}
+document.<span class="sf">querySelector</span>(<span class="ss">'#info'</span>).textContent =
+  <span class="ss">`Ігор: ${games.length} · разом ${sum} грн · дешевих: ${cheap}`</span>;</div>
+</div>
+      <div>
+        <div class="hbox hm">Клас — <b>до</b> вставки, поки картка в памʼяті. <span class="ic">.sale</span> — у <span class="ic">style.css</span> старту</div>
+        <div class="hbox hp">Накопичувач і лічильник — з уроку 8: <b>до</b> циклу, у циклі, <b>після</b> — вивід</div>
+        <div class="hbox ho">Перевір: <b>Ігор: 5 · разом 1945 грн · дешевих: 2</b></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 23 ── RENDER ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">♻️</div><div>
+      <span class="label lm">Функція з уроку 10</span>
+      <h2><span class="ic">render(list)</span> — намалювати будь-який список</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.6;padding:12px 16px"><span class="sk">function</span> <span class="sf">render</span>(list) {
+  catalog.innerHTML = <span class="ss">''</span>;          <span class="cm">// стерти старі картки</span>
+  <span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> list) {
+    <span class="cm">// … одна картка, як на сл. 17</span>
+  }
+}
+
+<span class="sf">render</span>(games);                   <span class="cm">// усі пʼять</span>
+
+<span class="sk">const</span> cheapGames = [];
+<span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> games) {
+  <span class="sk">if</span> (g.price <span class="st">&lt;</span> <span class="sn">300</span>) cheapGames.<span class="sf">push</span>(g);
+}
+<span class="sf">render</span>(cheapGames);              <span class="cm">// лише дві</span></div>
+</div>
+      <div>
+        <div class="hbox hm">Параметр <span class="ic">list</span> — будь-який масив ігор. Одна функція — різні вітрини</div>
+        <div class="hbox hp"><span class="ic">innerHTML = ''</span> на початку — інакше другий виклик <b>допише</b> картки до старих</div>
+        <div class="hbox ho">Урок 19: <span class="ic">render(cheapGames)</span> — за кліком на кнопку «Дешеві»</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ — не запускай, знайди очима</span>
+      <h2>Каталог порожній</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+<div class="dp-code" style="font-size:15.5px;line-height:1.65;padding:12px 16px"><span class="sk">const</span> catalog = document.<span class="sf">querySelector</span>(<span class="ss">'catalog'</span>);
+<span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> games) {
+  <span class="sk">const</span> card = document.<span class="sf">createElement</span>(<span class="ss">'div'</span>);
+  card.textContent = <span class="ss">`${g.name} — ${g.cost} грн`</span>;
+}
+catalog.<span class="sf">append</span>(card);</div>
+</div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+  <h3>Три біди</h3>
+  <p class="rv-hint">Знайди всі три, потім клацни</p>
+  <div class="rv-body"><p><b>1.</b> <span class="ic">'catalog'</span> без <span class="ic">#</span> — шукає тег, повертає <span class="ic">null</span></p><p><b>2.</b> <span class="ic">g.cost</span> — такої властивості немає: «undefined грн». Треба <span class="ic">g.price</span></p><p><b>3.</b> <span class="ic">append</span> поза циклом — <span class="ic">card</span> там не існує (ReferenceError). Вставляти <b>в циклі</b></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 25 ── ПРАКТИКА 4 ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 4</span>
+        <span class="t">render і вітрини</span><span class="tmr">6 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">function render(list) {
+  catalog.innerHTML = '';
+  for (const g of list) {
+    // картка
+  }
+}
+render(games);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Загорни цикл карток у <span class="ic">function render(list)</span> і виклич <span class="ic">render(games)</span></li>
+          <li>Клас <span class="ic">sale</span> дешевим і підсумок у <span class="ic">#info</span>, як на слайді 22</li>
+          <li>Масив <span class="ic">cheapGames</span> через <span class="ic">push</span> і <span class="ic">render(cheapGames)</span></li>
+          <li>Прибери <span class="ic">innerHTML = ''</span> і виклич <span class="ic">render</span> двічі — що бачиш? Поверни</li>
+          <li>⭐⭐ <span class="ic">render</span> сам рахує підсумок для <b>свого</b> списку: «Ігор: 2 · разом 478 грн»</li>
+          <li>⭐⭐⭐ Друга функція <span class="ic">byGenre(genre)</span> повертає масив ігор жанру — <span class="ic">render(byGenre('ферма'))</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 26 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Масив → сторінка</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>обʼєкт</h4><pre>const g = {
+  name: 'Terraria',
+  price: 199,
+};
+g.name   g.price = 149;</pre></div>
+      <div class="rf-c"><h4>масив обʼєктів</h4><pre>games[0].name
+games.push({ name: 'X',
+             price: 99 });
+console.table(games);</pre></div>
+      <div class="rf-c"><h4>innerHTML +=</h4><pre>for (const g of games) {
+  catalog.innerHTML +=
+    `&lt;h3&gt;${g.name}&lt;/h3&gt;`;
+}</pre></div>
+      <div class="rf-c"><h4>createElement</h4><pre>const h = document
+  .createElement('h3');
+h.textContent = g.name;
+catalog.append(h);</pre></div>
+      <div class="rf-c"><h4>вставити</h4><pre>append(a, b)  prepend(a)
+el.before(a)  el.after(a)
+el.remove()</pre></div>
+      <div class="rf-c"><h4>перемалювати</h4><pre>function render(list) {
+  catalog.innerHTML = '';
+  for (const g of list) …
+}</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 27 ── ТЕСТИ ══════════ -->
+  <section class="slide" id="s26"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">✅</div><div>
+      <span class="label lm">Перевір себе</span>
+      <h2>Таблиця тестів</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Що робиш</th><th>Що має статися</th></tr>
+      <tr><td>відкрив <span class="ic">index.html</span></td><td>пʼять карток: назва, жанр, ціна</td></tr>
+      <tr><td><span class="ic">#info</span></td><td>«Ігор: 5 · разом 1945 грн · дешевих: 2»</td></tr>
+      <tr><td>Terraria і Portal 2</td><td>зелена смуга — клас <span class="ic">sale</span></td></tr>
+      <tr><td>додав гру в масив, F5</td><td>шоста картка, підсумок змінився сам</td></tr>
+      <tr><td><span class="ic">render</span> двічі поспіль</td><td>карток не подвоїлось</td></tr>
+      <tr><td>F12 → Console</td><td>жодного червоного рядка</td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 28 ── БАНК ══════════ -->
+  <section class="slide" id="s27"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:16px"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Список.</b> Ті самі ігри — у <span class="ic">&lt;ul&gt;</span>: на кожну <span class="ic">createElement('li')</span></div>
+      <div class="bk"><b>Таблиця.</b> <span class="ic">&lt;table&gt;</span>, рядок <span class="ic">tr</span> на гру, дві клітинки <span class="ic">td</span></div>
+      <div class="bk"><b>Знижка.</b> Обʼєктам з <span class="ic">sale: true</span> — стара ціна закреслена і нова −20 %</div>
+      <div class="bk"><b>Зірки.</b> Властивість <span class="ic">rating</span> 1–5 → на картці ⭐ стільки разів через цикл</div>
+      <div class="bk"><b>Нічний каталог.</b> Тема уроку 17: після 18:00 — клас <span class="ic">dark</span> на <span class="ic">body</span></div>
+      <div class="bk"><b>Дорожчі за.</b> <span class="ic">prompt</span> ціни → <span class="ic">render</span> лише дорожчих</div>
+      <div class="bk"><b>Пошук.</b> <span class="ic">prompt</span> частини назви → <span class="ic">render</span> ігор, де <span class="ic">name.includes(…)</span></div>
+      <div class="bk"><b>Прибрати.</b> Після рендеру <span class="ic">remove()</span> для карток, дорожчих за 600</div>
+    </div>
+    <div class="hbox hm mt">Усі вісім — тільки тим, що вже було</div>
+  </div></section>
+
+  <!-- ══════════ 29 ── ЗБЕРЕГТИ ══════════ -->
+  <section class="slide" id="s28"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🗂️</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Підписати рівень і зберегти</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">katalog/script.js</span></div>
+<div class="dp-code"><span class="cm">// Урок 18 · Масив → сторінка</span>
+<span class="cm">// Прізвище Імʼя · рівень: ⭐⭐</span>
+<span class="cm">// зроблено: обʼєкти, innerHTML, createElement, render</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Коментар — <b>першим рядком</b> <span class="ic">script.js</span>, потім <b>Ctrl + S</b> в усіх трьох файлах</div>
+        <div class="hbox hp">Закоментовані спроби можна лишити — підпиши, яка практика</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 30 ── ДАЛІ ══════════ -->
+  <section class="slide" id="s29"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🚀</div><div>
+      <span class="label lm">Далі</span>
+      <h2>Після уроку 18</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Сьогодні руками</h3><ul>
+        <li>обʼєкт <span class="ic">{ name, price }</span> і масив обʼєктів</li>
+        <li><span class="ic">innerHTML +=</span> і <span class="ic">createElement</span> + <span class="ic">append</span></li>
+        <li>чужий текст — <span class="ic">textContent</span></li>
+        <li><span class="ic">render(list)</span></li>
+      </ul></div>
+      <div class="card cp"><h3>Урок 19 · понеділок 23 листопада</h3><ul>
+        <li>перша подія: <span class="ic">click</span></li>
+        <li>кнопка-лічильник і кнопка «Тема»</li>
+        <li>сторінка відповідає на дії</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання</strong> — на наступному слайді.</div>
+  </div></section>
+
+  <!-- ══════════ 31 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s30"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання · 10 хвилин</span>
+      <h2>Мої ігри — список зі масиву</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">Два блоки «Домашнє» — у панелі <b>HTML</b> і <b>JS</b> на <strong>codepen.io</strong>:
+      <a class="lnk" href="https://sv2627.github.io/sc/aplus/11-javascript/u18/kod.html">https://sv2627.github.io/sc/aplus/11-javascript/u18/kod.html</a> ·
+      код JS — у <strong>Google Classroom · 11 клас</strong> до <strong>23 листопада</strong></div>
+    <div class="two" style="grid-template-columns:1fr 1.05fr;gap:16px">
+      <div class="steps" style="gap:8px">
+        <div class="step" style="padding:7px 13px"><span class="step-n">1</span><span class="step-t" style="font-size:15.5px">
+          <b>ДОПИШИ 1</b> — свою гру в кінець масиву: <span class="ic">games.push({ name: '…', price: … });</span></span></div>
+        <div class="step" style="padding:7px 13px"><span class="step-n">2</span><span class="step-t" style="font-size:15.5px">
+          <b>ДОПИШИ 2</b> — у циклі: <span class="ic">list.innerHTML += `&lt;p&gt;${g.name} — ${g.price} грн&lt;/p&gt;`;</span> і <span class="ic">sum += g.price;</span></span></div>
+        <div class="step" style="padding:7px 13px"><span class="step-n">3</span><span class="step-t" style="font-size:15.5px">
+          <b>ДОПИШИ 3</b> — після циклу новий <span class="ic">p</span> через <span class="ic">createElement</span>: «Ігор: 4, разом: … грн» і <span class="ic">document.body.append(p)</span></span></div>
+      </div>
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">CodePen · JS · головне</span></div>
+<div class="dp-code" style="font-size:13.5px;line-height:1.45;padding:9px 13px"><span class="sk">const</span> games = [
+  { name: <span class="ss">'Minecraft'</span>, price: <span class="sn">699</span> },
+  { name: <span class="ss">'Terraria'</span>, price: <span class="sn">199</span> },
+  { name: <span class="ss">'Celeste'</span>, price: <span class="sn">449</span> },
+];
+<span class="cm">// ДОПИШИ 1 — games.push({ … })</span>
+<span class="sk">const</span> list = document.<span class="sf">querySelector</span>(<span class="ss">'#list'</span>);
+<span class="sk">let</span> sum = <span class="sn">0</span>;
+<span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> games) {
+  <span class="cm">// ДОПИШИ 2</span>
+}
+<span class="cm">// ДОПИШИ 3 — createElement('p')</span></div>
+</div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
+

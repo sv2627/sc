@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 9 · код уроку · JavaScript 8 клас</title>
+<!--
+  КОД УРОКУ 9 «Масиви» · 16.11.2026
+  Блок «Старт» — каркас index.html для папки js-8/masyvy (урок самодостатній:
+  хто пропустив урок 1, бере каркас тут). Далі — заготовка ДЗ (без розвʼязку)
+  і фінальний код трьох практик із коментарями. Увесь код прогнано в node
+  (prompt — заглушкою). Кнопка «Скопіювати» — єдиний JS на сторінці.
+-->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#f6eef0;--border:#e7d9dd;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--brand);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#c2aab0}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:780px}
+.lead a{color:var(--accent);border-bottom:1px solid}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 7px;border-radius:5px;white-space:nowrap}
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:18px;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;
+  background:var(--surf2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.codebar b{font-family:var(--f-head);color:var(--accent)}
+.copy{font:700 16px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:10px 18px;min-height:44px;cursor:pointer}
+.copy.ok{background:#1d7a3a}
+pre.js{font-family:var(--f-mono);font-size:15px;line-height:1.55;padding:18px;overflow-x:auto;
+  white-space:pre;tab-size:2;color:var(--ink)}
+.cm{color:#6f5f62;font-style:italic}
+.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+font-size:16px;color:var(--dim);display:flex;gap:24px;flex-wrap:wrap}
+.foot a{color:var(--accent);font-weight:700;padding:10px 0}
+.note{font-size:16.5px;color:var(--dim);margin-top:10px}
+.note a{color:var(--accent);border-bottom:1px solid}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}pre.js{font-size:14px}}
+@media print{body::before{display:none}.copy{display:none}pre.js{white-space:pre-wrap;font-size:11pt}
+  .codebox{break-inside:auto}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">8 клас · JavaScript</a><span class="sep">/</span><a href="./">Урок 9</a><span class="sep">/</span><span>Код</span></nav>
+<div class="kicker">Урок 9 / 35 · 16.11.2026 · код уроку</div>
+<h1>Код уроку і домашнього</h1>
+<p class="lead">Натисни «Скопіювати» над потрібним блоком. На уроці — папка <code>js-8/masyvy</code>: <code>index.html</code> зі «Старту» і <code>script.js</code>. Домашнє — на <a href="https://codepen.io/pen/" target="_blank" rel="noopener">codepen.io</a>: встав у панель <b>JS</b>, результат — кнопка <b>Console</b> унизу. Пояснення — у коментарях після <code>//</code>.</p>
+
+<div class="kicker" style="margin-top:28px">Старт уроку · VS Code</div>
+<p class="note">Створи папку <code>js-8/masyvy</code>, у ній — файли <code>index.html</code> і <code>script.js</code>. Цей блок — у <code>index.html</code>, <code>script.js</code> поки порожній. Відкрий <code>index.html</code> у Chrome, <b>F12</b> → Console.</p>
+<div class="codebox"><div class="codebar"><b>Старт · index.html</b>
+  <button class="copy" data-for="start">Скопіювати</button></div>
+<pre class="js" id="start">&lt;!DOCTYPE html&gt;
+&lt;html lang="uk"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Масиви&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Масиви — дивись у Console (F12)&lt;/h1&gt;
+  <span class="cm">&lt;!-- скрипт підключаємо останнім рядком body --&gt;</span>
+  &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div>
+
+<div class="kicker" style="margin-top:34px">Домашнє завдання · до 23 листопада</div>
+<p class="note">Умова — на сторінці <a href="dz.html">«Домашнє завдання»</a>.</p>
+<div class="codebox"><div class="codebar"><b>Кошик · допиши три місця</b>
+  <button class="copy" data-for="dz">Скопіювати</button></div>
+<pre class="js" id="dz"><span class="cm">// Домашнє · урок 9 · «Кошик». Прізвище Імʼя: ...</span>
+<span class="cm">// Допиши три місця з позначкою ДОПИШИ ТУТ.</span>
+<span class="cm">// Зараз у консолі: «Перша: Minecraft — 699 грн» і «Ігор у кошику: 3, разом: 0 грн».</span>
+<span class="cm">// Має вийти:       «Перша: Minecraft — 699 грн»,</span>
+<span class="cm">//                  «Ігор у кошику: 4, разом: 1666 грн»,</span>
+<span class="cm">//                  «Остання: Stardew Valley».</span>
+
+const games = ['Minecraft', 'Terraria', 'Celeste'];
+const prices = [699, 199, 449];
+
+<span class="cm">// Готово: перша гра і її ціна — індекс 0</span>
+console.log(`Перша: ${games[0]} — ${prices[0]} грн`);
+
+<span class="cm">// 1. ДОПИШИ ТУТ: додай у кінець гру 'Stardew Valley' і її ціну 319.</span>
+<span class="cm">//    Два рядки: games.push(...) і prices.push(...)</span>
+
+
+<span class="cm">// 2. ДОПИШИ ТУТ: цикл for по масиву prices — від i = 0, поки i &lt; prices.length.</span>
+<span class="cm">//    Усередині одна дія: sum += prices[i];</span>
+let sum = 0;
+
+
+console.log(`Ігор у кошику: ${games.length}, разом: ${sum} грн`);
+
+<span class="cm">// 3. ДОПИШИ ТУТ: виведи останню гру — індекс games.length - 1:</span>
+<span class="cm">//    console.log(`Остання: ${ ... }`);</span>
+</pre></div>
+
+<div class="kicker" style="margin-top:34px">Урок · VS Code і Chrome · script.js</div>
+<p class="note">Блоки — по одному: у блоках 1–3 є однакові назви змінних. Попередній блок закоментуй (<b>Ctrl + /</b>) або видали.</p>
+<div class="codebox"><div class="codebar"><b>1 · Створити, прочитати, змінити</b>
+  <button class="copy" data-for="p1">Скопіювати</button></div>
+<pre class="js" id="p1"><span class="cm">// Урок 9 · Практика 1 · масив</span>
+<span class="cm">// Масив — список значень у [ ], між ними коми. Індекс (номер місця) — з 0.</span>
+const games = ['Minecraft', 'Terraria', 'Celeste', 'Portal', 'Tetris'];
+
+console.log(games[0]);       <span class="cm">// Minecraft — перша</span>
+console.log(games[2]);       <span class="cm">// Celeste — третя (індекс 2!)</span>
+console.log(games.length);   <span class="cm">// 5 — скільки елементів</span>
+
+games[1] = 'Stardew Valley'; <span class="cm">// замінили другу</span>
+console.log(games);
+
+console.log(games[10]);      <span class="cm">// undefined — такого місця немає, але це не помилка</span>
+
+<span class="cm">// ⭐⭐ Остання — індекс length - 1, працює з будь-якою довжиною</span>
+console.log(games[games.length - 1]);   <span class="cm">// Tetris</span>
+
+<span class="cm">// ⭐⭐⭐ Поміняти першу й останню місцями через допоміжну змінну</span>
+const last = games.length - 1;
+const temp = games[0];
+games[0] = games[last];
+games[last] = temp;
+console.log(games);   <span class="cm">// ['Tetris', 'Stardew Valley', 'Celeste', 'Portal', 'Minecraft']</span></pre></div>
+<div class="codebox"><div class="codebar"><b>2 · Кошик росте: push, pop, includes, join</b>
+  <button class="copy" data-for="p2">Скопіювати</button></div>
+<pre class="js" id="p2"><span class="cm">// Урок 9 · Практика 2 · push і родина</span>
+const cart = [];              <span class="cm">// порожній кошик</span>
+cart.push('Terraria');        <span class="cm">// push — додати в кінець</span>
+cart.push('Celeste');
+cart.push('Portal');
+console.log(cart.join(', '));            <span class="cm">// Terraria, Celeste, Portal</span>
+console.log(`Ігор: ${cart.length}`);     <span class="cm">// Ігор: 3</span>
+
+const removed = cart.pop();   <span class="cm">// pop — забрати останній і віддати його</span>
+console.log(`Забрали: ${removed}, лишилось: ${cart.length}`);   <span class="cm">// Portal, 2</span>
+
+<span class="cm">// ⭐⭐ Додати, тільки якщо такої гри ще немає</span>
+if (cart.includes('Minecraft')) {
+  console.log('Minecraft уже в кошику');
+} else {
+  cart.push('Minecraft');
+}
+console.log(cart.join(', '));   <span class="cm">// Terraria, Celeste, Minecraft</span>
+
+<span class="cm">// ⭐⭐⭐ Три назви з prompt — у новий кошик</span>
+const myCart = [];
+for (let i = 1; i &lt;= 3; i++) {
+  const name = prompt(`Гра ${i} з 3:`);
+  myCart.push(name);
+}
+console.log(`Мій кошик: ${myCart.join(', ')}`);</pre></div>
+<div class="codebox"><div class="codebar"><b>3 · Кошик GameStore: сума, середнє, лічильник, найдорожча</b>
+  <button class="copy" data-for="p3">Скопіювати</button></div>
+<pre class="js" id="p3"><span class="cm">// Урок 9 · Практика 3 · «Кошик GameStore»: масив цін → сума</span>
+const prices = [699, 199, 449, 319, 250];
+prices.push(99);   <span class="cm">// ще одна ціна ДО циклу — сума врахує її сама</span>
+
+let sum = 0;       <span class="cm">// накопичувач — до циклу</span>
+for (let i = 0; i &lt; prices.length; i++) {   <span class="cm">// &lt;, не &lt;= : останній індекс length - 1</span>
+  sum += prices[i];
+}
+const avg = sum / prices.length;
+console.log(`Разом: ${sum} грн`);        <span class="cm">// Разом: 2015 грн</span>
+console.log(`Середня: ${avg.toFixed(2)} грн`);   <span class="cm">// Середня: 335.83 грн</span>
+
+<span class="cm">// Скільки ігор дешевших за 300 грн — лічильник</span>
+let cheap = 0;
+for (let i = 0; i &lt; prices.length; i++) {
+  if (prices[i] &lt; 300) {
+    cheap++;
+  }
+}
+console.log(`Дешевших за 300: ${cheap}`);   <span class="cm">// 3 (199, 250, 99)</span>
+
+<span class="cm">// ⭐⭐ Найдорожча: стартуємо з першої, далі «бачу більшу — запамʼятовую»</span>
+let max = prices[0];
+for (let i = 0; i &lt; prices.length; i++) {
+  if (prices[i] &gt; max) {
+    max = prices[i];
+  }
+}
+console.log(`Найдорожча: ${max} грн`);   <span class="cm">// 699</span>
+
+<span class="cm">// ⭐⭐⭐ Два масиви поруч: той самий індекс — та сама гра</span>
+const games = ['Minecraft', 'Terraria', 'Celeste'];
+const gamePrices = [699, 199, 449];
+for (let i = 0; i &lt; games.length; i++) {
+  console.log(`${games[i]} — ${gamePrices[i]} грн`);
+}</pre></div>
+
+<div class="foot">
+  <a href="./">Урок</a>
+  <a href="prezentatsiya.html">Презентація</a>
+  <a href="dz.html">Домашнє завдання</a>
+</div>
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.for).innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+  b.textContent = 'Скопійовано ✓'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Скопіювати'; b.classList.remove('ok'); }, 2000);
+});
+</script>
+</body>
+</html>

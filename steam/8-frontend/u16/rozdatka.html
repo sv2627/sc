@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · Front-end · 8 клас · Урок 16</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          Front-end
+  Клас          8
+  Урок          16 / 27 · 17.11.2026
+  Тема          Технологія Flexbox. Меню сайту
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ТІЛЬКИ СХОВИЩЕ. На уроці НЕ роздається, слайди на аркуш
+     не посилаються. Усі шість завдань — олівцем, без комп'ютера.
+  ⚠️ Нове уроку 16: Flexbox — шість властивостей контейнера. Дані інші, ніж на слайдах.
+  ⚠️ Відповіді — у конспекті, розділ «Відповіді до роздатки».
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок.
+  ОБСЯГ         Рівно одна сторінка A4.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b > h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b > h2 .tag{float:right; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.35fr 1fr}
+.two.k46{grid-template-columns:1fr 1.35fr}
+.two.tree-l{grid-template-columns:52mm 1fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:9.6pt; font-weight:700; padding-bottom:.4mm; flex-shrink:0}
+
+pre.c{font-family:var(--fm); font-size:10pt; line-height:1.32; border:var(--line);
+  padding:1.6mm 2.2mm; white-space:pre-wrap; font-weight:700}
+.tree{font-family:var(--fm); font-size:9.8pt; line-height:1.44; border:var(--line);
+  padding:1.6mm 2mm; font-weight:700}
+
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.5mm 1.8mm; font-size:10.2pt; text-align:left}
+table.t th{font-size:9.3pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:22mm; text-align:center}
+table.t td.m{font-family:var(--fm); font-weight:700}
+
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.4mm 0; font-size:10.6pt; vertical-align:bottom}
+table.voc td.en{width:52%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+/* ─── додано для уроку 4 ─── */
+.bx{display:inline-block; width:3.6mm; height:3.6mm; border:1.5px solid #000; vertical-align:-.5mm; margin-right:1.2mm}
+table.t td.c{text-align:center; width:15mm}
+table.t td.tg,table.t th.tg{font-family:var(--fm); font-weight:700; text-align:center; padding:1.2mm .4mm; font-size:9.6pt}
+.opts{font-size:10.4pt; line-height:1.55}
+.opts span{display:inline-block; margin-right:3.5mm; white-space:nowrap}
+.wb{border:var(--line); min-height:16mm; padding:1.4mm 2mm}
+.wb .sch{border:var(--line); padding:1.4mm}
+.sch div{border:var(--thin); padding:1mm 2mm; margin-bottom:1.2mm; font-size:10.4pt}
+.cap{font-family:var(--fm); font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:.6px}
+/* ─── додано для уроків 6–7: заголовок у колонці блока .b.two
+   (.b > div > h2) отримує той самий вигляд, що й .b > h2 ─── */
+.b > div > h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+/* ─── додано для уроку 9: схема коробки, лише чорні рамки ─── */
+.bx1,.bx2,.bx3{position:relative}
+.bx1{border:2px dashed #000; padding:4.5mm 5mm 2.5mm}
+.bx2{border:5px solid #000; padding:4.5mm 5mm 2.5mm}
+.bx3{border:1.5px dotted #000; padding:4.5mm 5mm 2.5mm}
+.bx4{border:var(--thin); padding:2mm; text-align:center; font-weight:700}
+.bx1>span,.bx2>span,.bx3>span{position:absolute; top:.6mm; left:1.4mm; font-family:var(--fm); font-weight:700; font-size:9pt}
+/* ─── додано для уроку 11: інлайн-код не розривається ─── */
+code{white-space:nowrap}
+</style>
+<style>
+/* ─── додано для уроків 14–16: рамки під ескіз і малюнок ─── */
+.box{border:var(--line)}
+.cap{font-family:var(--fm); font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:.6px; margin-bottom:.8mm}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hd">
+    <div class="meta"><span>Front-end &#183; 8 клас &#183; Урок 16 / 27 &#183; 17 листопада</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Технологія Flexbox. Меню сайту</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Контейнер</p>
+        <p><code>display:&#160;flex</code> &#8212; пишемо <b>батькові</b>, діти стають у рядок</p>
+        <p><code>gap:&#160;20px</code> &#8212; відстань між дітьми</p>
+        <p><code>flex-wrap:&#160;wrap</code> &#8212; переносити</p>
+      </div>
+      <div>
+        <p class="rh">Уздовж осі</p>
+        <p><code>flex-direction</code>: row &#183; column &#183; row-reverse &#183; column-reverse</p>
+        <p><code>justify-content</code>: flex-start &#183; center &#183; flex-end &#183; space-between &#183; space-around &#183; space-evenly</p>
+      </div>
+      <div>
+        <p class="rh">Поперек осі</p>
+        <p><code>align-items</code>: stretch &#183; flex-start &#183; center &#183; flex-end &#183; baseline</p>
+        <p>У <code>column</code> осі міняються: <code>justify-content</code> &#8212; згори вниз</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b two">
+    <div>
+      <h2>1 &#183; Кому писати display: flex?</h2>
+      <pre class="c">&lt;div class=&quot;container&quot;&gt;
+  &lt;h1&gt;Кіно&lt;/h1&gt;
+  &lt;nav&gt;
+    &lt;a href=&quot;#films&quot;&gt;Фільми&lt;/a&gt;
+    &lt;a href=&quot;#prices&quot;&gt;Ціни&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/div&gt;</pre>
+      <div class="sl"><span>посилання в рядок &#8594;</span></div>
+      <div class="sl"><span>назва й меню по краях &#8594;</span></div>
+    </div>
+    <div>
+      <h2>2 &#183; Що робить властивість</h2>
+      <table class="t">
+        <tr><td class="m" style="width:34mm">flex-direction</td><td></td></tr>
+        <tr><td class="m">justify-content</td><td></td></tr>
+        <tr><td class="m">align-items</td><td></td></tr>
+        <tr><td class="m">gap</td><td></td></tr>
+        <tr><td class="m">flex-wrap</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>3 &#183; Намалюй три квадрати 1 2 3 у рамці<span class="tag">контейнер з display: flex</span></h2>
+    <div class="two">
+      <div><p class="cap">justify-content: center</p><div class="box" style="height:9mm"></div></div>
+      <div><p class="cap">justify-content: space-between</p><div class="box" style="height:9mm"></div></div>
+      <div><p class="cap">justify-content: flex-end</p><div class="box" style="height:9mm"></div></div>
+      <div><p class="cap">flex-direction: row-reverse</p><div class="box" style="height:9mm"></div></div>
+    </div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>4 &#183; Знайди помилку</h2>
+      <p class="q">Хотіли меню посередині:</p>
+      <pre class="c">nav { justify-content: center; }</pre>
+      <div class="ln s"></div>
+      <p class="q">Хотіли відстань 20px:</p>
+      <pre class="c">nav { display: flex; gap: 20; }</pre>
+      <div class="ln s"></div>
+    </div>
+    <div>
+      <h2>5 &#183; Допиши CSS</h2>
+      <p class="q">Назва ліворуч, меню праворуч, на одній висоті:</p>
+      <pre class="c">header .container {
+  display: ________;
+  justify-content: _____________;
+  align-items: ________;
+}</pre>
+      <p class="q">Перший екран: стовпчиком і посередині:</p>
+      <pre class="c">#hero .container {
+  display: flex;
+  flex-direction: ________;
+  justify-content: ________;
+  align-items: ________;
+}</pre>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>6 &#183; Своїми словами<span class="tag">&#9733;&#9733;&#9733;</span></h2>
+    <p class="q">Чим <code>justify-content</code> відрізняється від <code>align-items</code>? Що зміниться, коли додати <code>flex-direction:&#160;column</code>?</p>
+    <div class="ln"></div>
+  </div>
+
+  <div class="ft">
+    <span>Front-end &#183; 8 клас</span>
+    <span>Урок 16 &#183; 17.11.2026</span>
+  </div>
+</div>
+</body>
+</html>

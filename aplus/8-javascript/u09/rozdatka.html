@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · JavaScript · 8 клас · Урок 9</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          JavaScript I
+  Клас          8
+  Урок          9 / 35 · 16.11.2026 · понеділок
+  Тема          Масиви: [ ] · arr[i] · length · push · for по масиву
+  ────────────────────────────────────────────────────────────────
+  ⚠️ СХОВИЩЕ. У класі не роздається (практика за ноутбуками),
+     друкується на випадок тривоги. Жодне завдання не потребує
+     комп'ютера. Слайди на аркуш не посилаються, аркуш — на слайди теж.
+     Числа й код — інші, ніж на слайдах.
+  КЛЮЧ  1) 'яблуко' · 'слива' · 4 · 'вишня' · undefined
+        2) [5, 10, 15] · [1, 10, 15] · [1, 10] · [1, 10, 20] → «[1, 10, 20] 3»
+        3) 20 5   4) 3 (12, 11, 10)   5) m · 0 · < · >
+        6) р.3 i = 0 · р.4 p[i] · р.6 length → 200
+  Увесь код аркуша прогнано в node.
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок.
+  ОБСЯГ         Рівно одна сторінка A4. Перевірено вимірюванням.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b > h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b h2 .tag{float:right; margin-left:4mm; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.4fr 1fr}
+.two.k46{grid-template-columns:1fr 1.4fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7.2mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:10pt; font-weight:700; padding-bottom:.4mm}
+
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.6mm 1.8mm; font-size:10.5pt; text-align:left}
+table.t th{font-size:9.5pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:30mm; text-align:center}
+table.t td.m{font-family:var(--fm); font-weight:700}
+
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.5mm 0; font-size:11pt; vertical-align:bottom}
+table.voc td.en{width:48%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+pre.c{font-family:var(--fm); font-size:10pt; line-height:1.3; border:var(--line);
+  padding:1.6mm 2.2mm; white-space:pre-wrap; font-weight:700}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+.wb{border:var(--line); min-height:16mm; padding:1.4mm 2mm}
+.q code,.ref code{white-space:nowrap}
+table.t.tight td,table.t.tight th{padding:1.1mm 1.8mm}
+.wb .cap{font-family:var(--fm); font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:.6px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>JavaScript &#183; 8 клас &#183; Урок 9 / 35 &#183; 16 листопада</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Масиви: індекс, length, push і цикл for</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Створити й прочитати</p>
+        <p><code>const a = [10, 20, 30];</code></p>
+        <p>індекс з 0: <code>a[0]</code> &#8212; перший</p>
+        <p><code>a.length</code> &#8212; скільки; останній <code>a[a.length - 1]</code></p>
+      </div>
+      <div>
+        <p class="rh">Змінити</p>
+        <p><code>a[1] = 99;</code> &#8212; замінити</p>
+        <p><code>a.push(x)</code> &#8212; додати в кінець</p>
+        <p><code>a.pop()</code> &#8212; забрати останній</p>
+        <p>за межею &#8212; <code>undefined</code></p>
+      </div>
+      <div>
+        <p class="rh">Перебрати</p>
+        <p><code>for (let i = 0; i &lt; a.length; i++)</code></p>
+        <p><code>let sum = 0;</code> до циклу, <code>sum += a[i];</code> у циклі</p>
+        <p>середнє &#8212; <code>sum / a.length</code></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b two k46">
+    <div>
+      <h2>1 &#183; Що поверне?</h2>
+      <pre class="c">const fruits = ['яблуко', 'груша',
+                'слива', 'вишня'];</pre>
+    </div>
+    <div>
+      <table class="t tight">
+        <tr><th>Вираз</th><th>Значення</th></tr>
+        <tr><td class="m">fruits[0]</td><td style="width:45%"></td></tr>
+        <tr><td class="m">fruits[2]</td><td></td></tr>
+        <tr><td class="m">fruits.length</td><td></td></tr>
+        <tr><td class="m">fruits[fruits.length - 1]</td><td></td></tr>
+        <tr><td class="m">fruits[4]</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b two k46">
+    <div>
+      <h2>2 &#183; Простеж масив</h2>
+      <pre class="c">const a = [5, 10];
+a.push(15);
+a[0] = 1;
+a.pop();
+a.push(20);
+console.log(a, a.length);</pre>
+    </div>
+    <div>
+      <table class="t tight">
+        <tr><th>Після рядка</th><th>Масив a</th></tr>
+        <tr><td class="m">a.push(15)</td><td style="width:55%"></td></tr>
+        <tr><td class="m">a[0] = 1</td><td></td></tr>
+        <tr><td class="m">a.pop()</td><td></td></tr>
+        <tr><td class="m">a.push(20)</td><td></td></tr>
+      </table>
+      <div class="sl"><span>console.log →</span></div>
+    </div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>3 &#183; Сума і середнє</h2>
+      <pre class="c">const t = [3, 7, 2, 8];
+let s = 0;
+for (let i = 0; i &lt; t.length; i++) {
+  s += t[i];
+}
+console.log(s, s / t.length);</pre>
+      <p class="q" style="margin-top:1.2mm">Що в консолі?</p>
+      <div class="ln s"></div>
+    </div>
+    <div>
+      <h2>4 &#183; Лічильник</h2>
+      <pre class="c">const m = [9, 12, 6, 11, 10];
+let n = 0;
+for (let i = 0; i &lt; m.length; i++) {
+  if (m[i] &gt;= 10) n++;
+}
+console.log(n);</pre>
+      <p class="q" style="margin-top:1.2mm">Що в консолі? Які числа порахувало?</p>
+      <div class="ln s"></div>
+    </div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>5 &#183; Допиши<span class="tag">4 пропуски</span></h2>
+      <p class="q">Найбільше число масиву <code>m</code> із завдання 4 &#8212; має вийти 12.</p>
+      <pre class="c" style="line-height:1.5">let max = ____[0];
+for (let i = ____; i ____ m.length; i++) {
+  if (m[i] ____ max) max = m[i];
+}
+console.log(max);</pre>
+    </div>
+    <div>
+      <h2>6 &#183; Знайди три помилки</h2>
+      <pre class="c">1  const p = [100, 200, 300];
+2  let total = 0;
+3  for (let i = 1; i &lt; p.length; i++) {
+4    total += p(i);
+5  }
+6  console.log(total / p.lenght);</pre>
+      <p class="q" style="margin-top:1.2mm">Номер рядка і як має бути:</p>
+      <div class="sl" style="height:6.2mm"><span>1)</span></div>
+      <div class="sl" style="height:6.2mm"><span>2)</span></div>
+      <div class="sl" style="height:6.2mm"><span>3)</span></div>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>JavaScript &#183; 8 клас</span>
+    <span>Урок 9 &#183; 16.11.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

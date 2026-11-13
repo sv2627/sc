@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · Front-end · 7 клас · Урок 10</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          Front-end
+  Клас          7
+  Урок          10 / 35 · 17.11.2026
+  Тема          Призначення CSS. Підключення таблиці стилів
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ТІЛЬКИ СХОВИЩЕ. Урок іде за ноутбуками, аркуш на уроці НЕ
+     роздається і слайди на нього не посилаються.
+  ⚠️ Зміст уроку 10 олівцем: правило, підключення, код кольору,
+     CSS за паспортом. Перенесено з A+ 6-frontend/u09 і доповнено
+     шістнадцятковим кодом. Дані інші, ніж на слайдах («Мій футбол»,
+     players.html, палітра #fefae0 · #283618 · #bc6c25).
+  ⚠️ Відповіді — у конспекті, розділ «Відповіді до роздатки».
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок.
+  ОБСЯГ         Рівно одна сторінка A4.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b h2 code{text-transform:none}
+.b h2 .tag{float:right; margin-left:4mm; text-transform:none; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.35fr 1fr}
+.two.k46{grid-template-columns:1fr 1.35fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:9.6pt; font-weight:700; padding-bottom:.4mm; flex-shrink:0}
+
+pre.c{font-family:var(--fm); font-size:10pt; line-height:1.32; border:var(--line);
+  padding:1.6mm 2.2mm; white-space:pre-wrap; font-weight:700}
+
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.5mm 1.8mm; font-size:10.2pt; text-align:left}
+table.t th{font-size:9.3pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:30mm; text-align:center}
+
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.4mm 0; font-size:10.6pt; vertical-align:bottom}
+table.voc td.en{width:44%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 7: рамка під код від руки (як в уроці 6) ─── */
+.box{border:var(--line); min-height:40mm}
+table.m{width:100%; border-collapse:collapse}
+table.m td{border:var(--thin); padding:1.2mm 1.8mm; font-size:10.4pt}
+table.m td.k{font-family:var(--fm); font-weight:700; width:24mm}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8: схема сторінки з номерами частин ─── */
+.sch{border:var(--line); padding:1.4mm}
+.sch div{border:var(--thin); padding:1mm 2mm; margin-bottom:1.2mm; font-size:10.4pt; display:flex; justify-content:space-between}
+.sch div:last-child{margin-bottom:0}
+.sch div div{margin:1mm 0 0 0}
+.sch .n{font-family:var(--fm); font-weight:800}
+.sch .hd2{display:block}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10: рядки «підпиши», рамка для CSS ─── */
+.sl.wide span{min-width:30mm}
+.wb{border:var(--line); min-height:16mm; padding:1.4mm 2mm}
+.wb .cap{font-family:var(--fm); font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:.6px}
+</style></head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>Front-end &#183; 7 клас &#183; Урок 10 / 35 &#183; 17 листопада</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Призначення CSS. Підключення таблиці стилів</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Підключення &#8212; у head кожної сторінки</p>
+        <p><code>&lt;link rel=&quot;stylesheet&quot;</code></p>
+        <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;href=&quot;style.css&quot;&gt;</code></p>
+      </div>
+      <div>
+        <p class="rh">Правило</p>
+        <p><code>h1 { color: navy; }</code></p>
+        <p>селектор { властивість: значення; }</p>
+        <p><code>color</code> &#8212; літери &#183; <code>background-color</code> &#8212; фон</p>
+      </div>
+      <div>
+        <p class="rh">Код кольору</p>
+        <p><code>#rrggbb</code> &#8212; червоний, зелений, синій</p>
+        <p><code>00</code> &#8212; нічого &#183; <code>ff</code> &#8212; найбільше</p>
+        <p>знаки <code>0&#8211;9</code> і <code>a&#8211;f</code></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b two">
+    <div>
+      <h2>1 &#183; Розбери правило<span class="tag">підпиши</span></h2>
+      <pre class="c">footer { background-color: #283618; }</pre>
+      <div class="sl wide"><span>селектор:</span></div>
+      <div class="sl wide"><span>властивість:</span></div>
+      <div class="sl wide"><span>значення:</span></div>
+    </div>
+    <div>
+      <h2>2 &#183; Допиши підключення<span class="tag">дві сторінки</span></h2>
+      <pre class="c">futbol/
+  &#9500;&#9472; index.html
+  &#9500;&#9472; players.html
+  &#9492;&#9472; style.css</pre>
+      <div class="sl"><span>&lt;link rel=&quot;stylesheet&quot; href=</span></div>
+      <p class="q" style="margin-top:1.4mm">У яких файлах має бути цей рядок? І в якому тезі?</p>
+      <div class="ln s"></div>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>3 &#183; Чому не працює?<span class="tag">причина і як виправити</span></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:4mm;align-items:start">
+      <div>
+        <pre class="c">h1 {
+  color: 283618;
+}</pre>
+        <div class="ln s"></div>
+      </div>
+      <div>
+        <pre class="c">&lt;p&gt; {
+  color: navy;
+}</pre>
+        <div class="ln s"></div>
+      </div>
+      <div>
+        <pre class="c" style="white-space:pre">h2 {
+  color: white
+  background-color: navy;
+}</pre>
+        <div class="ln s"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>4 &#183; Який це колір?<span class="tag">словами</span></h2>
+      <table class="t">
+        <tr><th style="width:30mm">Код</th><th>Колір</th></tr>
+        <tr><td><code>#ffffff</code></td><td></td></tr>
+        <tr><td><code>#000000</code></td><td></td></tr>
+        <tr><td><code>#ff0000</code></td><td></td></tr>
+        <tr><td><code>#ffff00</code></td><td></td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>5 &#183; Яким кольором?<span class="tag">&#9733;&#9733;&#9733;</span></h2>
+      <pre class="c">body { color: navy; }
+section { color: green; }
+h2 { color: orange; }
+
+&lt;h1&gt;Мій футбол&lt;/h1&gt;
+&lt;section&gt;
+  &lt;h2&gt;Команда&lt;/h2&gt;
+  &lt;p&gt;Нас одинадцять.&lt;/p&gt;
+&lt;/section&gt;</pre>
+      <div class="sl"><span>h1:</span></div>
+      <div class="sl"><span>h2:</span></div>
+      <div class="sl"><span>p:</span></div>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>6 &#183; Запиши CSS за паспортом<span class="tag">style.css</span></h2>
+    <p class="q">Паспорт: фон <code>#fefae0</code> &#183; текст <code>#283618</code> &#183; акцент <code>#bc6c25</code>. Уся сторінка &#8212; фон і текст. Заголовки <code>h2</code> &#8212; колір акценту.</p>
+    <div class="wb" style="min-height:27mm"><span class="cap">style.css</span></div>
+  </div>
+
+  <div class="ft">
+    <span>Front-end &#183; 7 клас</span>
+    <span>Урок 10 &#183; 17.11.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

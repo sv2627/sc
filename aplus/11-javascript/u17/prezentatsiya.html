@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Стилі та класи з JS · JavaScript · 11 клас · Урок 17</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (основа мови)
+  Клас          11 (16–17 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум)
+  Урок          17 з 35 · 16.11.2026 · ПОНЕДІЛОК
+  Тема          Стилі та класи з JS (тема 3.18 плану)
+  Тривалість    45 хв — згадуємо 5 · показ ~13 · практика ~27
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       33
+  ────────────────────────────────────────────────────────────────
+  СПИРАЄТЬСЯ НА урок 16: id / class · #id / .class · querySelector ·
+     querySelectorAll (огляд) · textContent / innerHTML · null ·
+     new Date(), getHours() · скрипт останнім у body; уроки 3, 8, 9:
+     if / else, ||, for, масив і індекс
+  НОВЕ          element.style.* (camelCase, одиниці 'px', читає лише
+                inline, скидання = '') · огляд родини (сл. 6): style,
+                classList.add / remove / toggle / contains / replace,
+                className · клас .dark у CSS (body.dark, .dark #title) ·
+                document.body · авто-тема за getHours() ·
+                toggle(клас, умова) · querySelectorAll + for по списку
+  ⚠️ САМОДОСТАТНІЙ: сторінка GameStore уроку 16 — блоки «Старт»
+     у kod.html ЦЬОГО уроку (живе посилання сл. 5). Свою папку
+     js-11/dom з уроку 16 можна взяти як опцію.
+  ⚠️ Події (click) — урок 19. toggle сьогодні — з Console і з умовою.
+  ⚠️ «Передбач» — лише після пояснення: style сл. 7–9 → сл. 10;
+     classList сл. 13–14 → сл. 15; година сл. 20–21 → сл. 22.
+  ⚠️ ДЗ — CodePen (HTML + CSS + JS), до 18.11 (наступний урок — середа).
+     Здача — Google Classroom 11 класу. Git не згадується.
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  ЗГАДУЄМО      сл. 2–3 (урок 16 і його ДЗ) — 5 хв
+  ЩО ВИЙДЕ      сл. 4 · СТАРТ сл. 5 · РОДИНА сл. 6
+  STYLE         сл. 7–10 → ПРАКТИКА 1 сл. 11 (6 хв)
+  CLASSLIST     сл. 12–16 → ПРАКТИКА 2 сл. 17 (7 хв)
+  НІЧНА ТЕМА    сл. 18–22 → ПРАКТИКА 3 сл. 23 (8 хв)
+  УСІ ЕЛЕМЕНТИ  сл. 24–26 → ПРАКТИКА 4 сл. 27 (6 хв)
+  ДОВІДНИК сл. 28 (на дошці з П2) · ТЕСТИ 29 · БАНК 30 · ЗДАЧА 31 ·
+  ДАЛІ 32 · ДЗ 33
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО РІЗАТИ ПЕРШИМ (показ, не практика): сл. 9 (inline — сказати
+     усно); сл. 16 (className — лишити в банку); сл. 15 і 22 (передбач —
+     по одній картці); сл. 26 (виправ — тим, хто закінчив).
+  ────────────────────────────────────────────────────────────────
+  План          office/plany/05-javascript-8.md, тема 3.18
+  Роздатка      rozdatka.html — 1 сторінка A4, сховище
+  Код           kod.html — старт (index.html, style.css, script.js), ДЗ,
+                фінальні style.css і script.js
+  Конспект      2026-27-teacher/aplus/11-javascript/u17/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:96px}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6 ─── */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.tree{font-family:var(--f-mono);font-size:16px;line-height:1.6;white-space:pre;color:var(--ink)}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8 ─── */
+.dp-out.con{font-family:var(--f-mono);font-size:16px;line-height:1.55;white-space:pre-wrap;padding:10px 19px}
+.dp-out.con b{color:var(--faint);font-family:var(--f-body);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+.three .mono{font-size:15.5px;line-height:1.55;margin-bottom:6px}
+table.ops td.c{text-align:center;font-family:var(--f-mono)}
+.ic{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 12 ─── інлайн-код не розривається між рядками */
+.ic{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 16 ─── */
+/* «вікно браузера» — як виглядає сторінка */
+.br{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);background:#fff;
+    box-shadow:0 2px 10px rgba(89,20,41,.07)}
+.br-body{padding:14px 20px;font-family:Arial,Helvetica,sans-serif;color:#222}
+.br-body .bh1{font-size:26px;font-weight:700;color:#591429;margin-bottom:6px}
+.br-body p{font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.45;margin:5px 0;color:#222}
+.br-body p.g{font-size:19px}
+.br-body p.s{background:#ffe9a8;display:inline-block;padding:0 4px}
+.br-body p.n{color:#555;font-style:italic}
+.br-body .chg{outline:2px dashed #0253b3;outline-offset:2px}
+.dp-code.sm{font-size:14px;line-height:1.5;padding:10px 14px}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 17 ─── нічна сторінка і посилання */
+.br-body.dk{background:#1f1d2b;color:#ecebf3}
+.br-body.dk p{color:#ecebf3}
+.br-body.dk .bh1{color:#f4a6b3}
+.br-body.dk p.s{background:#5b4a12;color:#fff3c4}
+.br-body.dk p.n{color:#c9c6d8}
+.br-body .hit{font-weight:700;color:#0253b3}
+.br-body p.ch{border-left:4px solid #1d7a3a;padding-left:8px}
+a.lnk{color:var(--blue);font-family:var(--f-mono);font-size:.9em;border-bottom:1.5px solid var(--blue);text-decoration:none;word-break:break-all}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ── ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Стилі та класи з JS</h1>
+      <p class="title-sub">Сторінка сама вмикає нічну тему<br>
+        JavaScript · 11 клас · Урок 17 з 35 · 16 листопада</p>
+      <div class="chips">
+        <span class="chip">element.style</span>
+        <span class="chip">classList.add · remove</span>
+        <span class="chip">toggle · contains</span>
+        <span class="chip">.dark</span>
+        <span class="chip">getHours()</span>
+        <span class="chip">querySelectorAll + for</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── ЗГАДУЄМО: УРОК 16 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lb">Згадуємо · урок 16</span>
+      <h2>Що поверне кожен рядок?</h2>
+    </div></div>
+    <div class="dp" style="margin-bottom:12px">
+      <div class="dp-code" style="padding:10px 19px;font-size:15.5px"><span class="sk">&lt;h1</span> id=<span class="ss">"title"</span><span class="sk">&gt;</span>Магазин<span class="sk">&lt;/h1&gt;</span>  <span class="sk">&lt;p</span> class=<span class="ss">"game"</span><span class="sk">&gt;</span>Minecraft<span class="sk">&lt;/p&gt;</span>  <span class="sk">&lt;p</span> class=<span class="ss">"game sale"</span><span class="sk">&gt;</span>Terraria<span class="sk">&lt;/p&gt;</span></div>
+    </div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">document.querySelector('.game')
+  .textContent</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>'Minecraft'</b> — <span class="ic">querySelector</span> бере <b>перший</b> збіг</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">document
+  .querySelectorAll('.game')
+  .length</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>2</b> — <span class="ic">querySelectorAll</span> повертає <b>усі</b> збіги списком</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">document.querySelector('sale')</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>null</b> — без крапки це тег <span class="ic">&lt;sale&gt;</span>, а такого немає</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ЗГАДУЄМО: ДЗ УРОКУ 16 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏠</div><div>
+      <span class="label lb">Згадуємо · домашнє уроку 16</span>
+      <h2>Візитка: три рядки JS</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">CodePen · JS · що треба було дописати</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.6;padding:12px 16px">document.<span class="sf">querySelector</span>(<span class="ss">'#name'</span>).textContent = <span class="ss">'Олена Коваль'</span>;
+document.<span class="sf">querySelector</span>(<span class="ss">'.city'</span>).textContent = <span class="ss">'Місто: Київ'</span>;
+document.<span class="sf">querySelector</span>(<span class="ss">'#today'</span>).textContent =
+  <span class="ss">`Сьогодні ${day}.${month}.${year}`</span>;</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3><span class="ic">querySelector('city')</span></h3>
+          <p class="rv-hint">Що піде не так? Клацни</p><div class="rv-body"><p><span class="ic">null</span> → TypeError: без крапки шукає тег</p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3><span class="ic">'Сьогодні ${day}'</span></h3>
+          <p class="rv-hint">Що на сторінці? Клацни</p><div class="rv-body"><p>Буквально <b>${day}</b> — звичайні лапки замість зворотних <span class="ic">`</span></p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ЩО ВИЙДЕ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🎯</div><div>
+      <span class="label lm">Що вийде наприкінці</span>
+      <h2>Удень світла сторінка, увечері — нічна</h2>
+    </div></div>
+    <div class="two">
+      <div><p style="font-size:16px;margin-bottom:6px"><b>14:00</b> — <span class="ic">getHours()</span> дає 14</p><div class="br"><div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">index.html · день</span></div><div class="br-body"><div class="bh1">GameStore · ігри для всіх</div><p><b>Сьогодні 16.11.2026</b></p><p class="g hit">Minecraft — 649 грн</p><p class="g">Stardew Valley — 319 грн</p><p class="g s ch">Terraria — 199 грн</p><p class="n">Доброго дня! Ціни оновлено</p></div></div></div>
+      <div><p style="font-size:16px;margin-bottom:6px"><b>19:00</b> — <span class="ic">getHours()</span> дає 19, на <span class="ic">body</span> клас <span class="ic">dark</span></p><div class="br"><div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">index.html · вечір</span></div><div class="br-body dk"><div class="bh1">GameStore · ігри для всіх</div><p><b>Сьогодні 16.11.2026</b></p><p class="g">Minecraft — 649 грн</p><p class="g">Stardew Valley — 319 грн</p><p class="g s ch">Terraria — 199 грн</p><p class="n">Доброго вечора! 🌙 Нічна тема</p></div></div></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🎨</span>
+      <div>Вигляд описує CSS. JavaScript лише <b>вмикає й вимикає</b> класи — або змінює одну властивість через <span class="ic">style</span></div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ── СТАРТ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📁</div><div>
+      <span class="label lm">Старт</span>
+      <h2>Сторінка GameStore — три файли</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.1fr 1fr">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><span class="step-t">Папка <span class="ic">js-11/dom</span>: <span class="ic">index.html</span>, <span class="ic">style.css</span>, <span class="ic">script.js</span></span></div>
+        <div class="step"><span class="step-n">2</span><span class="step-t">Усі три — блоки «Старт» на сторінці, кнопка <b>Скопіювати</b>:<br>
+          <a class="lnk" href="https://sv2627.github.io/sc/aplus/11-javascript/u17/kod.html">https://sv2627.github.io/sc/aplus/11-javascript/u17/kod.html</a></span></div>
+        <div class="step"><span class="step-n">3</span><span class="step-t">Є своя папка <span class="ic">js-11/dom</span> — можна працювати в ній</span></div>
+        <div class="step"><span class="step-n">4</span><span class="step-t">Відкрий <span class="ic">index.html</span> у Chrome, <b>F12</b> → Console</span></div>
+      </div>
+      <div><p style="font-size:16px;margin-bottom:6px">Так має виглядати старт</p><div class="br"><div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">index.html · старт</span></div><div class="br-body"><div class="bh1">GameStore · ігри для всіх</div><p><b>Сьогодні 16.11.2026</b></p><p class="g">Minecraft — <b>649 грн</b></p><p class="g">Stardew Valley — 319 грн</p><p class="g s">Terraria — 199 грн</p><p class="n">Доброго дня! Ціни оновлено</p></div></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── УСЯ РОДИНА ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🧰</div><div>
+      <span class="label lb">Уся родина</span>
+      <h2>Змінити вигляд з JS — ось усі способи</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Запис</th><th>Що робить</th></tr>
+      <tr><td><span class="ic">el.style.color = 'red'</span></td><td>одна CSS-властивість — прямо на елементі</td></tr>
+      <tr><td><span class="ic">el.classList.add('dark')</span></td><td><b>додати</b> клас</td></tr>
+      <tr><td><span class="ic">el.classList.remove('dark')</span></td><td><b>прибрати</b> клас</td></tr>
+      <tr><td><span class="ic">el.classList.toggle('dark')</span></td><td>немає — додати, є — прибрати</td></tr>
+      <tr><td><span class="ic">el.classList.contains('dark')</span></td><td>чи є клас: <span class="ic">true</span> / <span class="ic">false</span></td></tr>
+      <tr><td><span class="ic">el.classList.replace('a', 'b')</span></td><td>замінити один клас іншим</td></tr>
+      <tr><td><span class="ic">el.className</span></td><td>усі класи одним рядком: <span class="ic">'game sale'</span></td></tr>
+    </table>
+    <div class="hbox hm mt"><span class="ic">el</span> — будь-який знайдений елемент: <span class="ic">const el = document.querySelector('#title');</span></div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ELEMENT.STYLE ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🖌️</div><div>
+      <span class="label lm">element.style</span>
+      <h2>Одна властивість CSS — з JavaScript</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> title = document.<span class="sf">querySelector</span>(<span class="ss">'#title'</span>);
+title.style.color = <span class="ss">'#0253b3'</span>;
+title.style.background = <span class="ss">'#fff3c4'</span>;
+title.style.padding = <span class="ss">'8px 12px'</span>;
+
+<span class="cm">// те саме, що в Elements:</span>
+<span class="cm">// &lt;h1 id="title" style="color: #0253b3; …"&gt;</span></div>
+</div>
+      <div>
+        <div class="hbox hm">Після <span class="ic">.style.</span> — назва властивості CSS, після <span class="ic">=</span> — значення <b>рядком</b> у лапках</div>
+        <div class="hbox hp">JS дописує атрибут <span class="ic">style</span> в елемент — видно в <b>F12 → Elements</b></div>
+        <div class="hbox ho">Атрибут <span class="ic">style</span> сильніший за правила зі <span class="ic">style.css</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── CAMELCASE ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🐫</div><div>
+      <span class="label lb">Назви з дефісом</span>
+      <h2>У JS дефіса немає: <span class="ic">font-size</span> → <span class="ic">fontSize</span></h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1fr">
+      <table class="ops">
+        <tr><th>CSS</th><th>JavaScript</th></tr>
+        <tr><td class="o" style="width:auto">color</td><td><span class="ic">style.color</span></td></tr>
+        <tr><td class="o" style="width:auto">font-size</td><td><span class="ic">style.fontSize</span></td></tr>
+        <tr><td class="o" style="width:auto">background-color</td><td><span class="ic">style.backgroundColor</span></td></tr>
+        <tr><td class="o" style="width:auto">border-radius</td><td><span class="ic">style.borderRadius</span></td></tr>
+        <tr><td class="o" style="width:auto">text-decoration</td><td><span class="ic">style.textDecoration</span></td></tr>
+      </table>
+      <div>
+        <div class="hbox hm">Дефіс прибрати, наступну літеру — <b>великою</b>. Це camelCase — «верблюжий» запис</div>
+        <div class="hbox hr"><span class="ic">style.font-size</span> JavaScript читає як <b>мінус</b>: <span class="ic">style.font - size</span> → помилка</div>
+        <div class="hbox ho">Розміри — з одиницями: <span class="ic">'24px'</span>, а не <span class="ic">24</span>. З числа: <span class="ic">`${size}px`</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ЩО БАЧИТЬ STYLE ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔬</div><div>
+      <span class="label lr">Тонкощі style</span>
+      <h2><span class="ic">style</span> бачить лише те, що на самому елементі</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">Console · у style.css: #title { color: #591429; }</span></div>
+<div class="dp-code" style="font-size:15.5px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> t = document.<span class="sf">querySelector</span>(<span class="ss">'#title'</span>);
+t.style.color          <span class="cm">// ''  — колір у style.css, не на елементі</span>
+t.style.color = <span class="ss">'red'</span>;
+t.style.color          <span class="cm">// 'red'</span>
+t.style.color = <span class="ss">''</span>;    <span class="cm">// прибрали — знову бордовий зі style.css</span>
+t.style.fontSize = <span class="sn">30</span>;  <span class="cm">// без 'px' — браузер мовчки ігнорує</span></div>
+</div>
+      <div>
+        <div class="hbox hm">Порожній рядок <span class="ic">''</span> — не помилка: просто на елементі цієї властивості немає</div>
+        <div class="hbox hp">Скинути — присвоїти <span class="ic">''</span>. Повертається те, що каже CSS</div>
+        <div class="hbox hr">Неправильне значення — <b>без червоного</b>: нічого не змінилось. Дивись у Elements</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПЕРЕДБАЧ: STYLE ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що станеться із заголовком?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">t.style.fontSize = '40px';</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>Більшає</b> до 40 px</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">t.style.background-color
+  = 'yellow';</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>Червоний рядок</b>: дефіс — це мінус. Треба <span class="ic">backgroundColor</span></p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const size = 12;
+t.style.fontSize = size * 3;</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>Нічого</b> — число 36 без одиниць. Треба <span class="ic">`${size * 3}px`</span></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">element.style</span><span class="tmr">6 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — у кінці script.js</span>
+        <div class="mono">const title =
+  document.querySelector('#title');
+title.style.color = '#0253b3';</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Заголовку — свій колір і <span class="ic">padding</span>. Онови сторінку (F5)</li>
+          <li>Грі зі знижкою <span class="ic">.sale</span> — <span class="ic">borderLeft = '6px solid green'</span></li>
+          <li>Примітці <span class="ic">.note</span> — <span class="ic">fontSize</span> 14 px</li>
+          <li>У Console: <span class="ic">title.style.background</span> — що повертає і чому?</li>
+          <li>Напиши <span class="ic">style.font-size</span> — прочитай помилку і виправ на camelCase</li>
+          <li>⭐⭐ Розмір заголовка з числа: <span class="ic">const size = 32;</span> і шаблонний рядок <span class="ic">`${size}px`</span></li>
+          <li>⭐⭐⭐ Перша гра закреслена й сіра: <span class="ic">textDecoration</span> і <span class="ic">color</span>. Потім скинь обидві через <span class="ic">''</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ЧОМУ КЛАСИ ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">⚖️</div><div>
+      <span class="label lm">style чи клас</span>
+      <h2>Багато властивостей — краще один клас</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">п'ять рядків style — і так для кожного</span>
+        <div class="mono">g.style.fontWeight = 'bold';
+g.style.color = '#0253b3';
+g.style.borderLeft = '4px solid #0253b3';
+g.style.paddingLeft = '8px';
+g.style.background = '#e2e7f6';</div></div>
+      <div class="right"><span class="lbl">опис у CSS, у JS — одне слово</span>
+        <div class="mono">/* style.css */
+.hit { font-weight: bold; color: #0253b3;
+       border-left: 4px solid #0253b3;
+       padding-left: 8px; background: #e2e7f6; }
+
+// script.js
+g.classList.add('hit');</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><b>Вигляд</b> — у CSS, <b>коли вмикати</b> — у JS. Кожен файл робить своє</div>
+      <div class="hbox hp"><span class="ic">style</span> лишаємо для того, що <b>обчислюється</b>: розмір, відсоток, колір з числа</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ADD / REMOVE ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏷️</div><div>
+      <span class="label lm">classList.add · remove</span>
+      <h2>Додати клас — прибрати клас</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> first = document.<span class="sf">querySelector</span>(<span class="ss">'.game'</span>);
+first.classList.<span class="sf">add</span>(<span class="ss">'hit'</span>);
+<span class="cm">// &lt;p class="game hit"&gt;Minecraft…</span>
+
+<span class="sk">const</span> terra = document.<span class="sf">querySelector</span>(<span class="ss">'.sale'</span>);
+terra.classList.<span class="sf">remove</span>(<span class="ss">'sale'</span>);
+<span class="cm">// &lt;p class="game"&gt;Terraria… — жовтого тла немає</span></div>
+</div>
+      <div>
+        <div class="hbox hm">Назва класу — <b>без крапки</b>: <span class="ic">add('hit')</span>, не <span class="ic">add('.hit')</span>. Крапка — лише в адресі</div>
+        <div class="hbox hp">Решта класів <b>лишається</b>: <span class="ic">game</span> нікуди не дівся</div>
+        <div class="hbox ho">Додати двічі — клас буде один. Прибрати неіснуючий — не помилка</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── TOGGLE / CONTAINS ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔀</div><div>
+      <span class="label lm">classList.toggle · contains</span>
+      <h2>Перемикач і перевірка</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">Console · виконуй по рядку</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> g = document.<span class="sf">querySelector</span>(<span class="ss">'.game'</span>);
+g.classList.<span class="sf">toggle</span>(<span class="ss">'hit'</span>);    <span class="cm">// true  — додав</span>
+g.classList.<span class="sf">toggle</span>(<span class="ss">'hit'</span>);    <span class="cm">// false — прибрав</span>
+g.classList.<span class="sf">contains</span>(<span class="ss">'game'</span>);  <span class="cm">// true</span>
+g.classList.<span class="sf">contains</span>(<span class="ss">'hit'</span>);   <span class="cm">// false</span>
+g.classList.<span class="sf">replace</span>(<span class="ss">'game'</span>, <span class="ss">'old'</span>);</div>
+</div>
+      <div>
+        <div class="hbox hm"><span class="ic">toggle</span> — як вимикач світла: кожен виклик міняє стан. Повертає, чи клас <b>тепер є</b></div>
+        <div class="hbox hp"><span class="ic">contains</span> — лише питає, нічого не змінює. Зручно в <span class="ic">if</span></div>
+        <div class="hbox ho">Кнопка «Тема» з <span class="ic">toggle</span> — на уроці 19, коли буде подія click</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ПЕРЕДБАЧ: CLASSLIST ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Які класи наприкінці?</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1.1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">&lt;p class="game sale"&gt;</span></div>
+<div class="dp-code" style="font-size:17px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> p = document.<span class="sf">querySelector</span>(<span class="ss">'.sale'</span>);
+p.classList.<span class="sf">add</span>(<span class="ss">'hit'</span>);
+p.classList.<span class="sf">toggle</span>(<span class="ss">'sale'</span>);
+p.classList.<span class="sf">toggle</span>(<span class="ss">'new'</span>);
+p.classList.<span class="sf">remove</span>(<span class="ss">'game'</span>);
+console.<span class="sf">log</span>(p.className);</div>
+</div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Що в консолі?</h3>
+        <p class="rv-hint">Запиши класи після кожного рядка, потім клацни</p>
+        <div class="rv-body">
+          <p class="mono">game sale hit   ← add('hit')
+game hit        ← toggle('sale') прибрав
+game hit new    ← toggle('new') додав
+hit new         ← remove('game')</p>
+          <p class="mt">Виведе <b>'hit new'</b></p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── CLASSNAME ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">⚠️</div><div>
+      <span class="label lr">className</span>
+      <h2><span class="ic">className =</span> стирає всі класи</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">className — замінює весь рядок</span>
+        <div class="mono">// &lt;p class="game sale"&gt;
+p.className = 'hit';
+// &lt;p class="hit"&gt;
+// game і sale зникли:
+// шрифт і жовте тло — теж</div></div>
+      <div class="right"><span class="lbl">classList — працює з одним класом</span>
+        <div class="mono">// &lt;p class="game sale"&gt;
+p.classList.add('hit');
+// &lt;p class="game sale hit"&gt;
+// решта на місці</div></div>
+    </div>
+    <div class="hbox hm mt"><span class="ic">className</span> — щоб <b>прочитати</b> всі класи рядком. Змінювати — через <span class="ic">classList</span></div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">classList</span><span class="tmr">7 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — CSS і JS</span>
+        <div class="mono">/* style.css */
+.hit { font-weight: bold;
+       color: #0253b3; }
+
+// script.js
+document.querySelector('.game')
+  .classList.add('hit');</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Правило <span class="ic">.hit</span> у <span class="ic">style.css</span> і клас <span class="ic">hit</span> першій грі зі скрипта</li>
+          <li>У Terraria прибери <span class="ic">sale</span> — жовте тло зникло?</li>
+          <li>У Console кілька разів <span class="ic">toggle('hit')</span> — що повертає щоразу?</li>
+          <li><span class="ic">console.log</span> з <span class="ic">contains('game')</span> і <span class="ic">contains('hit')</span></li>
+          <li>Напиши <span class="ic">add('.hit')</span> з крапкою — чому стиль не застосувався? Подивись у Elements</li>
+          <li>⭐⭐ <span class="ic">.old { text-decoration: line-through; }</span> і <span class="ic">replace('sale', 'old')</span> — знижка скінчилась</li>
+          <li>⭐⭐⭐ <span class="ic">if (g.classList.contains('hit'))</span> — тоді в <span class="ic">.note</span> «Є хіт продажів», інакше «Хітів немає»</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── .DARK У CSS ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🌙</div><div>
+      <span class="label lb">Нічна тема · CSS</span>
+      <h2>Клас <span class="ic">.dark</span> на <span class="ic">body</span> — і вся сторінка темна</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">style.css · у кінець файлу</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px"><span class="sk">.dark</span> {
+  background: <span class="ss">#1f1d2b</span>;
+  color: <span class="ss">#ecebf3</span>;
+}
+<span class="sk">.dark #title</span> { color: <span class="ss">#f4a6b3</span>; }
+<span class="sk">.dark .sale</span>  { background: <span class="ss">#5b4a12</span>; }
+<span class="sk">.dark .note</span>  { color: <span class="ss">#c9c6d8</span>; }</div>
+</div>
+      <div>
+        <div class="hbox hm"><span class="ic">.dark #title</span> — через пробіл: «<span class="ic">#title</span>, що <b>всередині</b> елемента з класом dark»</div>
+        <div class="hbox hp">Один клас на <span class="ic">body</span> перефарбовує всіх нащадків — у JS лише один рядок</div>
+        <div class="hbox ho">Перевір руками: F12 → Elements → допиши <span class="ic">class="dark"</span> у <span class="ic">&lt;body&gt;</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── DOCUMENT.BODY ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔌</div><div>
+      <span class="label lb">Нічна тема · JS</span>
+      <h2><span class="ic">document.body</span> — шукати не треба</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">Console</span></div>
+<div class="dp-code" style="font-size:17px;line-height:1.75;padding:14px 18px">document.body.classList.<span class="sf">add</span>(<span class="ss">'dark'</span>);      <span class="cm">// ніч</span>
+document.body.classList.<span class="sf">remove</span>(<span class="ss">'dark'</span>);   <span class="cm">// день</span>
+document.body.classList.<span class="sf">toggle</span>(<span class="ss">'dark'</span>);   <span class="cm">// навпаки</span>
+
+<span class="cm">// те саме довше:</span>
+document.<span class="sf">querySelector</span>(<span class="ss">'body'</span>).classList.<span class="sf">add</span>(<span class="ss">'dark'</span>);</div>
+</div>
+      <div>
+        <div class="hbox hm"><span class="ic">document.body</span> — готове посилання на <span class="ic">&lt;body&gt;</span>, як <span class="ic">document.title</span> — на назву вкладки</div>
+        <div class="hbox hp">Клас — на <span class="ic">body</span>, а не на кожен абзац: правила <span class="ic">.dark …</span> зроблять решту</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ── ЗА ГОДИНОЮ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🕖</div><div>
+      <span class="label lm">Умова + дата</span>
+      <h2>Після 18:00 — нічна тема сама</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js · у кінець</span></div>
+<div class="dp-code" style="font-size:16.5px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> hour = <span class="sk">new</span> <span class="sf">Date</span>().<span class="sf">getHours</span>();
+
+<span class="sk">if</span> (hour <span class="st">&gt;=</span> <span class="sn">18</span>) {
+  document.body.classList.<span class="sf">add</span>(<span class="ss">'dark'</span>);
+}</div>
+</div>
+      <div>
+        <div class="hbox hm"><span class="ic">getHours()</span> — година від <b>0 до 23</b> з годинника компʼютера</div>
+        <div class="hbox hp"><span class="ic">&gt;= 18</span> — з 18:00 включно. 17:59 — це ще 17</div>
+        <div class="hbox hr">Перевірити вдень: тимчасово <span class="ic">const hour = 20;</span> — потім повернути <span class="ic">getHours()</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ── TOGGLE З УМОВОЮ ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🌗</div><div>
+      <span class="label lm">toggle(клас, умова)</span>
+      <h2>Ніч — і ввечері, і вночі: один рядок</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> hour = <span class="sk">new</span> <span class="sf">Date</span>().<span class="sf">getHours</span>();
+<span class="sk">const</span> night = hour <span class="st">&gt;=</span> <span class="sn">18</span> <span class="st">||</span> hour <span class="st">&lt;</span> <span class="sn">7</span>;   <span class="cm">// true / false</span>
+
+document.body.classList.<span class="sf">toggle</span>(<span class="ss">'dark'</span>, night);
+
+<span class="cm">// те саме через if / else:</span>
+<span class="cm">// if (night) add('dark') else remove('dark')</span></div>
+</div>
+      <div>
+        <div class="hbox hm">Друга умова — <b>вночі теж</b>: 0–6 година. <span class="ic">||</span> — «хоч одна правдива» (урок 3)</div>
+        <div class="hbox hp"><span class="ic">toggle('dark', true)</span> — <b>додати</b>, <span class="ic">toggle('dark', false)</span> — <b>прибрати</b>. Перемикання за умовою</div>
+        <div class="hbox ho">Умову зручно тримати у змінній з назвою: <span class="ic">night</span> читається, як слово</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ── ПЕРЕДБАЧ: ГОДИНА ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2><span class="ic">night = hour &gt;= 18 || hour &lt; 7</span> — темна чи світла?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')"><h3>hour = 18</h3>
+        <p class="rv-hint">Спершу вголос, потім клацни</p><div class="rv-body"><p><b>Темна</b> — <span class="ic">18 &gt;= 18</span> правдиве</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3>hour = 7</h3>
+        <p class="rv-hint">Спершу вголос, потім клацни</p><div class="rv-body"><p><b>Світла</b> — <span class="ic">7 &lt; 7</span> хибне, <span class="ic">7 &gt;= 18</span> теж</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')"><h3>hour = 0</h3>
+        <p class="rv-hint">Спершу вголос, потім клацни</p><div class="rv-body"><p><b>Темна</b> — опівночі <span class="ic">getHours()</span> дає <b>0</b>, а <span class="ic">0 &lt; 7</span></p></div></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🧪</span><div>А якби <span class="ic">&amp;&amp;</span> замість <span class="ic">||</span>? Година не буває водночас ≥ 18 і &lt; 7 — темної теми <b>не було б ніколи</b></div></div>
+  </div></section>
+
+  <!-- ══════════ 23 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">Авто-тема за годиною</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — після 18:00</span>
+        <div class="mono">const hour =
+  new Date().getHours();
+if (hour &gt;= 18) {
+  document.body
+    .classList.add('dark');
+}</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Правило <span class="ic">.dark</span> у кінець <span class="ic">style.css</span>: тло, колір тексту</li>
+          <li>Ще <span class="ic">.dark #title</span> і <span class="ic">.dark .sale</span> — щоб на темному читалось</li>
+          <li>Скрипт: після 18:00 — клас <span class="ic">dark</span> на <span class="ic">body</span></li>
+          <li>Перевір: тимчасово <span class="ic">hour = 20</span> — темно, <span class="ic">hour = 10</span> — світло. Поверни <span class="ic">getHours()</span></li>
+          <li>Привітання <span class="ic">.note</span> уроку 16: увечері допиши « 🌙 Нічна тема» через <span class="ic">+=</span></li>
+          <li>⭐⭐ Вночі теж: <span class="ic">hour &gt;= 18 || hour &lt; 7</span> і <span class="ic">toggle('dark', night)</span></li>
+          <li>⭐⭐⭐ Перевір усі 24 години одним циклом <span class="ic">for</span>: «0 — ніч», «1 — ніч» … у Console</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ── УСІ ЕЛЕМЕНТИ ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔁</div><div>
+      <span class="label lb">querySelectorAll + for</span>
+      <h2>Змінити <b>усі</b> ігри — цикл по списку</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> games = document.<span class="sf">querySelectorAll</span>(<span class="ss">'.game'</span>);
+
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">0</span>; i <span class="st">&lt;</span> games.length; i<span class="st">++</span>) {
+  games[i].classList.<span class="sf">add</span>(<span class="ss">'card'</span>);
+}
+
+<span class="cm">// або коротше — for...of, як по масиву</span>
+<span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> games) {
+  g.style.padding = <span class="ss">'6px 10px'</span>;
+}</div>
+</div>
+      <div>
+        <div class="hbox hm"><span class="ic">querySelectorAll</span> — <b>список</b> елементів: <span class="ic">.length</span>, <span class="ic">[0]</span>, <span class="ic">[i]</span> — як у масиву з уроку 9</div>
+        <div class="hbox hr"><span class="ic">games.classList.add(…)</span> без циклу — <b>TypeError</b>: у списку немає <span class="ic">classList</span>, він є лише в кожного елемента</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 25 ── МАСИВ ЦІН ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏷️</div><div>
+      <span class="label lm">Умова в циклі</span>
+      <h2>Дешеві ігри — зеленою смугою</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js · у style.css: .cheap { border-left: 4px solid green; }</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> prices = [<span class="sn">649</span>, <span class="sn">319</span>, <span class="sn">199</span>];   <span class="cm">// у тому ж порядку, що ігри</span>
+<span class="sk">const</span> games = document.<span class="sf">querySelectorAll</span>(<span class="ss">'.game'</span>);
+
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">0</span>; i <span class="st">&lt;</span> games.length; i<span class="st">++</span>) {
+  <span class="sk">if</span> (prices[i] <span class="st">&lt;</span> <span class="sn">300</span>) {
+    games[i].classList.<span class="sf">add</span>(<span class="ss">'cheap'</span>);
+  }
+}</div>
+</div>
+      <div>
+        <div class="hbox hm">Той самий індекс <span class="ic">i</span> — та сама гра: <span class="ic">games[2]</span> — Terraria, <span class="ic">prices[2]</span> — 199</div>
+        <div class="hbox hp">Тут смугу отримає лише Terraria</div>
+        <div class="hbox ho">Урок 18: ціни й назви — в одному масиві, а сторінку <b>будує</b> JavaScript</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 26 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ — не запускай, знайди очима</span>
+      <h2>Нічна тема не вмикається</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> hour = <span class="sk">new</span> <span class="sf">Date</span>().<span class="sf">getHours</span>();
+<span class="sk">if</span> (hour <span class="st">&gt;=</span> <span class="sn">18</span> <span class="st">&amp;&amp;</span> hour <span class="st">&lt;</span> <span class="sn">7</span>) {
+  document.body.classList.<span class="sf">add</span>(<span class="ss">'.dark'</span>);
+}
+<span class="sk">const</span> games = document.<span class="sf">querySelectorAll</span>(<span class="ss">'.game'</span>);
+games.style.color = <span class="ss">'gray'</span>;</div>
+</div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+  <h3>Три біди</h3>
+  <p class="rv-hint">Знайди всі три, потім клацни</p>
+  <div class="rv-body"><p><b>1.</b> <span class="ic">&amp;&amp;</span> — умова не буває правдивою ніколи. Треба <span class="ic">||</span></p><p><b>2.</b> <span class="ic">'.dark'</span> — з крапкою: додасться клас «.dark», а правило <span class="ic">.dark</span> його не впізнає. Треба <span class="ic">'dark'</span></p><p><b>3.</b> <span class="ic">games.style</span> — у списку немає <span class="ic">style</span>: TypeError. Потрібен цикл і <span class="ic">games[i].style</span></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 27 ── ПРАКТИКА 4 ══════════ -->
+  <section class="slide" id="s26"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 4</span>
+        <span class="t">Усі ігри одним циклом</span><span class="tmr">6 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">const games =
+  document.querySelectorAll('.game');
+for (const g of games) {
+  g.classList.add('card');
+}</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Правило <span class="ic">.card</span> (рамка, <span class="ic">padding</span>, <span class="ic">border-radius</span>) — і клас усім іграм циклом</li>
+          <li>У <span class="ic">.note</span>: «Ігор у каталозі: 3» — через <span class="ic">games.length</span></li>
+          <li>Масив цін і клас <span class="ic">cheap</span> іграм, дешевшим за 300 грн</li>
+          <li>Спробуй <span class="ic">games.classList.add('card')</span> без циклу — прочитай помилку і прибери</li>
+          <li>⭐⭐ Лічильник дешевих у циклі → у <span class="ic">.note</span> «Дешевих: 1»</li>
+          <li>⭐⭐⭐ «Зебра»: кожній другій грі — інше тло через <span class="ic">i % 2 === 1</span> і <span class="ic">style.background</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 28 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s27"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Стилі та класи з JS</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>style — одна властивість</h4><pre>el.style.color = 'red';
+el.style.fontSize = '24px';
+el.style.color = '';  // скинути</pre></div>
+      <div class="rf-c"><h4>classList</h4><pre>el.classList.add('hit');
+el.classList.remove('hit');
+el.classList.toggle('hit');
+el.classList.contains('hit')</pre></div>
+      <div class="rf-c"><h4>ще</h4><pre>el.classList.replace('a','b');
+el.className  // 'game hit'
+toggle('dark', умова)</pre></div>
+      <div class="rf-c"><h4>CSS нічної теми</h4><pre>.dark { background: #1f1d2b;
+        color: #ecebf3; }
+.dark #title { … }</pre></div>
+      <div class="rf-c"><h4>за годиною</h4><pre>const hour =
+  new Date().getHours();
+if (hour &gt;= 18) document.body
+  .classList.add('dark');</pre></div>
+      <div class="rf-c"><h4>усім елементам</h4><pre>const all = document
+  .querySelectorAll('.game');
+for (const g of all) {
+  g.classList.add('card');
+}</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 29 ── ТЕСТИ ══════════ -->
+  <section class="slide" id="s28"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">✅</div><div>
+      <span class="label lm">Перевір себе</span>
+      <h2>Таблиця тестів</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Що робиш</th><th>Що має статися</th></tr>
+      <tr><td><span class="ic">hour = 20</span>, F5</td><td>темне тло, заголовок рожевий, текст читається</td></tr>
+      <tr><td><span class="ic">hour = 10</span>, F5</td><td>світла сторінка, як на старті</td></tr>
+      <tr><td>⭐⭐ <span class="ic">hour = 3</span></td><td>темна</td></tr>
+      <tr><td>перша гра</td><td>клас <span class="ic">hit</span> — видно в Elements і на сторінці</td></tr>
+      <tr><td>усі ігри</td><td>рамка <span class="ic">.card</span> у кожної, Terraria — зелена смуга</td></tr>
+      <tr><td>F12 → Console</td><td>жодного червоного рядка</td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 30 ── БАНК ══════════ -->
+  <section class="slide" id="s29"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:16px"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Ранок, день, вечір.</b> Три класи <span class="ic">morning</span>, <span class="ic">day</span>, <span class="ic">evening</span> на <span class="ic">body</span> через <span class="ic">if / else if</span></div>
+      <div class="bk"><b>Вихідні.</b> <span class="ic">getDay()</span> 0 або 6 — клас <span class="ic">weekend</span> на заголовок зі святковим кольором</div>
+      <div class="bk"><b>Розмір за довжиною.</b> Заголовок, довший за 20 символів, — <span class="ic">fontSize</span> менший. <span class="ic">textContent.length</span></div>
+      <div class="bk"><b>Вкладка вночі.</b> <span class="ic">document.title</span> — «🌙 GameStore», якщо темна тема</div>
+      <div class="bk"><b>Найдорожча.</b> Знайди найбільшу ціну в масиві й дай цій грі клас <span class="ic">hit</span></div>
+      <div class="bk"><b>Без класу.</b> Усі ігри без <span class="ic">sale</span> — сірим, через <span class="ic">!g.classList.contains('sale')</span></div>
+      <div class="bk"><b>Хвилини.</b> З 17:30 — уже ніч: <span class="ic">getMinutes()</span> і <span class="ic">&amp;&amp;</span> в умові</div>
+      <div class="bk"><b>Прогрес дня.</b> Смуга-<span class="ic">div</span>: ширина <span class="ic">`${hour / 24 * 100}%`</span> через <span class="ic">style.width</span></div>
+    </div>
+    <div class="hbox hm mt">Усі вісім — тільки тим, що вже було</div>
+  </div></section>
+
+  <!-- ══════════ 31 ── ЗБЕРЕГТИ ══════════ -->
+  <section class="slide" id="s30"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🗂️</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Підписати рівень і зберегти</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">dom/script.js</span></div>
+<div class="dp-code"><span class="cm">// Урок 17 · Стилі та класи з JS</span>
+<span class="cm">// Прізвище Імʼя · рівень: ⭐⭐</span>
+<span class="cm">// зроблено: style, hit, нічна тема, картки</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Коментар — <b>першим рядком</b> <span class="ic">script.js</span>, потім <b>Ctrl + S</b> в усіх трьох файлах</div>
+        <div class="hbox hr">Тимчасове <span class="ic">hour = 20</span> — повернути на <span class="ic">new Date().getHours()</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 32 ── ДАЛІ ══════════ -->
+  <section class="slide" id="s31"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🚀</div><div>
+      <span class="label lm">Далі</span>
+      <h2>Після уроку 17</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Сьогодні руками</h3><ul>
+        <li><span class="ic">style.*</span> і camelCase, <span class="ic">'px'</span></li>
+        <li><span class="ic">classList</span>: add, remove, toggle, contains</li>
+        <li>нічна тема за <span class="ic">getHours()</span></li>
+        <li><span class="ic">querySelectorAll</span> + цикл</li>
+      </ul></div>
+      <div class="card cp"><h3>Урок 18 · середа 18 листопада</h3><ul>
+        <li>масив обʼєктів GameStore</li>
+        <li>сторінку будує JavaScript: <span class="ic">innerHTML +=</span>, <span class="ic">createElement</span></li>
+        <li>картки товарів з ціною</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання</strong> — на наступному слайді.</div>
+  </div></section>
+
+  <!-- ══════════ 33 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s32"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання · 10 хвилин</span>
+      <h2>Нічна візитка</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">Три блоки «Домашнє» — у панелі <b>HTML</b>, <b>CSS</b> і <b>JS</b> на <strong>codepen.io</strong>:
+      <a class="lnk" href="https://sv2627.github.io/sc/aplus/11-javascript/u17/kod.html">https://sv2627.github.io/sc/aplus/11-javascript/u17/kod.html</a> ·
+      код JS — у <strong>Google Classroom · 11 клас</strong> до <strong>18 листопада</strong></div>
+    <div class="two" style="grid-template-columns:1fr 1.05fr;gap:16px">
+      <div class="steps" style="gap:8px">
+        <div class="step" style="padding:7px 13px"><span class="step-n">1</span><span class="step-t" style="font-size:15.5px">
+          <b>ДОПИШИ 1</b> — усередині <span class="ic">if (hour &gt;= 18)</span>: <span class="ic">document.body.classList.add('dark');</span></span></div>
+        <div class="step" style="padding:7px 13px"><span class="step-n">2</span><span class="step-t" style="font-size:15.5px">
+          <b>ДОПИШИ 2</b> — імені <span class="ic">#name</span> колір <span class="ic">'orange'</span> через <span class="ic">style.color</span>; місту <span class="ic">.city</span> — клас <span class="ic">big</span> через <span class="ic">classList.add</span></span></div>
+        <div class="step" style="padding:7px 13px"><span class="step-n">3</span><span class="step-t" style="font-size:15.5px">
+          <b>Перевір</b> — тимчасово <span class="ic">const hour = 20;</span> → темне тло; <span class="ic">10</span> → світле. Поверни <span class="ic">getHours()</span></span></div>
+      </div>
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">CodePen · JS · головне</span></div>
+<div class="dp-code" style="font-size:13.5px;line-height:1.45;padding:9px 13px"><span class="sk">const</span> hour = <span class="sk">new</span> <span class="sf">Date</span>().<span class="sf">getHours</span>();
+<span class="cm">// const hour = 20;  // перевірка</span>
+
+<span class="sk">if</span> (hour <span class="st">&gt;=</span> <span class="sn">18</span>) {
+  <span class="cm">// ДОПИШИ 1 — клас dark на body</span>
+}
+
+<span class="cm">// ДОПИШИ 2 — #name: style.color</span>
+<span class="cm">//            .city: classList.add('big')</span></div>
+</div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
+

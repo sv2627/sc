@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Масиви · JavaScript · 8 клас · Урок 9</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (перший рік мови)
+  Клас          8 (13–14 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · понеділок · 11:45 · Медіатека
+  Урок          9 з 35 · 16.11.2026
+  Тема          Масиви (тема 2.10 плану): [ ] · arr[i] · .length · .push() ·
+                перебір циклом for · «Кошик GameStore»: масив цін → сума
+  Тривалість    45 хв — згадуємо ~4 · створити/індекс ~5 + П1 8 ·
+                push і родина ~4 + П2 8 · for по масиву ~4 + П3 9 · здача, ДЗ ~3
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       22
+  ────────────────────────────────────────────────────────────────
+  СПИРАЄТЬСЯ НА уроки 1–8: let / const · prompt + Number · шаблонні
+     рядки · if · === · % · for, while, i++, накопичувач sum += i (урок 8)
+  ⚠️ ПОВНА РОДИНА (правило «всі види»): план 2.10 називає [ ], arr[i],
+     length, push, for. Огляд усієї родини — сл. 5 (pop, unshift, shift,
+     includes, indexOf, join, for...of) з англійськими словами; pop/shift/
+     unshift — сл. 10, includes/indexOf/join — сл. 11; for...of — сл. 14
+     і довідник сл. 19. Практика тримається на плані; решта — ⭐⭐/⭐⭐⭐.
+  ⚠️ САМОДОСТАТНІЙ: каркас index.html — блок «Старт» у kod.html ЦЬОГО
+     уроку (живе посилання на сл. 2), а не «як на уроці 1».
+  ⚠️ ЗДАЧА — прізвище й рівень коментарем першими рядками script.js
+     (Git у курсі не згадується до січня 2027).
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  ЗГАДУЄМО      сл. 3 — цикли й ДЗ уроку 8, reveal на тому ж слайді
+  НАВІЩО        сл. 4 · РОДИНА сл. 5 · ІНДЕКС сл. 6 · ЧИТАТИ сл. 7
+  ПЕРЕДБАЧ      сл. 8 → ПРАКТИКА 1 сл. 9 (8 хв)
+  PUSH          сл. 10 · INCLUDES/JOIN сл. 11 · ПЕРЕДБАЧ сл. 12 → П2 сл. 13 (8 хв)
+  FOR           сл. 14 · СУМА сл. 15 · ПЕРЕДБАЧ сл. 16 → П3 сл. 17 (9 хв)
+  ВИПРАВ        сл. 18 · ДОВІДНИК сл. 19 (на дошці з П2) · БАНК сл. 20
+  ЗДАЧА         сл. 21 · ДОМАШНЄ сл. 22 — kod.html → CodePen, код у
+                Google Classroom 8 класу до 23.11 (dz.html)
+  РІЗАТИ ПЕРШИМ сл. 12 (передбач — усно) · 11 (join/includes — сказати
+                на П2) · 16 (лише перша картка). Практику НЕ різати
+  ПЛАН Б        не встигли П3 — «Кошик» стає першими 10 хв уроку 10
+                (функції: суму кошика загорнути у function total)
+  ────────────────────────────────────────────────────────────────
+  Аркуш         rozdatka.html — 1 сторінка A4, для сховища
+  Код           kod.html — старт, ДЗ, код трьох практик із коментарями
+  Конспект      2026-27-teacher/aplus/8-javascript/u09/konspekt.md
+  Увесь код слайдів прогнано в node (prompt — заглушкою).
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand);white-space:nowrap}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:120px;white-space:nowrap}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── імітація діалогового вікна Chrome ─── */
+.dlg{border:2px solid var(--border);border-radius:12px;background:var(--surface);
+  overflow:hidden;box-shadow:0 4px 16px rgba(89,20,41,.10);max-width:460px;margin:0 auto}
+.dlg-bar{background:var(--surf2);border-bottom:1.5px solid var(--border);
+  padding:8px 14px;font-family:var(--f-mono);font-size:13px;color:var(--dim)}
+.dlg-body{padding:16px 18px;font-size:17.5px;color:var(--ink)}
+.dlg-in{margin-top:11px;border:1.5px solid var(--border);border-radius:7px;
+  padding:8px 11px;font-family:var(--f-mono);font-size:16px;color:var(--dim);background:var(--bg)}
+.dlg-btn{display:flex;gap:9px;justify-content:flex-end;padding:0 18px 15px}
+.dlg-btn span{border:1.5px solid var(--border);border-radius:8px;padding:7px 17px;font-size:15.5px}
+.dlg-btn span.ok{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8 ─── стовпчик reveal-карток, щільніший .solo,
+   вивід консолі під кодом */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+.dp-out.mono{font-family:var(--f-mono);white-space:pre-wrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 9 ─── інлайн-код не розривається, вивід консолі */
+.ic{white-space:nowrap}
+.dp-out.con{font-family:var(--f-mono);font-size:16px;line-height:1.55;white-space:pre-wrap;padding:10px 19px}
+.dp-out.con b{color:var(--faint);font-family:var(--f-body);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+table.ops td.c{text-align:center;font-family:var(--f-mono)}
+.three .mono{font-size:15.5px;line-height:1.55;margin-bottom:6px}
+a.lnk{color:var(--blue);font-family:var(--f-mono);font-size:.9em;border-bottom:1.5px solid var(--blue);text-decoration:none;word-break:break-all}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Масиви</h1>
+      <p class="title-sub">Один список замість ста змінних<br>
+        JavaScript · 8 клас · Урок 9 з 35 · 16 листопада</p>
+      <div class="chips">
+        <span class="chip">[ ]</span>
+        <span class="chip">arr[i]</span>
+        <span class="chip">.length</span>
+        <span class="chip">.push()</span>
+        <span class="chip">for по масиву</span>
+        <span class="chip">Кошик GameStore</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lm">Сьогодні</span>
+      <h2>Масив — і кошик GameStore</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Створити</b> масив, прочитати й змінити елемент за <b>індексом</b>. Практика 1</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><span class="ic">push</span> і вся родина: додати, забрати, знайти, склеїти. Практика 2</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t">Цикл <span class="ic">for</span> по масиву: <b>сума і середнє</b>. Практика 3 — «Кошик GameStore», рівні ⭐ / ⭐⭐ / ⭐⭐⭐</span></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hp">Нова папка <span class="ic">js-8/masyvy</span>: <span class="ic">index.html</span> + <span class="ic">script.js</span>.
+        Каркас <span class="ic">index.html</span> — блок «Старт» на сторінці<br>
+        <a class="lnk" href="https://sv2627.github.io/sc/aplus/8-javascript/u09/kod.html">https://sv2627.github.io/sc/aplus/8-javascript/u09/kod.html</a></div>
+      <div class="hbox hm">Результат — у <b>Console</b>: <span class="ic">F12</span> → вкладка Console</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ЗГАДУЄМО: ЦИКЛИ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔁</div><div>
+      <span class="label lb">Згадуємо · цикли і домашнє уроку 8</span>
+      <h2>Що покаже консоль?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">for (let i = 3; i &gt;= 1; i--) {
+  console.log(i);
+}
+console.log('Старт!');</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>3 2 1 Старт!</b> — <span class="ic">i--</span> рахує вниз, <span class="ic">'Старт!'</span> після <span class="ic">}</span> — один раз</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">let money = 10;
+let days = 0;
+while (money &lt; 1000) {
+  money = money * 2;
+  days++;
+}</div>
+        <p class="rv-hint">Скільки днів і грошей?</p>
+        <div class="rv-body"><p><b>Днів: 7, грошей: 1280</b> — 10, 20, 40 … 640, 1280: на 1280 умова вже <span class="ic">false</span></p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">let s = 0;
+for (let i = 1; i &lt;= 4; i++) {
+  s += i;
+}
+console.log(s);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>10</b> — 1 + 2 + 3 + 4. Накопичувач <span class="ic">s</span> — <b>до</b> циклу</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── НАВІЩО ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">📦</div><div>
+      <span class="label lm">Нове · масив</span>
+      <h2>Сто цін — сто змінних?</h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">без масиву — змінна на кожну ціну</span>
+        <div class="mono">const price1 = 699;
+const price2 = 199;
+const price3 = 449;
+const price4 = 319;
+const sum = price1 + price2
+          + price3 + price4;
+// а якщо ігор 100?</div></div>
+      <div class="right"><span class="lbl">з масивом — одне імʼя на всі</span>
+        <div class="mono">const prices = [699, 199, 449, 319];
+
+let sum = 0;
+for (let i = 0; i &lt; prices.length; i++) {
+  sum += prices[i];
+}
+// хоч 4 ціни, хоч 100</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm"><b>Масив</b> (array) — впорядкований список значень під <b>одним</b> імʼям. Квадратні дужки <span class="ic">[ ]</span>, між значеннями — коми</div>
+      <div class="hbox hp">У Python це <b>список</b>: <span class="ic">prices = [699, 199]</span> — запис той самий</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ── УСЯ РОДИНА ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🗂️</div><div>
+      <span class="label lb">Уся родина — за один урок</span>
+      <h2>Що вміє масив</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Що</th><th>Як пишеться</th><th>Приклад</th><th>Слово</th></tr>
+      <tr><td>створити</td><td class="o">[ ]</td><td><span class="ic">const prices = [699, 199];</span></td><td class="r">array — масив</td></tr>
+      <tr><td>прочитати · змінити</td><td class="o">arr[i]</td><td><span class="ic">prices[0]</span> · <span class="ic">prices[1] = 249</span></td><td class="r">index — номер</td></tr>
+      <tr><td>скільки елементів</td><td class="o">.length</td><td><span class="ic">prices.length</span> → 2</td><td class="r">length — довжина</td></tr>
+      <tr><td>додати · забрати</td><td class="o" style="width:auto">push · pop<br>unshift · shift</td><td><span class="ic">prices.push(449)</span> — у кінець</td><td class="r">push — штовхнути</td></tr>
+      <tr><td>знайти</td><td class="o" style="width:auto">includes · indexOf</td><td><span class="ic">prices.includes(199)</span> → true</td><td class="r">include — містити</td></tr>
+      <tr><td>склеїти в рядок</td><td class="o">join</td><td><span class="ic">prices.join(', ')</span></td><td class="r">join — зʼєднати</td></tr>
+      <tr><td>перебрати</td><td class="o" style="width:auto">for · for...of</td><td><span class="ic">for (let i = 0; i &lt; prices.length; i++)</span></td><td class="r">element — елемент</td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 6 ── ІНДЕКС ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🔢</div><div>
+      <span class="label lm">Як це влаштовано</span>
+      <h2>Кожне місце має номер — індекс. Від нуля</h2>
+    </div></div>
+    <div class="dp" style="margin-bottom:8px">
+      <div class="dp-code" style="padding:10px 19px"><span class="sk">const</span> games = [<span class="ss">'Minecraft'</span>, <span class="ss">'Terraria'</span>, <span class="ss">'Celeste'</span>, <span class="ss">'Portal'</span>];</div>
+    </div>
+    <svg class="diagram" viewBox="0 0 940 170" role="img"
+         aria-label="Масив із чотирьох назв ігор: індекси від 0 до 3, довжина 4"
+         font-family="'Montserrat','Segoe UI',system-ui,sans-serif">
+      <text x="20" y="34" fill="#55564f" font-size="15" font-weight="700">індекс</text>
+      <text x="175" y="34" text-anchor="middle" fill="#591429" font-size="22" font-weight="800" font-family="'JetBrains Mono', Menlo, monospace">0</text>
+      <text x="385" y="34" text-anchor="middle" fill="#591429" font-size="22" font-weight="800" font-family="'JetBrains Mono', Menlo, monospace">1</text>
+      <text x="595" y="34" text-anchor="middle" fill="#591429" font-size="22" font-weight="800" font-family="'JetBrains Mono', Menlo, monospace">2</text>
+      <text x="805" y="34" text-anchor="middle" fill="#591429" font-size="22" font-weight="800" font-family="'JetBrains Mono', Menlo, monospace">3</text>
+      <rect x="80"  y="46" width="190" height="64" rx="9" fill="#ffffff" stroke="#591429" stroke-width="2.5"/>
+      <rect x="290" y="46" width="190" height="64" rx="9" fill="#ffffff" stroke="#591429" stroke-width="2.5"/>
+      <rect x="500" y="46" width="190" height="64" rx="9" fill="#ffffff" stroke="#591429" stroke-width="2.5"/>
+      <rect x="710" y="46" width="190" height="64" rx="9" fill="#f6eaee" stroke="#591429" stroke-width="2.5"/>
+      <text x="175" y="85" text-anchor="middle" fill="#0253b3" font-size="19" font-family="'JetBrains Mono', Menlo, monospace">'Minecraft'</text>
+      <text x="385" y="85" text-anchor="middle" fill="#0253b3" font-size="19" font-family="'JetBrains Mono', Menlo, monospace">'Terraria'</text>
+      <text x="595" y="85" text-anchor="middle" fill="#0253b3" font-size="19" font-family="'JetBrains Mono', Menlo, monospace">'Celeste'</text>
+      <text x="805" y="85" text-anchor="middle" fill="#0253b3" font-size="19" font-family="'JetBrains Mono', Menlo, monospace">'Portal'</text>
+      <text x="175" y="140" text-anchor="middle" fill="#2e2f2b" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">games[0]</text>
+      <text x="805" y="140" text-anchor="middle" fill="#2e2f2b" font-size="16" font-family="'JetBrains Mono', Menlo, monospace">games[games.length - 1]</text>
+      <text x="490" y="162" text-anchor="middle" fill="#55564f" font-size="15">games.length → 4 · останній індекс → 3</text>
+    </svg>
+    <div class="three">
+      <div class="hbox hm">Перший — <b><span class="ic">[0]</span></b>, не <span class="ic">[1]</span></div>
+      <div class="hbox hp">Останній індекс = <b><span class="ic">length - 1</span></b></div>
+      <div class="hbox ho">Рядок так само: <span class="ic">'кіт'[0]</span> → <span class="ic">'к'</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ЧИТАЄМО Й ЗМІНЮЄМО ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">✏️</div><div>
+      <span class="label lm">arr[i]</span>
+      <h2>Прочитати, змінити, вийти за край</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> games = [<span class="ss">'Minecraft'</span>, <span class="ss">'Terraria'</span>, <span class="ss">'Celeste'</span>];
+
+console.<span class="sf">log</span>(games[<span class="sn">0</span>]);       <span class="cm">// Minecraft</span>
+console.<span class="sf">log</span>(games.length);    <span class="cm">// 3</span>
+
+games[<span class="sn">1</span>] = <span class="ss">'Portal'</span>;          <span class="cm">// замінили</span>
+console.<span class="sf">log</span>(games);
+<span class="cm">// ['Minecraft', 'Portal', 'Celeste']</span>
+
+console.<span class="sf">log</span>(games[<span class="sn">5</span>]);       <span class="cm">// undefined</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">games[1] = …</span> — як звичайне присвоєння, тільки з номером місця</div>
+        <div class="hbox hr">За межею масиву — <b>не помилка</b>, а <span class="ic">undefined</span> («не визначено»). Червоного рядка не буде</div>
+        <div class="hbox hp">Масив під <span class="ic">const</span> — <b>вміст</b> міняти можна. Не можна покласти в <span class="ic">games</span> <b>інший</b> масив</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе кожен рядок?</h2>
+    </div></div>
+    <div class="dp" style="margin-bottom:14px">
+      <div class="dp-code" style="padding:10px 19px"><span class="sk">const</span> a = [<span class="sn">10</span>, <span class="sn">20</span>, <span class="sn">30</span>];</div>
+    </div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log(a[a.length - 1]);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>30</b> — <span class="ic">a.length - 1</span> = 2, а <span class="ic">a[2]</span> — останній</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">console.log(a[3]);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>undefined</b> — індекси лише 0, 1, 2</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">a[0] = a[1] + a[2];
+console.log(a);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>[50, 20, 30]</b> — змінився лише перший</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Створити, прочитати, змінити</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.3fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono" style="font-size:16px;line-height:1.6">const friends = ['Оля', 'Максим', 'Ірина'];
+console.log(friends[0]);
+console.log(friends.length);
+friends[2] = 'Дана';
+console.log(friends);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Папка <span class="ic">js-8/masyvy</span>, каркас — блок «Старт»: <a class="lnk" href="https://sv2627.github.io/sc/aplus/8-javascript/u09/kod.html">https://sv2627.github.io/sc/aplus/8-javascript/u09/kod.html</a>. Масив <span class="ic">games</span> з 5 улюблених ігор</li>
+          <li>Виведи першу і третю гру — <span class="ic">games[0]</span>, <span class="ic">games[2]</span></li>
+          <li>Виведи, скільки ігор: <span class="ic">games.length</span></li>
+          <li>Заміни другу гру на іншу й виведи весь масив</li>
+          <li>Виведи <span class="ic">games[10]</span> — що в консолі і чому?</li>
+          <li>⭐⭐ Останню гру — через <span class="ic">games.length - 1</span>, щоб працювало з будь-якою довжиною</li>
+          <li>⭐⭐⭐ Поміняй першу й останню гру місцями — через допоміжну змінну <span class="ic">temp</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── PUSH І РОДИНА ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">➕</div><div>
+      <span class="label lm">push · pop · unshift · shift</span>
+      <h2>Додати в кінець — і решта родини</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16.5px"><span class="sk">const</span> cart = [<span class="ss">'Terraria'</span>];
+
+cart.<span class="sf">push</span>(<span class="ss">'Celeste'</span>);
+cart.<span class="sf">push</span>(<span class="ss">'Portal'</span>);
+console.<span class="sf">log</span>(cart);   <span class="cm">// ['Terraria', 'Celeste', 'Portal']</span>
+console.<span class="sf">log</span>(cart.length);   <span class="cm">// 3</span>
+
+<span class="sk">const</span> last = cart.<span class="sf">pop</span>();
+console.<span class="sf">log</span>(last);   <span class="cm">// Portal</span></div>
+        </div>
+        <div class="hbox ho">Змінюється <b>сам масив</b>. Писати <span class="ic">cart = cart.push(…)</span> не треба</div>
+      </div>
+      <table class="ops">
+        <tr><th>Метод</th><th>Де</th><th>Що робить</th></tr>
+        <tr><td class="o" style="width:110px">push(x)</td><td>кінець</td><td><b>додає</b> x</td></tr>
+        <tr><td class="o">pop()</td><td>кінець</td><td><b>забирає</b> і віддає</td></tr>
+        <tr><td class="o">unshift(x)</td><td>початок</td><td>додає x</td></tr>
+        <tr><td class="o">shift()</td><td>початок</td><td>забирає і віддає</td></tr>
+      </table>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── INCLUDES / INDEXOF / JOIN ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔍</div><div>
+      <span class="label lb">includes · indexOf · join</span>
+      <h2>Чи є такий — де саме — і все одним рядком</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16.5px"><span class="sk">const</span> games = [<span class="ss">'Terraria'</span>, <span class="ss">'Celeste'</span>, <span class="ss">'Portal'</span>];
+
+games.<span class="sf">includes</span>(<span class="ss">'Celeste'</span>);    <span class="cm">// true</span>
+games.<span class="sf">includes</span>(<span class="ss">'celeste'</span>);    <span class="cm">// false</span>
+games.<span class="sf">indexOf</span>(<span class="ss">'Portal'</span>);      <span class="cm">// 2</span>
+games.<span class="sf">indexOf</span>(<span class="ss">'Minecraft'</span>);   <span class="cm">// -1</span>
+
+games.<span class="sf">join</span>(<span class="ss">', '</span>);
+<span class="cm">// 'Terraria, Celeste, Portal'</span></div>
+      </div>
+      <div>
+        <div class="hbox hm"><span class="ic">includes</span> — відповідь <b>так / ні</b>. Зручно в <span class="ic">if</span></div>
+        <div class="hbox hp"><span class="ic">indexOf</span> — <b>номер місця</b>; немає — <span class="ic">-1</span></div>
+        <div class="hbox hr">Порівнюють точно: <span class="ic">'celeste'</span> і <span class="ic">'Celeste'</span> — різні</div>
+        <div class="hbox ho"><span class="ic">join(', ')</span> — склеює все в один рядок, між елементами — те, що в дужках</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Простеж масив після кожного рядка</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1.1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:18px"><span class="sk">const</span> a = [<span class="sn">1</span>, <span class="sn">2</span>, <span class="sn">3</span>];
+a.<span class="sf">push</span>(<span class="sn">4</span>);
+a.<span class="sf">pop</span>();
+a.<span class="sf">push</span>(<span class="sn">5</span>);
+a[<span class="sn">0</span>] = <span class="sn">9</span>;
+console.<span class="sf">log</span>(a, a.length);</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Що в консолі?</h3>
+        <p class="rv-hint">Запиши масив після кожного рядка, потім клацни</p>
+        <div class="rv-body">
+          <p class="mono">[1, 2, 3, 4]   ← push(4)
+[1, 2, 3]      ← pop()
+[1, 2, 3, 5]   ← push(5)
+[9, 2, 3, 5]   ← a[0] = 9</p>
+          <p class="mt">Виведе <b>[9, 2, 3, 5] 4</b></p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">Кошик росте</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.3fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono" style="font-size:16px;line-height:1.6">const cart = [];
+cart.push('Terraria');
+cart.push('Celeste');
+console.log(cart.join(', '));
+console.log(`Ігор: ${cart.length}`);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у тому самому файлі</span>
+        <ul>
+          <li>Код практики 1 закоментуй: виділи й <b>Ctrl + /</b></li>
+          <li>Порожній кошик <span class="ic">[]</span> і три <span class="ic">push</span> — три гри. Виведи кошик і кількість</li>
+          <li>Забери останню гру через <span class="ic">pop</span>: виведи, яку забрали, і скільки лишилось</li>
+          <li>Напиши <span class="ic">cart.Push('Doom')</span> з великої <b>P</b> — прочитай помилку, виправ</li>
+          <li>⭐⭐ Немає «Minecraft» у кошику — <span class="ic">push</span>, є — виведи «вже в кошику». Через <span class="ic">if</span> і <span class="ic">includes</span></li>
+          <li>⭐⭐⭐ Кошик із <span class="ic">prompt</span>: три назви поспіль у циклі <span class="ic">for</span>, кожну — <span class="ic">push</span>. Потім <span class="ic">join(', ')</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── FOR ПО МАСИВУ ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🐾</div><div>
+      <span class="label lm">Перебір · for з уроку 8</span>
+      <h2>Лічильник циклу = індекс масиву</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.25fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code"><span class="sk">const</span> games = [<span class="ss">'Terraria'</span>, <span class="ss">'Celeste'</span>, <span class="ss">'Portal'</span>];
+
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">0</span>; i <span class="st">&lt;</span> games.length; i<span class="st">++</span>) {
+  console.<span class="sf">log</span>(<span class="ss">`${i + 1}. ${games[i]}`</span>);
+}</div>
+        <div class="dp-out con"><b>Консоль</b>1. Terraria
+2. Celeste
+3. Portal</div>
+      </div>
+      <div>
+        <table class="ops">
+          <tr><th>i</th><th>i &lt; 3</th><th>games[i]</th></tr>
+          <tr><td class="c">0</td><td class="c">true</td><td class="c">Terraria</td></tr>
+          <tr><td class="c">1</td><td class="c">true</td><td class="c">Celeste</td></tr>
+          <tr><td class="c">2</td><td class="c">true</td><td class="c">Portal</td></tr>
+          <tr><td class="c">3</td><td class="c"><b>false</b></td><td class="c">вихід</td></tr>
+        </table>
+        <div class="hbox hr">Старт з <b>0</b>, умова <span class="ic">i &lt; games.length</span> — <b>не</b> <span class="ic">&lt;=</span>: індексу 3 немає</div>
+        <div class="hbox hp">Коротший запис, коли номер не потрібен: <span class="ic">for (const g of games)</span> — <span class="ic">g</span> по черзі кожна гра</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── СУМА І СЕРЕДНЄ ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🧺</div><div>
+      <span class="label lb">Приклад · Кошик GameStore</span>
+      <h2>Масив цін → сума і середня ціна</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">js-8/masyvy/script.js</span></div>
+<div class="dp-code" style="font-size:16.5px"><span class="sk">const</span> prices = [<span class="sn">699</span>, <span class="sn">199</span>, <span class="sn">449</span>, <span class="sn">319</span>];
+
+<span class="sk">let</span> sum = <span class="sn">0</span>;
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">0</span>; i <span class="st">&lt;</span> prices.length; i<span class="st">++</span>) {
+  sum <span class="st">+=</span> prices[i];
+}
+<span class="sk">const</span> avg = sum / prices.length;
+
+console.<span class="sf">log</span>(<span class="ss">`Разом: ${sum} грн`</span>);
+console.<span class="sf">log</span>(<span class="ss">`Середня: ${avg} грн`</span>);</div>
+        <div class="dp-out con"><b>Консоль</b>Разом: 1666 грн
+Середня: 416.5 грн</div>
+      </div>
+      <div>
+        <div class="hbox hm">Накопичувач з уроку 8: <span class="ic">let sum = 0</span> <b>до</b> циклу, <span class="ic">sum += …</span> у циклі</div>
+        <div class="hbox hp"><b>Середнє</b> = сума ÷ <span class="ic">length</span></div>
+        <div class="hbox ho">Додай у масив ще ціну — цикл <b>не змінюється</b>, сума рахується сама</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе кожен цикл?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const a = [2, 4, 6];
+let s = 0;
+for (let i = 0; i &lt; a.length; i++) {
+  s += a[i];
+}
+console.log(s);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>12</b> — 2 + 4 + 6</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const a = [5, 3, 8];
+let n = 0;
+for (let i = 0; i &lt; a.length; i++) {
+  if (a[i] &gt; 4) n++;
+}
+console.log(n);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>2</b> — лічильник: більші за 4 лише 5 і 8</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const a = [1, 2, 3];
+for (let i = 0; i &lt;= a.length; i++) {
+  console.log(a[i]);
+}</div>
+        <p class="rv-hint">Скільки рядків?</p>
+        <div class="rv-body"><p><b>Чотири</b>: 1, 2, 3 і <b>undefined</b> — через <span class="ic">&lt;=</span> цикл зайшов на <span class="ic">a[3]</span></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">Кошик GameStore</span><span class="tmr">9 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.35fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — сума кошика</span>
+        <div class="mono" style="font-size:15.5px;line-height:1.6">const prices = [699, 199, 449, 319];
+let sum = 0;
+for (let i = 0; i &lt; prices.length; i++) {
+  sum += prices[i];
+}
+console.log(`Разом: ${sum} грн`);</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Свій кошик із 5 цін: сума. Перевір калькулятором</li>
+          <li>Середня ціна: <span class="ic">sum / prices.length</span></li>
+          <li>Додай ще одну ціну через <span class="ic">push</span> <b>перед</b> циклом — сума змінилась сама?</li>
+          <li>Скільки ігор дешевших за 300 грн — лічильник і <span class="ic">if</span> у циклі</li>
+          <li>Заміни <span class="ic">&lt;</span> на <span class="ic">&lt;=</span> в умові циклу — що стало із сумою? Поверни</li>
+          <li>⭐⭐ Найдорожча ціна: <span class="ic">let max = prices[0];</span> у циклі — <span class="ic">if (prices[i] &gt; max) max = prices[i];</span></li>
+          <li>⭐⭐⭐ Масив назв <span class="ic">games</span> поруч із масивом цін: «Terraria — 199 грн» для кожної гри одним циклом</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ</span>
+      <h2>Має бути середнє 10. Що не так?</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+<div class="dp-code" style="font-size:17.5px"><span class="sk">const</span> marks = [<span class="sn">10</span>, <span class="sn">8</span>, <span class="sn">12</span>];
+<span class="sk">let</span> sum;
+
+<span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;=</span> marks.length; i<span class="st">++</span>) {
+  sum <span class="st">+=</span> marks[i];
+}
+
+console.<span class="sf">log</span>(sum / marks.length);</div>
+        <div class="dp-out con"><b>Консоль</b>NaN</div>
+      </div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <h3>Три біди, червоного рядка немає</h3>
+        <p class="rv-hint">Знайди всі три, потім клацни</p>
+        <div class="rv-body">
+          <p><b>1.</b> <span class="ic">let sum;</span> — без нуля: <span class="ic">undefined + 8</span> = <b>NaN</b> («не число»). Треба <span class="ic">let sum = 0;</span></p>
+          <p><b>2.</b> <span class="ic">i = 1</span> — перша оцінка пропущена. Старт з <b>0</b></p>
+          <p><b>3.</b> <span class="ic">i &lt;= marks.length</span> — читає <span class="ic">marks[3]</span>, тобто <span class="ic">undefined</span>. Потрібно <span class="ic">&lt;</span></p>
+          <p class="mt" style="color:var(--brand)">Полагоджене дає <b>10</b></p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Увесь масив на одному екрані</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>створити · прочитати</h4><pre>const a = [10, 20, 30];
+a[0]        // 10
+a.length    // 3</pre></div>
+      <div class="rf-c"><h4>змінити · останній</h4><pre>a[1] = 99;
+a[a.length - 1]
+a[7]        // undefined</pre></div>
+      <div class="rf-c"><h4>кінець · початок</h4><pre>a.push(x)     a.pop()
+a.unshift(x)  a.shift()</pre></div>
+      <div class="rf-c"><h4>знайти · склеїти</h4><pre>a.includes(x)  // true
+a.indexOf(x)   // -1
+a.join(', ')</pre></div>
+      <div class="rf-c"><h4>for — кожен елемент</h4><pre>for (let i = 0;
+     i &lt; a.length; i++) {
+  console.log(a[i]);
+}</pre></div>
+      <div class="rf-c"><h4>сума · середнє</h4><pre>let sum = 0;  // до циклу
+sum += a[i];  // у циклі
+sum / a.length</pre></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🔦</span>
+      <div><span class="ic">console.log(a)</span> до і після циклу — і видно, що насправді лежить у масиві</div></div>
+  </div></section>
+
+  <!-- ══════════ 20 ── БАНК ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Зробив усе?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Задом наперед.</b> Вивести масив з кінця: <span class="ic">for</span> від <span class="ic">length - 1</span> до 0, крок <span class="ic">i--</span></div>
+      <div class="bk"><b>Найдешевша.</b> Як найдорожча, але знак <span class="ic">&lt;</span> і <span class="ic">let min = prices[0]</span></div>
+      <div class="bk"><b>Пошук у каталозі.</b> <span class="ic">prompt</span> назви гри → «є, місце 3» або «немає» через <span class="ic">indexOf</span></div>
+      <div class="bk"><b>Знижка.</b> Кожну ціну в масиві зменшити на 10 %: <span class="ic">prices[i] = prices[i] * 0.9</span>, потім нова сума</div>
+      <div class="bk"><b>Парні.</b> З масиву чисел <span class="ic">push</span> у новий масив лише парні: <span class="ic">% 2 === 0</span></div>
+      <div class="bk"><b>Таблиця в масив.</b> <span class="ic">[7, 14, …, 70]</span> — порожній масив і <span class="ic">push</span> у <span class="ic">for</span></div>
+      <div class="bk"><b>Оцінки.</b> Масив 6 оцінок: середня, найвища і скільки оцінок 10 і вище</div>
+      <div class="bk"><b>Без повторів.</b> Додавати гру в кошик, лише якщо її там ще немає — <span class="ic">includes</span></div>
+    </div>
+    <div class="hbox hm mt">Усі вісім — тільки тим, що вже було, плюс масив</div>
+  </div></section>
+
+  <!-- ══════════ 21 ── ЗДАЄМО ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">📤</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Підписати рівень і зберегти</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t">Усі три практики — в одному <span class="ic">script.js</span>, кожна під своїм коментарем</span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t">У консолі <b>жодного червоного рядка</b> і жодного <span class="ic">NaN</span></span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t">Прізвище і рівень — <b>першими рядками</b> <span class="ic">script.js</span>, потім <span class="ic">Ctrl+S</span></span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">masyvy/script.js</span></div>
+        <div class="dp-code" style="font-size:15.5px;line-height:1.6"><span class="cm">// Урок 9 · Масиви
+// Прізвище Імʼя · рівень ⭐⭐
+// П1 масив ігор · П2 кошик · П3 сума</span>
+
+<span class="cm">// ── Практика 1 ──</span>
+<span class="sk">const</span> games = [<span class="ss">'Terraria'</span>, …];
+…</div>
+      </div>
+    </div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 10 · 23 листопада · Функції</p>
+  </div></section>
+
+  <!-- ══════════ 22 ── ДОМАШНЄ ЗАВДАННЯ ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання · 10 хвилин</span>
+      <h2>Кошик: додай гру і порахуй суму</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">Заготовка — блок «Домашнє», кнопка «Скопіювати»:
+      <a class="lnk" href="https://sv2627.github.io/sc/aplus/8-javascript/u09/kod.html">https://sv2627.github.io/sc/aplus/8-javascript/u09/kod.html</a> ·
+      <strong>codepen.io</strong>, панель <b>JS</b>, кнопка <b>Console</b> ·
+      код — у <strong>Google Classroom · 8 клас</strong> до <strong>23 листопада</strong></div>
+    <div class="two" style="grid-template-columns:1.05fr 1fr;gap:16px;margin-top:10px">
+      <div class="steps" style="gap:8px">
+        <div class="step" style="padding:9px 15px"><span class="step-n">1</span><span class="step-t" style="font-size:16px">
+          <span class="ic">// ДОПИШИ ТУТ 1</span> — <span class="ic">games.push('Stardew Valley')</span> і <span class="ic">prices.push(319)</span>. Має стати <span class="ic">Ігор у кошику: 4</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">2</span><span class="step-t" style="font-size:16px">
+          <span class="ic">// ДОПИШИ ТУТ 2</span> — цикл <span class="ic">for</span> по <span class="ic">prices</span>, у ньому <span class="ic">sum += prices[i];</span>.
+          Має вийти <span class="ic">разом: 1666 грн</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">3</span><span class="step-t" style="font-size:16px">
+          <span class="ic">// ДОПИШИ ТУТ 3</span> — остання гра через <span class="ic">games.length - 1</span>.
+          Має вийти <span class="ic">Остання: Stardew Valley</span></span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">заготовка · головне</span></div>
+<div class="dp-code" style="font-size:13.5px;line-height:1.42;padding:10px 14px"><span class="sk">const</span> games = [<span class="ss">'Minecraft'</span>, <span class="ss">'Terraria'</span>, <span class="ss">'Celeste'</span>];
+<span class="sk">const</span> prices = [<span class="sn">699</span>, <span class="sn">199</span>, <span class="sn">449</span>];
+
+<span class="cm">// ДОПИШИ ТУТ 1: ще одна гра і її ціна</span>
+
+<span class="sk">let</span> sum = <span class="sn">0</span>;
+<span class="cm">// ДОПИШИ ТУТ 2: for по prices, sum += prices[i]</span>
+
+console.<span class="sf">log</span>(<span class="ss">`Ігор у кошику: ${games.length}, разом: ${sum} грн`</span>);
+<span class="cm">// ДОПИШИ ТУТ 3: 'Остання: …'</span></div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 18 · код уроку · Flutter 10 клас</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#eef1f8;--border:#dcdfe9;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--blue);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#aab4cc}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:760px}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+padding:24px 26px;display:block;box-shadow:0 1px 3px rgba(2,83,179,.05);
+transition:border-color .18s,background .18s,transform .18s,box-shadow .18s}
+a.card:hover{border-color:var(--accent);background:var(--surf2);transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(2,83,179,.09)}
+.card .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);display:block;margin-bottom:9px}
+.card h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin-bottom:7px;line-height:1.2}
+.card p{font-size:16.5px;color:var(--dim)}
+.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:26px;
+box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--accent);display:block;margin-bottom:8px}
+.hero p{font-size:17px;color:var(--dim)}
+.hero ul{margin:0;padding-left:22px;font-size:17px;color:var(--dim)}
+.hero li{margin-bottom:6px}
+.hero li:last-child{margin-bottom:0}
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 7px;border-radius:5px}
+.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+font-size:15px;color:var(--dim)}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}
+.card{padding:19px 20px}.hero{padding:18px 20px}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:18px;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;
+  background:var(--surf2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.codebar b{font-family:var(--f-head);color:var(--accent)}
+.copy{font:700 16px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:10px 18px;min-height:44px;cursor:pointer}
+.copy.ok{background:#1d7a3a}
+pre.dart{font-family:var(--f-mono);font-size:15px;line-height:1.55;padding:18px;overflow-x:auto;
+  white-space:pre;tab-size:2;color:var(--ink)}
+.cm{color:#5c6b5e;font-style:italic}
+
+.steps-note{font-size:16.5px;color:var(--dim);margin-top:10px}
+.open{display:inline-block;font:700 16px var(--f-body);background:#1d7a3a;color:#fff;border-radius:10px;
+  padding:10px 18px;min-height:44px;margin-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">10 клас · Flutter</a><span class="sep">/</span><a href="./">Урок 18</a><span class="sep">/</span><span>Код</span></nav>
+<div class="kicker">Урок 18 / 68 · 18.11.2026 · код уроку</div>
+<h1>Код уроку</h1>
+<p class="lead">Працює і в DartPad, і в проєкті: «Скопіювати», відкрий <a href="https://dartpad.dev/?sample=counter" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px solid">dartpad.dev</a> або <code>lib/main.dart</code> у VS Code, заміни весь код і натисни Run (у VS Code — <code>Ctrl + S</code>, потім hot restart). Пояснення — у коментарях після <code>//</code>. Домашнього до цього уроку немає: завтра знову Flutter.</p>
+<div class="kicker" style="margin-top:28px">Старт · з нього починаємо практику 1</div>
+<div class="codebox"><div class="codebar"><b>Старт · порожній екран Game store</b>
+  <button class="copy" data-for="start">Скопіювати</button></div>
+<pre class="dart" id="start"><span class="cm">// Урок 18 · «Компонування» · старт.</span>
+<span class="cm">// DartPad: заміни весь код цим і натисни Run. VS Code: заміни весь lib/main.dart, Ctrl+S, hot restart.</span>
+<span class="cm">// Сьогодні в body замість напису Card goes here збираємо картку гри.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Game store'), centerTitle: true),
+        <span class="cm">// Center — ставить свою дитину посередині вільного місця</span>
+        body: const Center(
+          child: Text('Card goes here'),
+        ),
+      ),
+    );
+  }
+}</pre></div>
+<div class="kicker" style="margin-top:34px">Розвʼязки практик · фінальний вигляд</div>
+<div class="codebox"><div class="codebar"><b>1 · Практика 1 — Row і Column: шапка і рейтинг ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="p1">Скопіювати</button></div>
+<pre class="dart" id="p1"><span class="cm">// Урок 18 · практика 1 · Row і Column: шапка картки і рейтинг.</span>
+<span class="cm">// Усе ⭐–⭐⭐⭐ разом. Рамки й кольорів картки ще немає — це практика 2.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Game store'), centerTitle: true),
+        body: Center(
+          <span class="cm">// Column — діти згори вниз. Головна вісь — вертикаль.</span>
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              <span class="cm">// ⭐ Row — діти зліва направо. Головна вісь — горизонталь.</span>
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.sports_esports, size: 48, color: Colors.indigo),
+                  SizedBox(width: 12), <span class="cm">// проміжок 12 між іконкою і текстом</span>
+                  <span class="cm">// Column у Row: назва над жанром, обидва від лівого краю</span>
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Stardew Valley'),
+                      Text('Farming sim'),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16), <span class="cm">// проміжок 16 між рядками</span>
+              <span class="cm">// ⭐⭐ Рейтинг: чотири повні зірки, половинка і число</span>
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.star, color: Colors.amber),
+                  Icon(Icons.star, color: Colors.amber),
+                  Icon(Icons.star, color: Colors.amber),
+                  Icon(Icons.star, color: Colors.amber),
+                  Icon(Icons.star_half, color: Colors.amber),
+                  SizedBox(width: 8),
+                  Text('4.8'),
+                ],
+              ),
+              const SizedBox(height: 16),
+              <span class="cm">// ⭐⭐⭐ Ціна ліворуч, кошик праворуч. SizedBox дає рядку ширину 300,</span>
+              <span class="cm">// spaceBetween розкидає дітей по краях цих 300.</span>
+              const SizedBox(
+                width: 300,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('14.99 USD'),
+                    Icon(Icons.shopping_cart),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}</pre></div>
+<div class="codebox"><div class="codebar"><b>2 · Практика 2 — Container і TextStyle: шапка в рамці ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="p2">Скопіювати</button></div>
+<pre class="dart" id="p2"><span class="cm">// Урок 18 · практика 2 · Container і TextStyle: шапка гри в рамці.</span>
+<span class="cm">// Усе ⭐–⭐⭐⭐ разом. Рейтинг і ціну додаємо в практиці 3.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: Scaffold(
+        backgroundColor: Colors.grey.shade200, <span class="cm">// сірий фон — біла картка на ньому видна</span>
+        appBar: AppBar(title: const Text('Game store'), centerTitle: true),
+        body: Center(
+          <span class="cm">// ⭐ Container — коробка: розмір, відступи, фон, рамка</span>
+          child: Container(
+            width: 320,
+            padding: const EdgeInsets.all(16), <span class="cm">// відступ ВСЕРЕДИНІ: від рамки до тексту</span>
+            margin: const EdgeInsets.all(16), <span class="cm">// відступ ЗЗОВНІ: від рамки до сусідів</span>
+            <span class="cm">// ⭐⭐ decoration — фон, заокруглення, рамка. color — лише тут, усередині</span>
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.indigo, width: 2),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.sports_esports, size: 48, color: Colors.indigo),
+                SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    <span class="cm">// ⭐ TextStyle — розмір, товщина, колір тексту</span>
+                    Text(
+                      'Stardew Valley',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    <span class="cm">// ⭐⭐⭐ курсив, приглушений колір, розрідження літер</span>
+                    Text(
+                      'Farming sim',
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontStyle: FontStyle.italic,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}</pre></div>
+<div class="codebox"><div class="codebar"><b>3 · Практика 3 — картка товару цілком ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="card">Скопіювати</button></div>
+<pre class="dart" id="card"><span class="cm">// Урок 18 · практика 3 · статична картка товару, рівні ⭐–⭐⭐⭐.</span>
+<span class="cm">// Дані вписані прямо в код. Збережи собі: завтра (урок 19) з картки зробимо свій віджет.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(title: const Text('Game store'), centerTitle: true),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              <span class="cm">// ⭐ Картка 1</span>
+              Container(
+                width: 320,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.indigo, width: 2),
+                ),
+                child: Column(
+                  <span class="cm">// min — Column висотою зі свій вміст, а не на весь екран</span>
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    <span class="cm">// ⭐ Рядок 1: іконка + назва і жанр</span>
+                    const Row(
+                      children: [
+                        Icon(Icons.sports_esports, size: 48, color: Colors.indigo),
+                        SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Stardew Valley',
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                            Text('Farming sim', style: TextStyle(color: Colors.black54)),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    <span class="cm">// ⭐ Рядок 2: рейтинг</span>
+                    const Row(
+                      children: [
+                        Icon(Icons.star, color: Colors.amber),
+                        Icon(Icons.star, color: Colors.amber),
+                        Icon(Icons.star, color: Colors.amber),
+                        Icon(Icons.star, color: Colors.amber),
+                        Icon(Icons.star_half, color: Colors.amber),
+                        SizedBox(width: 8),
+                        Text('4.8'),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    <span class="cm">// ⭐ Рядок 3: ціна ліворуч, мітка праворуч — spaceBetween</span>
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        <span class="cm">// ⭐⭐ стара ціна закреслена, нова — велика</span>
+                        const Row(
+                          children: [
+                            Text(
+                              '19.99',
+                              style: TextStyle(
+                                color: Colors.black54,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              '14.99 USD',
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        <span class="cm">// ⭐⭐ мітка SALE: маленький Container з фоном і заокругленням</span>
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'SALE',
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              <span class="cm">// ⭐⭐⭐ Картка 2 — копія картки 1 з іншими даними.</span>
+              <span class="cm">// 50 рядків повтору заради трьох слів — завтра це виправить свій віджет.</span>
+              Container(
+                width: 320,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.indigo, width: 2),
+                ),
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.sports_esports, size: 48, color: Colors.indigo),
+                        SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Celeste',
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                            Text('Platformer', style: TextStyle(color: Colors.black54)),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Icon(Icons.star, color: Colors.amber),
+                        Icon(Icons.star, color: Colors.amber),
+                        Icon(Icons.star, color: Colors.amber),
+                        Icon(Icons.star, color: Colors.amber),
+                        Icon(Icons.star_half, color: Colors.amber),
+                        SizedBox(width: 8),
+                        Text('4.7'),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      '19.99 USD',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}</pre></div>
+
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.for).innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+  b.textContent = 'Скопійовано ✓'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Скопіювати'; b.classList.remove('ok'); }, 2000);
+});
+</script>
+</body>
+</html>
