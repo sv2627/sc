@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ефекти: наведення, переходи, закріплена шапка · Front-end · 8 клас · Урок 21</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Front-end
+  Клас          8
+  Школа         STEAM (Республіка) · вівторок
+  Урок          21 з 27 · 01.12.2026 · другий урок дня (слот 5)
+  Тема          Ефекти: наведення, переходи, закріплена шапка
+  Акцент        green (#154734) — --accent:var(--forest), як уроки 1–17
+  Слайдів       20 (s0…s19)
+  ────────────────────────────────────────────────────────────────
+  ⛔ З 17.11 (рішення користувача): ЖОДНИХ reveal-карток і відповідей
+     на слайдах — учні відкривають колоду на ноутбуках. Відповіді —
+     у конспекті вчителя.
+  ⚠️ ТІЛЬКИ ВБУДОВАНЕ У VS CODE + F12, без скорочень, що розгортаються.
+  ⚠️ ОЦІНЮВАННЯ — тільки в конспекті, на слайдах його немає.
+  ✅ З НОУТБУКАМИ. Свій сайт АБО «Зерно» з kod.html цього уроку
+     (уже з формою з u20).
+  ⚠️ Нове — стани :hover, :focus, :active; transition; transform
+     (scale, translate, rotate); position: sticky + top (+ z-index —
+     щоб картки з transform не налазили на шапку).
+  ⚠️ ДОМАШНЄ — останній слайд, ОДНЕ НА ОБИДВА УРОКИ ДНЯ (u20 без ДЗ).
+     dz.html — CodePen, здача — Google Classroom 8ІТ (ibncx2el) до 08.12.
+  ────────────────────────────────────────────────────────────────
+  ЗГАДУЄМО      s2  форма (4 питання вголос)               3 хв
+  НОВЕ          s3 стани · s4 transition · s5 transform
+                s6 sticky · s7 довідник · s8 передбач      ≈ 12 хв
+  ПРАКТИКА      s9  рівні · старт
+                s10 крок 1 ⭐ кнопка                        5 хв
+                s11 крок 2 ⭐ картки                        5 хв
+                s12 крок 3 ⭐⭐ поля форми                  4 хв
+                s13 крок 4 ⭐⭐ шапка, що не зникає         4 хв
+                s14 крок 5 ⭐⭐⭐ меню й іконки               4 хв
+                s15 чому не працює                         3 хв
+                s16 фініш · s17 банк                       2 хв
+                разом руками ≈ 27 хв із 45
+  РІЗАТИ ПЕРШИМ s8, s14, s17.  s7, s10, s11, s13, ДЗ НЕ різати.
+  ────────────────────────────────────────────────────────────────
+  Аркуш A4      rozdatka.html — тільки сховище
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --surf2:#f1f3f7; --border:#e0e3e9;
+  --brand:#591429; --green:#227354; --forest:#154734; --gold:#f2c75c;
+  --goldink:#8a5a10; --brick:#a8392f; --steel:#3c5a72;
+  --teal:#227354; --blue:#3c5a72; --pink:#a8392f; --yellow:#8a5a10;
+  --purple:#8a5a10; --green2:#154734;
+  --text:#282a29; --ink:#282a29; --dim:#5c605e; --faint:#84888a;
+  --accent:var(--forest);
+  --f-head:'Source Serif 4','Meta Serif Pro',Georgia,'Times New Roman',serif;
+  --f-body:'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(110,231,160,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(110,231,160,.022) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(40,42,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:#e2ebe6}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:#e3efe9;color:var(--teal)}
+.lb{background:#e4eaf0;color:var(--blue)}
+.ly{background:#f7eeda;color:var(--yellow)}
+.lp{background:#f6e5e3;color:var(--pink)}
+.lg{background:#e2ebe6;color:var(--green)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cb h3{color:var(--blue)}
+.card.cp h3{color:var(--pink)} .card.cy h3{color:var(--yellow)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--text);line-height:1.7}
+.hbox.ht{border-color:var(--teal)} .hbox.hb{border-color:var(--blue)}
+.hbox.hp{border-color:var(--pink)} .hbox.hy{border-color:var(--yellow)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:#eef3f0;
+     border:1px solid rgba(110,231,160,.25);border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7}
+.tip.ty{background:#fbf6ea;border-color:#e8d5a8}
+.tip.tp{background:#fbf1f0;border-color:#e6c6c2}
+.tip.tb{background:#eef2f6;border-color:rgba(99,197,255,.28)}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+.dp{border-radius:13px;overflow:hidden;border:1px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(40,42,41,.08);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdfcfa;padding:15px 19px;font-size:16px;line-height:1.6;white-space:pre-wrap}
+.dp-out{background:#fff;color:#111;padding:18px 22px;font-family:var(--f-body)}
+.dp-out h1{font-size:1.9rem;color:#111;font-family:var(--f-head)}
+.sk{color:#3c5a72}.ss{color:#a8392f}.sn{color:#154734}
+.cm{color:#6b6f6d;font-style:italic}
+.sa{color:#227354}
+
+/* ─── розбір каркаса: рядок «тег → що робить» ─── */
+.brk{display:flex;flex-direction:column;gap:9px}
+.brow{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:11px;padding:11px 16px}
+.btag{font-family:var(--f-mono);font-size:16px;color:var(--accent);flex-shrink:0;
+      min-width:172px;font-weight:700}
+.bwhat{font-size:17px;line-height:1.6;color:var(--dim)}
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:400}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:rgba(110,231,160,.15);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:#f9f2e2;border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.prac{background:var(--surf2);border:2px solid var(--accent);border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.pbadge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+  background:var(--accent);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--accent)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:var(--goldink);background:#f9f2e2;
+  border:1px solid var(--gold);border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16px;flex-shrink:0;letter-spacing:1px;min-width:54px}
+.lv-t{font-size:17px;line-height:1.6;color:var(--text)}
+.vs{font-family:var(--f-mono);font-size:14px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:7px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid}
+.wrong{border-color:var(--brick);background:var(--surface)}
+.right{border-color:var(--forest);background:var(--surface)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--text)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3: «приклад → тепер самостійно» ─── */
+.demo{border:2px solid var(--steel);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--steel);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--accent);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--text,var(--ink))}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--brick)} .right{border-color:var(--forest)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6}
+.bk b{color:var(--accent)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4: сайт через ШІ ─── */
+.now{display:inline-block;font-family:var(--f-mono);font-size:15px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;background:var(--brick);color:#fff;padding:7px 16px;border-radius:8px;margin-bottom:12px}
+.chat{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:18px 22px;
+  font-size:25px;line-height:1.45;box-shadow:0 2px 10px rgba(40,42,41,.08)}
+.chat .who{font-family:var(--f-mono);font-size:13px;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--dim);display:block;margin-bottom:8px}
+.chat.bad{border-color:var(--brick)} .chat.good{border-color:var(--forest)}
+.chat.sm{font-size:19px;line-height:1.55}
+.mock{background:#fff;border:1px solid var(--border);border-radius:13px;overflow:hidden;
+  box-shadow:0 2px 10px rgba(40,42,41,.08)}
+.mock .m-hd{background:#3b3b3b;color:#fff;padding:12px 18px;display:flex;justify-content:space-between;
+  font-size:16px;font-weight:700}
+.mock .m-hd span{font-weight:400;opacity:.9}
+.mock .m-body{padding:18px 20px;text-align:center}
+.mock .m-h1{font-family:var(--f-head);font-size:30px;font-weight:800;color:#282a29;margin-bottom:10px}
+.mock .m-img{height:96px;border-radius:10px;background:#f1e3cf;display:flex;align-items:center;
+  justify-content:center;font-size:48px;margin-bottom:12px}
+.mock .m-btn{display:inline-block;background:#d9822b;color:#fff;font-weight:700;padding:9px 20px;border-radius:9px;font-size:17px}
+.mock .m-ft{border-top:1px solid var(--border);padding:9px 18px;font-size:14px;color:var(--dim);text-align:center}
+.tags{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
+.tg{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--accent);
+  border-radius:10px;padding:12px 10px;text-align:center}
+.tg code{font-family:var(--f-mono);font-size:21px;font-weight:700;color:var(--accent);display:block;margin-bottom:4px}
+.tg span{font-size:16px;color:var(--dim);line-height:1.35;display:block}
+.nope{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.nope div{border:2px solid var(--brick);border-radius:12px;padding:16px 10px;font-size:22px;font-weight:700;
+  text-align:center;color:var(--brick);background:#fbf1f0}
+.fm{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.fm div{background:var(--surface);border:2px solid var(--accent);border-radius:14px;padding:16px 10px;text-align:center}
+.fm .n{font-family:var(--f-mono);font-size:15px;color:var(--dim);display:block}
+.fm b{display:block;font-family:var(--f-head);font-size:25px;color:var(--accent);margin:4px 0 8px}
+.fm span.e{font-size:16px;color:var(--text);line-height:1.4;display:block}
+.steps.lg .step-t{font-size:23px;line-height:1.45}
+.steps.lg .step-n{width:42px;height:42px;font-size:20px}
+.steps.lg .step{padding:15px 20px;align-items:center}
+.bigsay{font-family:var(--f-head);font-size:2.3rem;font-weight:800;color:var(--accent);line-height:1.25;text-align:center}
+kbd{font-family:var(--f-mono);font-size:.9em;background:var(--surface);border:1px solid var(--border);
+  border-bottom-width:3px;border-radius:7px;padding:1px 8px;white-space:nowrap}
+/* частина 2: розділювач, карта сторінки */
+.divider{text-align:center}
+.divider .dv-n{font-family:var(--f-mono);font-size:18px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.divider .dv-t{font-family:var(--f-head);font-size:3.4rem;font-weight:900;color:var(--accent);line-height:1.1;margin-bottom:22px}
+.map{display:flex;flex-direction:column;gap:9px;font-family:var(--f-mono);font-weight:700;font-size:17px}
+.mp{border:2px solid var(--accent);border-radius:10px;padding:9px 13px;background:var(--surface);color:var(--accent)}
+.mp .mp{margin-top:7px}
+.mrow{display:grid;grid-template-columns:3fr 1fr;gap:9px}
+.mp.alt{border-color:var(--steel);color:var(--steel);background:#f4f7fa}
+.mp.gold{border-color:var(--goldink);color:var(--goldink);background:#fbf6ea}
+.mp.dash{border-style:dashed}
+.mp small{font-family:var(--f-body);font-weight:400;font-size:15px;color:var(--dim);margin-left:8px}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО ДЛЯ УРОКУ 9: схема коробки ─── */
+.bm-m,.bm-b,.bm-p,.bm-c{position:relative;border-radius:8px;text-align:center}
+.bm-m{background:#fbf6ea;border:2px dashed var(--goldink);padding:34px 30px}
+.bm-b{background:#e9ecef;border:6px solid var(--ink);padding:30px 28px}
+.bm-p{background:#e3efe9;border:2px dashed var(--green);padding:30px 28px}
+.bm-c{background:#fff;border:1px solid var(--border);padding:18px 10px;font-size:19px;font-weight:700}
+.bm-c small{font-weight:400;font-size:15px;color:var(--dim)}
+.bm-l{position:absolute;top:6px;left:10px;font-family:var(--f-mono);font-size:14px;font-weight:700}
+.bm-m>.bm-l{color:var(--goldink)} .bm-b>.bm-l{color:var(--ink);top:4px} .bm-p>.bm-l{color:var(--green)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 11: інлайн-код ніколи не розривається ─── */
+.ic{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 14: повторення, проєкт чверті, ескіз ─── */
+.ic{white-space:nowrap}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 14px;font-size:18px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{font-family:var(--f-mono);font-weight:700;color:var(--accent);white-space:nowrap}
+.map .nb{display:inline-flex;width:28px;height:28px;border-radius:7px;background:var(--accent);color:#fff;
+  align-items:center;justify-content:center;font-size:15px;margin-right:8px}
+.mp.gold .nb{background:var(--goldink)} .mp.alt .nb{background:var(--steel)}
+.mp.alt{border-color:var(--steel);color:var(--steel);background:#eef2f6}
+.anat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.an-code{font-family:var(--f-mono);font-size:30px;font-weight:700;text-align:center;margin-bottom:10px}
+.an-lbl{display:flex;justify-content:space-around;font-family:var(--f-mono);font-size:15px;font-weight:700}
+.an-lbl span{border-top:3px solid;padding-top:4px}
+.an-s{color:var(--steel)} .an-p{color:var(--brick)} .an-v{color:var(--forest)}
+.road{display:grid;grid-template-columns:repeat(7,1fr);gap:9px}
+.rd-i{background:var(--surface);border:1px solid var(--border);border-top:5px solid var(--accent);
+  border-radius:10px;padding:12px 10px;display:flex;flex-direction:column;gap:5px;text-align:center}
+.rd-i .rd-d{font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--accent)}
+.rd-i b{font-family:var(--f-head);font-size:19px;color:var(--ink);line-height:1.2}
+.rd-i span:last-child{font-size:15px;color:var(--dim);line-height:1.35}
+.rd-i.cur{border-top-color:var(--brick);background:#fbf1f0}
+.rd-i.cur .rd-d{color:var(--brick)}
+.rd-i.fin{border-top-color:var(--steel);background:#eef2f6}
+.rd-i.fin .rd-d{color:var(--steel)}
+.ideas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.idea{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+  border-radius:0 10px 10px 0;padding:10px 14px}
+.idea b{display:block;font-family:var(--f-head);font-size:19px;color:var(--ink)}
+.idea span{font-size:16px;color:var(--dim)}
+/* макети пристроїв */
+.devs{display:flex;gap:20px;align-items:flex-start}
+.dev{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.dev.wide{width:400px} .dev.narrow{width:150px;border-radius:18px}
+.d-cap{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);text-align:center}
+.d-hd{background:#3e2723;color:#fff;border-radius:6px;padding:6px 9px;display:flex;justify-content:space-between;font-size:13px;gap:6px}
+.d-hd b{font-size:15px;color:#fff}
+.d-hd.col{flex-direction:column;gap:1px}
+.d-hero{background:#efebe9;border-radius:6px;padding:12px 8px;font-family:var(--f-head);font-weight:800;font-size:15px;text-align:center;color:#3e2723}
+.d-row{display:flex;gap:6px}
+.d-card{flex:1;height:58px;border:2px solid #8d6e63;border-radius:6px;background:#fff}
+.dev.narrow .d-card{flex:none;height:44px}
+.d-form{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.d-form span{flex:1;min-width:50px;height:18px;border:1.5px solid #8d6e63;border-radius:4px}
+.d-form i{font-style:normal;background:#3e2723;color:#fff;font-size:12px;padding:3px 8px;border-radius:5px}
+/* ескіз */
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.lg-i{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;gap:14px;align-items:center}
+.lg-i span{font-size:17px;line-height:1.4}
+.lg-pic{width:110px;flex-shrink:0}
+.wf-box,.wf-img,.wf-btn,.wf-in,.wf-card,.wf-hero,.wf-nav{border:2px solid var(--ink);border-radius:4px;background:#fff}
+.wf-box{font-family:var(--f-mono);font-size:13px;text-align:center;padding:6px 4px}
+.wf-img{height:44px;background:
+  linear-gradient(to top right,transparent calc(50% - 1px),var(--ink) 50%,transparent calc(50% + 1px)),
+  linear-gradient(to top left,transparent calc(50% - 1px),var(--ink) 50%,transparent calc(50% + 1px)),#fff}
+.wf-txt{display:flex;flex-direction:column;gap:5px;padding:2px 0}
+.wf-txt i{display:block;height:3px;background:var(--ink);border-radius:2px;width:100%}
+.wf-btn{display:inline-block;font-size:13px;font-weight:700;padding:3px 10px;border-radius:12px}
+.wf-in{height:20px}
+.wf-h{font-family:var(--f-mono);font-weight:700;font-size:15px;letter-spacing:1px}
+.wf-nav{font-family:var(--f-mono);font-size:12px;padding:3px 8px;border-style:dashed}
+.sk2{display:flex;gap:18px;align-items:flex-start}
+.wf{background:#fffef8;border:2px solid var(--border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:7px}
+.wf.wide{width:440px} .wf.narrow{width:160px}
+.wf-cap{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);text-align:center}
+.wf-row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.wf-row .wf-card,.wf-row .wf-in{flex:1}
+.wf-hero{padding:8px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.wf-card{padding:5px;display:flex;flex-direction:column;gap:5px}
+.wf.narrow .wf-img{height:34px}
+.sheet{background:#fff;border:2px solid var(--ink);border-radius:6px;padding:10px;font-size:15px}
+.sh-t{font-family:var(--f-mono);font-size:14px;font-weight:700;border-bottom:1px dashed var(--ink);padding-bottom:6px;margin-bottom:8px}
+.sh-r{display:flex;gap:10px}
+.sh-w,.sh-n{border:2px solid var(--ink);border-radius:4px;padding:8px;font-weight:700;min-height:130px}
+.sh-w{flex:3} .sh-n{flex:1}
+.sh-r small{font-weight:400;font-size:13px;color:var(--dim)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 15: блочні/рядкові, обгортка ─── */
+.xr{font-family:var(--f-body);padding:14px 16px}
+.xb{border:2px solid var(--forest);border-radius:4px;padding:6px 10px;margin-bottom:8px;position:relative;font-size:18px;color:#111}
+.xb:first-child{font-family:var(--f-head);font-weight:800;font-size:22px}
+.xi{border:2px solid var(--brick);border-radius:3px;padding:0 3px}
+.xi.xa{color:#1a4fd6;text-decoration:underline}
+.xi:not(.xa){font-weight:700}
+.xt{position:absolute;right:6px;top:-11px;background:#fff;font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--forest);padding:0 4px}
+.scr{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:10px 8px;min-height:72px}
+.scr-l{font-size:15px;line-height:1.5;background:#fbf1f0;padding:4px 6px}
+.scr-c{font-size:15px;line-height:1.5;max-width:60%;margin:0 auto;background:#eef3f0;padding:4px 6px;border-left:2px dashed var(--forest);border-right:2px dashed var(--forest)}
+.bw-hd,.bw-sec,.bw-ft{padding:12px 0}
+.bw-hd{background:#3e2723;color:#fff} .bw-sec{background:#fff} .bw-sec.alt{background:#efebe9}
+.bw-ft{background:#3e2723;color:#ddd}
+.bw-c{max-width:62%;margin:0 auto;border-left:2px dashed #b08968;border-right:2px dashed #b08968;padding:0 10px;
+  display:flex;justify-content:space-between;gap:10px;font-size:15px;align-items:baseline;flex-wrap:wrap}
+.bw-c b{font-family:var(--f-head);font-size:18px}
+.bw-hd b{color:#fff}
+.tbl td{vertical-align:top}
+/* ─── ДОДАНО ДЛЯ УРОКІВ 16–17: Flexbox — живі демо (справжній display:flex) ─── */
+.fx{display:flex;background:#fff;border:2px dashed var(--steel);border-radius:8px;padding:6px;gap:6px;min-height:50px}
+.fx>i{font-style:normal;background:#e3efe9;border:2px solid var(--forest);border-radius:5px;padding:5px 12px;
+  font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--forest);line-height:1.3}
+.fx.tall{height:104px}
+.fx>i.m{padding-top:12px;padding-bottom:12px}
+.fx>i.l{padding-top:22px;padding-bottom:22px}
+.fx.blk{display:block}
+.fx.blk>i{display:block;margin-bottom:6px}
+.fx.blk>i:last-child{margin-bottom:0}
+.fx.nw>i{width:120px}
+.fxg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px}
+.fxg.g2{grid-template-columns:1fr 1fr}
+.fxc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--ink);margin-bottom:5px;white-space:nowrap}
+.fxc span{color:var(--dim);font-weight:400}
+.q6{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.qc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 15px}
+.qc .mono{font-size:14.5px;line-height:1.5}
+.qc .qq{font-size:16.5px;font-weight:700;color:var(--brand);margin-top:7px;line-height:1.4}
+.qc .wnt{font-size:15.5px;color:var(--dim);margin-bottom:5px;line-height:1.4}
+.qn{display:inline-flex;width:26px;height:26px;border-radius:7px;background:var(--brand);color:#fff;
+  font-family:var(--f-mono);font-size:14px;font-weight:700;align-items:center;justify-content:center;margin-right:6px}
+.mh{display:flex;justify-content:space-between;align-items:center;background:#3e2723;color:#fff;padding:12px 16px;gap:12px}
+.mh b{font-family:var(--f-head);font-size:22px;color:#fff}
+.mh .mn{display:flex;gap:16px;font-size:16px}
+.mh .mn span{color:#ffcc80;text-decoration:underline}
+.mhero{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;min-height:150px;background:#efebe9;color:#3e2723;text-align:center}
+.mhero b{font-family:var(--f-head);font-size:21px}
+.mhero .mb{background:#d9822b;color:#fff;font-weight:700;padding:6px 16px;border-radius:8px;font-size:15px}
+.url{font-family:var(--f-mono);font-size:17px;font-weight:700;color:var(--forest);border-bottom:2px solid var(--forest);word-break:break-all}
+.tbl td.v{font-family:var(--f-mono);font-size:15.5px;color:var(--ink)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 17: картки, рівні ─── */
+.mcs{display:flex;flex-wrap:wrap;gap:10px;background:#efebe9;padding:10px;border-radius:8px}
+.mcd{width:150px;background:#fff;border:2px solid #8d6e63;border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:4px}
+.mcd b{font-family:var(--f-head);font-size:17px;color:#3e2723}
+.mcd span{font-size:14px;color:#5d4037;line-height:1.35}
+.mft{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+.mft .pr{color:#c62828;font-weight:700;font-size:15px}
+.mft .bt{background:#d9822b;color:#fff;font-weight:700;font-size:13px;padding:3px 9px;border-radius:6px}
+.lvt{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border)}
+.lvt td{border-bottom:1px solid var(--border);padding:10px 14px;font-size:18px;vertical-align:top}
+.lvt td:first-child{font-size:19px;white-space:nowrap;width:90px}
+.lvt tr:last-child td{border-bottom:0}
+.pic{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:8px}
+.pic .p-hd{display:flex;justify-content:space-between;align-items:center;background:#1a237e;color:#fff;border-radius:5px;padding:8px 12px;font-size:15px}
+.pic .p-hd b{font-family:var(--f-head);font-size:18px;color:#fff}
+.pic .p-hd span{display:flex;gap:14px}
+.pic .p-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.pic .p-row div{width:120px;height:62px;border:2px solid #1a237e;border-radius:6px;font-size:14px;font-weight:700;color:#1a237e;padding:5px 8px}
+.pic .p-ft{display:flex;justify-content:space-around;border-top:2px dashed var(--ink);padding-top:7px;font-size:14px}
+/* ─── ДОДАНО ДЛЯ УРОКІВ 18–25: Grid, форма, ефекти, адаптив — живі демо ─── */
+.gd{display:grid;background:#fff;border:2px dashed var(--steel);border-radius:8px;padding:6px;gap:6px}
+.gd>i{font-style:normal;background:#e3efe9;border:2px solid var(--forest);border-radius:5px;padding:8px 6px;
+  font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--forest);text-align:center;line-height:1.3}
+.gd>i.w{background:#f7eeda;border-color:var(--goldink);color:var(--goldink)}
+.gd>i.t{background:#e4eaf0;border-color:var(--steel);color:var(--steel)}
+.gd>i.e{background:transparent;border:2px dashed #c9ced6;color:var(--faint)}
+.gd.c3{grid-template-columns:repeat(3,1fr)} .gd.c4{grid-template-columns:repeat(4,1fr)}
+.gd.c2{grid-template-columns:repeat(2,1fr)} .gd.c1{grid-template-columns:1fr}
+.gcap{font-family:var(--f-mono);font-size:14px;font-weight:700;color:var(--ink);margin:0 0 5px;white-space:nowrap}
+.gcap span{color:var(--dim);font-weight:400}
+.ruler{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:14px;font-weight:700;color:var(--brick);padding:0 2px}
+/* форма на слайді */
+.fdemo{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:14px 16px;display:grid;gap:7px;
+  font-family:Arial,sans-serif;color:#3e2723;font-size:16px}
+.fdemo label{font-weight:700}
+.fdemo input,.fdemo select,.fdemo textarea{padding:7px;border:2px solid #8d6e63;border-radius:6px;font-size:16px;font-family:inherit}
+.fdemo .rl{font-weight:400}
+.fdemo button{background:#d9822b;color:#fff;border:0;border-radius:8px;padding:10px 18px;font-size:16px;font-weight:700}
+.fdemo input:focus,.fdemo select:focus,.fdemo textarea:focus{outline:3px solid #d9822b}
+.err{display:inline-block;background:#fff;border:2px solid var(--ink);border-radius:8px;padding:6px 12px;
+  font-size:15px;box-shadow:0 3px 8px rgba(0,0,0,.18);font-family:Arial,sans-serif}
+/* ефекти на слайді */
+.hv-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.hv{background:#d9822b;color:#fff;font-weight:700;border-radius:8px;padding:12px 22px;font-size:18px;cursor:pointer;
+  display:inline-block;font-family:Arial,sans-serif}
+.hv.t1{transition:transform .3s,background-color .3s}
+.hv.t1:hover{transform:scale(1.1);background:#b5651d}
+.hv.t0:hover{transform:scale(1.1);background:#b5651d}
+.hv.t1:active{transform:scale(.95)}
+.hvc{width:170px;background:#fff;border:2px solid #8d6e63;border-radius:8px;padding:12px;font-family:Arial,sans-serif;
+  color:#3e2723;transition:transform .3s,box-shadow .3s;cursor:pointer}
+.hvc b{font-size:18px;display:block}
+.hvc:hover{transform:translateY(-8px);box-shadow:0 8px 16px rgba(0,0,0,.2)}
+.hvr{font-size:48px;display:inline-block;transition:transform .4s;cursor:pointer}
+.hvr:hover{transform:rotate(20deg)}
+.tf3{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;text-align:center}
+.tf3 .bx0{height:70px;display:flex;align-items:center;justify-content:center;border:2px dashed #c9ced6;border-radius:8px}
+.tf3 .bx0 i{font-style:normal;width:56px;height:40px;background:#e3efe9;border:2px solid var(--forest);border-radius:6px}
+/* телефон і монітор */
+.phone{width:190px;border:4px solid var(--ink);border-radius:24px;padding:14px 8px 18px;background:#fff;flex-shrink:0}
+.phone .scr2{border:1px solid var(--border);border-radius:6px;overflow:hidden;font-family:Arial,sans-serif;font-size:12px;color:#3e2723}
+.mon{flex:1;border:4px solid var(--ink);border-radius:10px;padding:8px;background:#fff}
+.mon .scr2{border:1px solid var(--border);border-radius:4px;overflow:hidden;font-family:Arial,sans-serif;font-size:13px;color:#3e2723}
+.z-hd{background:#3e2723;color:#ffcc80;padding:6px 8px;display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.z-hd b{color:#fff}
+.z-hd.col{flex-direction:column;align-items:flex-start}
+.z-cards{display:grid;gap:6px;padding:8px;background:#efebe9}
+.z-cards i{font-style:normal;background:#fff;border:1.5px solid #8d6e63;border-radius:4px;height:34px}
+.z-ft{background:#3e2723;color:#ddd;padding:5px 8px;font-size:11px}
+.bp{display:flex;gap:0;font-family:var(--f-mono);font-size:14px;font-weight:700;text-align:center}
+.bp div{padding:10px 6px;border:2px solid var(--ink);border-left-width:0}
+.bp div:first-child{border-left-width:2px;border-radius:8px 0 0 8px}
+.bp div:last-child{border-radius:0 8px 8px 0}
+.bp .on{background:#e3efe9;color:var(--forest)}
+/* матеріал чверті */
+.mq{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border)}
+.mq td,.mq th{border-bottom:1px solid var(--border);padding:6px 11px;font-size:16px;text-align:left;vertical-align:top;line-height:1.45}
+.mq th{font-family:var(--f-mono);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim)}
+.mq td.c{font-family:var(--f-mono);font-weight:700;color:var(--accent);white-space:nowrap;font-size:15px}
+.mq td.x{font-family:var(--f-mono);font-size:14px;color:var(--ink);white-space:nowrap}
+.mq tr:last-child td{border-bottom:0}
+.chk{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.chk div{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:17px;line-height:1.45}
+.chk div b{color:var(--accent)}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1" style="font-size:3rem">Ефекти: наведення, переходи, закріплена шапка</div>
+    <div class="title-sub">Front-end · 8 клас · Урок 21 · 1 грудня 2026</div>
+    <div class="chips">
+      <span class="chip">:hover · :focus · :active</span>
+      <span class="chip">transition</span>
+      <span class="chip">transform</span>
+      <span class="chip">position: sticky</span>
+      <span class="chip">⭐ / ⭐⭐ / ⭐⭐⭐</span>
+    </div>
+  </div></section>
+
+  <!-- ══════════ СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lb">Урок 21 · за ноутбуками</span>
+      <h2>Сайт відповідає на мишу</h2>
+    </div></div>
+    <div class="steps lg">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Стани</b>: наведення, поле в роботі, натискання</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Плавно</b>, а не стрибком — <span class="ic">transition</span></span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Збільшити, зсунути, повернути</b> — <span class="ic">transform</span></span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><b>Шапка, що не зникає</b> під час прокрутки</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ЗГАДУЄМО ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lt">Згадуємо · урок 20 · відповідай уголос</span>
+      <h2>Форма замовлення</h2>
+    </div></div>
+    <div class="two">
+      <div class="fdemo" inert>
+        <label>Ім'я</label><input type="text" placeholder="Олена">
+        <label>Розмір</label><span><label class="rl"><input type="radio" name="z1"> малий</label> &#160; <label class="rl"><input type="radio" name="z1" checked> великий</label></span>
+        <label class="rl"><input type="checkbox"> з собою</label>
+        <button>Замовити</button>
+      </div>
+      <div class="q6" style="grid-template-columns:1fr">
+        <div class="qc"><div class="qq" style="margin:0"><span class="qn">1</span>Клік на «Ім'я» ставить курсор у поле. Які два атрибути це зв'язують?</div></div>
+        <div class="qc"><div class="qq" style="margin:0"><span class="qn">2</span>Чому з двох кружечків можна обрати лише один?</div></div>
+        <div class="qc"><div class="qq" style="margin:0"><span class="qn">3</span>Порожнє ім'я браузер не пускає. Який атрибут?</div></div>
+        <div class="qc"><div class="qq" style="margin:0"><span class="qn">4</span>Сіра «Олена» в порожньому полі — що це за атрибут?</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ СТАНИ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🖱️</div><div>
+      <span class="label lt">Нове · стани</span>
+      <h2>:hover, :focus, :active — коли спрацьовує правило</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="mono" style="font-size:15px;line-height:1.6"><span class="sk">.btn</span> { <span class="sa">background-color</span>: <span class="ss">#d9822b</span>; }
+
+<span class="sk">.btn:hover</span> { <span class="sa">background-color</span>: <span class="ss">#b5651d</span>; }
+
+<span class="sk">input:focus</span> { <span class="sa">outline</span>: <span class="ss">3px solid #d9822b</span>; }
+
+<span class="sk">.btn:active</span> { <span class="sa">background-color</span>: <span class="ss">#8d4a12</span>; }</div>
+        <div class="hv-row mt"><span class="hv t0">Наведи на мене</span></div>
+      </div>
+      <div class="brk">
+        <div class="brow"><span class="btag" style="min-width:90px">:hover</span><span class="bwhat">миша <b>над</b> елементом. На телефоні миші немає — там наведення не буває</span></div>
+        <div class="brow"><span class="btag" style="min-width:90px">:focus</span><span class="bwhat">поле <b>в роботі</b>: клацнули в нього або дійшли клавішею <kbd>Tab</kbd></span></div>
+        <div class="brow"><span class="btag" style="min-width:90px">:active</span><span class="bwhat">у ту мить, коли кнопку <b>натиснули</b></span></div>
+        <div class="tip ty" style="margin:0"><span class="tip-ico">✍️</span><div>Двокрапка — <b>впритул</b> до селектора: <span class="ic">.btn:hover</span>, без пробілу.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ TRANSITION ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🎞️</div><div>
+      <span class="label lt">Нове</span>
+      <h2>transition — плавно, а не стрибком</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="gcap">без transition <span>— наведи</span></div>
+        <span class="hv t0">Стрибком</span>
+        <div class="gcap mt">transition: background-color 0.3s, transform 0.3s; <span>— наведи</span></div>
+        <span class="hv t1">Плавно</span>
+        <div class="mono mt" style="font-size:15px;line-height:1.6"><span class="sk">.btn</span> {
+  <span class="sa">transition</span>: <span class="ss">background-color 0.3s</span>;
+}
+<span class="sk">.btn:hover</span> {
+  <span class="sa">background-color</span>: <span class="ss">#b5651d</span>;
+}</div>
+      </div>
+      <div class="brk">
+        <div class="brow"><span class="btag" style="min-width:110px">що</span><span class="bwhat">яку властивість вести плавно: <span class="ic">background-color</span>, <span class="ic">transform</span>, <span class="ic">color</span>… Кілька — через кому</span></div>
+        <div class="brow"><span class="btag" style="min-width:110px">скільки</span><span class="bwhat">час у секундах: <span class="ic">0.3s</span>. Без <span class="ic">s</span> не працює</span></div>
+        <div class="brow"><span class="btag" style="min-width:110px">кому</span><span class="bwhat"><b>звичайному</b> стану <span class="ic">.btn</span>, не <span class="ic">:hover</span> — тоді плавно і туди, і назад</span></div>
+        <div class="brow"><span class="btag" style="min-width:110px">all</span><span class="bwhat"><span class="ic">transition: all 0.3s</span> — плавно все, що зміниться</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ TRANSFORM ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🔄</div><div>
+      <span class="label lt">Нове</span>
+      <h2>transform — збільшити, зсунути, повернути</h2>
+    </div></div>
+    <div class="tf3">
+      <div><div class="bx0"><i></i></div><p class="mono" style="font-size:14px">звичайно</p></div>
+      <div><div class="bx0"><i style="transform:scale(1.3)"></i></div><p class="mono" style="font-size:14px">scale(1.3)</p></div>
+      <div><div class="bx0"><i style="transform:translateY(-12px)"></i></div><p class="mono" style="font-size:14px">translateY(-12px)</p></div>
+      <div><div class="bx0"><i style="transform:rotate(20deg)"></i></div><p class="mono" style="font-size:14px">rotate(20deg)</p></div>
+    </div>
+    <table class="tbl mt">
+      <tr><th>Значення</th><th>Що робить</th></tr>
+      <tr><td class="c">scale(1.1)</td><td>у 1,1 раза більше · <span class="ic">scale(0.9)</span> — менше</td></tr>
+      <tr><td class="c">translateX(10px) · translateY(-5px)</td><td>зсув праворуч · вгору (мінус — угору). <span class="ic">translate(10px, -5px)</span> — обидва</td></tr>
+      <tr><td class="c">rotate(15deg)</td><td>поворот за годинниковою стрілкою, <span class="ic">deg</span> — градуси</td></tr>
+      <tr><td class="c">scale(1.1) rotate(5deg)</td><td>кілька разом — через <b>пробіл</b> в одному <span class="ic">transform</span></td></tr>
+    </table>
+    <div class="tip tb"><span class="tip-ico">💡</span><div>Сусіди <b>не посуваються</b>: <span class="ic">transform</span> лише малює елемент інакше.</div></div>
+  </div></section>
+
+  <!-- ══════════ STICKY ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">📌</div><div>
+      <span class="label lt">Нове</span>
+      <h2>position: sticky — шапка, що не зникає</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div style="height:270px;overflow:auto;border:3px solid var(--ink);border-radius:10px;background:#fff;font-family:Arial,sans-serif;color:#3e2723">
+          <div class="z-hd" style="position:sticky;top:0;z-index:2;font-size:16px;padding:10px 12px"><b>Зерно</b><span>Напої · Замовити</span></div>
+          <div style="padding:10px 14px;font-size:16px;line-height:1.8">Прокрути цю рамку ↓<br>Капучино — 55 грн<br>Лате — 60 грн<br>Какао — 45 грн<br>Чай — 35 грн<br>Сік — 50 грн<br>Круасан — 40 грн<br>Чому ми: свіже зерно<br>Випічка щоранку<br>Безкоштовний Wi-Fi<br>Замовити: форма<br>© 2026 Зерно</div>
+        </div>
+      </div>
+      <div>
+        <div class="mono" style="font-size:15px;line-height:1.6"><span class="sk">header</span> {
+  <span class="sa">position</span>: <span class="ss">sticky</span>;
+  <span class="sa">top</span>: <span class="ss">0</span>;
+  <span class="sa">z-index</span>: <span class="ss">10</span>;
+}</div>
+        <div class="brk mt">
+          <div class="brow"><span class="btag" style="min-width:100px">sticky</span><span class="bwhat">«липка»: їде разом зі сторінкою, а дійшовши до краю — прилипає</span></div>
+          <div class="brow"><span class="btag" style="min-width:100px">top: 0</span><span class="bwhat">де прилипнути: 0 від верху вікна. <b>Без <span class="ic">top</span> не прилипає</b></span></div>
+          <div class="brow"><span class="btag" style="min-width:100px">z-index</span><span class="bwhat">хто зверху: шапка з 10 — над картками, а не під ними</span></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ДОВІДНИК ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lt">Довідник · лишається на дошці</span>
+      <h2>Усі ефекти на одному екрані</h2>
+    </div></div>
+    <table class="tbl">
+      <tr><th>Що</th><th>Запис</th><th>Що робить</th></tr>
+      <tr><td rowspan="3"><b>стани</b></td><td class="c">.btn:hover</td><td>миша над елементом</td></tr>
+      <tr><td class="c">input:focus</td><td>поле в роботі</td></tr>
+      <tr><td class="c">.btn:active</td><td>мить натискання</td></tr>
+      <tr><td><b>плавно</b></td><td class="c">transition: transform 0.3s</td><td>яку властивість і за скільки секунд; пишемо звичайному стану</td></tr>
+      <tr><td rowspan="3"><b>transform</b></td><td class="c">scale(1.05)</td><td>більше · менше</td></tr>
+      <tr><td class="c">translateY(-5px)</td><td>зсув: <span class="ic">translateX</span> — вбік, <span class="ic">translateY</span> — вгору-вниз</td></tr>
+      <tr><td class="c">rotate(15deg)</td><td>поворот</td></tr>
+      <tr><td><b>шапка</b></td><td class="c">position: sticky; top: 0;</td><td>прилипає до верху вікна; <span class="ic">z-index: 10</span> — над картками</td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🔮</div><div>
+      <span class="label lp">Передбач · відповідь у коментар CSS</span>
+      <h2>Що станеться?</h2>
+    </div></div>
+    <div class="q6">
+      <div class="qc"><div class="mono"><span class="qn">1</span>.btn:hover {
+  background-color: red;
+}</div>
+        <div class="qq">Колір зміниться плавно чи стрибком?</div></div>
+      <div class="qc"><div class="mono"><span class="qn">2</span>.btn:hover {
+  background-color: red;
+  transition: 0.5s;
+}</div>
+        <div class="qq">Навели — плавно. А коли мишу прибрали?</div></div>
+      <div class="qc"><div class="mono"><span class="qn">3</span>.card:hover {
+  transform: scale(2);
+}</div>
+        <div class="qq">Картка 200px. Яка ширина на екрані? Сусіди посунуться?</div></div>
+      <div class="qc"><div class="mono"><span class="qn">4</span>.card:hover {
+  transform: translateY(-10px);
+}</div>
+        <div class="qq">Картка поїде вгору чи вниз?</div></div>
+      <div class="qc"><div class="mono"><span class="qn">5</span>header {
+  position: sticky;
+}</div>
+        <div class="qq">Прокрутили вниз. Шапка прилипне?</div></div>
+      <div class="qc"><div class="mono"><span class="qn">6</span>.logo:hover {
+  transform: rotate(360deg);
+}</div>
+        <div class="qq">Без <span class="ic">transition</span>. Що побачимо?</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ РІВНІ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lg">Практика · проєкт чверті</span>
+      <h2>Рівні: обери, куди дійдеш</h2>
+    </div></div>
+    <table class="lvt">
+      <tr><td>⭐</td><td><b>Кроки 1–2.</b> Кнопка плавно змінює колір і більшає · картки піднімаються з тінню</td></tr>
+      <tr><td>⭐⭐</td><td><b>+ кроки 3–4.</b> Поле форми в роботі видно · шапка не зникає під час прокрутки</td></tr>
+      <tr><td>⭐⭐⭐</td><td><b>+ крок 5.</b> Меню й іконки «Чому ми» відповідають на мишу</td></tr>
+    </table>
+    <div class="hbox mt"><b>Старт.</b> Свій сайт — відкрий папку проєкту у VS Code. Немає своєї — нова папка зі стартовим кодом «Зерно» (уже з формою), кнопка «Скопіювати»:<br>
+      <a class="url" href="kod.html">sv2627.github.io/sc/steam/8-frontend/u21/kod.html</a></div>
+  </div></section>
+
+  <!-- ══════════ КРОК 1 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 1 · ⭐</span>
+        <span class="t">Кнопка</span><span class="tmr">5 хвилин</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад · style.css</span>
+          <div class="mono" style="font-size:14.5px;line-height:1.55"><span class="sk">.btn</span> {
+  <span class="sa">transition</span>: <span class="ss">background-color 0.3s, transform 0.3s</span>;
+}
+<span class="sk">.btn:hover</span> {
+  <span class="sa">background-color</span>: <span class="ss">#b5651d</span>;
+  <span class="sa">transform</span>: <span class="ss">scale(1.05)</span>;
+}
+<span class="sk">.btn:active</span> {
+  <span class="sa">transform</span>: <span class="ss">scale(0.95)</span>;
+}</div>
+          <div class="hv-row mt"><span class="hv t1">Замовити</span></div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li><span class="ic">.btn:hover</span> — темніший колір твоєї кнопки</li>
+            <li>Звичайному <span class="ic">.btn</span> — <span class="ic">transition</span> на 0.3s</li>
+            <li>У <span class="ic">:hover</span> — ще й <span class="ic">scale(1.05)</span></li>
+            <li><span class="ic">:active</span> — кнопка «втискається»: <span class="ic">scale(0.95)</span></li>
+            <li>⭐⭐ Спробуй <span class="ic">1s</span> і <span class="ic">0.1s</span> — що приємніше?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ КРОК 2 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 2 · ⭐</span>
+        <span class="t">Картки піднімаються</span><span class="tmr">5 хвилин</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:14.5px;line-height:1.55"><span class="sk">.card</span> {
+  <span class="sa">transition</span>: <span class="ss">transform 0.3s, box-shadow 0.3s</span>;
+}
+<span class="sk">.card:hover</span> {
+  <span class="sa">transform</span>: <span class="ss">translateY(-5px)</span>;
+  <span class="sa">box-shadow</span>: <span class="ss">0 6px 14px rgba(0, 0, 0, 0.2)</span>;
+}</div>
+          <div class="hv-row mt"><div class="hvc"><b>Капучино</b>наведи на мене</div></div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Наведення на картку каталогу: вгору на 5px</li>
+            <li>Тінь у <span class="ic">:hover</span> — ніби картка злетіла</li>
+            <li><span class="ic">transition</span> — для <span class="ic">transform</span> і <span class="ic">box-shadow</span>, через кому</li>
+            <li>⭐⭐ Головній картці — <span class="ic">scale(1.03)</span> замість зсуву</li>
+            <li>⭐⭐⭐ Наведення на картку змінює колір рамки — ще одна властивість у <span class="ic">transition</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ КРОК 3 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 3 · ⭐⭐</span>
+        <span class="t">Поле форми в роботі</span><span class="tmr">4 хвилини</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:14px;line-height:1.55"><span class="sk">.order-form input:focus,
+.order-form select:focus,
+.order-form textarea:focus</span> {
+  <span class="sa">outline</span>: <span class="ss">3px solid #d9822b</span>;
+}</div>
+          <div class="fdemo mt" style="padding:10px"><label for="dm1">Клацни в поле</label><input id="dm1" type="text" placeholder="Олена"></div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Полям форми в стані <span class="ic">:focus</span> — товстий контур твого кольору</li>
+            <li>Три селектори через кому — одне правило</li>
+            <li>Пройди форму клавішею <kbd>Tab</kbd>: видно, де ти?</li>
+            <li>⭐⭐⭐ Поле в роботі ще й світліше: <span class="ic">background-color</span> у <span class="ic">:focus</span></li>
+          </ul>
+          <div class="tip ty" style="margin-top:8px"><span class="tip-ico">⌨️</span><div>Контур не прибирати зовсім: без нього не видно, де курсор.</div></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ КРОК 4 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 4 · ⭐⭐</span>
+        <span class="t">Шапка, що не зникає</span><span class="tmr">4 хвилини</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:15px;line-height:1.6"><span class="sk">header</span> {
+  <span class="sa">position</span>: <span class="ss">sticky</span>;
+  <span class="sa">top</span>: <span class="ss">0</span>;
+  <span class="sa">z-index</span>: <span class="ss">10</span>;
+}</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Шапці — <span class="ic">position: sticky</span> і <span class="ic">top: 0</span></li>
+            <li>Прокрути сторінку: шапка лишається вгорі?</li>
+            <li>Наведи на картку під шапкою: картка налазить на шапку? Додай <span class="ic">z-index: 10</span></li>
+            <li>Клацни пункт меню: розділ видно повністю?</li>
+            <li>⭐⭐⭐ Шапка з тінню знизу: <span class="ic">box-shadow</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ КРОК 5 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 5 · ⭐⭐⭐</span>
+        <span class="t">Меню й іконки</span><span class="tmr">4 хвилини</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:14.5px;line-height:1.55"><span class="sk">nav a</span> { <span class="sa">transition</span>: <span class="ss">color 0.3s</span>; }
+<span class="sk">nav a:hover</span> { <span class="sa">color</span>: <span class="ss">white</span>; }
+
+<span class="sk">.feature span</span> { <span class="sa">transition</span>: <span class="ss">transform 0.4s</span>; }
+<span class="sk">.feature span:hover</span> { <span class="sa">transform</span>: <span class="ss">rotate(20deg)</span>; }</div>
+          <div class="hv-row mt"><span class="hvr">☕</span><span class="hvr">🥐</span><span class="hvr">📶</span></div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Пункти меню при наведенні — інший колір, плавно</li>
+            <li>Іконки «Чому ми» повертаються при наведенні</li>
+            <li>Підвал: посилання підкреслюються лише при наведенні — <span class="ic">text-decoration</span></li>
+            <li>Не працює <span class="ic">transform</span> на <span class="ic">span</span> у рядку тексту? Йому потрібен <span class="ic">display: inline-block</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ЧОМУ НЕ ПРАЦЮЄ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🔧</div><div>
+      <span class="label lp">Чому не працює · 3 хвилини</span>
+      <h2>Шість помилок — виправ у коментарі CSS</h2>
+    </div></div>
+    <div class="q6">
+      <div class="qc"><div class="wnt"><span class="qn">1</span>Хотіли плавно і туди, і назад</div>
+        <div class="mono">.btn:hover {
+  transition: background-color 0.3s;
+  background-color: #b5651d;
+}</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">2</span>Хотіли колір при наведенні</div>
+        <div class="mono">.btn : hover {
+  background-color: #b5651d;
+}</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">3</span>Хотіли плавно</div>
+        <div class="mono">.btn {
+  transition: transform 0.3;
+}</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">4</span>Хотіли шапку, що не зникає</div>
+        <div class="mono">header {
+  position: sticky;
+}</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">5</span>Хотіли і збільшити, і повернути</div>
+        <div class="mono">.card:hover {
+  transform: scale(1.1);
+  transform: rotate(5deg);
+}</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">6</span>Хотіли, щоб картка піднялась</div>
+        <div class="mono">.card:hover {
+  transform: translateX(-5px);
+}</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ФІНІШ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lt">Фініш · 2 хвилини</span>
+      <h2>Перевір свій сайт</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">⭐</div><div class="step-t">Кнопка при наведенні плавно змінює колір і більшає, при натисканні «втискається»</div></div>
+      <div class="step"><div class="step-n">⭐</div><div class="step-t">Картки піднімаються з тінню — плавно і туди, і назад</div></div>
+      <div class="step"><div class="step-n">⭐⭐</div><div class="step-t">Клавішею <kbd>Tab</kbd> видно, яке поле форми в роботі</div></div>
+      <div class="step"><div class="step-n">⭐⭐</div><div class="step-t">Шапка лишається вгорі, картки під неї не налазять</div></div>
+      <div class="step"><div class="step-n">👀</div><div class="step-t">Сусід: на що на твоєму сайті він навів мишу першим?</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ БАНК ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lg">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Кнопка-стрілка.</b> «Замовити →»: стрілка в <span class="ic">span</span> їде праворуч при наведенні — <span class="ic">translateX</span></div>
+      <div class="bk"><b>Фото ближче.</b> Фото в картці при наведенні — <span class="ic">scale(1.1)</span></div>
+      <div class="bk"><b>Логотип.</b> Назва сайту в шапці — <span class="ic">rotate(-3deg)</span> при наведенні</div>
+      <div class="bk"><b>Повільно назад.</b> Два різні <span class="ic">transition</span>: у <span class="ic">.card</span> 1s, у <span class="ic">.card:hover</span> 0.2s. Що відчуваєш?</div>
+      <div class="bk"><b>Підвал.</b> Посилання підвалу зсуваються праворуч на 3px при наведенні</div>
+      <div class="bk"><b>Справжній сайт.</b> Будь-який магазин: що там змінюється при наведенні? Запиши три речі в коментар</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ПІДСУМОК ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lb">Підсумок</span>
+      <h2>Що ви зробили за два уроки</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Зроблено</h3><ul>
+        <li>форма з підписами, вибором і перевіркою</li>
+        <li>стани <span class="ic">:hover</span>, <span class="ic">:focus</span>, <span class="ic">:active</span></li>
+        <li><span class="ic">transition</span> і <span class="ic">transform</span></li>
+        <li>шапка, що не зникає</li>
+      </ul></div>
+      <div class="card ct"><h3>Наступного разу · 8 грудня</h3><ul>
+        <li><b>Телефон</b>: як сайт виглядає на вузькому екрані</li>
+        <li>медіа-запити й сітка, що пристосовується</li>
+        <li>принеси кілька фото для свого каталогу</li>
+      </ul></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lp">Додому · 10 хвилин · на обидва уроки</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox">Робимо на <strong>codepen.io</strong>. Код — на сторінці домашнього завдання, кнопка «Скопіювати»: <a class="url" style="font-size:15px" href="dz.html">sv2627.github.io/sc/steam/8-frontend/u21/dz.html</a><br>
+      Код HTML і CSS — у <strong>Google Classroom</strong> (код класу <strong>ibncx2el</strong>) до <strong>8 грудня</strong>.</div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-t" style="font-size:16.5px"><span class="ic">ДОПИШИ ТУТ 1</span>: поле пошти з підписом, підказкою й <span class="ic">required</span>.</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-t" style="font-size:16.5px"><span class="ic">ДОПИШИ ТУТ 2</span>: список із трьох гуртків з підписом.</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-t" style="font-size:16.5px"><span class="ic">ДОПИШИ ТУТ 3</span>: кнопка при наведенні плавно змінює колір і більшає.</div></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">шматок коду · HTML</span></div>
+        <div class="dp-code" style="font-size:14px;line-height:1.4;padding:12px 17px">&lt;<span class="sk">form</span> <span class="sa">class</span>=<span class="ss">"club"</span>&gt;
+  &lt;<span class="sk">label</span> <span class="sa">for</span>=<span class="ss">"name"</span>&gt;Ім'я&lt;/<span class="sk">label</span>&gt;
+  &lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"text"</span> <span class="sa">id</span>=<span class="ss">"name"</span> <span class="sa">required</span>&gt;
+  <span class="cm">&lt;!-- ДОПИШИ ТУТ 1 --&gt;</span>
+  <span class="cm">&lt;!-- ДОПИШИ ТУТ 2 --&gt;</span>
+  &lt;<span class="sk">button</span> <span class="sa">type</span>=<span class="ss">"submit"</span>&gt;Записатися&lt;/<span class="sk">button</span>&gt;
+&lt;/<span class="sk">form</span>&gt;</div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

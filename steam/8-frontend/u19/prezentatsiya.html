@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Практична робота № 3. Сторінка-каталог · Front-end · 8 клас · Урок 19</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Front-end
+  Клас          8
+  Школа         STEAM (Республіка) · вівторок
+  Урок          19 з 27 · 24.11.2026 · другий урок дня (слот 5)
+  Тема          Практична робота № 3. Сторінка-каталог
+  Акцент        green (#154734) — --accent:var(--forest), як уроки 1–17
+  Слайдів       19 (s0…s18)
+  ────────────────────────────────────────────────────────────────
+  ⛔ З 17.11 (рішення користувача): ЖОДНИХ reveal-карток і відповідей
+     на слайдах — учні відкривають колоду на ноутбуках. Відповіді —
+     у конспекті вчителя.
+  ⚠️ ТІЛЬКИ ВБУДОВАНЕ У VS CODE + F12, без скорочень, що розгортаються.
+  ⚠️ ОЦІНЮВАННЯ — тільки в конспекті, на слайдах його немає.
+  ✅ З НОУТБУКАМИ. Свій сайт АБО стартовий код «Зерно» з kod.html
+     цього уроку (каталог ще на Flexbox — перевести на Grid самому).
+  ⚠️ Практична № 3: вимоги s4, рівні ⭐/⭐⭐/⭐⭐⭐, самоперевірка s12.
+     Нового матеріалу НЕМАЄ — лише Grid з u18 і Flexbox з u16–17.
+  ⚠️ «МАТЕРІАЛ ЦІЄЇ ЧВЕРТІ» — s14–s16, цілком в одному місці (u14–u18).
+     З цих трьох слайдів складається тест 01.12 — жодного слова поза ними.
+  ⚠️ ДОМАШНЄ — s18, ОДНЕ НА ОБИДВА УРОКИ ДНЯ (u18 без ДЗ).
+     dz.html — CodePen + перегляд слайдів «Матеріал цієї чверті»,
+     здача — Google Classroom 8ІТ (код ibncx2el) до 01.12.
+  ────────────────────────────────────────────────────────────────
+  СТАРТ         s1 сьогодні · s2 довідник Grid · s3 Flexbox поруч
+  ПРАКТИЧНА     s4  вимоги · s5 старт
+                s6  етап 1 ⭐ розділ і сітка              7 хв
+                s7  етап 2 ⭐ картка                      7 хв
+                s8  етап 3 ⭐⭐ головна картка, банер     6 хв
+                s9  етап 4 ⭐⭐ рядок фільтрів             4 хв
+                s10 етап 5 ⭐⭐⭐ друга сітка               4 хв
+                s11 чому не працює                        2 хв
+                s12 самоперевірка · s13 банк               3 хв
+                разом руками ≈ 33 хв із 45
+  ЧВЕРТЬ        s14–s16 матеріал цієї чверті               4 хв
+  РІЗАТИ ПЕРШИМ s3, s10, s11, s13.  s4, s6–s8, s14–s16, s18 НЕ різати.
+  ────────────────────────────────────────────────────────────────
+  Аркуш A4      rozdatka.html — тільки сховище
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --surf2:#f1f3f7; --border:#e0e3e9;
+  --brand:#591429; --green:#227354; --forest:#154734; --gold:#f2c75c;
+  --goldink:#8a5a10; --brick:#a8392f; --steel:#3c5a72;
+  --teal:#227354; --blue:#3c5a72; --pink:#a8392f; --yellow:#8a5a10;
+  --purple:#8a5a10; --green2:#154734;
+  --text:#282a29; --ink:#282a29; --dim:#5c605e; --faint:#84888a;
+  --accent:var(--forest);
+  --f-head:'Source Serif 4','Meta Serif Pro',Georgia,'Times New Roman',serif;
+  --f-body:'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(110,231,160,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(110,231,160,.022) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(40,42,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:#e2ebe6}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:#e3efe9;color:var(--teal)}
+.lb{background:#e4eaf0;color:var(--blue)}
+.ly{background:#f7eeda;color:var(--yellow)}
+.lp{background:#f6e5e3;color:var(--pink)}
+.lg{background:#e2ebe6;color:var(--green)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cb h3{color:var(--blue)}
+.card.cp h3{color:var(--pink)} .card.cy h3{color:var(--yellow)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--text);line-height:1.7}
+.hbox.ht{border-color:var(--teal)} .hbox.hb{border-color:var(--blue)}
+.hbox.hp{border-color:var(--pink)} .hbox.hy{border-color:var(--yellow)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:#eef3f0;
+     border:1px solid rgba(110,231,160,.25);border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7}
+.tip.ty{background:#fbf6ea;border-color:#e8d5a8}
+.tip.tp{background:#fbf1f0;border-color:#e6c6c2}
+.tip.tb{background:#eef2f6;border-color:rgba(99,197,255,.28)}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+.dp{border-radius:13px;overflow:hidden;border:1px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(40,42,41,.08);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdfcfa;padding:15px 19px;font-size:16px;line-height:1.6;white-space:pre-wrap}
+.dp-out{background:#fff;color:#111;padding:18px 22px;font-family:var(--f-body)}
+.dp-out h1{font-size:1.9rem;color:#111;font-family:var(--f-head)}
+.sk{color:#3c5a72}.ss{color:#a8392f}.sn{color:#154734}
+.cm{color:#6b6f6d;font-style:italic}
+.sa{color:#227354}
+
+/* ─── розбір каркаса: рядок «тег → що робить» ─── */
+.brk{display:flex;flex-direction:column;gap:9px}
+.brow{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:11px;padding:11px 16px}
+.btag{font-family:var(--f-mono);font-size:16px;color:var(--accent);flex-shrink:0;
+      min-width:172px;font-weight:700}
+.bwhat{font-size:17px;line-height:1.6;color:var(--dim)}
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:400}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:rgba(110,231,160,.15);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:#f9f2e2;border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.prac{background:var(--surf2);border:2px solid var(--accent);border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.pbadge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+  background:var(--accent);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--accent)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:var(--goldink);background:#f9f2e2;
+  border:1px solid var(--gold);border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16px;flex-shrink:0;letter-spacing:1px;min-width:54px}
+.lv-t{font-size:17px;line-height:1.6;color:var(--text)}
+.vs{font-family:var(--f-mono);font-size:14px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:7px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid}
+.wrong{border-color:var(--brick);background:var(--surface)}
+.right{border-color:var(--forest);background:var(--surface)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--text)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3: «приклад → тепер самостійно» ─── */
+.demo{border:2px solid var(--steel);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--steel);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--accent);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--text,var(--ink))}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--brick)} .right{border-color:var(--forest)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6}
+.bk b{color:var(--accent)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4: сайт через ШІ ─── */
+.now{display:inline-block;font-family:var(--f-mono);font-size:15px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;background:var(--brick);color:#fff;padding:7px 16px;border-radius:8px;margin-bottom:12px}
+.chat{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:18px 22px;
+  font-size:25px;line-height:1.45;box-shadow:0 2px 10px rgba(40,42,41,.08)}
+.chat .who{font-family:var(--f-mono);font-size:13px;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--dim);display:block;margin-bottom:8px}
+.chat.bad{border-color:var(--brick)} .chat.good{border-color:var(--forest)}
+.chat.sm{font-size:19px;line-height:1.55}
+.mock{background:#fff;border:1px solid var(--border);border-radius:13px;overflow:hidden;
+  box-shadow:0 2px 10px rgba(40,42,41,.08)}
+.mock .m-hd{background:#3b3b3b;color:#fff;padding:12px 18px;display:flex;justify-content:space-between;
+  font-size:16px;font-weight:700}
+.mock .m-hd span{font-weight:400;opacity:.9}
+.mock .m-body{padding:18px 20px;text-align:center}
+.mock .m-h1{font-family:var(--f-head);font-size:30px;font-weight:800;color:#282a29;margin-bottom:10px}
+.mock .m-img{height:96px;border-radius:10px;background:#f1e3cf;display:flex;align-items:center;
+  justify-content:center;font-size:48px;margin-bottom:12px}
+.mock .m-btn{display:inline-block;background:#d9822b;color:#fff;font-weight:700;padding:9px 20px;border-radius:9px;font-size:17px}
+.mock .m-ft{border-top:1px solid var(--border);padding:9px 18px;font-size:14px;color:var(--dim);text-align:center}
+.tags{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
+.tg{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--accent);
+  border-radius:10px;padding:12px 10px;text-align:center}
+.tg code{font-family:var(--f-mono);font-size:21px;font-weight:700;color:var(--accent);display:block;margin-bottom:4px}
+.tg span{font-size:16px;color:var(--dim);line-height:1.35;display:block}
+.nope{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.nope div{border:2px solid var(--brick);border-radius:12px;padding:16px 10px;font-size:22px;font-weight:700;
+  text-align:center;color:var(--brick);background:#fbf1f0}
+.fm{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.fm div{background:var(--surface);border:2px solid var(--accent);border-radius:14px;padding:16px 10px;text-align:center}
+.fm .n{font-family:var(--f-mono);font-size:15px;color:var(--dim);display:block}
+.fm b{display:block;font-family:var(--f-head);font-size:25px;color:var(--accent);margin:4px 0 8px}
+.fm span.e{font-size:16px;color:var(--text);line-height:1.4;display:block}
+.steps.lg .step-t{font-size:23px;line-height:1.45}
+.steps.lg .step-n{width:42px;height:42px;font-size:20px}
+.steps.lg .step{padding:15px 20px;align-items:center}
+.bigsay{font-family:var(--f-head);font-size:2.3rem;font-weight:800;color:var(--accent);line-height:1.25;text-align:center}
+kbd{font-family:var(--f-mono);font-size:.9em;background:var(--surface);border:1px solid var(--border);
+  border-bottom-width:3px;border-radius:7px;padding:1px 8px;white-space:nowrap}
+/* частина 2: розділювач, карта сторінки */
+.divider{text-align:center}
+.divider .dv-n{font-family:var(--f-mono);font-size:18px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.divider .dv-t{font-family:var(--f-head);font-size:3.4rem;font-weight:900;color:var(--accent);line-height:1.1;margin-bottom:22px}
+.map{display:flex;flex-direction:column;gap:9px;font-family:var(--f-mono);font-weight:700;font-size:17px}
+.mp{border:2px solid var(--accent);border-radius:10px;padding:9px 13px;background:var(--surface);color:var(--accent)}
+.mp .mp{margin-top:7px}
+.mrow{display:grid;grid-template-columns:3fr 1fr;gap:9px}
+.mp.alt{border-color:var(--steel);color:var(--steel);background:#f4f7fa}
+.mp.gold{border-color:var(--goldink);color:var(--goldink);background:#fbf6ea}
+.mp.dash{border-style:dashed}
+.mp small{font-family:var(--f-body);font-weight:400;font-size:15px;color:var(--dim);margin-left:8px}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО ДЛЯ УРОКУ 9: схема коробки ─── */
+.bm-m,.bm-b,.bm-p,.bm-c{position:relative;border-radius:8px;text-align:center}
+.bm-m{background:#fbf6ea;border:2px dashed var(--goldink);padding:34px 30px}
+.bm-b{background:#e9ecef;border:6px solid var(--ink);padding:30px 28px}
+.bm-p{background:#e3efe9;border:2px dashed var(--green);padding:30px 28px}
+.bm-c{background:#fff;border:1px solid var(--border);padding:18px 10px;font-size:19px;font-weight:700}
+.bm-c small{font-weight:400;font-size:15px;color:var(--dim)}
+.bm-l{position:absolute;top:6px;left:10px;font-family:var(--f-mono);font-size:14px;font-weight:700}
+.bm-m>.bm-l{color:var(--goldink)} .bm-b>.bm-l{color:var(--ink);top:4px} .bm-p>.bm-l{color:var(--green)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 11: інлайн-код ніколи не розривається ─── */
+.ic{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 14: повторення, проєкт чверті, ескіз ─── */
+.ic{white-space:nowrap}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 14px;font-size:18px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{font-family:var(--f-mono);font-weight:700;color:var(--accent);white-space:nowrap}
+.map .nb{display:inline-flex;width:28px;height:28px;border-radius:7px;background:var(--accent);color:#fff;
+  align-items:center;justify-content:center;font-size:15px;margin-right:8px}
+.mp.gold .nb{background:var(--goldink)} .mp.alt .nb{background:var(--steel)}
+.mp.alt{border-color:var(--steel);color:var(--steel);background:#eef2f6}
+.anat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.an-code{font-family:var(--f-mono);font-size:30px;font-weight:700;text-align:center;margin-bottom:10px}
+.an-lbl{display:flex;justify-content:space-around;font-family:var(--f-mono);font-size:15px;font-weight:700}
+.an-lbl span{border-top:3px solid;padding-top:4px}
+.an-s{color:var(--steel)} .an-p{color:var(--brick)} .an-v{color:var(--forest)}
+.road{display:grid;grid-template-columns:repeat(7,1fr);gap:9px}
+.rd-i{background:var(--surface);border:1px solid var(--border);border-top:5px solid var(--accent);
+  border-radius:10px;padding:12px 10px;display:flex;flex-direction:column;gap:5px;text-align:center}
+.rd-i .rd-d{font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--accent)}
+.rd-i b{font-family:var(--f-head);font-size:19px;color:var(--ink);line-height:1.2}
+.rd-i span:last-child{font-size:15px;color:var(--dim);line-height:1.35}
+.rd-i.cur{border-top-color:var(--brick);background:#fbf1f0}
+.rd-i.cur .rd-d{color:var(--brick)}
+.rd-i.fin{border-top-color:var(--steel);background:#eef2f6}
+.rd-i.fin .rd-d{color:var(--steel)}
+.ideas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.idea{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+  border-radius:0 10px 10px 0;padding:10px 14px}
+.idea b{display:block;font-family:var(--f-head);font-size:19px;color:var(--ink)}
+.idea span{font-size:16px;color:var(--dim)}
+/* макети пристроїв */
+.devs{display:flex;gap:20px;align-items:flex-start}
+.dev{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.dev.wide{width:400px} .dev.narrow{width:150px;border-radius:18px}
+.d-cap{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);text-align:center}
+.d-hd{background:#3e2723;color:#fff;border-radius:6px;padding:6px 9px;display:flex;justify-content:space-between;font-size:13px;gap:6px}
+.d-hd b{font-size:15px;color:#fff}
+.d-hd.col{flex-direction:column;gap:1px}
+.d-hero{background:#efebe9;border-radius:6px;padding:12px 8px;font-family:var(--f-head);font-weight:800;font-size:15px;text-align:center;color:#3e2723}
+.d-row{display:flex;gap:6px}
+.d-card{flex:1;height:58px;border:2px solid #8d6e63;border-radius:6px;background:#fff}
+.dev.narrow .d-card{flex:none;height:44px}
+.d-form{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.d-form span{flex:1;min-width:50px;height:18px;border:1.5px solid #8d6e63;border-radius:4px}
+.d-form i{font-style:normal;background:#3e2723;color:#fff;font-size:12px;padding:3px 8px;border-radius:5px}
+/* ескіз */
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.lg-i{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;gap:14px;align-items:center}
+.lg-i span{font-size:17px;line-height:1.4}
+.lg-pic{width:110px;flex-shrink:0}
+.wf-box,.wf-img,.wf-btn,.wf-in,.wf-card,.wf-hero,.wf-nav{border:2px solid var(--ink);border-radius:4px;background:#fff}
+.wf-box{font-family:var(--f-mono);font-size:13px;text-align:center;padding:6px 4px}
+.wf-img{height:44px;background:
+  linear-gradient(to top right,transparent calc(50% - 1px),var(--ink) 50%,transparent calc(50% + 1px)),
+  linear-gradient(to top left,transparent calc(50% - 1px),var(--ink) 50%,transparent calc(50% + 1px)),#fff}
+.wf-txt{display:flex;flex-direction:column;gap:5px;padding:2px 0}
+.wf-txt i{display:block;height:3px;background:var(--ink);border-radius:2px;width:100%}
+.wf-btn{display:inline-block;font-size:13px;font-weight:700;padding:3px 10px;border-radius:12px}
+.wf-in{height:20px}
+.wf-h{font-family:var(--f-mono);font-weight:700;font-size:15px;letter-spacing:1px}
+.wf-nav{font-family:var(--f-mono);font-size:12px;padding:3px 8px;border-style:dashed}
+.sk2{display:flex;gap:18px;align-items:flex-start}
+.wf{background:#fffef8;border:2px solid var(--border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:7px}
+.wf.wide{width:440px} .wf.narrow{width:160px}
+.wf-cap{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);text-align:center}
+.wf-row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.wf-row .wf-card,.wf-row .wf-in{flex:1}
+.wf-hero{padding:8px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.wf-card{padding:5px;display:flex;flex-direction:column;gap:5px}
+.wf.narrow .wf-img{height:34px}
+.sheet{background:#fff;border:2px solid var(--ink);border-radius:6px;padding:10px;font-size:15px}
+.sh-t{font-family:var(--f-mono);font-size:14px;font-weight:700;border-bottom:1px dashed var(--ink);padding-bottom:6px;margin-bottom:8px}
+.sh-r{display:flex;gap:10px}
+.sh-w,.sh-n{border:2px solid var(--ink);border-radius:4px;padding:8px;font-weight:700;min-height:130px}
+.sh-w{flex:3} .sh-n{flex:1}
+.sh-r small{font-weight:400;font-size:13px;color:var(--dim)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 15: блочні/рядкові, обгортка ─── */
+.xr{font-family:var(--f-body);padding:14px 16px}
+.xb{border:2px solid var(--forest);border-radius:4px;padding:6px 10px;margin-bottom:8px;position:relative;font-size:18px;color:#111}
+.xb:first-child{font-family:var(--f-head);font-weight:800;font-size:22px}
+.xi{border:2px solid var(--brick);border-radius:3px;padding:0 3px}
+.xi.xa{color:#1a4fd6;text-decoration:underline}
+.xi:not(.xa){font-weight:700}
+.xt{position:absolute;right:6px;top:-11px;background:#fff;font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--forest);padding:0 4px}
+.scr{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:10px 8px;min-height:72px}
+.scr-l{font-size:15px;line-height:1.5;background:#fbf1f0;padding:4px 6px}
+.scr-c{font-size:15px;line-height:1.5;max-width:60%;margin:0 auto;background:#eef3f0;padding:4px 6px;border-left:2px dashed var(--forest);border-right:2px dashed var(--forest)}
+.bw-hd,.bw-sec,.bw-ft{padding:12px 0}
+.bw-hd{background:#3e2723;color:#fff} .bw-sec{background:#fff} .bw-sec.alt{background:#efebe9}
+.bw-ft{background:#3e2723;color:#ddd}
+.bw-c{max-width:62%;margin:0 auto;border-left:2px dashed #b08968;border-right:2px dashed #b08968;padding:0 10px;
+  display:flex;justify-content:space-between;gap:10px;font-size:15px;align-items:baseline;flex-wrap:wrap}
+.bw-c b{font-family:var(--f-head);font-size:18px}
+.bw-hd b{color:#fff}
+.tbl td{vertical-align:top}
+/* ─── ДОДАНО ДЛЯ УРОКІВ 16–17: Flexbox — живі демо (справжній display:flex) ─── */
+.fx{display:flex;background:#fff;border:2px dashed var(--steel);border-radius:8px;padding:6px;gap:6px;min-height:50px}
+.fx>i{font-style:normal;background:#e3efe9;border:2px solid var(--forest);border-radius:5px;padding:5px 12px;
+  font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--forest);line-height:1.3}
+.fx.tall{height:104px}
+.fx>i.m{padding-top:12px;padding-bottom:12px}
+.fx>i.l{padding-top:22px;padding-bottom:22px}
+.fx.blk{display:block}
+.fx.blk>i{display:block;margin-bottom:6px}
+.fx.blk>i:last-child{margin-bottom:0}
+.fx.nw>i{width:120px}
+.fxg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px}
+.fxg.g2{grid-template-columns:1fr 1fr}
+.fxc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--ink);margin-bottom:5px;white-space:nowrap}
+.fxc span{color:var(--dim);font-weight:400}
+.q6{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.qc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 15px}
+.qc .mono{font-size:14.5px;line-height:1.5}
+.qc .qq{font-size:16.5px;font-weight:700;color:var(--brand);margin-top:7px;line-height:1.4}
+.qc .wnt{font-size:15.5px;color:var(--dim);margin-bottom:5px;line-height:1.4}
+.qn{display:inline-flex;width:26px;height:26px;border-radius:7px;background:var(--brand);color:#fff;
+  font-family:var(--f-mono);font-size:14px;font-weight:700;align-items:center;justify-content:center;margin-right:6px}
+.mh{display:flex;justify-content:space-between;align-items:center;background:#3e2723;color:#fff;padding:12px 16px;gap:12px}
+.mh b{font-family:var(--f-head);font-size:22px;color:#fff}
+.mh .mn{display:flex;gap:16px;font-size:16px}
+.mh .mn span{color:#ffcc80;text-decoration:underline}
+.mhero{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;min-height:150px;background:#efebe9;color:#3e2723;text-align:center}
+.mhero b{font-family:var(--f-head);font-size:21px}
+.mhero .mb{background:#d9822b;color:#fff;font-weight:700;padding:6px 16px;border-radius:8px;font-size:15px}
+.url{font-family:var(--f-mono);font-size:17px;font-weight:700;color:var(--forest);border-bottom:2px solid var(--forest);word-break:break-all}
+.tbl td.v{font-family:var(--f-mono);font-size:15.5px;color:var(--ink)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 17: картки, рівні ─── */
+.mcs{display:flex;flex-wrap:wrap;gap:10px;background:#efebe9;padding:10px;border-radius:8px}
+.mcd{width:150px;background:#fff;border:2px solid #8d6e63;border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:4px}
+.mcd b{font-family:var(--f-head);font-size:17px;color:#3e2723}
+.mcd span{font-size:14px;color:#5d4037;line-height:1.35}
+.mft{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+.mft .pr{color:#c62828;font-weight:700;font-size:15px}
+.mft .bt{background:#d9822b;color:#fff;font-weight:700;font-size:13px;padding:3px 9px;border-radius:6px}
+.lvt{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border)}
+.lvt td{border-bottom:1px solid var(--border);padding:10px 14px;font-size:18px;vertical-align:top}
+.lvt td:first-child{font-size:19px;white-space:nowrap;width:90px}
+.lvt tr:last-child td{border-bottom:0}
+.pic{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:8px}
+.pic .p-hd{display:flex;justify-content:space-between;align-items:center;background:#1a237e;color:#fff;border-radius:5px;padding:8px 12px;font-size:15px}
+.pic .p-hd b{font-family:var(--f-head);font-size:18px;color:#fff}
+.pic .p-hd span{display:flex;gap:14px}
+.pic .p-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.pic .p-row div{width:120px;height:62px;border:2px solid #1a237e;border-radius:6px;font-size:14px;font-weight:700;color:#1a237e;padding:5px 8px}
+.pic .p-ft{display:flex;justify-content:space-around;border-top:2px dashed var(--ink);padding-top:7px;font-size:14px}
+/* ─── ДОДАНО ДЛЯ УРОКІВ 18–25: Grid, форма, ефекти, адаптив — живі демо ─── */
+.gd{display:grid;background:#fff;border:2px dashed var(--steel);border-radius:8px;padding:6px;gap:6px}
+.gd>i{font-style:normal;background:#e3efe9;border:2px solid var(--forest);border-radius:5px;padding:8px 6px;
+  font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--forest);text-align:center;line-height:1.3}
+.gd>i.w{background:#f7eeda;border-color:var(--goldink);color:var(--goldink)}
+.gd>i.t{background:#e4eaf0;border-color:var(--steel);color:var(--steel)}
+.gd>i.e{background:transparent;border:2px dashed #c9ced6;color:var(--faint)}
+.gd.c3{grid-template-columns:repeat(3,1fr)} .gd.c4{grid-template-columns:repeat(4,1fr)}
+.gd.c2{grid-template-columns:repeat(2,1fr)} .gd.c1{grid-template-columns:1fr}
+.gcap{font-family:var(--f-mono);font-size:14px;font-weight:700;color:var(--ink);margin:0 0 5px;white-space:nowrap}
+.gcap span{color:var(--dim);font-weight:400}
+.ruler{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:14px;font-weight:700;color:var(--brick);padding:0 2px}
+/* форма на слайді */
+.fdemo{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:14px 16px;display:grid;gap:7px;
+  font-family:Arial,sans-serif;color:#3e2723;font-size:16px}
+.fdemo label{font-weight:700}
+.fdemo input,.fdemo select,.fdemo textarea{padding:7px;border:2px solid #8d6e63;border-radius:6px;font-size:16px;font-family:inherit}
+.fdemo .rl{font-weight:400}
+.fdemo button{background:#d9822b;color:#fff;border:0;border-radius:8px;padding:10px 18px;font-size:16px;font-weight:700}
+.fdemo input:focus,.fdemo select:focus,.fdemo textarea:focus{outline:3px solid #d9822b}
+.err{display:inline-block;background:#fff;border:2px solid var(--ink);border-radius:8px;padding:6px 12px;
+  font-size:15px;box-shadow:0 3px 8px rgba(0,0,0,.18);font-family:Arial,sans-serif}
+/* ефекти на слайді */
+.hv-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.hv{background:#d9822b;color:#fff;font-weight:700;border-radius:8px;padding:12px 22px;font-size:18px;cursor:pointer;
+  display:inline-block;font-family:Arial,sans-serif}
+.hv.t1{transition:transform .3s,background-color .3s}
+.hv.t1:hover{transform:scale(1.1);background:#b5651d}
+.hv.t0:hover{transform:scale(1.1);background:#b5651d}
+.hv.t1:active{transform:scale(.95)}
+.hvc{width:170px;background:#fff;border:2px solid #8d6e63;border-radius:8px;padding:12px;font-family:Arial,sans-serif;
+  color:#3e2723;transition:transform .3s,box-shadow .3s;cursor:pointer}
+.hvc b{font-size:18px;display:block}
+.hvc:hover{transform:translateY(-8px);box-shadow:0 8px 16px rgba(0,0,0,.2)}
+.hvr{font-size:48px;display:inline-block;transition:transform .4s;cursor:pointer}
+.hvr:hover{transform:rotate(20deg)}
+.tf3{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;text-align:center}
+.tf3 .bx0{height:70px;display:flex;align-items:center;justify-content:center;border:2px dashed #c9ced6;border-radius:8px}
+.tf3 .bx0 i{font-style:normal;width:56px;height:40px;background:#e3efe9;border:2px solid var(--forest);border-radius:6px}
+/* телефон і монітор */
+.phone{width:190px;border:4px solid var(--ink);border-radius:24px;padding:14px 8px 18px;background:#fff;flex-shrink:0}
+.phone .scr2{border:1px solid var(--border);border-radius:6px;overflow:hidden;font-family:Arial,sans-serif;font-size:12px;color:#3e2723}
+.mon{flex:1;border:4px solid var(--ink);border-radius:10px;padding:8px;background:#fff}
+.mon .scr2{border:1px solid var(--border);border-radius:4px;overflow:hidden;font-family:Arial,sans-serif;font-size:13px;color:#3e2723}
+.z-hd{background:#3e2723;color:#ffcc80;padding:6px 8px;display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.z-hd b{color:#fff}
+.z-hd.col{flex-direction:column;align-items:flex-start}
+.z-cards{display:grid;gap:6px;padding:8px;background:#efebe9}
+.z-cards i{font-style:normal;background:#fff;border:1.5px solid #8d6e63;border-radius:4px;height:34px}
+.z-ft{background:#3e2723;color:#ddd;padding:5px 8px;font-size:11px}
+.bp{display:flex;gap:0;font-family:var(--f-mono);font-size:14px;font-weight:700;text-align:center}
+.bp div{padding:10px 6px;border:2px solid var(--ink);border-left-width:0}
+.bp div:first-child{border-left-width:2px;border-radius:8px 0 0 8px}
+.bp div:last-child{border-radius:0 8px 8px 0}
+.bp .on{background:#e3efe9;color:var(--forest)}
+/* матеріал чверті */
+.mq{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border)}
+.mq td,.mq th{border-bottom:1px solid var(--border);padding:6px 11px;font-size:16px;text-align:left;vertical-align:top;line-height:1.45}
+.mq th{font-family:var(--f-mono);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim)}
+.mq td.c{font-family:var(--f-mono);font-weight:700;color:var(--accent);white-space:nowrap;font-size:15px}
+.mq td.x{font-family:var(--f-mono);font-size:14px;color:var(--ink);white-space:nowrap}
+.mq tr:last-child td{border-bottom:0}
+.chk{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.chk div{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:17px;line-height:1.45}
+.chk div b{color:var(--accent)}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1" style="font-size:3rem">Практична робота № 3. Сторінка-каталог</div>
+    <div class="title-sub">Front-end · 8 клас · Урок 19 · 24 листопада 2026</div>
+    <div class="chips">
+      <span class="chip">каталог на сітці</span>
+      <span class="chip">картка</span>
+      <span class="chip">головна картка</span>
+      <span class="chip">⭐ / ⭐⭐ / ⭐⭐⭐</span>
+      <span class="chip">матеріал чверті</span>
+    </div>
+  </div></section>
+
+  <!-- ══════════ СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lb">Урок 19 · за ноутбуками</span>
+      <h2>Каталог свого сайту — самостійно</h2>
+    </div></div>
+    <div class="steps lg">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Практична робота № 3</b>: каталог на сітці за вимогами</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Рівні</b> ⭐ / ⭐⭐ / ⭐⭐⭐ — хто скільки встигне</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Самоперевірка</b> за списком вимог</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><b>Матеріал цієї чверті</b> — на трьох слайдах</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ДОВІДНИК GRID ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lt">Довідник · лишається на дошці</span>
+      <h2>Сітка: усе з уроку 18</h2>
+    </div></div>
+    <table class="tbl">
+      <tr><th>Кому</th><th>Властивість</th><th>Приклад</th><th>Що робить</th></tr>
+      <tr><td rowspan="4"><b>батькові</b></td><td class="c">display</td><td class="v">grid</td><td>діти стають у комірки сітки</td></tr>
+      <tr><td class="c">grid-template-columns</td><td class="v">repeat(3, 1fr) · 200px 1fr</td><td>колонки: скільки значень — стільки колонок</td></tr>
+      <tr><td class="c">grid-template-rows</td><td class="v">100px auto</td><td>висота рядків</td></tr>
+      <tr><td class="c">gap</td><td class="v">20px · 30px 10px</td><td>проміжки між рядками й колонками</td></tr>
+      <tr><td rowspan="2"><b>дитині</b></td><td class="c">grid-column</td><td class="v">span 2 · 1 / -1</td><td>на дві колонки · на всю ширину</td></tr>
+      <tr><td class="c">grid-row</td><td class="v">span 2</td><td>на два рядки</td></tr>
+    </table>
+    <div class="tip"><span class="tip-ico">🍕</span><div><span class="ic">fr</span> — частка вільного місця: спершу віднімаються проміжки й px, решта ділиться на частки.</div></div>
+  </div></section>
+
+  <!-- ══════════ FLEXBOX ПОРУЧ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🤝</div><div>
+      <span class="label lt">Довідник · уроки 16–17</span>
+      <h2>Сітка — для каталогу, Flexbox — усередині</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="gd c3"><i class="w" style="grid-column:1 / -1">банер · grid-column: 1 / -1</i><i style="text-align:left">Капучино<br><span style="display:flex;justify-content:space-between;font-size:13px">55 грн <b>Купити</b></span></i><i style="text-align:left">Лате<br><span style="display:flex;justify-content:space-between;font-size:13px">60 грн <b>Купити</b></span></i><i style="text-align:left">Какао<br><span style="display:flex;justify-content:space-between;font-size:13px">45 грн <b>Купити</b></span></i></div>
+        <p style="font-size:16px;margin-top:8px">Каталог — <span class="ic">display: grid</span>. Низ кожної картки — <span class="ic">display: flex</span>.</p>
+      </div>
+      <table class="tbl">
+        <tr><th>Flexbox</th><th>Що робить</th></tr>
+        <tr><td class="c">flex-direction</td><td>рядок чи стовпчик</td></tr>
+        <tr><td class="c">justify-content</td><td>уздовж осі: <span class="ic">space-between</span>, <span class="ic">center</span>…</td></tr>
+        <tr><td class="c">align-items</td><td>поперек осі: <span class="ic">center</span>, <span class="ic">stretch</span>…</td></tr>
+        <tr><td class="c">gap</td><td>відстань між дітьми</td></tr>
+        <tr><td class="c">flex-wrap</td><td><span class="ic">wrap</span> — переносити на новий рядок</td></tr>
+      </table>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ВИМОГИ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">📑</div><div>
+      <span class="label lg">Практична робота № 3</span>
+      <h2>Вимоги до каталогу</h2>
+    </div></div>
+    <table class="lvt">
+      <tr><td>⭐</td><td><b>Етапи 1–2.</b> Розділ каталогу з <span class="ic">h2</span> і <span class="ic">id</span>, меню веде на нього · не менше <b>шести карток</b> · сітка з трьох колонок через <span class="ic">repeat</span> і <span class="ic">fr</span>, проміжок <span class="ic">gap</span> · у картці назва, опис, ціна й кнопка; ціна ліворуч, кнопка праворуч</td></tr>
+      <tr><td>⭐⭐</td><td><b>+ етапи 3–4.</b> Головна картка на дві колонки · банер на всю ширину сітки · над сіткою — рядок кнопок-фільтрів</td></tr>
+      <tr><td>⭐⭐⭐</td><td><b>+ етап 5.</b> Каталог із бічною колонкою: <span class="ic">200px 1fr</span> — ліворуч розділи, праворуч картки</td></tr>
+    </table>
+    <div class="tip tb"><span class="tip-ico">💾</span><div>Після кожного етапу — <kbd>Ctrl</kbd>+<kbd>S</kbd> у VS Code і <kbd>F5</kbd> у Chrome.</div></div>
+  </div></section>
+
+  <!-- ══════════ СТАРТ ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🚀</div><div>
+      <span class="label lg">Старт</span>
+      <h2>Своя папка проєкту — або «Зерно»</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-t">VS Code → <b>File → Open Folder…</b> → папка свого сайту</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-t"><span class="ic">index.html</span> — у Chrome, поруч із VS Code</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-t">Каталог уже сіткою з уроку 18? Перевір за етапом 1 і йди далі</div></div>
+      </div>
+      <div class="hbox"><b>Немає своєї папки?</b> Нова папка зі стартовим кодом «Зерно» — каталог у ньому ще на Flexbox, сітку робиш сам. Кнопка «Скопіювати»:<br>
+        <a class="url" href="kod.html">sv2627.github.io/sc/steam/8-frontend/u19/kod.html</a></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ЕТАП 1 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Етап 1 · ⭐</span>
+        <span class="t">Розділ і сітка</span><span class="tmr">7 хвилин</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:14px;line-height:1.5">&lt;<span class="sk">section</span> <span class="sa">id</span>=<span class="ss">"drinks"</span>&gt;
+  &lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"container"</span>&gt;
+    &lt;<span class="sk">h2</span>&gt;Напої&lt;/<span class="sk">h2</span>&gt;
+    &lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"cards"</span>&gt;
+      &lt;<span class="sk">article</span> <span class="sa">class</span>=<span class="ss">"card"</span>&gt;…&lt;/<span class="sk">article</span>&gt;
+      …
+    &lt;/<span class="sk">div</span>&gt;
+  &lt;/<span class="sk">div</span>&gt;
+&lt;/<span class="sk">section</span>&gt;</div>
+          <div class="mono" style="font-size:14px;line-height:1.5"><span class="sk">.cards</span> {
+  <span class="sa">display</span>: <span class="ss">grid</span>;
+  <span class="sa">grid-template-columns</span>: <span class="ss">repeat(3, 1fr)</span>;
+  <span class="sa">gap</span>: <span class="ss">20px</span>;
+}</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Розділ каталогу: <span class="ic">section</span> з <span class="ic">id</span>, усередині <span class="ic">h2</span></li>
+            <li>Пункт меню в шапці веде на цей <span class="ic">id</span>: <span class="ic">href="#…"</span></li>
+            <li>Обгортка <span class="ic">.cards</span> — сітка з трьох колонок, <span class="ic">gap</span></li>
+            <li>Не менше шести карток, у картки — жодного <span class="ic">width</span></li>
+            <li>⭐⭐ <kbd>F12</kbd> → кнопка <span class="ic">grid</span>: колонки рівні?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ЕТАП 2 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Етап 2 · ⭐</span>
+        <span class="t">Картка</span><span class="tmr">7 хвилин</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:14px;line-height:1.5">&lt;<span class="sk">article</span> <span class="sa">class</span>=<span class="ss">"card"</span>&gt;
+  &lt;<span class="sk">h3</span>&gt;Капучино&lt;/<span class="sk">h3</span>&gt;
+  &lt;<span class="sk">p</span>&gt;Кава з молоком і пінкою&lt;/<span class="sk">p</span>&gt;
+  &lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"card-foot"</span>&gt;
+    &lt;<span class="sk">span</span> <span class="sa">class</span>=<span class="ss">"price"</span>&gt;55 грн&lt;/<span class="sk">span</span>&gt;
+    &lt;<span class="sk">a</span> <span class="sa">class</span>=<span class="ss">"btn"</span> <span class="sa">href</span>=<span class="ss">"#order"</span>&gt;Замовити&lt;/<span class="sk">a</span>&gt;
+  &lt;/<span class="sk">div</span>&gt;
+&lt;/<span class="sk">article</span>&gt;</div>
+          <div class="mono" style="font-size:14px;line-height:1.5"><span class="sk">.card-foot</span> {
+  <span class="sa">display</span>: <span class="ss">flex</span>;
+  <span class="sa">justify-content</span>: <span class="ss">space-between</span>;
+  <span class="sa">align-items</span>: <span class="ss">center</span>;
+}</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>У кожній картці: <span class="ic">h3</span> — назва, <span class="ic">p</span> — опис</li>
+            <li>Низ картки <span class="ic">.card-foot</span>: ціна ліворуч, кнопка праворуч</li>
+            <li>Картці — рамка, круглі кути, <span class="ic">padding</span>, білий фон</li>
+            <li>Ціна — <span class="ic">span class="price"</span>, жирна й кольорова</li>
+            <li>⭐⭐ Тексти карток — свої, не з прикладу</li>
+            <li>⭐⭐⭐ Емодзі або фото з папки <span class="ic">img</span> угорі картки, <span class="ic">width: 100%</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ЕТАП 3 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Етап 3 · ⭐⭐</span>
+        <span class="t">Головна картка і банер</span><span class="tmr">6 хвилин</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:14px;line-height:1.5">&lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"cards"</span>&gt;
+  &lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"banner"</span>&gt;Друга кава — за 1 грн&lt;/<span class="sk">div</span>&gt;
+  &lt;<span class="sk">article</span> <span class="sa">class</span>=<span class="ss">"card wide"</span>&gt;…&lt;/<span class="sk">article</span>&gt;
+  …
+&lt;/<span class="sk">div</span>&gt;</div>
+          <div class="mono" style="font-size:14px;line-height:1.5"><span class="sk">.banner</span> { <span class="sa">grid-column</span>: <span class="ss">1 / -1</span>; }
+<span class="sk">.wide</span> { <span class="sa">grid-column</span>: <span class="ss">span 2</span>; }</div>
+          <div class="gd c3 mt"><i class="t" style="grid-column:1 / -1">банер</i><i class="w" style="grid-column:span 2">wide</i><i>2</i><i>3</i><i>4</i><i>5</i></div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Першій картці — другий клас <span class="ic">wide</span>, у CSS — <span class="ic">span 2</span></li>
+            <li>Банер першим у <span class="ic">.cards</span>: <span class="ic">grid-column: 1 / -1</span></li>
+            <li>Банеру — фон, <span class="ic">padding</span>, текст посередині</li>
+            <li>Перевір: у сітці немає дірок. Є — переклади картку в HTML</li>
+            <li>⭐⭐⭐ Головна картка 2 × 2: ще й <span class="ic">grid-row: span 2</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ЕТАП 4 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Етап 4 · ⭐⭐</span>
+        <span class="t">Рядок фільтрів</span><span class="tmr">4 хвилини</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:14px;line-height:1.5">&lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"filters"</span>&gt;
+  &lt;<span class="sk">a</span> <span class="sa">class</span>=<span class="ss">"btn"</span> <span class="sa">href</span>=<span class="ss">"#drinks"</span>&gt;Усі&lt;/<span class="sk">a</span>&gt;
+  &lt;<span class="sk">a</span> <span class="sa">class</span>=<span class="ss">"btn"</span> <span class="sa">href</span>=<span class="ss">"#drinks"</span>&gt;Кава&lt;/<span class="sk">a</span>&gt;
+  &lt;<span class="sk">a</span> <span class="sa">class</span>=<span class="ss">"btn"</span> <span class="sa">href</span>=<span class="ss">"#drinks"</span>&gt;Випічка&lt;/<span class="sk">a</span>&gt;
+&lt;/<span class="sk">div</span>&gt;</div>
+          <div class="mono" style="font-size:14px;line-height:1.5"><span class="sk">.filters</span> {
+  <span class="sa">display</span>: <span class="ss">flex</span>;
+  <span class="sa">flex-wrap</span>: <span class="ss">wrap</span>;
+  <span class="sa">gap</span>: <span class="ss">10px</span>;
+  <span class="sa">margin-bottom</span>: <span class="ss">20px</span>;
+}</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Над <span class="ic">.cards</span> — <span class="ic">div class="filters"</span> з трьома–чотирма кнопками</li>
+            <li>Кнопки в рядок, з відстанню, переносяться — Flexbox</li>
+            <li>Між фільтрами й сіткою — <span class="ic">margin-bottom</span></li>
+            <li>Фільтри поки не фільтрують — це вигляд. Фільтрувати вміє JavaScript</li>
+            <li>⭐⭐⭐ Фільтри посередині: <span class="ic">justify-content: center</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ЕТАП 5 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Етап 5 · ⭐⭐⭐</span>
+        <span class="t">Каталог із бічною колонкою</span><span class="tmr">4 хвилини</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:14px;line-height:1.5">&lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"catalog"</span>&gt;
+  &lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"side"</span>&gt;Кава · Чай · Випічка&lt;/<span class="sk">div</span>&gt;
+  &lt;<span class="sk">div</span> <span class="sa">class</span>=<span class="ss">"cards"</span>&gt;…&lt;/<span class="sk">div</span>&gt;
+&lt;/<span class="sk">div</span>&gt;</div>
+          <div class="mono" style="font-size:14px;line-height:1.5"><span class="sk">.catalog</span> {
+  <span class="sa">display</span>: <span class="ss">grid</span>;
+  <span class="sa">grid-template-columns</span>: <span class="ss">200px 1fr</span>;
+  <span class="sa">gap</span>: <span class="ss">20px</span>;
+}</div>
+          <div class="gd mt" style="grid-template-columns:110px 1fr"><i class="t">side<br>200px</i><span class="gd c3" style="padding:4px"><i>1</i><i>2</i><i>3</i></span></div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Обгорни <span class="ic">.side</span> і <span class="ic">.cards</span> в <span class="ic">div class="catalog"</span></li>
+            <li>Сітка з двох колонок: 200px і решта</li>
+            <li>У <span class="ic">.side</span> — розділи стовпчиком: <span class="ic">flex-direction: column</span></li>
+            <li>Скільки тепер карток у рядку вміщається гарно — 3 чи 2?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ЧОМУ НЕ ПРАЦЮЄ ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🔧</div><div>
+      <span class="label lp">Чому не працює · 2 хвилини</span>
+      <h2>Шість помилок — виправ у коментарі CSS</h2>
+    </div></div>
+    <div class="q6">
+      <div class="qc"><div class="wnt"><span class="qn">1</span>Хотіли ціну ліворуч, кнопку праворуч</div>
+        <div class="mono">.card-foot {
+  display: grid;
+  justify-content:
+    space-between;
+}</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">2</span>Хотіли банер на всю ширину трьох колонок</div>
+        <div class="mono">.banner {
+  grid-column: 1 / 3;
+}</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">3</span>Хотіли сітку з трьох колонок</div>
+        <div class="mono">.cards { display: grid;
+  grid-template-column:
+    repeat(3, 1fr); }</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">4</span>Хотіли фільтри в рядок</div>
+        <div class="mono">.filters a {
+  display: flex;
+  gap: 10px;
+}</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">5</span>Хотіли три колонки</div>
+        <div class="mono">.cards { display: grid;
+  grid-template-columns:
+    repeat(3, 1 fr); }</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">6</span>Хотіли головну картку на дві колонки</div>
+        <div class="mono">&lt;article class="card"
+  class="wide"&gt;
+.wide { grid-column: span 2; }</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ САМОПЕРЕВІРКА ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lt">Самоперевірка · 2 хвилини</span>
+      <h2>Познач, що є в каталозі</h2>
+    </div></div>
+    <div class="chk">
+      <div>⭐ <b>Розділ</b> з <span class="ic">h2</span> і <span class="ic">id</span>, меню веде на нього</div>
+      <div>⭐ <b>Шість карток</b> або більше</div>
+      <div>⭐ <b>Сітка</b>: три колонки, <span class="ic">repeat</span>, <span class="ic">fr</span>, <span class="ic">gap</span></div>
+      <div>⭐ <b>Картка</b>: назва, опис, ціна ліворуч, кнопка праворуч</div>
+      <div>⭐⭐ <b>Головна картка</b> на дві колонки, дірок немає</div>
+      <div>⭐⭐ <b>Банер</b> на всю ширину · <b>фільтри</b> в рядок</div>
+      <div>⭐⭐⭐ <b>Бічна колонка</b> <span class="ic">200px 1fr</span></div>
+      <div>👀 Сусід: <kbd>F12</kbd> → <span class="ic">grid</span> і <span class="ic">flex</span> — скільки позначок кожної?</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ БАНК ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lg">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Мітка «Хіт».</b> <span class="ic">span class="badge"</span> угорі картки — праворуч від назви</div>
+      <div class="bk"><b>Чотири колонки.</b> Карток вісім — <span class="ic">repeat(4, 1fr)</span>. Як тепер виглядає головна?</div>
+      <div class="bk"><b>Висока картка.</b> Найдовший опис — <span class="ic">grid-row: span 2</span></div>
+      <div class="bk"><b>Стара ціна.</b> Закреслена: <span class="ic">text-decoration: line-through</span> поруч із новою</div>
+      <div class="bk"><b>Підвал сіткою.</b> <span class="ic">2fr 1fr 1fr</span> — адреса ширша</div>
+      <div class="bk"><b>Вузьке вікно.</b> Звузь Chrome до телефона: що стало з трьома колонками? Запиши в коментар</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ МАТЕРІАЛ ЧВЕРТІ 1 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">📚</div><div>
+      <span class="label lb">Матеріал цієї чверті · 1 з 3 · уроки 14–15</span>
+      <h2>Каркас, CSS, коробка, блоки</h2>
+    </div></div>
+    <table class="mq">
+      <tr><th>Слово</th><th>Що це</th><th>Приклад</th></tr>
+      <tr><td class="c">header · nav · main</td><td>шапка · меню · головне на сторінці</td><td class="x">&lt;nav&gt;&lt;a href="#drinks"&gt;Напої&lt;/a&gt;&lt;/nav&gt;</td></tr>
+      <tr><td class="c">section · article · footer</td><td>розділ із заголовком · картка · підвал</td><td class="x">&lt;article class="card"&gt;…&lt;/article&gt;</td></tr>
+      <tr><td class="c">ескіз</td><td>схема сторінки з прямокутників і підписів, до коду</td><td>шапка → каталог → форма → підвал</td></tr>
+      <tr><td class="c">правило CSS</td><td>селектор { властивість: значення; }</td><td class="x">h2 { color: green; }</td></tr>
+      <tr><td class="c">клас · id</td><td>клас — для багатьох, крапка · id — один на сторінці, решітка</td><td class="x">.card { }  ·  #top { }</td></tr>
+      <tr><td class="c">margin · border · padding</td><td>коробка: відступ зовні · рамка · відступ усередині</td><td class="x">* { box-sizing: border-box; }</td></tr>
+      <tr><td class="c">блочні</td><td>з нового рядка, на всю ширину: <span class="ic">h1</span>, <span class="ic">p</span>, <span class="ic">div</span>, <span class="ic">section</span></td><td class="x">a { display: block; }</td></tr>
+      <tr><td class="c">рядкові</td><td>у рядку з текстом, за розміром вмісту: <span class="ic">a</span>, <span class="ic">strong</span>, <span class="ic">span</span></td><td class="x">&lt;span class="price"&gt;55 грн&lt;/span&gt;</td></tr>
+      <tr><td class="c">div · span</td><td>коробки без назви: блочна і рядкова</td><td class="x">&lt;div class="promo"&gt;</td></tr>
+      <tr><td class="c">обгортка</td><td>вміст не ширше й посередині</td><td class="x">.container { max-width: 1000px; margin: 0 auto; }</td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ МАТЕРІАЛ ЧВЕРТІ 2 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">📚</div><div>
+      <span class="label lb">Матеріал цієї чверті · 2 з 3 · уроки 16–17</span>
+      <h2>Flexbox: діти в рядок або в стовпчик</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+      <table class="mq">
+        <tr><th>Властивість · батькові</th><th>Значення і що робить</th></tr>
+        <tr><td class="c">display: flex</td><td>діти стають у рядок. Пишемо <b>батькові</b>, не дитині</td></tr>
+        <tr><td class="c">flex-direction</td><td><span class="ic">row</span> — рядок · <span class="ic">column</span> — стовпчик · <span class="ic">row-reverse</span> · <span class="ic">column-reverse</span></td></tr>
+        <tr><td class="c">justify-content</td><td><b>уздовж</b> осі: <span class="ic">flex-start</span> · <span class="ic">center</span> · <span class="ic">flex-end</span> · <span class="ic">space-between</span> · <span class="ic">space-around</span> · <span class="ic">space-evenly</span></td></tr>
+        <tr><td class="c">align-items</td><td><b>поперек</b> осі: <span class="ic">stretch</span> — однакова висота · <span class="ic">flex-start</span> · <span class="ic">center</span> · <span class="ic">flex-end</span> · <span class="ic">baseline</span></td></tr>
+        <tr><td class="c">gap</td><td>відстань між дітьми: <span class="ic">gap: 20px</span></td></tr>
+        <tr><td class="c">flex-wrap</td><td><span class="ic">nowrap</span> — стискаються · <span class="ic">wrap</span> — переносяться на новий рядок</td></tr>
+      </table>
+      <div>
+        <div class="gcap">шапка: <span>space-between + center</span></div>
+        <div class="mh" style="border-radius:8px"><b>Зерно</b><div class="mn"><span>Напої</span><span>Замовити</span></div></div>
+        <div class="mono mt" style="font-size:13.5px;line-height:1.5"><span class="sk">header .container</span> {
+  <span class="sa">display</span>: <span class="ss">flex</span>;
+  <span class="sa">justify-content</span>: <span class="ss">space-between</span>;
+  <span class="sa">align-items</span>: <span class="ss">center</span>;
+}</div>
+        <div class="gcap mt">низ картки <span>.card-foot</span></div>
+        <div class="mcs"><div class="mcd" style="width:100%"><div class="mft" style="margin:0"><span class="pr">55 грн</span><span class="bt">Замовити</span></div></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ МАТЕРІАЛ ЧВЕРТІ 3 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">📚</div><div>
+      <span class="label lb">Матеріал цієї чверті · 3 з 3 · урок 18</span>
+      <h2>Grid: рядки і колонки разом</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.5fr 1fr">
+      <table class="mq">
+        <tr><th>Що пишемо</th><th>Що робить</th></tr>
+        <tr><td class="c">display: grid</td><td>діти стають у комірки сітки. Пишемо <b>батькові</b></td></tr>
+        <tr><td class="c">grid-template-columns</td><td>колонки: <span class="ic">200px 200px</span> — дві по 200px</td></tr>
+        <tr><td class="c">grid-template-rows</td><td>висота рядків: <span class="ic">100px auto</span></td></tr>
+        <tr><td class="c">fr</td><td>частка вільного місця: <span class="ic">2fr 1fr</span> — перша вдвічі ширша</td></tr>
+        <tr><td class="c">repeat(3, 1fr)</td><td>те саме, що <span class="ic">1fr 1fr 1fr</span></td></tr>
+        <tr><td class="c">gap</td><td>проміжки; <span class="ic">row-gap</span> — між рядками, <span class="ic">column-gap</span> — між колонками</td></tr>
+        <tr><td class="c">grid-column: span 2</td><td>картка на дві колонки. Пишемо <b>дитині</b></td></tr>
+        <tr><td class="c">grid-row: span 2</td><td>картка на два рядки</td></tr>
+        <tr><td class="c">grid-column: 1 / -1</td><td>на всю ширину: від першої лінії до останньої</td></tr>
+      </table>
+      <div>
+        <div class="gd c3"><i class="t" style="grid-column:1 / -1">1 / -1</i><i class="w" style="grid-column:span 2">span 2</i><i>3</i><i>4</i><i>5</i><i>6</i></div>
+        <div class="mono mt" style="font-size:13.5px;line-height:1.5"><span class="sk">.cards</span> {
+  <span class="sa">display</span>: <span class="ss">grid</span>;
+  <span class="sa">grid-template-columns</span>: <span class="ss">repeat(3, 1fr)</span>;
+  <span class="sa">gap</span>: <span class="ss">20px</span>;
+}</div>
+        <div class="tip tb" style="font-size:15.5px"><span class="tip-ico">↔️</span><div>Flexbox — <b>один</b> напрямок, Grid — <b>два</b>. Три колонки — чотири лінії.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ПІДСУМОК ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lb">Підсумок</span>
+      <h2>Що ви зробили за два уроки</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Зроблено</h3><ul>
+        <li>сітка: <span class="ic">grid</span>, <span class="ic">fr</span>, <span class="ic">repeat</span>, <span class="ic">span</span></li>
+        <li>каталог свого сайту — сіткою</li>
+        <li>головна картка, банер, фільтри</li>
+        <li>матеріал чверті — на трьох слайдах</li>
+      </ul></div>
+      <div class="card ct"><h3>Наступного разу · 1 грудня</h3><ul>
+        <li><b>Форма</b> замовлення: поля і перевірка</li>
+        <li><b>Ефекти</b>: наведення, переходи, шапка, що не зникає</li>
+        <li>папку проєкту <b>не губіть</b></li>
+      </ul></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lp">Додому · 10 хвилин · на обидва уроки</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox">Код — на сторінці домашнього завдання, кнопка «Скопіювати»: <a class="url" style="font-size:15px" href="dz.html">sv2627.github.io/sc/steam/8-frontend/u19/dz.html</a><br>
+      Код CSS — у <strong>Google Classroom</strong> (код класу <strong>ibncx2el</strong>) до <strong>1 грудня</strong>.</div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-t" style="font-size:16.5px">Переглянь три слайди <b>«Матеріал цієї чверті»</b> цієї презентації.</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-t" style="font-size:16.5px"><b>codepen.io</b>, <span class="ic">ДОПИШИ ТУТ 1</span>: меню піцерії — сітка з трьох колонок, проміжок 20px.</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-t" style="font-size:16.5px"><span class="ic">ДОПИШИ ТУТ 2–3</span>: головна піца на дві колонки, заголовок — на всю ширину.</div></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">шматок коду · CSS</span></div>
+        <div class="dp-code" style="font-size:14px;line-height:1.4;padding:12px 17px"><span class="sk">.menu</span> {
+  <span class="cm">/* ДОПИШИ ТУТ 1 */</span>
+}
+<span class="sk">.hit</span> {
+  <span class="cm">/* ДОПИШИ ТУТ 2 */</span>
+}
+<span class="sk">.menu h2</span> {
+  <span class="cm">/* ДОПИШИ ТУТ 3 */</span>
+}</div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

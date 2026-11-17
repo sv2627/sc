@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Форма: поля, вибір значень і перевірка · Front-end · 8 клас · Урок 20</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Front-end
+  Клас          8
+  Школа         STEAM (Республіка) · вівторок
+  Урок          20 з 27 · 01.12.2026 · перший урок дня (слот 4)
+  Тема          Форма: поля, вибір значень і перевірка
+  Акцент        green (#154734) — --accent:var(--forest), як уроки 1–17
+  Слайдів       15 (s0…s14)
+  ────────────────────────────────────────────────────────────────
+  ⛔ З 17.11 (рішення користувача): ЖОДНИХ reveal-карток і відповідей
+     на слайдах — учні відкривають колоду на ноутбуках. Відповіді —
+     у конспекті вчителя.
+  ⚠️ ТІЛЬКИ ВБУДОВАНЕ У VS CODE + F12, без скорочень, що розгортаються.
+  ⚠️ ОЦІНЮВАННЯ — тільки в конспекті, на слайдах його немає.
+  ⚠️ ПЕРШІ 20 ХВ — ТЕСТ (ручка, ноутбуки закриті). Аркуші —
+     2026-27-teacher/steam/8-frontend/u20/test.html (11 варіантів) і
+     klyuch.html; друк — python3 office/druk.py 8 01.12. Слово «тест»
+     — ЛИШЕ в плані s1, ніде більше.
+  ✅ Після тесту — з ноутбуками ≈ 25 хв. Свій сайт АБО «Зерно» з
+     kod.html цього уроку (каталог уже на Grid).
+  ⚠️ Нове — родина форми: form, label/for, input (text, email, number,
+     password, checkbox, radio, date), select/option, textarea, button,
+     required, placeholder, min/max, pattern.
+  ⚠️ ДОМАШНЄ — ОДНЕ НА ОБИДВА УРОКИ ДНЯ, в u21. Тут слайда ДЗ немає.
+  ────────────────────────────────────────────────────────────────
+  ТЕСТ          s1 сьогодні                                20 хв
+  НОВЕ          s2  навіщо форма · s3 label і for
+                s4  типи input · s5 вибір: radio, checkbox, select
+                s6  перевірка · s7 довідник (на дошці)
+                s8  передбач (без відповідей)              ≈ 8 хв
+  ПРАКТИКА      s9  старт · s10 крок 1 ⭐ поля              5 хв
+                s11 крок 2 ⭐ вибір                        5 хв
+                s12 крок 3 ⭐⭐ перевірка                  4 хв
+                s13 чому не працює · s14 підсумок          3 хв
+                разом руками ≈ 14 хв із 25
+  РІЗАТИ ПЕРШИМ s8, s13.  s7, s10–s12 НЕ різати.
+  ────────────────────────────────────────────────────────────────
+  Аркуш A4      rozdatka.html — тільки сховище
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --surf2:#f1f3f7; --border:#e0e3e9;
+  --brand:#591429; --green:#227354; --forest:#154734; --gold:#f2c75c;
+  --goldink:#8a5a10; --brick:#a8392f; --steel:#3c5a72;
+  --teal:#227354; --blue:#3c5a72; --pink:#a8392f; --yellow:#8a5a10;
+  --purple:#8a5a10; --green2:#154734;
+  --text:#282a29; --ink:#282a29; --dim:#5c605e; --faint:#84888a;
+  --accent:var(--forest);
+  --f-head:'Source Serif 4','Meta Serif Pro',Georgia,'Times New Roman',serif;
+  --f-body:'Source Sans 3','Source Sans Pro','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--text);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(110,231,160,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(110,231,160,.022) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(40,42,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:600;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--text)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--text);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-size:1.35rem;color:var(--dim);margin-bottom:26px}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:#e2ebe6}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px}
+.lt{background:#e3efe9;color:var(--teal)}
+.lb{background:#e4eaf0;color:var(--blue)}
+.ly{background:#f7eeda;color:var(--yellow)}
+.lp{background:#f6e5e3;color:var(--pink)}
+.lg{background:#e2ebe6;color:var(--green)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.ct h3{color:var(--teal)} .card.cb h3{color:var(--blue)}
+.card.cp h3{color:var(--pink)} .card.cy h3{color:var(--yellow)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--text);line-height:1.7}
+.hbox.ht{border-color:var(--teal)} .hbox.hb{border-color:var(--blue)}
+.hbox.hp{border-color:var(--pink)} .hbox.hy{border-color:var(--yellow)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:#eef3f0;
+     border:1px solid rgba(110,231,160,.25);border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7}
+.tip.ty{background:#fbf6ea;border-color:#e8d5a8}
+.tip.tp{background:#fbf1f0;border-color:#e6c6c2}
+.tip.tb{background:#eef2f6;border-color:rgba(99,197,255,.28)}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em}
+
+.dp{border-radius:13px;overflow:hidden;border:1px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(40,42,41,.08);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdfcfa;padding:15px 19px;font-size:16px;line-height:1.6;white-space:pre-wrap}
+.dp-out{background:#fff;color:#111;padding:18px 22px;font-family:var(--f-body)}
+.dp-out h1{font-size:1.9rem;color:#111;font-family:var(--f-head)}
+.sk{color:#3c5a72}.ss{color:#a8392f}.sn{color:#154734}
+.cm{color:#6b6f6d;font-style:italic}
+.sa{color:#227354}
+
+/* ─── розбір каркаса: рядок «тег → що робить» ─── */
+.brk{display:flex;flex-direction:column;gap:9px}
+.brow{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:11px;padding:11px 16px}
+.btag{font-family:var(--f-mono);font-size:16px;color:var(--accent);flex-shrink:0;
+      min-width:172px;font-weight:700}
+.bwhat{font-size:17px;line-height:1.6;color:var(--dim)}
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.tree b{color:var(--accent);font-weight:400}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:rgba(110,231,160,.15);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:var(--yellow);
+               background:#f9f2e2;border:1px solid rgba(255,217,122,.3);
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.prac{background:var(--surf2);border:2px solid var(--accent);border-radius:14px;padding:17px 21px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.pbadge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+  background:var(--accent);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.3rem;font-weight:800;color:var(--accent)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:var(--goldink);background:#f9f2e2;
+  border:1px solid var(--gold);border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+.lvl{display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:11px 15px}
+.lv-s{font-size:16px;flex-shrink:0;letter-spacing:1px;min-width:54px}
+.lv-t{font-size:17px;line-height:1.6;color:var(--text)}
+.vs{font-family:var(--f-mono);font-size:14px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:7px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid}
+.wrong{border-color:var(--brick);background:var(--surface)}
+.right{border-color:var(--forest);background:var(--surface)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--text)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3: «приклад → тепер самостійно» ─── */
+.demo{border:2px solid var(--steel);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--steel);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--accent);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--text,var(--ink))}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--brick)} .right{border-color:var(--forest)}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--brick)} .right .lbl{color:var(--forest)}
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6}
+.bk b{color:var(--accent)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4: сайт через ШІ ─── */
+.now{display:inline-block;font-family:var(--f-mono);font-size:15px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;background:var(--brick);color:#fff;padding:7px 16px;border-radius:8px;margin-bottom:12px}
+.chat{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:18px 22px;
+  font-size:25px;line-height:1.45;box-shadow:0 2px 10px rgba(40,42,41,.08)}
+.chat .who{font-family:var(--f-mono);font-size:13px;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--dim);display:block;margin-bottom:8px}
+.chat.bad{border-color:var(--brick)} .chat.good{border-color:var(--forest)}
+.chat.sm{font-size:19px;line-height:1.55}
+.mock{background:#fff;border:1px solid var(--border);border-radius:13px;overflow:hidden;
+  box-shadow:0 2px 10px rgba(40,42,41,.08)}
+.mock .m-hd{background:#3b3b3b;color:#fff;padding:12px 18px;display:flex;justify-content:space-between;
+  font-size:16px;font-weight:700}
+.mock .m-hd span{font-weight:400;opacity:.9}
+.mock .m-body{padding:18px 20px;text-align:center}
+.mock .m-h1{font-family:var(--f-head);font-size:30px;font-weight:800;color:#282a29;margin-bottom:10px}
+.mock .m-img{height:96px;border-radius:10px;background:#f1e3cf;display:flex;align-items:center;
+  justify-content:center;font-size:48px;margin-bottom:12px}
+.mock .m-btn{display:inline-block;background:#d9822b;color:#fff;font-weight:700;padding:9px 20px;border-radius:9px;font-size:17px}
+.mock .m-ft{border-top:1px solid var(--border);padding:9px 18px;font-size:14px;color:var(--dim);text-align:center}
+.tags{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
+.tg{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--accent);
+  border-radius:10px;padding:12px 10px;text-align:center}
+.tg code{font-family:var(--f-mono);font-size:21px;font-weight:700;color:var(--accent);display:block;margin-bottom:4px}
+.tg span{font-size:16px;color:var(--dim);line-height:1.35;display:block}
+.nope{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.nope div{border:2px solid var(--brick);border-radius:12px;padding:16px 10px;font-size:22px;font-weight:700;
+  text-align:center;color:var(--brick);background:#fbf1f0}
+.fm{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.fm div{background:var(--surface);border:2px solid var(--accent);border-radius:14px;padding:16px 10px;text-align:center}
+.fm .n{font-family:var(--f-mono);font-size:15px;color:var(--dim);display:block}
+.fm b{display:block;font-family:var(--f-head);font-size:25px;color:var(--accent);margin:4px 0 8px}
+.fm span.e{font-size:16px;color:var(--text);line-height:1.4;display:block}
+.steps.lg .step-t{font-size:23px;line-height:1.45}
+.steps.lg .step-n{width:42px;height:42px;font-size:20px}
+.steps.lg .step{padding:15px 20px;align-items:center}
+.bigsay{font-family:var(--f-head);font-size:2.3rem;font-weight:800;color:var(--accent);line-height:1.25;text-align:center}
+kbd{font-family:var(--f-mono);font-size:.9em;background:var(--surface);border:1px solid var(--border);
+  border-bottom-width:3px;border-radius:7px;padding:1px 8px;white-space:nowrap}
+/* частина 2: розділювач, карта сторінки */
+.divider{text-align:center}
+.divider .dv-n{font-family:var(--f-mono);font-size:18px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.divider .dv-t{font-family:var(--f-head);font-size:3.4rem;font-weight:900;color:var(--accent);line-height:1.1;margin-bottom:22px}
+.map{display:flex;flex-direction:column;gap:9px;font-family:var(--f-mono);font-weight:700;font-size:17px}
+.mp{border:2px solid var(--accent);border-radius:10px;padding:9px 13px;background:var(--surface);color:var(--accent)}
+.mp .mp{margin-top:7px}
+.mrow{display:grid;grid-template-columns:3fr 1fr;gap:9px}
+.mp.alt{border-color:var(--steel);color:var(--steel);background:#f4f7fa}
+.mp.gold{border-color:var(--goldink);color:var(--goldink);background:#fbf6ea}
+.mp.dash{border-style:dashed}
+.mp small{font-family:var(--f-body);font-weight:400;font-size:15px;color:var(--dim);margin-left:8px}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО ДЛЯ УРОКУ 9: схема коробки ─── */
+.bm-m,.bm-b,.bm-p,.bm-c{position:relative;border-radius:8px;text-align:center}
+.bm-m{background:#fbf6ea;border:2px dashed var(--goldink);padding:34px 30px}
+.bm-b{background:#e9ecef;border:6px solid var(--ink);padding:30px 28px}
+.bm-p{background:#e3efe9;border:2px dashed var(--green);padding:30px 28px}
+.bm-c{background:#fff;border:1px solid var(--border);padding:18px 10px;font-size:19px;font-weight:700}
+.bm-c small{font-weight:400;font-size:15px;color:var(--dim)}
+.bm-l{position:absolute;top:6px;left:10px;font-family:var(--f-mono);font-size:14px;font-weight:700}
+.bm-m>.bm-l{color:var(--goldink)} .bm-b>.bm-l{color:var(--ink);top:4px} .bm-p>.bm-l{color:var(--green)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 11: інлайн-код ніколи не розривається ─── */
+.ic{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 14: повторення, проєкт чверті, ескіз ─── */
+.ic{white-space:nowrap}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 14px;font-size:18px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{font-family:var(--f-mono);font-weight:700;color:var(--accent);white-space:nowrap}
+.map .nb{display:inline-flex;width:28px;height:28px;border-radius:7px;background:var(--accent);color:#fff;
+  align-items:center;justify-content:center;font-size:15px;margin-right:8px}
+.mp.gold .nb{background:var(--goldink)} .mp.alt .nb{background:var(--steel)}
+.mp.alt{border-color:var(--steel);color:var(--steel);background:#eef2f6}
+.anat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.an-code{font-family:var(--f-mono);font-size:30px;font-weight:700;text-align:center;margin-bottom:10px}
+.an-lbl{display:flex;justify-content:space-around;font-family:var(--f-mono);font-size:15px;font-weight:700}
+.an-lbl span{border-top:3px solid;padding-top:4px}
+.an-s{color:var(--steel)} .an-p{color:var(--brick)} .an-v{color:var(--forest)}
+.road{display:grid;grid-template-columns:repeat(7,1fr);gap:9px}
+.rd-i{background:var(--surface);border:1px solid var(--border);border-top:5px solid var(--accent);
+  border-radius:10px;padding:12px 10px;display:flex;flex-direction:column;gap:5px;text-align:center}
+.rd-i .rd-d{font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--accent)}
+.rd-i b{font-family:var(--f-head);font-size:19px;color:var(--ink);line-height:1.2}
+.rd-i span:last-child{font-size:15px;color:var(--dim);line-height:1.35}
+.rd-i.cur{border-top-color:var(--brick);background:#fbf1f0}
+.rd-i.cur .rd-d{color:var(--brick)}
+.rd-i.fin{border-top-color:var(--steel);background:#eef2f6}
+.rd-i.fin .rd-d{color:var(--steel)}
+.ideas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.idea{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);
+  border-radius:0 10px 10px 0;padding:10px 14px}
+.idea b{display:block;font-family:var(--f-head);font-size:19px;color:var(--ink)}
+.idea span{font-size:16px;color:var(--dim)}
+/* макети пристроїв */
+.devs{display:flex;gap:20px;align-items:flex-start}
+.dev{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.dev.wide{width:400px} .dev.narrow{width:150px;border-radius:18px}
+.d-cap{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);text-align:center}
+.d-hd{background:#3e2723;color:#fff;border-radius:6px;padding:6px 9px;display:flex;justify-content:space-between;font-size:13px;gap:6px}
+.d-hd b{font-size:15px;color:#fff}
+.d-hd.col{flex-direction:column;gap:1px}
+.d-hero{background:#efebe9;border-radius:6px;padding:12px 8px;font-family:var(--f-head);font-weight:800;font-size:15px;text-align:center;color:#3e2723}
+.d-row{display:flex;gap:6px}
+.d-card{flex:1;height:58px;border:2px solid #8d6e63;border-radius:6px;background:#fff}
+.dev.narrow .d-card{flex:none;height:44px}
+.d-form{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.d-form span{flex:1;min-width:50px;height:18px;border:1.5px solid #8d6e63;border-radius:4px}
+.d-form i{font-style:normal;background:#3e2723;color:#fff;font-size:12px;padding:3px 8px;border-radius:5px}
+/* ескіз */
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.lg-i{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;gap:14px;align-items:center}
+.lg-i span{font-size:17px;line-height:1.4}
+.lg-pic{width:110px;flex-shrink:0}
+.wf-box,.wf-img,.wf-btn,.wf-in,.wf-card,.wf-hero,.wf-nav{border:2px solid var(--ink);border-radius:4px;background:#fff}
+.wf-box{font-family:var(--f-mono);font-size:13px;text-align:center;padding:6px 4px}
+.wf-img{height:44px;background:
+  linear-gradient(to top right,transparent calc(50% - 1px),var(--ink) 50%,transparent calc(50% + 1px)),
+  linear-gradient(to top left,transparent calc(50% - 1px),var(--ink) 50%,transparent calc(50% + 1px)),#fff}
+.wf-txt{display:flex;flex-direction:column;gap:5px;padding:2px 0}
+.wf-txt i{display:block;height:3px;background:var(--ink);border-radius:2px;width:100%}
+.wf-btn{display:inline-block;font-size:13px;font-weight:700;padding:3px 10px;border-radius:12px}
+.wf-in{height:20px}
+.wf-h{font-family:var(--f-mono);font-weight:700;font-size:15px;letter-spacing:1px}
+.wf-nav{font-family:var(--f-mono);font-size:12px;padding:3px 8px;border-style:dashed}
+.sk2{display:flex;gap:18px;align-items:flex-start}
+.wf{background:#fffef8;border:2px solid var(--border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:7px}
+.wf.wide{width:440px} .wf.narrow{width:160px}
+.wf-cap{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);text-align:center}
+.wf-row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.wf-row .wf-card,.wf-row .wf-in{flex:1}
+.wf-hero{padding:8px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.wf-card{padding:5px;display:flex;flex-direction:column;gap:5px}
+.wf.narrow .wf-img{height:34px}
+.sheet{background:#fff;border:2px solid var(--ink);border-radius:6px;padding:10px;font-size:15px}
+.sh-t{font-family:var(--f-mono);font-size:14px;font-weight:700;border-bottom:1px dashed var(--ink);padding-bottom:6px;margin-bottom:8px}
+.sh-r{display:flex;gap:10px}
+.sh-w,.sh-n{border:2px solid var(--ink);border-radius:4px;padding:8px;font-weight:700;min-height:130px}
+.sh-w{flex:3} .sh-n{flex:1}
+.sh-r small{font-weight:400;font-size:13px;color:var(--dim)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 15: блочні/рядкові, обгортка ─── */
+.xr{font-family:var(--f-body);padding:14px 16px}
+.xb{border:2px solid var(--forest);border-radius:4px;padding:6px 10px;margin-bottom:8px;position:relative;font-size:18px;color:#111}
+.xb:first-child{font-family:var(--f-head);font-weight:800;font-size:22px}
+.xi{border:2px solid var(--brick);border-radius:3px;padding:0 3px}
+.xi.xa{color:#1a4fd6;text-decoration:underline}
+.xi:not(.xa){font-weight:700}
+.xt{position:absolute;right:6px;top:-11px;background:#fff;font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--forest);padding:0 4px}
+.scr{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:10px 8px;min-height:72px}
+.scr-l{font-size:15px;line-height:1.5;background:#fbf1f0;padding:4px 6px}
+.scr-c{font-size:15px;line-height:1.5;max-width:60%;margin:0 auto;background:#eef3f0;padding:4px 6px;border-left:2px dashed var(--forest);border-right:2px dashed var(--forest)}
+.bw-hd,.bw-sec,.bw-ft{padding:12px 0}
+.bw-hd{background:#3e2723;color:#fff} .bw-sec{background:#fff} .bw-sec.alt{background:#efebe9}
+.bw-ft{background:#3e2723;color:#ddd}
+.bw-c{max-width:62%;margin:0 auto;border-left:2px dashed #b08968;border-right:2px dashed #b08968;padding:0 10px;
+  display:flex;justify-content:space-between;gap:10px;font-size:15px;align-items:baseline;flex-wrap:wrap}
+.bw-c b{font-family:var(--f-head);font-size:18px}
+.bw-hd b{color:#fff}
+.tbl td{vertical-align:top}
+/* ─── ДОДАНО ДЛЯ УРОКІВ 16–17: Flexbox — живі демо (справжній display:flex) ─── */
+.fx{display:flex;background:#fff;border:2px dashed var(--steel);border-radius:8px;padding:6px;gap:6px;min-height:50px}
+.fx>i{font-style:normal;background:#e3efe9;border:2px solid var(--forest);border-radius:5px;padding:5px 12px;
+  font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--forest);line-height:1.3}
+.fx.tall{height:104px}
+.fx>i.m{padding-top:12px;padding-bottom:12px}
+.fx>i.l{padding-top:22px;padding-bottom:22px}
+.fx.blk{display:block}
+.fx.blk>i{display:block;margin-bottom:6px}
+.fx.blk>i:last-child{margin-bottom:0}
+.fx.nw>i{width:120px}
+.fxg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px}
+.fxg.g2{grid-template-columns:1fr 1fr}
+.fxc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--ink);margin-bottom:5px;white-space:nowrap}
+.fxc span{color:var(--dim);font-weight:400}
+.q6{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.qc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 15px}
+.qc .mono{font-size:14.5px;line-height:1.5}
+.qc .qq{font-size:16.5px;font-weight:700;color:var(--brand);margin-top:7px;line-height:1.4}
+.qc .wnt{font-size:15.5px;color:var(--dim);margin-bottom:5px;line-height:1.4}
+.qn{display:inline-flex;width:26px;height:26px;border-radius:7px;background:var(--brand);color:#fff;
+  font-family:var(--f-mono);font-size:14px;font-weight:700;align-items:center;justify-content:center;margin-right:6px}
+.mh{display:flex;justify-content:space-between;align-items:center;background:#3e2723;color:#fff;padding:12px 16px;gap:12px}
+.mh b{font-family:var(--f-head);font-size:22px;color:#fff}
+.mh .mn{display:flex;gap:16px;font-size:16px}
+.mh .mn span{color:#ffcc80;text-decoration:underline}
+.mhero{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;min-height:150px;background:#efebe9;color:#3e2723;text-align:center}
+.mhero b{font-family:var(--f-head);font-size:21px}
+.mhero .mb{background:#d9822b;color:#fff;font-weight:700;padding:6px 16px;border-radius:8px;font-size:15px}
+.url{font-family:var(--f-mono);font-size:17px;font-weight:700;color:var(--forest);border-bottom:2px solid var(--forest);word-break:break-all}
+.tbl td.v{font-family:var(--f-mono);font-size:15.5px;color:var(--ink)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 17: картки, рівні ─── */
+.mcs{display:flex;flex-wrap:wrap;gap:10px;background:#efebe9;padding:10px;border-radius:8px}
+.mcd{width:150px;background:#fff;border:2px solid #8d6e63;border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:4px}
+.mcd b{font-family:var(--f-head);font-size:17px;color:#3e2723}
+.mcd span{font-size:14px;color:#5d4037;line-height:1.35}
+.mft{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+.mft .pr{color:#c62828;font-weight:700;font-size:15px}
+.mft .bt{background:#d9822b;color:#fff;font-weight:700;font-size:13px;padding:3px 9px;border-radius:6px}
+.lvt{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border)}
+.lvt td{border-bottom:1px solid var(--border);padding:10px 14px;font-size:18px;vertical-align:top}
+.lvt td:first-child{font-size:19px;white-space:nowrap;width:90px}
+.lvt tr:last-child td{border-bottom:0}
+.pic{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:8px}
+.pic .p-hd{display:flex;justify-content:space-between;align-items:center;background:#1a237e;color:#fff;border-radius:5px;padding:8px 12px;font-size:15px}
+.pic .p-hd b{font-family:var(--f-head);font-size:18px;color:#fff}
+.pic .p-hd span{display:flex;gap:14px}
+.pic .p-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.pic .p-row div{width:120px;height:62px;border:2px solid #1a237e;border-radius:6px;font-size:14px;font-weight:700;color:#1a237e;padding:5px 8px}
+.pic .p-ft{display:flex;justify-content:space-around;border-top:2px dashed var(--ink);padding-top:7px;font-size:14px}
+/* ─── ДОДАНО ДЛЯ УРОКІВ 18–25: Grid, форма, ефекти, адаптив — живі демо ─── */
+.gd{display:grid;background:#fff;border:2px dashed var(--steel);border-radius:8px;padding:6px;gap:6px}
+.gd>i{font-style:normal;background:#e3efe9;border:2px solid var(--forest);border-radius:5px;padding:8px 6px;
+  font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--forest);text-align:center;line-height:1.3}
+.gd>i.w{background:#f7eeda;border-color:var(--goldink);color:var(--goldink)}
+.gd>i.t{background:#e4eaf0;border-color:var(--steel);color:var(--steel)}
+.gd>i.e{background:transparent;border:2px dashed #c9ced6;color:var(--faint)}
+.gd.c3{grid-template-columns:repeat(3,1fr)} .gd.c4{grid-template-columns:repeat(4,1fr)}
+.gd.c2{grid-template-columns:repeat(2,1fr)} .gd.c1{grid-template-columns:1fr}
+.gcap{font-family:var(--f-mono);font-size:14px;font-weight:700;color:var(--ink);margin:0 0 5px;white-space:nowrap}
+.gcap span{color:var(--dim);font-weight:400}
+.ruler{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:14px;font-weight:700;color:var(--brick);padding:0 2px}
+/* форма на слайді */
+.fdemo{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:14px 16px;display:grid;gap:7px;
+  font-family:Arial,sans-serif;color:#3e2723;font-size:16px}
+.fdemo label{font-weight:700}
+.fdemo input,.fdemo select,.fdemo textarea{padding:7px;border:2px solid #8d6e63;border-radius:6px;font-size:16px;font-family:inherit}
+.fdemo .rl{font-weight:400}
+.fdemo button{background:#d9822b;color:#fff;border:0;border-radius:8px;padding:10px 18px;font-size:16px;font-weight:700}
+.fdemo input:focus,.fdemo select:focus,.fdemo textarea:focus{outline:3px solid #d9822b}
+.err{display:inline-block;background:#fff;border:2px solid var(--ink);border-radius:8px;padding:6px 12px;
+  font-size:15px;box-shadow:0 3px 8px rgba(0,0,0,.18);font-family:Arial,sans-serif}
+/* ефекти на слайді */
+.hv-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.hv{background:#d9822b;color:#fff;font-weight:700;border-radius:8px;padding:12px 22px;font-size:18px;cursor:pointer;
+  display:inline-block;font-family:Arial,sans-serif}
+.hv.t1{transition:transform .3s,background-color .3s}
+.hv.t1:hover{transform:scale(1.1);background:#b5651d}
+.hv.t0:hover{transform:scale(1.1);background:#b5651d}
+.hv.t1:active{transform:scale(.95)}
+.hvc{width:170px;background:#fff;border:2px solid #8d6e63;border-radius:8px;padding:12px;font-family:Arial,sans-serif;
+  color:#3e2723;transition:transform .3s,box-shadow .3s;cursor:pointer}
+.hvc b{font-size:18px;display:block}
+.hvc:hover{transform:translateY(-8px);box-shadow:0 8px 16px rgba(0,0,0,.2)}
+.hvr{font-size:48px;display:inline-block;transition:transform .4s;cursor:pointer}
+.hvr:hover{transform:rotate(20deg)}
+.tf3{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;text-align:center}
+.tf3 .bx0{height:70px;display:flex;align-items:center;justify-content:center;border:2px dashed #c9ced6;border-radius:8px}
+.tf3 .bx0 i{font-style:normal;width:56px;height:40px;background:#e3efe9;border:2px solid var(--forest);border-radius:6px}
+/* телефон і монітор */
+.phone{width:190px;border:4px solid var(--ink);border-radius:24px;padding:14px 8px 18px;background:#fff;flex-shrink:0}
+.phone .scr2{border:1px solid var(--border);border-radius:6px;overflow:hidden;font-family:Arial,sans-serif;font-size:12px;color:#3e2723}
+.mon{flex:1;border:4px solid var(--ink);border-radius:10px;padding:8px;background:#fff}
+.mon .scr2{border:1px solid var(--border);border-radius:4px;overflow:hidden;font-family:Arial,sans-serif;font-size:13px;color:#3e2723}
+.z-hd{background:#3e2723;color:#ffcc80;padding:6px 8px;display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.z-hd b{color:#fff}
+.z-hd.col{flex-direction:column;align-items:flex-start}
+.z-cards{display:grid;gap:6px;padding:8px;background:#efebe9}
+.z-cards i{font-style:normal;background:#fff;border:1.5px solid #8d6e63;border-radius:4px;height:34px}
+.z-ft{background:#3e2723;color:#ddd;padding:5px 8px;font-size:11px}
+.bp{display:flex;gap:0;font-family:var(--f-mono);font-size:14px;font-weight:700;text-align:center}
+.bp div{padding:10px 6px;border:2px solid var(--ink);border-left-width:0}
+.bp div:first-child{border-left-width:2px;border-radius:8px 0 0 8px}
+.bp div:last-child{border-radius:0 8px 8px 0}
+.bp .on{background:#e3efe9;color:var(--forest)}
+/* матеріал чверті */
+.mq{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border)}
+.mq td,.mq th{border-bottom:1px solid var(--border);padding:6px 11px;font-size:16px;text-align:left;vertical-align:top;line-height:1.45}
+.mq th{font-family:var(--f-mono);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim)}
+.mq td.c{font-family:var(--f-mono);font-weight:700;color:var(--accent);white-space:nowrap;font-size:15px}
+.mq td.x{font-family:var(--f-mono);font-size:14px;color:var(--ink);white-space:nowrap}
+.mq tr:last-child td{border-bottom:0}
+.chk{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.chk div{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:17px;line-height:1.45}
+.chk div b{color:var(--accent)}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<section class="slide active" id="s0"><div class="slide-inner title-wrap">
+    <div class="title-h1" style="font-size:3rem">Форма: поля, вибір значень і перевірка</div>
+    <div class="title-sub">Front-end · 8 клас · Урок 20 · 1 грудня 2026</div>
+    <div class="chips">
+      <span class="chip">form</span>
+      <span class="chip">label і for</span>
+      <span class="chip">input type</span>
+      <span class="chip">select · textarea</span>
+      <span class="chip">required · pattern</span>
+    </div>
+  </div></section>
+
+  <!-- ══════════ СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lb">Урок 20 · ручка, потім ноутбук</span>
+      <h2>Сьогодні</h2>
+    </div></div>
+    <div class="steps lg">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Тест — 20 хвилин.</b> Ручка, ноутбук закритий</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t"><b>Форма</b>: підпис і поле</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Вибір значень</b>: кружечки, галочки, список</span></div>
+      <div class="step"><span class="step-n">4</span>
+        <span class="step-t"><b>Перевірка</b> — браузер не пускає помилку</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ НАВІЩО ФОРМА ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📮</div><div>
+      <span class="label lt">Нове</span>
+      <h2>Форма — те, що сайт питає в людини</h2>
+    </div></div>
+    <div class="two">
+      <div class="fdemo" inert>
+        <b style="font-family:var(--f-head);font-size:20px">Замовити</b>
+        <label>Ім'я</label><input type="text" placeholder="Олена">
+        <label>Пошта</label><input type="email" placeholder="olena@gmail.com">
+        <label>Напій</label><select><option>Капучино</option></select>
+        <button>Замовити</button>
+      </div>
+      <div class="brk">
+        <div class="brow"><span class="btag" style="min-width:110px">&lt;form&gt;</span><span class="bwhat">обгортка всіх полів. Кнопка всередині надсилає саме цю форму</span></div>
+        <div class="brow"><span class="btag" style="min-width:110px">&lt;label&gt;</span><span class="bwhat">підпис: що вписати в поле</span></div>
+        <div class="brow"><span class="btag" style="min-width:110px">&lt;input&gt;</span><span class="bwhat">поле. Без закривального тегу. Яке саме — каже <span class="ic">type</span></span></div>
+        <div class="brow"><span class="btag" style="min-width:110px">&lt;button&gt;</span><span class="bwhat"><span class="ic">type="submit"</span> — надіслати форму</span></div>
+        <div class="tip ty" style="margin:0"><span class="tip-ico">📬</span><div>Куди йдуть дані — вирішує сервер. Поки його немає, сторінка просто оновиться.</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ LABEL І FOR ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🔗</div><div>
+      <span class="label lt">Нове</span>
+      <h2>label і for: підпис знає своє поле</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+            <span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+          <div class="dp-code" style="font-size:15px">&lt;<span class="sk">form</span> <span class="sa">class</span>=<span class="ss">"order-form"</span>&gt;
+  &lt;<span class="sk">label</span> <span class="sa">for</span>=<span class="ss">"name"</span>&gt;Ім'я&lt;/<span class="sk">label</span>&gt;
+  &lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"text"</span> <span class="sa">id</span>=<span class="ss">"name"</span> <span class="sa">name</span>=<span class="ss">"name"</span>&gt;
+
+  &lt;<span class="sk">button</span> <span class="sa">type</span>=<span class="ss">"submit"</span>&gt;Замовити&lt;/<span class="sk">button</span>&gt;
+&lt;/<span class="sk">form</span>&gt;</div>
+        </div>
+        <div class="pair mt">
+          <div class="right"><span class="lbl">Так</span><div class="mono" style="font-size:14px">for="name"
+id="name"</div></div>
+          <div class="wrong"><span class="lbl">Не так</span><div class="mono" style="font-size:14px">for="name"
+id="imya"</div></div>
+        </div>
+      </div>
+      <div class="brk">
+        <div class="brow"><span class="btag" style="min-width:90px">for</span><span class="bwhat">у підпису — те саме слово, що <span class="ic">id</span> поля</span></div>
+        <div class="brow"><span class="btag" style="min-width:90px">клік</span><span class="bwhat">клацнув на підпис — курсор уже в полі. На телефоні це велика ціль для пальця</span></div>
+        <div class="brow"><span class="btag" style="min-width:90px">name</span><span class="bwhat">ім'я, під яким значення поля піде на сервер</span></div>
+        <div class="brow"><span class="btag" style="min-width:90px">сітка</span><span class="bwhat">поля стовпчиком із проміжком: <span class="ic">.order-form { display: grid; gap: 8px; }</span></span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ТИПИ ПОЛЯ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">⌨️</div><div>
+      <span class="label lt">Нове · type</span>
+      <h2>Сім типів поля input</h2>
+    </div></div>
+    <table class="tbl" inert>
+      <tr><th>type</th><th>Для чого</th><th>Як виглядає</th></tr>
+      <tr><td class="c">text</td><td>будь-який текст: ім'я, місто</td><td><input type="text" value="Олена" style="font-size:16px;padding:4px 8px"></td></tr>
+      <tr><td class="c">email</td><td>пошта — браузер перевірить <b>@</b></td><td><input type="email" value="olena@gmail.com" style="font-size:16px;padding:4px 8px"></td></tr>
+      <tr><td class="c">number</td><td>число, стрілочки ▲▼</td><td><input type="number" value="2" style="font-size:16px;padding:4px 8px;width:80px"></td></tr>
+      <tr><td class="c">password</td><td>пароль — замість літер крапки</td><td><input type="password" value="kava2026" style="font-size:16px;padding:4px 8px"></td></tr>
+      <tr><td class="c">date</td><td>дата з календариком</td><td><input type="date" value="2026-12-01" style="font-size:16px;padding:4px 8px"></td></tr>
+      <tr><td class="c">checkbox</td><td>галочка: так чи ні</td><td><label style="font-size:17px"><input type="checkbox" checked> з собою</label></td></tr>
+      <tr><td class="c">radio</td><td>кружечок: один варіант із кількох</td><td><label style="font-size:17px"><input type="radio" name="r0"> малий</label> &#160; <label style="font-size:17px"><input type="radio" name="r0" checked> великий</label></td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ ВИБІР ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🔘</div><div>
+      <span class="label lt">Нове · вибір значень</span>
+      <h2>Кружечки, галочки, список і великий текст</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="mono" style="font-size:13.5px;line-height:1.5">&lt;<span class="sk">label</span>&gt;&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"radio"</span> <span class="sa">name</span>=<span class="ss">"size"</span>&gt; малий&lt;/<span class="sk">label</span>&gt;
+&lt;<span class="sk">label</span>&gt;&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"radio"</span> <span class="sa">name</span>=<span class="ss">"size"</span>&gt; великий&lt;/<span class="sk">label</span>&gt;
+
+&lt;<span class="sk">label</span>&gt;&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"checkbox"</span> <span class="sa">name</span>=<span class="ss">"togo"</span>&gt; з собою&lt;/<span class="sk">label</span>&gt;
+
+&lt;<span class="sk">label</span> <span class="sa">for</span>=<span class="ss">"drink"</span>&gt;Напій&lt;/<span class="sk">label</span>&gt;
+&lt;<span class="sk">select</span> <span class="sa">id</span>=<span class="ss">"drink"</span> <span class="sa">name</span>=<span class="ss">"drink"</span>&gt;
+  &lt;<span class="sk">option</span>&gt;Капучино&lt;/<span class="sk">option</span>&gt;
+  &lt;<span class="sk">option</span>&gt;Лате&lt;/<span class="sk">option</span>&gt;
+&lt;/<span class="sk">select</span>&gt;
+
+&lt;<span class="sk">label</span> <span class="sa">for</span>=<span class="ss">"note"</span>&gt;Побажання&lt;/<span class="sk">label</span>&gt;
+&lt;<span class="sk">textarea</span> <span class="sa">id</span>=<span class="ss">"note"</span> <span class="sa">name</span>=<span class="ss">"note"</span> <span class="sa">rows</span>=<span class="ss">"3"</span>&gt;&lt;/<span class="sk">textarea</span>&gt;</div>
+      </div>
+      <div class="brk">
+        <div class="brow"><span class="btag" style="min-width:110px">radio</span><span class="bwhat">однаковий <span class="ic">name</span> — одна група: обираєш <b>один</b></span></div>
+        <div class="brow"><span class="btag" style="min-width:110px">checkbox</span><span class="bwhat">кожна галочка сама по собі: скільки завгодно</span></div>
+        <div class="brow"><span class="btag" style="min-width:110px">select</span><span class="bwhat">випадний список, кожен варіант — <span class="ic">option</span></span></div>
+        <div class="brow"><span class="btag" style="min-width:110px">textarea</span><span class="bwhat">поле на кілька рядків; <span class="ic">rows</span> — висота. Має закривальний тег</span></div>
+        <div class="brow"><span class="btag" style="min-width:110px">checked</span><span class="bwhat">кружечок чи галочка вже обрані з самого початку</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ПЕРЕВІРКА ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🛡️</div><div>
+      <span class="label lt">Нове · без жодного рядка JavaScript</span>
+      <h2>Перевірка: браузер не пускає помилку</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="mono" style="font-size:13.5px;line-height:1.55">&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"text"</span> <span class="sa">id</span>=<span class="ss">"name"</span>
+  <span class="sa">placeholder</span>=<span class="ss">"Олена"</span> <span class="sa">required</span>&gt;
+
+&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"number"</span> <span class="sa">id</span>=<span class="ss">"count"</span>
+  <span class="sa">min</span>=<span class="ss">"1"</span> <span class="sa">max</span>=<span class="ss">"10"</span>&gt;
+
+&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"text"</span> <span class="sa">id</span>=<span class="ss">"phone"</span>
+  <span class="sa">placeholder</span>=<span class="ss">"0671234567"</span>
+  <span class="sa">pattern</span>=<span class="ss">"[0-9]{10}"</span>&gt;</div>
+        <div class="mt"><span class="err">⚠️ Заповніть це поле.</span></div>
+      </div>
+      <table class="tbl">
+        <tr><th>Атрибут</th><th>Що робить</th></tr>
+        <tr><td class="c">required</td><td>поле обов'язкове: порожнім форма не піде</td></tr>
+        <tr><td class="c">placeholder</td><td>сіра підказка в порожньому полі — <b>не</b> значення</td></tr>
+        <tr><td class="c">min · max</td><td>найменше й найбільше число (для <span class="ic">number</span>, <span class="ic">date</span>)</td></tr>
+        <tr><td class="c">pattern</td><td>зразок: <span class="ic">[0-9]{10}</span> — рівно десять цифр</td></tr>
+        <tr><td class="c">type="email"</td><td>без <b>@</b> — не пропустить</td></tr>
+      </table>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ДОВІДНИК ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lt">Довідник · лишається на дошці</span>
+      <h2>Уся форма на одному екрані</h2>
+    </div></div>
+    <table class="tbl">
+      <tr><th>Тег</th><th>Що це</th><th>Атрибути</th></tr>
+      <tr><td class="c">form</td><td>обгортка полів</td><td class="v">class</td></tr>
+      <tr><td class="c">label</td><td>підпис поля</td><td class="v">for — те саме, що id поля</td></tr>
+      <tr><td class="c">input</td><td>поле: text · email · number · password · date · checkbox · radio</td><td class="v">type · id · name · placeholder · required · min · max · pattern · checked</td></tr>
+      <tr><td class="c">select · option</td><td>список і його варіанти</td><td class="v">id · name</td></tr>
+      <tr><td class="c">textarea</td><td>текст на кілька рядків</td><td class="v">rows · placeholder</td></tr>
+      <tr><td class="c">button</td><td>кнопка</td><td class="v">type="submit" — надіслати</td></tr>
+    </table>
+    <div class="tip tb"><span class="tip-ico">💡</span><div>Поля стовпчиком: <span class="ic">.order-form { display: grid; gap: 8px; max-width: 420px; }</span></div></div>
+  </div></section>
+
+  <!-- ══════════ ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🔮</div><div>
+      <span class="label lp">Передбач · відповідь у коментар</span>
+      <h2>Що зробить браузер?</h2>
+    </div></div>
+    <div class="q6">
+      <div class="qc"><div class="mono"><span class="qn">1</span>&lt;input type="radio" name="a"&gt;
+&lt;input type="radio" name="b"&gt;</div>
+        <div class="qq">Можна обрати обидва кружечки?</div></div>
+      <div class="qc"><div class="mono"><span class="qn">2</span>&lt;label for="mail"&gt;Пошта&lt;/label&gt;
+&lt;input id="email"&gt;</div>
+        <div class="qq">Клацнули на «Пошта». Курсор у полі?</div></div>
+      <div class="qc"><div class="mono"><span class="qn">3</span>&lt;input type="number"
+  min="1" max="10"&gt;</div>
+        <div class="qq">Вписали 15 і натиснули «Замовити». Форма піде?</div></div>
+      <div class="qc"><div class="mono"><span class="qn">4</span>&lt;input type="text" required&gt;</div>
+        <div class="qq">Поле порожнє, натиснули «Замовити». Що побачимо?</div></div>
+      <div class="qc"><div class="mono"><span class="qn">5</span>&lt;input type="email"&gt;</div>
+        <div class="qq">Вписали <span class="ic">olena.gmail.com</span>. Форма піде?</div></div>
+      <div class="qc"><div class="mono"><span class="qn">6</span>&lt;input placeholder="Олена"&gt;</div>
+        <div class="qq">Нічого не вписали. Яке значення піде з поля?</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ СТАРТ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lg">Практика · проєкт чверті</span>
+      <h2>Форма на своєму сайті</h2>
+    </div></div>
+    <table class="lvt">
+      <tr><td>⭐</td><td><b>Кроки 1–2.</b> Форма в розділі «Замовити» (чи «Запис», «Контакти») — поля з підписами · вибір: список, кружечки, галочка</td></tr>
+      <tr><td>⭐⭐</td><td><b>+ крок 3.</b> Перевірка: обов'язкові поля, підказки, межі чисел, зразок</td></tr>
+      <tr><td>⭐⭐⭐</td><td>Друга форма — вхід: пошта і пароль</td></tr>
+    </table>
+    <div class="hbox mt"><b>Старт.</b> Свій сайт — відкрий папку проєкту у VS Code. Немає своєї — нова папка зі стартовим кодом «Зерно» (каталог уже на сітці), кнопка «Скопіювати»:<br>
+      <a class="url" href="kod.html">sv2627.github.io/sc/steam/8-frontend/u20/kod.html</a></div>
+  </div></section>
+
+  <!-- ══════════ КРОК 1 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 1 · ⭐</span>
+        <span class="t">Поля з підписами</span><span class="tmr">5 хвилин</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:13.5px;line-height:1.5">&lt;<span class="sk">form</span> <span class="sa">class</span>=<span class="ss">"order-form"</span>&gt;
+  &lt;<span class="sk">label</span> <span class="sa">for</span>=<span class="ss">"name"</span>&gt;Ім'я&lt;/<span class="sk">label</span>&gt;
+  &lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"text"</span> <span class="sa">id</span>=<span class="ss">"name"</span> <span class="sa">name</span>=<span class="ss">"name"</span>&gt;
+  &lt;<span class="sk">label</span> <span class="sa">for</span>=<span class="ss">"email"</span>&gt;Пошта&lt;/<span class="sk">label</span>&gt;
+  &lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"email"</span> <span class="sa">id</span>=<span class="ss">"email"</span> <span class="sa">name</span>=<span class="ss">"email"</span>&gt;
+  &lt;<span class="sk">button</span> <span class="sa">type</span>=<span class="ss">"submit"</span> <span class="sa">class</span>=<span class="ss">"btn"</span>&gt;Замовити&lt;/<span class="sk">button</span>&gt;
+&lt;/<span class="sk">form</span>&gt;</div>
+          <div class="mono" style="font-size:13.5px;line-height:1.5"><span class="sk">.order-form</span> {
+  <span class="sa">display</span>: <span class="ss">grid</span>;
+  <span class="sa">gap</span>: <span class="ss">8px</span>;
+  <span class="sa">max-width</span>: <span class="ss">420px</span>;
+}</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>У розділ «Замовити» свого сайту — <span class="ic">form class="order-form"</span></li>
+            <li>Два поля: ім'я (<span class="ic">text</span>) і пошта (<span class="ic">email</span>), кожне з <span class="ic">label</span></li>
+            <li><span class="ic">for</span> підпису = <span class="ic">id</span> поля. Перевір: клац на підпис</li>
+            <li>Кнопка «Замовити» з класом <span class="ic">btn</span></li>
+            <li>CSS: форма — сітка в один стовпчик, не ширша за 420px</li>
+            <li>⭐⭐ Полям — рамка, <span class="ic">padding</span>, <span class="ic">font-size: 16px</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ КРОК 2 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 2 · ⭐</span>
+        <span class="t">Вибір значень</span><span class="tmr">5 хвилин</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:13px;line-height:1.5">&lt;<span class="sk">label</span> <span class="sa">for</span>=<span class="ss">"drink"</span>&gt;Напій&lt;/<span class="sk">label</span>&gt;
+&lt;<span class="sk">select</span> <span class="sa">id</span>=<span class="ss">"drink"</span> <span class="sa">name</span>=<span class="ss">"drink"</span>&gt;
+  &lt;<span class="sk">option</span>&gt;Капучино&lt;/<span class="sk">option</span>&gt;
+  &lt;<span class="sk">option</span>&gt;Лате&lt;/<span class="sk">option</span>&gt;
+&lt;/<span class="sk">select</span>&gt;
+&lt;<span class="sk">label</span> <span class="sa">for</span>=<span class="ss">"count"</span>&gt;Скільки чашок&lt;/<span class="sk">label</span>&gt;
+&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"number"</span> <span class="sa">id</span>=<span class="ss">"count"</span> <span class="sa">name</span>=<span class="ss">"count"</span>&gt;
+&lt;<span class="sk">label</span> <span class="sa">for</span>=<span class="ss">"day"</span>&gt;Коли прийдеш&lt;/<span class="sk">label</span>&gt;
+&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"date"</span> <span class="sa">id</span>=<span class="ss">"day"</span> <span class="sa">name</span>=<span class="ss">"day"</span>&gt;
+&lt;<span class="sk">p</span>&gt;Розмір:
+  &lt;<span class="sk">label</span>&gt;&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"radio"</span> <span class="sa">name</span>=<span class="ss">"size"</span>&gt; малий&lt;/<span class="sk">label</span>&gt;
+  &lt;<span class="sk">label</span>&gt;&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"radio"</span> <span class="sa">name</span>=<span class="ss">"size"</span>&gt; великий&lt;/<span class="sk">label</span>&gt;
+&lt;/<span class="sk">p</span>&gt;
+&lt;<span class="sk">label</span>&gt;&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"checkbox"</span> <span class="sa">name</span>=<span class="ss">"togo"</span>&gt; з собою&lt;/<span class="sk">label</span>&gt;</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Список <span class="ic">select</span> — три варіанти зі свого каталогу</li>
+            <li>Число (<span class="ic">number</span>) і дата (<span class="ic">date</span>) — з підписами</li>
+            <li>Два–три кружечки з <b>однаковим</b> <span class="ic">name</span></li>
+            <li>Галочка <span class="ic">checkbox</span></li>
+            <li><span class="ic">textarea</span> «Побажання», <span class="ic">rows="3"</span></li>
+            <li>⭐⭐ Один кружечок обраний одразу — <span class="ic">checked</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ КРОК 3 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="pbadge">Крок 3 · ⭐⭐</span>
+        <span class="t">Перевірка</span><span class="tmr">4 хвилини</span></div>
+      <div class="two">
+        <div class="demo"><span class="lbl">Приклад</span>
+          <div class="mono" style="font-size:13.5px;line-height:1.55">&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"text"</span> <span class="sa">id</span>=<span class="ss">"name"</span> <span class="sa">name</span>=<span class="ss">"name"</span>
+  <span class="sa">placeholder</span>=<span class="ss">"Олена"</span> <span class="sa">required</span>&gt;
+&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"number"</span> <span class="sa">id</span>=<span class="ss">"count"</span> <span class="sa">name</span>=<span class="ss">"count"</span>
+  <span class="sa">min</span>=<span class="ss">"1"</span> <span class="sa">max</span>=<span class="ss">"10"</span> <span class="sa">value</span>=<span class="ss">"1"</span>&gt;
+&lt;<span class="sk">input</span> <span class="sa">type</span>=<span class="ss">"text"</span> <span class="sa">id</span>=<span class="ss">"phone"</span> <span class="sa">name</span>=<span class="ss">"phone"</span>
+  <span class="sa">placeholder</span>=<span class="ss">"0671234567"</span>
+  <span class="sa">pattern</span>=<span class="ss">"[0-9]{10}"</span>&gt;</div>
+          <div class="mt"><span class="err">⚠️ Значення має бути не більше 10.</span></div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Ім'я і пошта — <span class="ic">required</span>. Натисни «Замовити» з порожніми</li>
+            <li>Кожному текстовому полю — <span class="ic">placeholder</span> із прикладом</li>
+            <li>Число — <span class="ic">min="1"</span> і <span class="ic">max="10"</span>. Впиши 15 — що каже браузер?</li>
+            <li>Поле «Телефон» з <span class="ic">pattern="[0-9]{10}"</span>. Впиши 9 цифр</li>
+            <li>⭐⭐⭐ Друга форма «Вхід»: пошта і <span class="ic">password</span>, обидва <span class="ic">required</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ЧОМУ НЕ ПРАЦЮЄ ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🔧</div><div>
+      <span class="label lp">Чому не працює · 3 хвилини</span>
+      <h2>Шість помилок — виправ у коментарі</h2>
+    </div></div>
+    <div class="q6">
+      <div class="qc"><div class="wnt"><span class="qn">1</span>Клік на підпис — курсор у полі</div>
+        <div class="mono">&lt;label for="email"&gt;Пошта&lt;/label&gt;
+&lt;input type="email" id="mail"&gt;</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">2</span>Можна обрати лише один розмір</div>
+        <div class="mono">&lt;input type="radio" name="s1"&gt; малий
+&lt;input type="radio" name="s2"&gt; великий</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">3</span>Порожнє ім'я не пускати</div>
+        <div class="mono">&lt;input type="text" id="name"
+  placeholder="обов'язково"&gt;</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">4</span>Поле для пошти</div>
+        <div class="mono">&lt;input type="mail" id="email"&gt;</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">5</span>Поле на кілька рядків</div>
+        <div class="mono">&lt;input type="textarea" rows="3"&gt;</div></div>
+      <div class="qc"><div class="wnt"><span class="qn">6</span>Список із двох напоїв</div>
+        <div class="mono">&lt;select&gt;
+  &lt;input&gt;Капучино
+  &lt;input&gt;Лате
+&lt;/select&gt;</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ ПІДСУМОК ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">🏁</div><div>
+      <span class="label lb">Підсумок</span>
+      <h2>Що ви зробили на цьому уроці</h2>
+    </div></div>
+    <div class="two">
+      <div class="card cg"><h3>Зроблено</h3><ul>
+        <li><span class="ic">form</span>, <span class="ic">label</span> і <span class="ic">for</span></li>
+        <li>сім типів <span class="ic">input</span>, список, великий текст</li>
+        <li>перевірка: <span class="ic">required</span>, <span class="ic">min</span>, <span class="ic">max</span>, <span class="ic">pattern</span></li>
+        <li>форма на своєму сайті</li>
+      </ul></div>
+      <div class="card ct"><h3>Після перерви · урок 21</h3><ul>
+        <li>наведення і натискання</li>
+        <li>плавні переходи, шапка, що не зникає</li>
+        <li>домашнє — наприкінці уроку 21</li>
+      </ul></div>
+    </div>
+  </div></section>
+
+</div>
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

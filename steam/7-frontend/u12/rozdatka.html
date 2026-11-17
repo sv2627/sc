@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · Front-end · 7 клас · Урок 12</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          Front-end
+  Клас          7
+  Урок          12 / 35 · 01.12.2026
+  Тема          Класи та ідентифікатори
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ТІЛЬКИ СХОВИЩЕ. Урок іде за ноутбуками, аркуш на уроці НЕ
+     роздається і слайди на нього не посилаються.
+  ⚠️ Зміст уроку 12 олівцем: клас і id в HTML, селектори в CSS, хто
+     сильніший, якорі меню, помилки, клас за описом. Перенесено з A+
+     6-frontend/u11 і доповнено id та якорями. Дані інші, ніж на слайдах
+     («Мій футбол»: team, matches, player, captain).
+  ⚠️ Відповіді — у конспекті, розділ «Відповіді до роздатки».
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок.
+  ОБСЯГ         Рівно одна сторінка A4.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b h2 code{text-transform:none}
+.b h2 .tag{float:right; margin-left:4mm; text-transform:none; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.35fr 1fr}
+.two.k46{grid-template-columns:1fr 1.35fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:9.6pt; font-weight:700; padding-bottom:.4mm; flex-shrink:0}
+
+pre.c{font-family:var(--fm); font-size:10pt; line-height:1.32; border:var(--line);
+  padding:1.6mm 2.2mm; white-space:pre-wrap; font-weight:700}
+
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.5mm 1.8mm; font-size:10.2pt; text-align:left}
+table.t th{font-size:9.3pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:30mm; text-align:center}
+
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.4mm 0; font-size:10.6pt; vertical-align:bottom}
+table.voc td.en{width:44%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 7: рамка під код від руки (як в уроці 6) ─── */
+.box{border:var(--line); min-height:40mm}
+table.m{width:100%; border-collapse:collapse}
+table.m td{border:var(--thin); padding:1.2mm 1.8mm; font-size:10.4pt}
+table.m td.k{font-family:var(--fm); font-weight:700; width:24mm}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8: схема сторінки з номерами частин ─── */
+.sch{border:var(--line); padding:1.4mm}
+.sch div{border:var(--thin); padding:1mm 2mm; margin-bottom:1.2mm; font-size:10.4pt; display:flex; justify-content:space-between}
+.sch div:last-child{margin-bottom:0}
+.sch div div{margin:1mm 0 0 0}
+.sch .n{font-family:var(--fm); font-weight:800}
+.sch .hd2{display:block}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10: рядки «підпиши», рамка для CSS ─── */
+.sl.wide span{min-width:30mm}
+.wb{border:var(--line); min-height:16mm; padding:1.4mm 2mm}
+.wb .cap{font-family:var(--fm); font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:.6px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 11: зразки трьох родин шрифтів ─── */
+table.fm3 td{border:var(--thin); padding:.8mm 2mm; font-size:10.4pt; vertical-align:middle}
+table.fm3 td.smp{font-size:13pt; width:58mm}
+table.m4{width:100%; border-collapse:collapse}
+table.m4 td{border:var(--thin); padding:1mm 1.6mm; font-size:10.4pt}
+table.m4 td.l{width:6mm; font-family:var(--fm); font-weight:800; text-align:center}
+table.m4 td.cd{font-family:var(--fm); font-weight:700; white-space:nowrap}
+pre.c.nw{white-space:nowrap; font-size:9.6pt}
+</style></head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>Front-end &#183; 7 клас &#183; Урок 12 / 35 &#183; 1 грудня</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Класи та ідентифікатори</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Клас</p>
+        <p>HTML: <code>&lt;p class=&quot;note&quot;&gt;</code> &#8212; без крапки</p>
+        <p>CSS: <code>.note { }</code> &#8212; з крапкою</p>
+        <p>два класи: <code>class=&quot;card note&quot;</code> &#8212; пробіл</p>
+      </div>
+      <div>
+        <p class="rh">id &#8212; один на сторінці</p>
+        <p>HTML: <code>&lt;section id=&quot;team&quot;&gt;</code></p>
+        <p>CSS: <code>#team { }</code> &#183; тег + клас: <code>p.note</code></p>
+        <p>сильніший: <code>#id</code> &#8250; <code>.клас</code> &#8250; тег</p>
+      </div>
+      <div>
+        <p class="rh">Якір</p>
+        <p><code>href=&quot;#team&quot;</code> &#8212; до розділу цієї сторінки</p>
+        <p><code>href=&quot;index.html#team&quot;</code> &#8212; з іншої сторінки</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b two">
+    <div>
+      <h2>1 &#183; Знайди класи й id<span class="tag">обведи і впиши</span></h2>
+      <pre class="c" style="font-size:9.4pt;white-space:pre">&lt;section id=&quot;team&quot;&gt;
+  &lt;h2 class=&quot;title&quot;&gt;Команда&lt;/h2&gt;
+  &lt;p class=&quot;player captain&quot;&gt;Андрій&lt;/p&gt;
+  &lt;p class=&quot;player&quot;&gt;Богдан&lt;/p&gt;
+  &lt;p&gt;Тренуємось щосуботи.&lt;/p&gt;
+&lt;/section&gt;</pre>
+      <div class="sl wide"><span>скільки класів у Андрія:</span></div>
+      <div class="sl wide"><span>скільки абзаців без класу:</span></div>
+    </div>
+    <div>
+      <h2>2 &#183; Допиши селектор<span class="tag">за кодом зліва</span></h2>
+      <table class="t">
+        <tr><th>Кому</th><th style="width:34mm">Селектор</th></tr>
+        <tr><td>усім гравцям</td><td></td></tr>
+        <tr><td>тільки капітану</td><td></td></tr>
+        <tr><td>усьому розділу team</td><td></td></tr>
+        <tr><td>усім абзацам</td><td></td></tr>
+        <tr><td>тільки абзацам з класом player</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>3 &#183; Якого кольору?<span class="tag">&#9733;&#9733;</span></h2>
+      <pre class="c" style="font-size:9.4pt;white-space:pre">p { color: black; }
+.player { color: blue; }
+.captain { color: red; }</pre>
+      <p class="q" style="margin-top:1.2mm">Код &#8212; із завдання 1. Нижче правило <code>.captain</code></p>
+      <div class="sl"><span>«Андрій»:</span></div>
+      <div class="sl"><span>«Богдан»:</span></div>
+      <div class="sl"><span>«Тренуємось щосуботи.»:</span></div>
+    </div>
+    <div>
+      <h2>4 &#183; Меню на розділи<span class="tag">допиши href</span></h2>
+      <p class="q">На сторінці є <code>id=&quot;team&quot;</code> і <code>id=&quot;matches&quot;</code>.</p>
+      <div class="sl"><span>&lt;a href=</span></div>
+      <p class="q" style="margin-top:.8mm">&#8230;&gt;Команда&lt;/a&gt;</p>
+      <div class="sl"><span>&lt;a href=</span></div>
+      <p class="q" style="margin-top:.8mm">&#8230;&gt;Матчі&lt;/a&gt; &#8212; з іншої сторінки, <code>photos.html</code></p>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>5 &#183; Чому не працює?<span class="tag">причина і як виправити</span></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4mm;align-items:start">
+      <div>
+        <pre class="c nw">player { color: blue; }</pre>
+        <div class="ln s"></div>
+      </div>
+      <div>
+        <pre class="c nw">class=&quot;player, captain&quot;</pre>
+        <div class="ln s"></div>
+      </div>
+      <div>
+        <pre class="c nw">&lt;a href=&quot;team&quot;&gt;Команда&lt;/a&gt;</pre>
+        <div class="ln s"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>6 &#183; Клас за описом<span class="tag">HTML і CSS</span></h2>
+    <p class="q">Дай абзацу <b>«Наступна гра &#8212; у суботу»</b> клас <code>note</code>. Напиши правило: колір <code>gray</code>, похилий, <code>14px</code>.</p>
+    <div class="two">
+      <div class="wb" style="min-height:44mm"><span class="cap">HTML</span></div>
+      <div class="wb" style="min-height:44mm"><span class="cap">CSS</span></div>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>Front-end &#183; 7 клас</span>
+    <span>Урок 12 &#183; 01.12.2026</span>
+  </div>
+
+</div>
+</body>
+</html>
