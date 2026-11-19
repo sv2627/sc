@@ -58,6 +58,7 @@
   ────────────────────────────────────────────────────────────────
   Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
                 F — на весь екран  ·  Ctrl+P — експорт у PDF
+                ↓ ↑ — кроки анімації на слайдах s4, s5, s7, s11, s13
   ────────────────────────────────────────────────────────────────
 --><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -470,6 +471,53 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
 @media (max-height:800px){
   .selc{padding:8px 12px} .selc code{font-size:19px} .selc p{font-size:15px}
 }
+
+/* ─── ПОКРОКОВІ АНІМАЦІЇ УРОКУ 11 ───
+   У розмітці записаний КІНЦЕВИЙ стан, тому друк і PDF не змінюються.
+   .anim[data-max] — кількість кроків · data-from — з якого кроку діє вигляд
+   data-bgfrom — те саме для фону · data-mid — проміжний колір brown
+   data-cue — на яких кроках підсвічено */
+.actl,.amark,.only{display:none}
+.anim.armed .actl{display:flex;align-items:center;gap:10px;margin-top:10px;min-height:56px}
+.abtn{min-width:0;min-height:48px;padding:8px 16px;font-size:16px;white-space:nowrap;flex-shrink:0}
+.abtn:disabled{color:var(--dim);cursor:default}
+.acaps{flex:1;font-size:16.5px;line-height:1.35;font-weight:600;color:var(--ink)}
+.acaps::before{content:attr(data-step);display:block;font-family:var(--f-mono);font-size:13px;
+  font-weight:700;color:var(--accent)}
+.acap{display:none}
+.acap.now{display:block}
+.only.now{display:inline}
+.anim.armed .amark{display:inline-block}
+.amark{font-family:var(--f-mono);font-size:13px;font-weight:700;font-style:normal;
+       padding:1px 6px;border-radius:5px;margin-left:8px;white-space:nowrap}
+.amark.y{background:#e8f2e4;color:#1f5c14}
+.amark.n{background:#fbeaea;color:#a01818}
+.anim [data-from],.anim [data-bgfrom]{transition:color .35s,background-color .35s,font-size .35s}
+.cue.now{background:#fdf0d9;outline:2px solid var(--orange);border-radius:4px;animation:acue 1s ease-out}
+.an.cue.now{border-radius:10px;border-color:var(--orange)}
+@keyframes acue{0%{outline-offset:6px}100%{outline-offset:0}}
+@media screen{
+  .anim.armed .pre.amark,.pre.fx-gone{display:none}
+  .pre.fx-txt{color:var(--ink) !important;font-weight:400 !important}
+  .pre.fx-size{font-size:17px !important}
+  .prebg{background:transparent !important}
+  .pre.mid{color:brown !important;font-weight:400 !important}
+}
+/* летючі значення: колір чи клас вилітає з коду й падає на елемент */
+.flyer{position:absolute;left:0;top:0;z-index:4;pointer-events:none;display:inline-flex;align-items:center;gap:7px;
+       background:var(--surface);color:var(--ink);border:2.5px solid var(--c);border-radius:20px;padding:4px 12px;
+       font-family:var(--f-mono);font-size:17px;font-weight:700;white-space:nowrap;box-shadow:0 6px 16px rgba(89,20,41,.25)}
+.flyer i{width:14px;height:14px;border-radius:50%;background:var(--c);border:1px solid var(--dim)}
+.flyer.drop{padding:0;width:11px;height:11px;border-radius:50%;background:var(--c);border:1px solid var(--dim);box-shadow:none}
+@media print{.flyer{display:none !important}}
+@media (prefers-reduced-motion:reduce){
+  .cue.now{animation:none}
+  .anim [data-from],.anim [data-bgfrom]{transition:none}
+}
+@media print{
+  .actl,.amark,.only{display:none !important}
+  .cue.now{background:none !important;outline:0 !important}
+}
 </style>
 </head>
 <body>
@@ -590,22 +638,29 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
       <span class="label lb">Проблема</span>
       <h2>Селектор тегу фарбує всіх</h2>
     </div></div>
-    <div class="two">
+    <div class="two anim" data-max="3">
       <div>
         <div class="dp">
           <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
             <span class="dp-dot dg2"></span><span class="dp-title">style.css</span></div>
-          <div class="dp-code"><span class="sk">p</span> {
-  <span class="st">color</span>: <span class="ss">red</span>;
+          <div class="dp-code"><span class="cue" data-cue="0 1 2 3"><span class="sk">p</span></span> {
+  <span class="st">color</span>: <span class="ss" data-k="red">red</span>;
   <span class="st">font-weight</span>: <span class="ss">bold</span>;
 }</div>
           <div class="dp-out" style="font-family:Verdana,sans-serif">
             <h2 style="font-size:20px">Шахи</h2>
-            <p style="color:red;font-weight:bold;margin:0">Класична гра для двох.</p>
-            <p style="color:red;font-weight:bold;margin:0">450 грн</p>
-            <p style="color:red;font-weight:bold;margin:0">Ціни дійсні до 30 листопада.</p>
+            <p class="fx-txt cue" data-from="1" data-cue="1" style="color:red;font-weight:bold;margin:0">Класична гра для двох.<span class="amark y" data-from="1">✓ це p</span></p>
+            <p class="fx-txt cue" data-from="2" data-cue="2" style="color:red;font-weight:bold;margin:0">450 грн<span class="amark y" data-from="2">✓ це p</span></p>
+            <p class="fx-txt cue" data-from="3" data-cue="3" style="color:red;font-weight:bold;margin:0">Ціни дійсні до 30 листопада.<span class="amark y" data-from="3">✓ це p</span></p>
           </div>
         </div>
+        <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+          <div class="acaps" aria-live="polite">
+            <span class="acap" data-cue="0">Правило для p. Кого воно знайде?</span>
+            <span class="acap" data-cue="1">Перший абзац — це p. Фарбуємо!</span>
+            <span class="acap" data-cue="2">Другий абзац — теж p. Фарбуємо!</span>
+            <span class="acap" data-cue="3">Третій — теж p. Червоне все, а хотіли тільки ціну</span>
+          </div></div>
       </div>
       <div>
         <div class="hbox">Хотіли червоною <b>тільки ціну</b>. А правило <span class="ic">p</span> діє на <b>кожен</b> абзац сторінки</div>
@@ -621,32 +676,40 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
       <span class="label lb">class · .price</span>
       <h2>Клас: імʼя в HTML — крапка в CSS</h2>
     </div></div>
-    <div class="two">
+    <div class="two anim" data-max="4">
       <div>
         <div class="dp">
           <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
             <span class="dp-dot dg2"></span><span class="dp-title">katalog.html</span></div>
-          <div class="dp-code"><span class="sk">&lt;p&gt;</span>Класична гра для двох.<span class="sk">&lt;/p&gt;</span>
-<span class="sk">&lt;p</span> <span class="st">class</span>=<span class="ss">"<span class="hl">price</span>"</span><span class="sk">&gt;</span>450 грн<span class="sk">&lt;/p&gt;</span></div>
+          <div class="dp-code"><span class="cue" data-cue="4" data-k="line1"><span class="sk">&lt;p&gt;</span>Класична гра для двох.<span class="sk">&lt;/p&gt;</span></span>
+<span class="cue" data-cue="1 3" data-k="line2"><span class="sk">&lt;p</span> <span class="st">class</span>=<span class="ss">"<span class="hl">price</span>"</span><span class="sk">&gt;</span>450 грн<span class="sk">&lt;/p&gt;</span></span></div>
         </div>
         <div class="dp mt">
           <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
             <span class="dp-dot dg2"></span><span class="dp-title">style.css</span></div>
-          <div class="dp-code"><span class="sk">.<span class="hl">price</span></span> {
-  <span class="st">color</span>: <span class="ss">red</span>;
+          <div class="dp-code"><span class="cue" data-cue="2 3" data-k="sel"><span class="sk">.<span class="hl">price</span></span></span> {
+  <span class="st">color</span>: <span class="ss" data-k="red">red</span>;
   <span class="st">font-weight</span>: <span class="ss">bold</span>;
 }</div>
           <div class="dp-out" style="font-family:Verdana,sans-serif;padding:10px 18px">
-            <p style="margin:0">Класична гра для двох.</p>
-            <p style="color:red;font-weight:bold;margin:0">450 грн</p>
+            <p style="margin:0">Класична гра для двох.<span class="amark n" data-from="4">✕ немає класу</span></p>
+            <p class="fx-txt cue" data-from="3" data-cue="3" style="color:red;font-weight:bold;margin:0">450 грн<span class="amark y" data-from="3">✓ class="price"</span></p>
           </div>
         </div>
       </div>
       <div class="anat">
-        <div class="an"><code>class="price"</code><span>атрибут у HTML — як <span class="ic">src</span> чи <span class="ic">href</span>. Імʼя — <b>без</b> крапки</span></div>
-        <div class="an"><code>.price</code><span>селектор у CSS: <b>крапка</b> + імʼя = «усі, у кого клас price»</span></div>
-        <div class="an"><code>price</code><span>імʼя придумуєш <b>сам</b>. В обох файлах — літера в літеру</span></div>
-        <div class="an"><code>&lt;p&gt;</code><span>абзац <b>без</b> класу правило <span class="ic">.price</span> не чіпає</span></div>
+        <div class="an cue" data-cue="1"><code>class="price"</code><span>атрибут у HTML — як <span class="ic">src</span> чи <span class="ic">href</span>. Імʼя — <b>без</b> крапки</span></div>
+        <div class="an cue" data-cue="2"><code>.price</code><span>селектор у CSS: <b>крапка</b> + імʼя = «усі, у кого клас price»</span></div>
+        <div class="an cue" data-cue="3"><code>price</code><span>імʼя придумуєш <b>сам</b>. В обох файлах — літера в літеру</span></div>
+        <div class="an cue" data-cue="4"><code>&lt;p&gt;</code><span>абзац <b>без</b> класу правило <span class="ic">.price</span> не чіпає</span></div>
+        <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+          <div class="acaps" aria-live="polite">
+            <span class="acap" data-cue="0">Як правило знаходить свій абзац? Чотири кроки — чотири рядки вгорі</span>
+            <span class="acap" data-cue="1">class="price" — абзац із ціною отримав імʼя price</span>
+            <span class="acap" data-cue="2">.price — крапка в CSS: шукаємо всіх із класом price</span>
+            <span class="acap" data-cue="3">price = price, літера в літеру. Збіг — ціна червона!</span>
+            <span class="acap" data-cue="4">&lt;p&gt; без класу правило .price пропускає</span>
+          </div></div>
       </div>
     </div>
   </div></section>
@@ -698,21 +761,29 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
       <div class="card cp"><h3>Клас сильніший за тег</h3>
         <p>Абзац-ціна отримує <b>обидва</b> правила. Де вони сперечаються — перемагає <b>клас</b>: він точніше каже, кому</p></div>
     </div>
+    <div class="anim" data-max="2">
     <div class="two mt">
       <div class="dp">
         <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
           <span class="dp-dot dg2"></span><span class="dp-title">style.css</span></div>
-        <div class="dp-code tight"><span class="sk">p</span>      { <span class="st">color</span>: <span class="ss">brown</span>; }
-<span class="sk">.price</span> { <span class="st">color</span>: <span class="ss">red</span>; <span class="st">font-weight</span>: <span class="ss">bold</span>; }</div>
+        <div class="dp-code tight"><span class="cue" data-cue="1"><span class="sk">p</span>      { <span class="st">color</span>: <span class="ss" data-k="brown">brown</span>; }</span>
+<span class="cue" data-cue="2"><span class="sk">.price</span> { <span class="st">color</span>: <span class="ss" data-k="red">red</span>; <span class="st">font-weight</span>: <span class="ss">bold</span>; }</span></div>
       </div>
       <div class="dp">
         <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
           <span class="dp-dot dg2"></span><span class="dp-title">у браузері</span></div>
         <div class="dp-out" style="font-family:Verdana,sans-serif;padding:10px 18px">
-          <p style="color:brown;margin:0">Класична гра для двох. — <i>brown від p</i></p>
-          <p style="color:red;font-weight:bold;margin:0">450 грн — red від .price</p>
+          <p class="fx-txt" data-from="1" style="color:brown;margin:0">Класична гра для двох.<span class="fx-gone" data-from="1"> — <i>brown від p</i></span></p>
+          <p class="fx-txt cue" data-from="2" data-mid="1" data-cue="2" style="color:red;font-weight:bold;margin:0">450 грн<span class="only" data-cue="1"> — brown від p</span><span class="fx-gone" data-from="2"> — red від .price</span></p>
         </div>
       </div>
+    </div>
+    <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+      <div class="acaps" aria-live="polite">
+        <span class="acap" data-cue="0">Обидва абзаци — p, але в ціни є ще й клас price</span>
+        <span class="acap" data-cue="1">Правило p фарбує обидва абзаци в brown</span>
+        <span class="acap" data-cue="2">Для ціни сперечаються brown і red. Клас точніший, тому перемагає red</span>
+      </div></div>
     </div>
   </div></section>
 
@@ -804,21 +875,27 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
       <span class="label lb">class="price sale"</span>
       <h2>Два класи на одному елементі</h2>
     </div></div>
-    <div class="two">
+    <div class="two anim" data-max="2">
       <div>
         <div class="dp">
           <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
             <span class="dp-dot dg2"></span><span class="dp-title">katalog.html + style.css</span></div>
-          <div class="dp-code tight"><span class="sk">&lt;p</span> <span class="st">class</span>=<span class="ss">"price"</span><span class="sk">&gt;</span>450 грн<span class="sk">&lt;/p&gt;</span>
-<span class="sk">&lt;p</span> <span class="st">class</span>=<span class="ss">"price sale"</span><span class="sk">&gt;</span>250 грн<span class="sk">&lt;/p&gt;</span>
+          <div class="dp-code tight"><span class="sk">&lt;p</span> <span class="st">class</span>=<span class="ss">"<span class="cue" data-cue="1">price</span>"</span><span class="sk">&gt;</span>450 грн<span class="sk">&lt;/p&gt;</span>
+<span class="sk">&lt;p</span> <span class="st">class</span>=<span class="ss">"<span class="cue" data-cue="1">price</span> <span class="cue" data-cue="2">sale</span>"</span><span class="sk">&gt;</span>250 грн<span class="sk">&lt;/p&gt;</span>
 
-<span class="sk">.price</span> { <span class="st">color</span>: <span class="ss">red</span>; <span class="st">font-weight</span>: <span class="ss">bold</span>; }
-<span class="sk">.sale</span>  { <span class="st">background-color</span>: <span class="ss">yellow</span>; }</div>
+<span class="cue" data-cue="1"><span class="sk">.price</span> { <span class="st">color</span>: <span class="ss" data-k="red">red</span>; <span class="st">font-weight</span>: <span class="ss">bold</span>; }</span>
+<span class="cue" data-cue="2"><span class="sk">.sale</span>  { <span class="st">background-color</span>: <span class="ss" data-k="yellow">yellow</span>; }</span></div>
           <div class="dp-out" style="font-family:Verdana,sans-serif;padding:10px 18px">
-            <p style="color:red;font-weight:bold;margin:0">450 грн</p>
-            <p style="color:red;font-weight:bold;background:yellow;margin:0">250 грн</p>
+            <p class="fx-txt" data-from="1" style="color:red;font-weight:bold;margin:0">450 грн<span class="amark n" data-from="2">✕ немає sale</span></p>
+            <p class="fx-txt" data-from="1" data-bgfrom="2" style="color:red;font-weight:bold;background:yellow;margin:0">250 грн<span class="amark y" data-from="2">✓ price + sale</span></p>
           </div>
         </div>
+        <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+          <div class="acaps" aria-live="polite">
+            <span class="acap" data-cue="0">У першої ціни один клас, у другої — два</span>
+            <span class="acap" data-cue="1">Клас price є в обох: обидві ціни червоні й жирні</span>
+            <span class="acap" data-cue="2">Клас sale є тільки в другої: жовтий фон лише там</span>
+          </div></div>
       </div>
       <div>
         <div class="hbox">Класи — <b>через пробіл</b> в одних лапках. Елемент отримує правила <b>обох</b> класів</div>
@@ -861,23 +938,29 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
       <div class="selc"><code>.note</code><p>Усі з класом <span class="ic">note</span> — <b>будь-який</b> тег: <span class="ic">p</span>, <span class="ic">li</span>, <span class="ic">h2</span></p></div>
       <div class="selc"><code>p.note</code><p><b>Тільки абзаци</b> з класом <span class="ic">note</span>. Пишеться разом, <b>без пробілу</b></p></div>
     </div>
-    <div class="two mt">
+    <div class="two mt anim" data-max="2">
       <div class="dp">
         <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
           <span class="dp-dot dg2"></span><span class="dp-title">HTML + CSS</span></div>
         <div class="dp-code tight"><span class="sk">&lt;li</span> <span class="st">class</span>=<span class="ss">"note"</span><span class="sk">&gt;</span>Скоро: Дженга<span class="sk">&lt;/li&gt;</span>
 <span class="sk">&lt;p</span> <span class="st">class</span>=<span class="ss">"note"</span><span class="sk">&gt;</span>Ціни дійсні до 30.11<span class="sk">&lt;/p&gt;</span>
 
-<span class="sk">.note</span>   { <span class="st">color</span>: <span class="ss">gray</span>; }
-<span class="sk">p.note</span>  { <span class="st">font-size</span>: <span class="sn">14px</span>; }</div>
+<span class="cue" data-cue="1"><span class="sk">.note</span>   { <span class="st">color</span>: <span class="ss" data-k="gray">gray</span>; }</span>
+<span class="cue" data-cue="2"><span class="sk">p.note</span>  { <span class="st">font-size</span>: <span class="sn" data-k="size">14px</span>; }</span></div>
         <div class="dp-out" style="font-family:Verdana,sans-serif;padding:10px 18px">
-          <ul style="margin:0 0 0 24px"><li style="color:gray;font-size:17px">Скоро: Дженга</li></ul>
-          <p style="color:gray;font-size:14px;margin:4px 0 0">Ціни дійсні до 30.11</p>
+          <ul style="margin:0 0 0 24px"><li class="fx-txt" data-from="1" style="color:gray;font-size:17px">Скоро: Дженга<span class="amark n" data-from="2">✕ це не p</span></li></ul>
+          <p class="fx-txt fx-size" data-from="1" style="color:gray;font-size:14px;margin:4px 0 0"><span class="fx-size" data-from="2">Ціни дійсні до 30.11</span><span class="amark y" data-from="2">✓ p.note</span></p>
         </div>
       </div>
       <div>
         <div class="hbox">Обидва сірі — <span class="ic">.note</span>. Дрібний — <b>тільки абзац</b>: <span class="ic">p.note</span></div>
         <div class="tip"><span class="tip-ico">🔜</span><div>Є ще <span class="ic">#імʼя</span> — для <b>одного</b> елемента на сторінці. Це урок 18</div></div>
+        <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+          <div class="acaps" aria-live="polite">
+            <span class="acap" data-cue="0">Клас note є в li і в p. Що зробить кожне правило?</span>
+            <span class="acap" data-cue="1">.note діє на будь-який тег: сірі обидва</span>
+            <span class="acap" data-cue="2">p.note шукає тільки абзаци: li пропускаємо</span>
+          </div></div>
       </div>
     </div>
   </div></section>
@@ -1104,6 +1187,170 @@ document.addEventListener('touchend', e => {
   const dy = ty - e.changedTouches[0].clientY;
   if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
 }, {passive:true});
+
+/* ═════════ ПОКРОКОВІ АНІМАЦІЇ ═════════ */
+/* Що летить на кожному кроці. Група [ ] — летять разом, групи — одна за одною.
+   t — напис · c — колір · from/to — звідки й куди · miss — відскакує · knock — що збиває */
+const P = n => '.dp-out p:nth-of-type(' + n + ')';
+const FLY = {
+  s4: {
+    1: [[{t:'red', c:'red', from:'[data-k=red]', to:P(1)}]],
+    2: [[{t:'red', c:'red', from:'[data-k=red]', to:P(2)}]],
+    3: [[{t:'red', c:'red', from:'[data-k=red]', to:P(3)}]]
+  },
+  s5: {
+    3: [[{t:'🔍 price', c:'orange', from:'[data-k=sel]', to:'[data-k=line2]'}],
+        [{t:'red', c:'red', from:'[data-k=red]', to:P(2)}]],
+    4: [[{t:'🔍 price', c:'orange', from:'[data-k=sel]', to:'[data-k=line1]', miss:true}]]
+  },
+  s7: {
+    1: [[{t:'brown', c:'brown', from:'[data-k=brown]', to:P(1)}, {t:'brown', c:'brown', from:'[data-k=brown]', to:P(2)}]],
+    2: [[{t:'red', c:'red', from:'[data-k=red]', to:P(2), knock:{t:'brown', c:'brown'}}]]
+  },
+  s11: {
+    1: [[{t:'red', c:'red', from:'[data-k=red]', to:P(1)}, {t:'red', c:'red', from:'[data-k=red]', to:P(2)}]],
+    2: [[{t:'yellow', c:'yellow', from:'[data-k=yellow]', to:P(1), miss:true}],
+        [{t:'yellow', c:'yellow', from:'[data-k=yellow]', to:P(2)}]]
+  },
+  s13: {
+    1: [[{t:'gray', c:'gray', from:'[data-k=gray]', to:'.dp-out li'}, {t:'gray', c:'gray', from:'[data-k=gray]', to:'.dp-out p'}]],
+    2: [[{t:'14px', c:'orange', from:'[data-k=size]', to:'.dp-out li', miss:true}],
+        [{t:'14px', c:'orange', from:'[data-k=size]', to:'.dp-out p'}]]
+  }
+};
+const CALM = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const place = (x, y, sc, rot) => 'translate(' + x + 'px,' + y + 'px) translate(-50%,-50%) scale(' + sc + ') rotate(' + rot + 'deg)';
+
+function flyPart(a, el, frames, opts) {
+  const an = el.animate(frames, Object.assign({fill:'forwards'}, opts));
+  a.live.push(an);
+  return an;
+}
+function flyChip(fl) {
+  const chip = document.createElement('div');
+  chip.className = 'flyer';
+  chip.style.setProperty('--c', fl.c);
+  chip.innerHTML = '<i></i>';
+  chip.append(fl.t);
+  document.getElementById('stage').appendChild(chip);
+  return chip;
+}
+function flySplash(a, x, y, c) {
+  for (let i = 0; i < 10; i++) {
+    const d = document.createElement('div'), ang = i / 10 * Math.PI * 2, r = 45 + (i % 3) * 18;
+    d.className = 'flyer drop';
+    d.style.setProperty('--c', c);
+    document.getElementById('stage').appendChild(d);
+    flyPart(a, d, [{transform:place(x, y, 1, 0), opacity:1},
+                   {transform:place(x + Math.cos(ang) * r, y + Math.sin(ang) * r, .3, 0), opacity:0}],
+            {duration:520, easing:'ease-out'}).finished.then(() => d.remove()).catch(() => {});
+  }
+}
+async function flyOne(a, fl) {
+  const src = a.querySelector(fl.from), dst = a.querySelector(fl.to);
+  if (!src || !dst) return;
+  const box = document.getElementById('stage').getBoundingClientRect();
+  const r0 = src.getBoundingClientRect(), r1 = dst.getBoundingClientRect();
+  const x0 = r0.left + r0.width / 2 - box.left, y0 = r0.top + r0.height / 2 - box.top;
+  const x1 = r1.left + Math.min(r1.width / 2, 90) - box.left, y1 = r1.top + r1.height / 2 - box.top;
+  const topY = Math.max(24, Math.min(y0, y1) - 70);
+  let old = null;
+  if (fl.knock) {
+    old = flyChip(fl.knock);
+    flyPart(a, old, [{transform:place(x1, y1, 1, 0)}, {transform:place(x1, y1, 1, 0)}], {duration:1});
+  }
+  const chip = flyChip(fl);
+  try {
+    await flyPart(a, chip, [
+      {transform:place(x0, y0, .7, 0), opacity:0},
+      {transform:place((x0 + x1) / 2, topY, 1.3, -12), opacity:1, offset:.5},
+      {transform:place(x1, y1, 1, 0), opacity:1}
+    ], {duration:850, easing:'ease-in-out'}).finished;
+    if (fl.miss) {
+      flyPart(a, dst, [{transform:'translateX(0)'}, {transform:'translateX(-7px)'}, {transform:'translateX(7px)'},
+                       {transform:'translateX(-4px)'}, {transform:'translateX(0)'}], {duration:320, fill:'none'});
+      await flyPart(a, chip, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 + 70, y1 - 50, 1.05, 40), opacity:1, offset:.35},
+        {transform:place(x1 + 150, y1 + 170, .7, 200), opacity:0}
+      ], {duration:750, easing:'ease-in'}).finished;
+    } else {
+      flySplash(a, x1, y1, fl.c);
+      flyPart(a, dst, [{transform:'scale(1)'}, {transform:'scale(1.05)'}, {transform:'scale(1)'}], {duration:300, fill:'none'});
+      if (old) flyPart(a, old, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 - 130, y1 - 40, 1, -90), opacity:1, offset:.3},
+        {transform:place(x1 - 210, y1 + 240, .7, -320), opacity:0}
+      ], {duration:800, easing:'ease-in'}).finished.then(() => old.remove()).catch(() => {});
+    }
+  } catch (e) { /* політ перервано */ }
+  chip.remove();
+}
+function animStop(a) {
+  (a.live || []).forEach(an => an.cancel());
+  a.live = [];
+  a.run = (a.run || 0) + 1;
+  a.busy = false;
+  document.querySelectorAll('.flyer').forEach(f => f.remove());
+}
+/* Крок уперед: підпис і підсвітка одразу, а вигляд змінюється, коли значення долетить */
+async function animForward(a, s) {
+  animStop(a);
+  const plan = (FLY[a.closest('.slide').id] || {})[s];
+  if (!plan || CALM) { animShow(a, s); return; }
+  const run = a.run;
+  a.busy = true;
+  animShow(a, s, s - 1);
+  for (const group of plan) {
+    await Promise.all(group.map(fl => flyOne(a, fl)));
+    if (a.run !== run) return;
+  }
+  a.busy = false;
+  animShow(a, s);
+}
+function animShow(a, s, look = s) {
+  const max = +a.dataset.max;
+  a.dataset.s = s;
+  a.querySelectorAll('[data-from]').forEach(e => e.classList.toggle('pre', look < +e.dataset.from));
+  a.querySelectorAll('[data-bgfrom]').forEach(e => e.classList.toggle('prebg', look < +e.dataset.bgfrom));
+  a.querySelectorAll('[data-mid]').forEach(e => e.classList.toggle('mid', look >= +e.dataset.mid && look < +e.dataset.from));
+  a.querySelectorAll('[data-cue]').forEach(e => e.classList.toggle('now', e.dataset.cue.split(' ').includes(String(s))));
+  const btn = a.querySelector('[data-a="next"]');
+  /* кнопка лише веде далі; номер — у кроку, який зараз на екрані */
+  btn.textContent = s === 0 ? 'Почати →' : s < max ? 'Далі →' : 'Готово ✓';
+  a.querySelector('.acaps').dataset.step = s ? 'Крок ' + s + ' з ' + max : '';
+  btn.disabled = s >= max;
+}
+function animStep(a, d) {
+  const s = +a.dataset.s;
+  /* повторне натискання під час польоту — одразу показати результат */
+  if (a.busy && d > 0) { animStop(a); animShow(a, s); return; }
+  const n = Math.max(0, Math.min(+a.dataset.max, s + d));
+  if (n > s) animForward(a, n);
+  else { animStop(a); animShow(a, n); }
+}
+document.querySelectorAll('.anim').forEach(a => {
+  a.classList.add('armed');
+  animShow(a, 0);
+  a.querySelectorAll('.abtn').forEach(b => {
+    b.addEventListener('click', e => {
+      if (b.dataset.a === 'next') animStep(a, 1);
+      else { animStop(a); animShow(a, 0); }
+      if (e.detail > 0) b.blur();
+    });
+    /* пробіл на кнопці — це крок, а не наступний слайд */
+    b.addEventListener('keydown', e => { if (e.key === ' ') e.stopPropagation(); });
+  });
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  const a = document.querySelector('.slide.active .anim');
+  if (a) { e.preventDefault(); animStep(a, e.key === 'ArrowDown' ? 1 : -1); }
+});
+/* повернулись на слайд — анімація знову з початку */
+new MutationObserver(() => {
+  document.querySelectorAll('.slide:not(.active) .anim').forEach(a => { if (+a.dataset.s) { animStop(a); animShow(a, 0); } });
+}).observe(document.getElementById('stage'), {subtree:true, attributes:true, attributeFilter:['class'], childList:false});
 
 goTo(0);
 </script>

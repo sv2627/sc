@@ -46,6 +46,7 @@
   ────────────────────────────────────────────────────────────────
   Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
                 F — на весь екран  ·  Ctrl+P — експорт у PDF
+                ↓ ↑ — кроки анімації на слайдах s5, s7, s8
   ────────────────────────────────────────────────────────────────
 -->
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -545,6 +546,54 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
 .chk{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .chk div{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:17px;line-height:1.45}
 .chk div b{color:var(--accent)}
+
+/* ─── ПОКРОКОВІ АНІМАЦІЇ УРОКУ 18 ───
+   У розмітці записаний КІНЦЕВИЙ стан, тому друк і PDF не змінюються.
+   .anim[data-max] — кількість кроків · data-from — з якого кроку діє вигляд
+   data-bgfrom — те саме для фону · data-cue — на яких кроках підсвічено.
+   Клас поточного кроку — anow, бо .now у цій колоді вже зайнятий (урок 4). */
+.actl,.amark,.only{display:none}
+.anim.armed .actl{display:flex;align-items:center;gap:10px;margin-top:10px;min-height:56px}
+.abtn{min-width:0;min-height:48px;padding:8px 16px;font-size:16px;white-space:nowrap;flex-shrink:0}
+.abtn:disabled{color:var(--dim);cursor:default}
+.acaps{flex:1;font-size:16.5px;line-height:1.35;font-weight:600;color:var(--ink)}
+.acaps::before{content:attr(data-step);display:block;font-family:var(--f-mono);font-size:13px;
+  font-weight:700;color:var(--accent)}
+.acap{display:none}
+.acap.anow{display:block}
+.only.anow{display:inline}
+.anim.armed .amark{display:inline-block}
+.amark{font-family:var(--f-mono);font-size:13px;font-weight:700;font-style:normal;
+       padding:1px 6px;border-radius:5px;margin-left:8px;white-space:nowrap}
+.amark.y{background:#e3efe9;color:var(--forest)}
+.amark.n{background:#fbf1f0;color:var(--brick)}
+.anim [data-from],.anim [data-bgfrom]{transition:color .35s,background-color .35s,font-size .35s}
+.cue.anow{background:#fbf6ea;outline:2px solid var(--gold);border-radius:4px;animation:acue 1s ease-out}
+@keyframes acue{0%{outline-offset:6px}100%{outline-offset:0}}
+@media screen{
+  .anim.armed .pre.amark,.pre.fx-gone{display:none}
+  .pre.fx-hide{visibility:hidden}
+  .pre.fx-gap0{gap:0 !important}
+  .pre.fx-gapd{gap:6px !important}
+  .pre.fx-rows0{grid-template-rows:none !important}
+  .pre.fx-span0{grid-column:auto !important;grid-row:auto !important}
+  .prebg{background:transparent !important}
+}
+/* летючі значення: значення вилітає з коду й падає на сітку */
+.flyer{position:absolute;left:0;top:0;z-index:4;pointer-events:none;display:inline-flex;align-items:center;gap:7px;
+       background:var(--surface);color:var(--ink);border:2.5px solid var(--c);border-radius:20px;padding:4px 12px;
+       font-family:var(--f-mono);font-size:17px;font-weight:700;white-space:nowrap;box-shadow:0 6px 16px rgba(89,20,41,.25)}
+.flyer i{width:14px;height:14px;border-radius:50%;background:var(--c);border:1px solid var(--dim)}
+.flyer.drop{padding:0;width:11px;height:11px;border-radius:50%;background:var(--c);border:1px solid var(--dim);box-shadow:none}
+@media print{.flyer{display:none !important}}
+@media (prefers-reduced-motion:reduce){
+  .cue.anow{animation:none}
+  .anim [data-from],.anim [data-bgfrom]{transition:none}
+}
+@media print{
+  .actl,.amark,.only{display:none !important}
+  .cue.anow{background:none !important;outline:0 !important}
+}
 </style></head>
 <body>
 
@@ -666,24 +715,31 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
       <span class="label lt">Нове</span>
       <h2>grid-template-columns — скільки колонок і яких</h2>
     </div></div>
-    <div class="two">
+    <div class="two anim" data-max="3">
       <div>
         <div class="dp">
           <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
             <span class="dp-dot dg2"></span><span class="dp-title">style.css</span></div>
           <div class="dp-code"><span class="sk">.cards</span> {
   <span class="sa">display</span>: <span class="ss">grid</span>;
-  <span class="sa">grid-template-columns</span>: <span class="ss">150px 150px 150px</span>;
-  <span class="sa">gap</span>: <span class="ss">10px</span>;
+  <span class="cue" data-cue="1"><span class="sa">grid-template-columns</span>: <span class="ss" data-k="cols">150px 150px 150px</span>;</span>
+  <span class="cue" data-cue="3"><span class="sa">gap</span>: <span class="ss" data-k="gap">10px</span>;</span>
 }
-<span class="cm">/* у .cards — шість карток */</span></div>
+<span class="cm cue" data-cue="1 2" data-k="six">/* у .cards — шість карток */</span></div>
         </div>
-        <div class="hbox mt">Скільки значень через пробіл — <b>стільки колонок</b>. Три значення — три колонки по 150px.</div>
+        <div class="hbox mt cue" data-cue="1">Скільки значень через пробіл — <b>стільки колонок</b>. Три значення — три колонки по 150px.</div>
       </div>
       <div>
-        <div class="gd" style="grid-template-columns:150px 150px 150px;gap:10px"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i></div>
-        <div class="tip"><span class="tip-ico">💡</span><div>Рядків ніхто не задавав: колонки скінчились — сітка сама почала <b>новий рядок</b>. Картки 4–6 стали під 1–3.</div></div>
+        <div class="gd fx-gap0" data-from="3" style="grid-template-columns:150px 150px 150px;gap:10px"><i class="fx-hide" data-from="1">1</i><i class="fx-hide" data-from="1">2</i><i class="fx-hide" data-from="1">3</i><i class="fx-hide" data-from="2">4</i><i class="fx-hide" data-from="2">5</i><i class="fx-hide" data-from="2">6</i></div>
+        <div class="tip cue" data-cue="2"><span class="tip-ico">💡</span><div>Рядків ніхто не задавав: колонки скінчились — сітка сама почала <b>новий рядок</b>. Картки 4–6 стали під 1–3.</div></div>
         <div class="tip ty"><span class="tip-ico">📐</span><div>У px колонки <b>не стискаються</b>: вузьке вікно — і з'являється прокрутка вбік.</div></div>
+        <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+          <div class="acaps" aria-live="polite">
+            <span class="acap" data-cue="0">У .cards шість карток і три значення колонок. Куди стане кожна картка?</span>
+            <span class="acap" data-cue="1">Три значення — три колонки по 150px. Картки 1–3 займають перший рядок</span>
+            <span class="acap" data-cue="2">Колонки скінчились — картки 4–6 самі починають новий рядок</span>
+            <span class="acap" data-cue="3">gap: 10px — проміжки між колонками й рядками</span>
+          </div></div>
       </div>
     </div>
   </div></section>
@@ -718,28 +774,37 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
       <span class="label lt">Нове</span>
       <h2>repeat(), рядки і проміжки</h2>
     </div></div>
+    <div class="anim" data-max="3">
     <div class="three">
       <div class="card"><h3>repeat()</h3>
-        <div class="mono" style="font-size:14.5px"><span class="sk">grid-template-columns:
+        <div class="mono" style="font-size:14.5px"><span class="sk cue" data-cue="1" data-k="rep">grid-template-columns:
   repeat(4, 1fr);</span></div>
         <p style="margin-top:6px">те саме, що <span class="ic">1fr 1fr 1fr 1fr</span>. Перше число — скільки разів, далі — яка колонка</p>
-        <div class="gd c4 mt"><i>1</i><i>2</i><i>3</i><i>4</i></div>
+        <div class="gd c4 mt" data-k="g1"><i class="fx-hide" data-from="1">1</i><i class="fx-hide" data-from="1">2</i><i class="fx-hide" data-from="1">3</i><i class="fx-hide" data-from="1">4</i></div>
       </div>
       <div class="card"><h3>grid-template-rows</h3>
         <div class="mono" style="font-size:14.5px"><span class="sk">grid-template-columns:
   repeat(3, 1fr);
-grid-template-rows: 70px 35px;</span></div>
-        <div class="gd c3 mt" style="grid-template-rows:70px 35px"><i>70px</i><i>70px</i><i>70px</i><i>35px</i><i>35px</i><i>35px</i></div>
+<span class="cue" data-cue="2">grid-template-rows: <span data-k="r70">70px</span> <span data-k="r35">35px</span>;</span></span></div>
+        <div class="gd c3 mt fx-rows0" data-from="2" data-k="g2" style="grid-template-rows:70px 35px"><i>70px</i><i>70px</i><i>70px</i><i>35px</i><i>35px</i><i>35px</i></div>
         <p style="margin-top:6px">висота рядків. Не задали — за вмістом найвищої картки</p>
       </div>
       <div class="card"><h3>gap</h3>
         <div class="mono" style="font-size:14.5px"><span class="sk">gap: 20px;
 gap: 30px 10px;
-row-gap: 30px;
-column-gap: 10px;</span></div>
+<span class="cue" data-cue="3" data-k="rg">row-gap: 30px;</span>
+<span class="cue" data-cue="3" data-k="cg">column-gap: 10px;</span></span></div>
         <p style="margin-top:6px">одне значення — однаково всюди. Два — спершу між <b>рядками</b>, потім між <b>колонками</b></p>
-        <div class="gd c3 mt" style="row-gap:18px;column-gap:4px"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i></div>
+        <div class="gd c3 mt fx-gapd" data-from="3" data-k="g3" style="row-gap:18px;column-gap:4px"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i></div>
       </div>
+    </div>
+    <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+      <div class="acaps" aria-live="polite">
+        <span class="acap" data-cue="0">Три способи керувати сіткою. Дивимось по черзі, зліва направо</span>
+        <span class="acap" data-cue="1">repeat(4, 1fr) — чотири рази по 1fr: чотири рівні колонки</span>
+        <span class="acap" data-cue="2">grid-template-rows задає висоту рядків: перший 70px, другий 35px</span>
+        <span class="acap" data-cue="3">row-gap розсуває рядки, column-gap — колонки, кожен окремо</span>
+      </div></div>
     </div>
   </div></section>
 
@@ -749,30 +814,39 @@ column-gap: 10px;</span></div>
       <span class="label lt">Нове · правило для однієї картки</span>
       <h2>grid-column: span 2 — картка на дві колонки</h2>
     </div></div>
+    <div class="anim" data-max="3">
     <div class="three">
       <div>
-        <div class="mono" style="font-size:14.5px"><span class="sk">.wide</span> {
-  <span class="sa">grid-column</span>: <span class="ss">span 2</span>;
+        <div class="mono cue" data-cue="1" style="font-size:14.5px"><span class="sk">.wide</span> {
+  <span class="sa">grid-column</span>: <span class="ss" data-k="w">span 2</span>;
 }</div>
-        <div class="gd c3 mt"><i class="w" style="grid-column:span 2">1 · wide</i><i>2</i><i>3</i><i>4</i><i>5</i></div>
+        <div class="gd c3 mt" data-k="g1"><i class="w fx-span0" data-from="1" style="grid-column:span 2">1 · wide</i><i>2</i><i>3</i><i>4</i><i>5</i></div>
         <p style="font-size:16px;margin-top:6px">Решта карток самі посуваються далі</p>
       </div>
       <div>
-        <div class="mono" style="font-size:14.5px"><span class="sk">.big</span> {
-  <span class="sa">grid-column</span>: <span class="ss">span 2</span>;
-  <span class="sa">grid-row</span>: <span class="ss">span 2</span>;
+        <div class="mono cue" data-cue="2" style="font-size:14.5px"><span class="sk">.big</span> {
+  <span class="sa">grid-column</span>: <span class="ss" data-k="bc">span 2</span>;
+  <span class="sa">grid-row</span>: <span class="ss" data-k="br">span 2</span>;
 }</div>
-        <div class="gd c3 mt"><i class="w" style="grid-column:span 2;grid-row:span 2">1 · big</i><i>2</i><i>3</i><i>4</i><i>5</i></div>
+        <div class="gd c3 mt" data-k="g2"><i class="w fx-span0" data-from="2" style="grid-column:span 2;grid-row:span 2">1 · big</i><i>2</i><i>3</i><i>4</i><i>5</i></div>
         <p style="font-size:16px;margin-top:6px"><span class="ic">grid-row</span> — те саме вгору-вниз</p>
       </div>
       <div>
         <div class="ruler"><span>1</span><span>2</span><span>3</span><span>4</span></div>
-        <div class="gd c3" style="border-left:3px solid var(--brick);border-right:3px solid var(--brick)"><i class="t" style="grid-column:1 / -1">title · 1 / -1</i><i>1</i><i>2</i><i>3</i></div>
-        <div class="mono mt" style="font-size:14.5px"><span class="sk">.title</span> {
-  <span class="sa">grid-column</span>: <span class="ss">1 / -1</span>;
+        <div class="gd c3" data-k="g3" style="border-left:3px solid var(--brick);border-right:3px solid var(--brick)"><i class="t fx-span0" data-from="3" style="grid-column:1 / -1">title · 1 / -1</i><i>1</i><i>2</i><i>3</i></div>
+        <div class="mono mt cue" data-cue="3" style="font-size:14.5px"><span class="sk">.title</span> {
+  <span class="sa">grid-column</span>: <span class="ss" data-k="t">1 / -1</span>;
 }</div>
         <p style="font-size:16px;margin-top:6px">Три колонки — <b>чотири лінії</b>. <span class="ic">1 / -1</span> — від першої до останньої: на всю ширину</p>
       </div>
+    </div>
+    <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+      <div class="acaps" aria-live="polite">
+        <span class="acap" data-cue="0">Правило для однієї картки: скільки колонок чи рядків вона займе</span>
+        <span class="acap" data-cue="1">span 2 — картка wide займає дві колонки, решта посуваються далі</span>
+        <span class="acap" data-cue="2">grid-column і grid-row разом — картка big займає квадрат 2 × 2</span>
+        <span class="acap" data-cue="3">1 / -1 — від першої лінії до останньої: title на всю ширину</span>
+      </div></div>
     </div>
   </div></section>
 
@@ -1096,6 +1170,170 @@ document.addEventListener('touchend', e => {
   const dy = ty - e.changedTouches[0].clientY;
   if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
 }, {passive:true});
+
+/* ═════════ ПОКРОКОВІ АНІМАЦІЇ ═════════ */
+/* Що летить на кожному кроці. Група [ ] — летять разом, групи — одна за одною.
+   t — напис · c — колір · from/to — звідки й куди · miss — відскакує · knock — що збиває */
+const G = (k, n) => '[data-k=' + k + '] i:nth-child(' + n + ')';
+const FR = 'var(--forest)', GO = 'var(--goldink)', ST = 'var(--steel)';
+const FLY = {
+  s5: {
+    1: [[{t:'150px 150px 150px', c:GO, from:'[data-k=cols]', to:'.gd'}],
+        [{t:'1', c:FR, from:'[data-k=six]', to:'.gd i:nth-child(1)'}, {t:'2', c:FR, from:'[data-k=six]', to:'.gd i:nth-child(2)'},
+         {t:'3', c:FR, from:'[data-k=six]', to:'.gd i:nth-child(3)'}]],
+    2: [[{t:'4', c:FR, from:'[data-k=six]', to:'.gd i:nth-child(4)'}, {t:'5', c:FR, from:'[data-k=six]', to:'.gd i:nth-child(5)'},
+         {t:'6', c:FR, from:'[data-k=six]', to:'.gd i:nth-child(6)'}]],
+    3: [[{t:'10px', c:ST, from:'[data-k=gap]', to:'.gd'}]]
+  },
+  s7: {
+    1: [[{t:'1fr', c:FR, from:'[data-k=rep]', to:G('g1', 1)}, {t:'1fr', c:FR, from:'[data-k=rep]', to:G('g1', 2)},
+         {t:'1fr', c:FR, from:'[data-k=rep]', to:G('g1', 3)}, {t:'1fr', c:FR, from:'[data-k=rep]', to:G('g1', 4)}]],
+    2: [[{t:'70px', c:GO, from:'[data-k=r70]', to:G('g2', 1)}],
+        [{t:'35px', c:GO, from:'[data-k=r35]', to:G('g2', 4)}]],
+    3: [[{t:'row-gap', c:ST, from:'[data-k=rg]', to:G('g3', 4)}],
+        [{t:'column-gap', c:ST, from:'[data-k=cg]', to:G('g3', 2)}]]
+  },
+  s8: {
+    1: [[{t:'span 2', c:GO, from:'[data-k=w]', to:G('g1', 1)}]],
+    2: [[{t:'span 2', c:GO, from:'[data-k=bc]', to:G('g2', 1)}],
+        [{t:'span 2', c:GO, from:'[data-k=br]', to:G('g2', 1)}]],
+    3: [[{t:'1 / -1', c:ST, from:'[data-k=t]', to:G('g3', 1)}]]
+  }
+};
+const CALM = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const place = (x, y, sc, rot) => 'translate(' + x + 'px,' + y + 'px) translate(-50%,-50%) scale(' + sc + ') rotate(' + rot + 'deg)';
+
+function flyPart(a, el, frames, opts) {
+  const an = el.animate(frames, Object.assign({fill:'forwards'}, opts));
+  a.live.push(an);
+  return an;
+}
+function flyChip(fl) {
+  const chip = document.createElement('div');
+  chip.className = 'flyer';
+  chip.style.setProperty('--c', fl.c);
+  chip.innerHTML = '<i></i>';
+  chip.append(fl.t);
+  document.getElementById('stage').appendChild(chip);
+  return chip;
+}
+function flySplash(a, x, y, c) {
+  for (let i = 0; i < 10; i++) {
+    const d = document.createElement('div'), ang = i / 10 * Math.PI * 2, r = 45 + (i % 3) * 18;
+    d.className = 'flyer drop';
+    d.style.setProperty('--c', c);
+    document.getElementById('stage').appendChild(d);
+    flyPart(a, d, [{transform:place(x, y, 1, 0), opacity:1},
+                   {transform:place(x + Math.cos(ang) * r, y + Math.sin(ang) * r, .3, 0), opacity:0}],
+            {duration:520, easing:'ease-out'}).finished.then(() => d.remove()).catch(() => {});
+  }
+}
+async function flyOne(a, fl) {
+  const src = a.querySelector(fl.from), dst = a.querySelector(fl.to);
+  if (!src || !dst) return;
+  const box = document.getElementById('stage').getBoundingClientRect();
+  const r0 = src.getBoundingClientRect(), r1 = dst.getBoundingClientRect();
+  const x0 = r0.left + r0.width / 2 - box.left, y0 = r0.top + r0.height / 2 - box.top;
+  const x1 = r1.left + Math.min(r1.width / 2, 90) - box.left, y1 = r1.top + r1.height / 2 - box.top;
+  const topY = Math.max(24, Math.min(y0, y1) - 70);
+  let old = null;
+  if (fl.knock) {
+    old = flyChip(fl.knock);
+    flyPart(a, old, [{transform:place(x1, y1, 1, 0)}, {transform:place(x1, y1, 1, 0)}], {duration:1});
+  }
+  const chip = flyChip(fl);
+  try {
+    await flyPart(a, chip, [
+      {transform:place(x0, y0, .7, 0), opacity:0},
+      {transform:place((x0 + x1) / 2, topY, 1.3, -12), opacity:1, offset:.5},
+      {transform:place(x1, y1, 1, 0), opacity:1}
+    ], {duration:850, easing:'ease-in-out'}).finished;
+    if (fl.miss) {
+      flyPart(a, dst, [{transform:'translateX(0)'}, {transform:'translateX(-7px)'}, {transform:'translateX(7px)'},
+                       {transform:'translateX(-4px)'}, {transform:'translateX(0)'}], {duration:320, fill:'none'});
+      await flyPart(a, chip, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 + 70, y1 - 50, 1.05, 40), opacity:1, offset:.35},
+        {transform:place(x1 + 150, y1 + 170, .7, 200), opacity:0}
+      ], {duration:750, easing:'ease-in'}).finished;
+    } else {
+      flySplash(a, x1, y1, fl.c);
+      flyPart(a, dst, [{transform:'scale(1)'}, {transform:'scale(1.05)'}, {transform:'scale(1)'}], {duration:300, fill:'none'});
+      if (old) flyPart(a, old, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 - 130, y1 - 40, 1, -90), opacity:1, offset:.3},
+        {transform:place(x1 - 210, y1 + 240, .7, -320), opacity:0}
+      ], {duration:800, easing:'ease-in'}).finished.then(() => old.remove()).catch(() => {});
+    }
+  } catch (e) { /* політ перервано */ }
+  chip.remove();
+}
+function animStop(a) {
+  (a.live || []).forEach(an => an.cancel());
+  a.live = [];
+  a.run = (a.run || 0) + 1;
+  a.busy = false;
+  document.querySelectorAll('.flyer').forEach(f => f.remove());
+}
+/* Крок уперед: підпис і підсвітка одразу, а вигляд змінюється, коли значення долетить */
+async function animForward(a, s) {
+  animStop(a);
+  const plan = (FLY[a.closest('.slide').id] || {})[s];
+  if (!plan || CALM) { animShow(a, s); return; }
+  const run = a.run;
+  a.busy = true;
+  animShow(a, s, s - 1);
+  for (const group of plan) {
+    await Promise.all(group.map(fl => flyOne(a, fl)));
+    if (a.run !== run) return;
+  }
+  a.busy = false;
+  animShow(a, s);
+}
+function animShow(a, s, look = s) {
+  const max = +a.dataset.max;
+  a.dataset.s = s;
+  a.querySelectorAll('[data-from]').forEach(e => e.classList.toggle('pre', look < +e.dataset.from));
+  a.querySelectorAll('[data-bgfrom]').forEach(e => e.classList.toggle('prebg', look < +e.dataset.bgfrom));
+  a.querySelectorAll('[data-mid]').forEach(e => e.classList.toggle('mid', look >= +e.dataset.mid && look < +e.dataset.from));
+  a.querySelectorAll('[data-cue]').forEach(e => e.classList.toggle('anow', e.dataset.cue.split(' ').includes(String(s))));
+  const btn = a.querySelector('[data-a="next"]');
+  /* кнопка лише веде далі; номер — у кроку, який зараз на екрані */
+  btn.textContent = s === 0 ? 'Почати →' : s < max ? 'Далі →' : 'Готово ✓';
+  a.querySelector('.acaps').dataset.step = s ? 'Крок ' + s + ' з ' + max : '';
+  btn.disabled = s >= max;
+}
+function animStep(a, d) {
+  const s = +a.dataset.s;
+  /* повторне натискання під час польоту — одразу показати результат */
+  if (a.busy && d > 0) { animStop(a); animShow(a, s); return; }
+  const n = Math.max(0, Math.min(+a.dataset.max, s + d));
+  if (n > s) animForward(a, n);
+  else { animStop(a); animShow(a, n); }
+}
+document.querySelectorAll('.anim').forEach(a => {
+  a.classList.add('armed');
+  animShow(a, 0);
+  a.querySelectorAll('.abtn').forEach(b => {
+    b.addEventListener('click', e => {
+      if (b.dataset.a === 'next') animStep(a, 1);
+      else { animStop(a); animShow(a, 0); }
+      if (e.detail > 0) b.blur();
+    });
+    /* пробіл на кнопці — це крок, а не наступний слайд */
+    b.addEventListener('keydown', e => { if (e.key === ' ') e.stopPropagation(); });
+  });
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  const a = document.querySelector('.slide.active .anim');
+  if (a) { e.preventDefault(); animStep(a, e.key === 'ArrowDown' ? 1 : -1); }
+});
+/* повернулись на слайд — анімація знову з початку */
+new MutationObserver(() => {
+  document.querySelectorAll('.slide:not(.active) .anim').forEach(a => { if (+a.dataset.s) { animStop(a); animShow(a, 0); } });
+}).observe(document.getElementById('stage'), {subtree:true, attributes:true, attributeFilter:['class'], childList:false});
+
 
 goTo(0);
 </script>

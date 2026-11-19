@@ -49,6 +49,7 @@
   ────────────────────────────────────────────────────────────────
   Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
                 F — на весь екран  ·  Ctrl+P — експорт у PDF
+                ↓ ↑ — кроки анімації на слайдах s5, s7, s10, s13
   ────────────────────────────────────────────────────────────────
 -->
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -502,6 +503,102 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
   .pv4 .card{padding:9px 12px}
   .url{font-size:14px}
 }
+
+/* ─── ПОКРОКОВІ АНІМАЦІЇ УРОКУ 11 ───
+   У розмітці записаний КІНЦЕВИЙ стан, тому друк і PDF не змінюються.
+   .anim[data-max] — кількість кроків · data-from — з якого кроку діє вигляд
+   data-cue — на яких кроках підсвічено · data-k — звідки й куди летить значення
+   Нових кольорів немає: фон підсвітки — як у .lo, мітка — як у .lm */
+.actl,.amark,.only{display:none}
+.anim.armed .actl{display:flex;align-items:center;gap:10px;margin-top:10px;min-height:56px}
+.abtn{min-width:0;min-height:48px;padding:8px 16px;font-size:16px;white-space:nowrap;flex-shrink:0}
+.abtn:disabled{color:var(--dim);cursor:default}
+.acaps{flex:1;font-size:16.5px;line-height:1.35;font-weight:600;color:var(--ink)}
+.acaps::before{content:attr(data-step);display:block;font-family:var(--f-mono);font-size:13px;
+  font-weight:700;color:var(--accent)}
+.acap{display:none}
+.acap.now{display:block}
+.only.now{display:inline}
+.anim.armed .amark{display:inline-block}
+.amark{font-family:var(--f-mono);font-size:13px;font-weight:700;font-style:normal;
+       padding:1px 6px;border-radius:5px;margin-left:8px;white-space:nowrap}
+.amark.y{background:#f3e3e7;color:var(--brand)}
+.anim [data-from],.anim [data-bgfrom]{transition:color .35s,background-color .35s,font-size .35s}
+.cue.now{outline:2px solid var(--orange);animation:acue 1s ease-out}
+.cue.now:not(.blk){background:#fdf0d9;border-radius:4px}
+@keyframes acue{0%{outline-offset:6px}100%{outline-offset:0}}
+@media screen{
+  .anim.armed .pre.amark,.pre.fx-gone{display:none}
+  .pre.fx-hide{visibility:hidden}
+  .prebg{background:transparent !important}
+}
+/* летючі значення: число чи текст вилітає з блоку й падає в гніздо */
+.flyer{position:absolute;left:0;top:0;z-index:4;pointer-events:none;display:inline-flex;align-items:center;gap:7px;
+       background:var(--surface);color:var(--ink);border:2.5px solid var(--c);border-radius:20px;padding:4px 12px;
+       font-family:var(--f-mono);font-size:17px;font-weight:700;white-space:nowrap;box-shadow:0 6px 16px rgba(89,20,41,.25)}
+.flyer i{width:14px;height:14px;border-radius:50%;background:var(--c);border:1px solid var(--dim)}
+.flyer.drop{padding:0;width:11px;height:11px;border-radius:50%;background:var(--c);border:1px solid var(--dim);box-shadow:none}
+@media print{.flyer{display:none !important}}
+@media (prefers-reduced-motion:reduce){
+  .cue.now{animation:none}
+  .anim [data-from],.anim [data-bgfrom]{transition:none}
+}
+@media print{
+  .actl,.amark,.only{display:none !important}
+  .cue.now{background:none !important;outline:0 !important}
+}
+
+/* ─── БЛОКИ ЯК В APP INVENTOR · 19.11.2026 ───
+   Скопійовано з робочої області App Inventor (тема classic, рендерер Blockly):
+   кожен блок — три SVG-шари, як там: темна тінь (колір × 0.8, зсув 1px),
+   основний колір і світла обвідка зверху й зліва (колір + 30 % білого).
+   Контури, розміри (висота 27, поле 18, шрифт sans-serif 14.67px),
+   поля (білі, прозорість 60 %, текст чорний) — як в App Inventor.
+   Малює aiShapes() у кінці файлу. .st — команда · .vl — значення · .top — initialize */
+.blk:is(.st,.vl,.top),.cblk-h,.dd,.fld,.nf{font-family:sans-serif;font-weight:400}
+.blk:is(.st,.vl,.top){background:transparent !important;border:0 !important;border-radius:0;box-shadow:none;
+   position:relative;isolation:isolate;color:#fff;font-size:14.67px;line-height:18px;padding:5px 5px 4px 5px;white-space:nowrap}
+.blk:is(.st,.top){padding-left:10px;padding-right:13px}
+.blk-op .blk:is(.st,.vl,.top),.blk-op:is(.st,.vl,.top){font-size:14.67px !important;padding:5px 5px 4px 5px !important;box-shadow:none}
+.blk-event{--bc:#b18e35} .blk-set{--bc:#266643} .blk-get{--bc:#439970} .blk-text{--bc:#b32d5e}
+.blk-num{--bc:#3f71b5} .blk-log{--bc:#77ab41} .blk-var{--bc:#d05f2d} .blk-call{--bc:#7c5385}
+.blk-col{--bc:#7d7d7d}
+.cblk{--bc:#b18e35;background:transparent;border:0;box-shadow:none;position:relative;isolation:isolate;padding-bottom:10px}
+.cblk-h{font-size:14.67px;line-height:18px;padding:5px 13px 4px 10px;color:#fff}
+.cblk-h .dl{position:absolute;left:10px;top:32px;font-weight:400}
+.cblk-b{margin-left:37px;border:0;border-radius:0;padding:0;gap:0;min-height:27px;background:transparent}
+.cblk-b .blk-row{gap:0;align-items:flex-start}
+.blk-row > .st + .vl,.blk-row > .top + .vl{margin-left:-9px}
+.cblk-b .blk-row > .st + .vl,.cblk-b .blk-row > .top + .vl{margin-left:0}
+.bsh{position:absolute;top:0;z-index:-1;overflow:visible;pointer-events:none}
+.vbx .vt{background:#d05f2d;border-color:#d05f2d;color:#fff}
+.dd,.fld,.nf{display:inline-block;background:rgba(255,255,255,.6);color:#000;border-radius:4px;
+   padding:0 5px;line-height:18px;height:18px;font-size:14.67px}
+.dd::after{content:' ▾'}
+.nf{min-width:9px;text-align:center}
+/* команда стає заввишки як вставлене значення; значення всередині + і random мають місце під пазл */
+.blk-row{align-items:flex-start}
+.blk-row > .blk.st,.blk-row > .blk.top{align-self:stretch}
+.blk-op .blk.vl{margin-left:9px !important}
+.blk-op{gap:4px !important}
+/* блоки з кількома входами (call MoveTo, join) — як в App Inventor:
+   підпис праворуч, гніздо на правому краї, значення вставлене ззовні */
+.blk.blk-multi{display:inline-flex !important;flex-direction:column;gap:0 !important;padding:5px 13px 4px 10px !important;font-size:14.67px !important}
+.blk-multi .sk{display:flex;justify-content:flex-end;align-items:flex-start;gap:0;min-height:28px;position:relative;
+  font-size:14.67px !important;font-weight:400;line-height:18px;white-space:nowrap}
+.blk-multi .sk:last-child{min-height:18px}
+.blk-multi .sk:first-child{justify-content:flex-start}
+.blk-multi .sk > .blk.vl{position:absolute !important;left:calc(100% + 13px);top:-5px;margin:0 !important;
+  font-size:14.67px !important;padding:5px 5px 4px 5px !important}
+/* параметри події (x, y) — окремим рядком під when, як в App Inventor; do — на лівому плечі */
+.cblk-h{position:relative}
+.cblk-h .prm1{margin-left:14px}
+.cblk-h .dl{top:calc(100% + 5px) !important}
+/* SVG-блоки з App Inventor: обгортка, позначки біля рядка, підсвітка кроку */
+.aibw{position:relative;display:inline-block;max-width:100%;vertical-align:top}
+.aibw > .amark{position:absolute;white-space:nowrap;margin:0}
+.aib g.cue.now{outline:0 !important;background:none !important;animation:none !important;filter:drop-shadow(0 0 2px var(--orange,var(--gold,#e8a33d))) drop-shadow(0 0 5px var(--orange,var(--gold,#e8a33d)))}
+@media print{.aib g.cue.now{filter:none}}
 </style>
 </head>
 <body>
@@ -556,7 +653,7 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
   <h2>«+10» і «яке число в кінці»</h2>
 </div></div>
 <div class="two">
-  <div class="card cb reveal"><h3>1 · Кнопка «+10»</h3><p class="q">На екрані 0 → «+10» → <b>10</b> → «+1» → <b>11</b>. Що в підкові Button10?</p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><div class="cblk"><div class="cblk-h">when Button10.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-var">set global score to</span> <span class="blk blk-num blk-op"><span class="blk blk-var">get global score</span> + <span class="blk blk-num">10</span></span></div><div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-var">get global score</span></div></div></div></div></div>
+  <div class="card cb reveal"><h3>1 · Кнопка «+10»</h3><p class="q">На екрані 0 → «+10» → <b>10</b> → «+1» → <b>11</b>. Що в підкові Button10?</p><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><div class="aibw"><svg class="aib" viewBox="0 0 489 110" width="489" height="110" font-family="sans-serif" font-size="14.67" role="img" aria-label="when Button10.Click doset global score to get global score + 10set Label1.Text to get global score"><g transform="translate(0, 0)" data-i="0"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 181 v 5 H 189 V 5 H 189 V 23 H 189 V 27 H 67 l -6,4 -3,0 -6,-4 h -7 a 8 8 0 0,0 -8,8 v 54 a 8 8 0 0,0 8,8 H 189 H 189 V 97 V 107 h -181 a 8 8 0 0,1 -8,-8 z" fill="#8e722a"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 181 v 5 H 189 V 5 H 189 V 23 H 189 V 27 H 67 l -6,4 -3,0 -6,-4 h -7 a 8 8 0 0,0 -8,8 v 54 a 8 8 0 0,0 8,8 H 189 H 189 V 97 V 107 h -181 a 8 8 0 0,1 -8,-8 z" fill="#b18e35"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 188.5 H 188.5 M 37,97 m 1.9895923599143455,-1.9895923599143455 a 8.5 8.5 0 0,0 6.0104076400856545,2.4895923599143455 l 143.5,0 H 188.5 M 0,107 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 8" fill="none" stroke="#c8b072" stroke-width="2" stroke-linecap="round"></path><g transform="translate(38, 28)" data-i="1"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 144 v 5 H 174 V 5 H 174 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 14 H 174 V 34 V 38 h -144.5 l -6,4 -3,0 -6,-4 h -14.5 H 0 z" fill="#a64c24"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 144 v 5 H 174 V 5 H 174 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 14 H 174 V 34 V 38 h -144.5 l -6,4 -3,0 -6,-4 h -14.5 H 0 z" fill="#d05f2d"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 14.5 h 0.5 l 6,4 3,0 6,-4 H 173.5 H 173.5 M 174,5 m -5,14.3 l 3.68,-2.1 M 0.5,37.5 V 8" fill="none" stroke="#de8f6c" stroke-width="2" stroke-linecap="round"></path><g transform="translate(167, 0)" data-i="2"><path transform="translate(1,1)" d="m 8,0 h 273 v 5 H 281 V 5 H 281 V 34 H 281 V 34 V 38 h -273 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 146 v -29 z M 232,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 39 v -29 z" fill="#325a91"></path><path d="m 8,0 h 273 v 5 H 281 V 5 H 281 V 34 H 281 V 34 V 38 h -273 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 146 v -29 z M 232,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 39 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 280.5 H 280.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 197.5,5.5 v 29 h -146 M 51,10 m -5,14.3 l 3.68,-2.1 M 271.5,5.5 v 29 h -39 M 232,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(44, 6)" data-i="3"><path transform="translate(1,1)" d="m 8,0 h 144 v 5 H 152 V 5 H 152 V 23 H 152 V 23 V 27 h -144 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#a64c24"></path><path d="m 8,0 h 144 v 5 H 152 V 5 H 152 V 23 H 152 V 23 V 27 h -144 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#d05f2d"></path><path d="m 8,0 m 0.5,0.5 H 151.5 H 151.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#de8f6c" stroke-width="2" stroke-linecap="round"></path><g transform="translate(18,5)" data-t="get"><text x="0" y="14" fill="#ffffff">get</text></g><g transform="translate(44,5)" data-t="global score"><rect x="0" y="0" width="103" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">global score ▾</text></g></g><g transform="translate(225, 6)" data-i="4"><path transform="translate(1,1)" d="m 8,0 h 37 v 5 H 45 V 5 H 45 V 23 H 45 V 23 V 27 h -37 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 37 v 5 H 45 V 5 H 45 V 23 H 45 V 23 V 27 h -37 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 44.5 H 44.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="10"><rect x="0" y="0" width="27" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">10</text></g></g><g transform="translate(207,10)" data-t="+"><text x="0" y="14" fill="#ffffff">+</text></g><path transform="translate(52, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(233, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g><g transform="translate(0, 39)" data-i="5"><path transform="translate(1,1)" d="m 0,0 h 15 l 6,4 3,0 6,-4 h 183 v 5 H 213 V 5 H 213 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 213 V 23 V 27 h -183.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#1e5236"></path><path d="m 0,0 h 15 l 6,4 3,0 6,-4 h 183 v 5 H 213 V 5 H 213 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 213 V 23 V 27 h -183.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#266643"></path><path d="m 0,0 m 0.5,0.5 H 14.5 h 0.5 l 6,4 3,0 6,-4 H 212.5 H 212.5 M 213,5 m -5,14.3 l 3.68,-2.1 M 0,27 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 0.5" fill="none" stroke="#67947b" stroke-width="2" stroke-linecap="round"></path><g transform="translate(206, 0)" data-i="6"><path transform="translate(1,1)" d="m 8,0 h 144 v 5 H 152 V 5 H 152 V 23 H 152 V 23 V 27 h -144 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#a64c24"></path><path d="m 8,0 h 144 v 5 H 152 V 5 H 152 V 23 H 152 V 23 V 27 h -144 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#d05f2d"></path><path d="m 8,0 m 0.5,0.5 H 151.5 H 151.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#de8f6c" stroke-width="2" stroke-linecap="round"></path><g transform="translate(18,5)" data-t="get"><text x="0" y="14" fill="#ffffff">get</text></g><g transform="translate(44,5)" data-t="global score"><rect x="0" y="0" width="103" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">global score ▾</text></g></g><g transform="translate(10,5)" data-t="set"><text x="0" y="14" fill="#ffffff">set </text></g><g transform="translate(39,5)" data-t="Label1"><rect x="0" y="0" width="68" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Label1 ▾</text></g><g transform="translate(112,5)" data-t="."><text x="0" y="14" fill="#ffffff">.</text></g><g transform="translate(122,5)" data-t="Text"><rect x="0" y="0" width="51" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Text ▾</text></g><g transform="translate(178,5)" data-t="to"><text x="0" y="14" fill="#ffffff"> to</text></g><path transform="translate(15, 0)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path><path transform="translate(214, 5)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(15, 28)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g><g transform="translate(10,5)" data-t="set"><text x="0" y="14" fill="#ffffff">set</text></g><g transform="translate(35,5)" data-t="global score"><rect x="0" y="0" width="103" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">global score ▾</text></g><g transform="translate(143,5)" data-t="to"><text x="0" y="14" fill="#ffffff">to</text></g><path transform="translate(15, 0)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path><path transform="translate(175, 5)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(15, 39)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g><g transform="translate(10,5)" data-t="when"><text x="0" y="14" fill="#ffffff">when </text></g><g transform="translate(55,5)" data-t="Button10"><rect x="0" y="0" width="83" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Button10 ▾</text></g><g transform="translate(143,5)" data-t=".Click"><text x="0" y="14" fill="#ffffff">.Click</text></g><g transform="translate(10,32)" data-t="do"><text x="0" y="14" fill="#ffffff">do</text></g><path transform="translate(53, 28)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g></svg></div></div></div>
   <div>
     <p class="mini">Пункт 2 · Button1 додає <b>2</b> · на старті 0</p>
     <div class="steps">
@@ -591,10 +688,10 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
 </div></div>
 <table class="tb">
   <tr><th style="width:36%">Блок</th><th>Дія</th><th>Приклад</th><th>Відповідь</th></tr>
-  <tr><td><span class="blk blk-num blk-op"><span class="blk blk-num">7</span> + <span class="blk blk-num">3</span></span></td><td>додати</td><td class="mono">7 + 3</td><td class="mono"><b>10</b></td></tr>
-  <tr><td><span class="blk blk-num blk-op"><span class="blk blk-num">7</span> − <span class="blk blk-num">3</span></span></td><td>відняти</td><td class="mono">7 − 3</td><td class="mono"><b>4</b></td></tr>
-  <tr><td><span class="blk blk-num blk-op"><span class="blk blk-num">7</span> × <span class="blk blk-num">3</span></span></td><td>помножити</td><td class="mono">7 × 3</td><td class="mono"><b>21</b></td></tr>
-  <tr><td><span class="blk blk-num blk-op"><span class="blk blk-num">7</span> / <span class="blk blk-num">3</span></span></td><td>поділити</td><td class="mono">7 / 3</td><td class="mono"><b>2.33…</b></td></tr>
+  <tr><td><span class="blk blk-num blk-op vl"><span class="blk blk-num vl"><span class="nf">7</span></span> + <span class="blk blk-num vl"><span class="nf">3</span></span></span></td><td>додати</td><td class="mono">7 + 3</td><td class="mono"><b>10</b></td></tr>
+  <tr><td><span class="blk blk-num blk-op vl"><span class="blk blk-num vl"><span class="nf">7</span></span> − <span class="blk blk-num vl"><span class="nf">3</span></span></span></td><td>відняти</td><td class="mono">7 − 3</td><td class="mono"><b>4</b></td></tr>
+  <tr><td><span class="blk blk-num blk-op vl"><span class="blk blk-num vl"><span class="nf">7</span></span> × <span class="blk blk-num vl"><span class="nf">3</span></span></span></td><td>помножити</td><td class="mono">7 × 3</td><td class="mono"><b>21</b></td></tr>
+  <tr><td><span class="blk blk-num blk-op vl"><span class="blk blk-num vl"><span class="nf">7</span></span> / <span class="blk blk-num vl"><span class="nf">3</span></span></span></td><td>поділити</td><td class="mono">7 / 3</td><td class="mono"><b>2.33…</b></td></tr>
 </table>
 <div class="tip mt"><span class="tip-ico">💡</span>
   <div>Ділення дає <b>дріб з крапкою</b>: 7 / 2 = 3.5. Множення — знак <span class="ic">×</span>, не буква «х».</div></div>
@@ -606,20 +703,30 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
   <span class="label lm">Нове · блок у блоці</span>
   <h2>Що всередині — те рахується першим</h2>
 </div></div>
+<div class="anim" data-max="4">
 <div class="two">
   <div class="card">
     <h3>Спершу додати, потім помножити</h3>
-    <div class="blk-row"><span class="blk blk-num blk-op"><span class="blk blk-num blk-op"><span class="blk blk-num">2</span> + <span class="blk blk-num">3</span></span> × <span class="blk blk-num">4</span></span></div>
-    <p class="mono mt">2 + 3 = 5 → 5 × 4 = <b>20</b></p>
+    <div class="aibw"><svg class="aib" viewBox="0 0 282 52" width="282" height="52" font-family="sans-serif" font-size="14.67" role="img" aria-label="2 + 3 × 4"><g transform="translate(0, 0)" data-i="0" class="cue" data-cue="2"><path transform="translate(1,1)" d="m 8,0 h 271 v 5 H 279 V 5 H 279 V 45 H 279 V 45 V 49 h -271 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 20 h 152 v -40 z M 238,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 271 v 5 H 279 V 5 H 279 V 45 H 279 V 45 V 49 h -271 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 20 h 152 v -40 z M 238,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 278.5 H 278.5 M 8.5,48.5 M 8.5,48.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 203.5,5.5 v 40 h -152 M 51,10 m -5,14.3 l 3.68,-2.1 M 269.5,5.5 v 29 h -31 M 238,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(44, 6)" data-i="1" class="cue" data-k="i1" data-cue="1"><path transform="translate(1,1)" d="m 8,0 h 150 v 5 H 158 V 5 H 158 V 34 H 158 V 34 V 38 h -150 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 117,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 150 v 5 H 158 V 5 H 158 V 34 H 158 V 34 V 38 h -150 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 117,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 157.5 H 157.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 82.5,5.5 v 29 h -31 M 51,10 m -5,14.3 l 3.68,-2.1 M 148.5,5.5 v 29 h -31 M 117,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(44, 6)" data-i="2"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="2"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">2</text></g></g><g transform="translate(110, 6)" data-i="3"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="3"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">3</text></g></g><g transform="translate(92,10)" data-t="+"><text x="0" y="14" fill="#ffffff">+</text></g><path transform="translate(52, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(118, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g><g transform="translate(231, 6)" data-i="4"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="4"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">4</text></g></g><g transform="translate(213,10)" data-t="×" data-k="x1"><text x="0" y="14" fill="#ffffff">×</text></g><path transform="translate(52, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(239, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g></svg></div>
+    <p class="mono mt"><span class="fx-hide" data-from="1" data-k="r1">2 + 3 = 5</span><span class="fx-hide" data-from="2" data-k="r2"> → 5 × 4 = <b>20</b></span></p>
   </div>
   <div class="card cb">
     <h3>Спершу помножити, потім додати</h3>
-    <div class="blk-row"><span class="blk blk-num blk-op"><span class="blk blk-num">2</span> + <span class="blk blk-num blk-op"><span class="blk blk-num">3</span> × <span class="blk blk-num">4</span></span></span></div>
-    <p class="mono mt">3 × 4 = 12 → 2 + 12 = <b>14</b></p>
+    <div class="aibw"><svg class="aib" viewBox="0 0 282 52" width="282" height="52" font-family="sans-serif" font-size="14.67" role="img" aria-label="2 + 3 × 4"><g transform="translate(0, 0)" data-i="0" class="cue" data-cue="4"><path transform="translate(1,1)" d="m 8,0 h 271 v 5 H 279 V 5 H 279 V 45 H 279 V 45 V 49 h -271 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 117,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 20 h 152 v -40 z" fill="#325a91"></path><path d="m 8,0 h 271 v 5 H 279 V 5 H 279 V 45 H 279 V 45 V 49 h -271 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 117,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 20 h 152 v -40 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 278.5 H 278.5 M 8.5,48.5 M 8.5,48.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 82.5,5.5 v 29 h -31 M 51,10 m -5,14.3 l 3.68,-2.1 M 269.5,5.5 v 40 h -152 M 117,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(44, 6)" data-i="1"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="2"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">2</text></g></g><g transform="translate(110, 6)" data-i="2" class="cue" data-k="i2" data-cue="3"><path transform="translate(1,1)" d="m 8,0 h 150 v 5 H 158 V 5 H 158 V 34 H 158 V 34 V 38 h -150 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 117,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 150 v 5 H 158 V 5 H 158 V 34 H 158 V 34 V 38 h -150 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 117,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 157.5 H 157.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 82.5,5.5 v 29 h -31 M 51,10 m -5,14.3 l 3.68,-2.1 M 148.5,5.5 v 29 h -31 M 117,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(44, 6)" data-i="3"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="3"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">3</text></g></g><g transform="translate(110, 6)" data-i="4"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="4"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">4</text></g></g><g transform="translate(92,10)" data-t="×"><text x="0" y="14" fill="#ffffff">×</text></g><path transform="translate(52, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(118, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g><g transform="translate(92,10)" data-t="+" data-k="p2"><text x="0" y="14" fill="#ffffff">+</text></g><path transform="translate(52, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(118, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g></svg></div>
+    <p class="mono mt"><span class="fx-hide" data-from="3" data-k="r3">3 × 4 = 12</span><span class="fx-hide" data-from="4" data-k="r4"> → 2 + 12 = <b>14</b></span></p>
   </div>
 </div>
 <div class="hbox hb mt">Дужок у блоках немає — їх замінює <b>вкладення</b>. Внутрішній блок рахується першим,
   а його відповідь іде в гніздо зовнішнього.</div>
+<div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+  <div class="acaps" aria-live="polite">
+    <span class="acap" data-cue="0">Ті самі числа 2, 3 і 4 — а блоки вкладені по-різному</span>
+    <span class="acap" data-cue="1">Ліворуч усередині 2 + 3 — цей блок рахується першим: 5</span>
+    <span class="acap" data-cue="2">5 іде в гніздо зовнішнього блоку: 5 × 4 = 20</span>
+    <span class="acap" data-cue="3">Праворуч усередині 3 × 4 — цей блок рахується першим: 12</span>
+    <span class="acap" data-cue="4">12 іде в гніздо зовнішнього блоку: 2 + 12 = 14</span>
+  </div></div>
+</div>
   </div></section>
 
   <!-- ══════════ 7 ══════════ -->
@@ -629,10 +736,10 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
   <h2>Порахуй, як App Inventor</h2>
 </div></div>
 <div class="pv4">
-  <div class="card cr reveal"><h3>а</h3><div class="blk-row"><span class="blk blk-num blk-op"><span class="blk blk-num">10</span> − <span class="blk blk-num">4</span></span></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>6</b></p></div></div>
-  <div class="card cr reveal"><h3>б</h3><div class="blk-row"><span class="blk blk-num blk-op"><span class="blk blk-num blk-op"><span class="blk blk-num">10</span> − <span class="blk blk-num">2</span></span> × <span class="blk blk-num">3</span></span></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>24</b> — спершу 10 − 2 = 8, потім 8 × 3</p></div></div>
-  <div class="card cr reveal"><h3>в</h3><div class="blk-row"><span class="blk blk-num blk-op"><span class="blk blk-num">9</span> / <span class="blk blk-num">2</span></span></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>4.5</b> — ділення дає дріб</p></div></div>
-  <div class="card cr reveal"><h3>г · у змінній score число 5</h3><div class="blk-row"><span class="blk blk-num blk-op"><span class="blk blk-var">get global score</span> × <span class="blk blk-num">2</span></span></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>10</b> — змінна теж іде в гніздо Math</p></div></div>
+  <div class="card cr reveal"><h3>а</h3><div class="aibw"><svg class="aib" viewBox="0 0 138 41" width="138" height="41" font-family="sans-serif" font-size="14.67" role="img" aria-label="10 − 4"><g transform="translate(0, 0)" data-i="0"><path transform="translate(1,1)" d="m 8,0 h 127 v 5 H 135 V 5 H 135 V 34 H 135 V 34 V 38 h -127 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 24,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 39 v -29 z M 94,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 127 v 5 H 135 V 5 H 135 V 34 H 135 V 34 V 38 h -127 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 24,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 39 v -29 z M 94,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 134.5 H 134.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 63.5,5.5 v 29 h -39 M 24,10 m -5,14.3 l 3.68,-2.1 M 125.5,5.5 v 29 h -31 M 94,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(17, 6)" data-i="1"><path transform="translate(1,1)" d="m 8,0 h 37 v 5 H 45 V 5 H 45 V 23 H 45 V 23 V 27 h -37 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 37 v 5 H 45 V 5 H 45 V 23 H 45 V 23 V 27 h -37 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 44.5 H 44.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="10"><rect x="0" y="0" width="27" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">10</text></g></g><g transform="translate(87, 6)" data-i="2"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="4"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">4</text></g></g><g transform="translate(73,10)" data-t="-"><text x="0" y="14" fill="#ffffff">-</text></g><path transform="translate(25, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(95, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g></svg></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>6</b></p></div></div>
+  <div class="card cr reveal"><h3>б</h3><div class="aibw"><svg class="aib" viewBox="0 0 259 52" width="259" height="52" font-family="sans-serif" font-size="14.67" role="img" aria-label="10 − 2 × 3"><g transform="translate(0, 0)" data-i="0"><path transform="translate(1,1)" d="m 8,0 h 248 v 5 H 256 V 5 H 256 V 45 H 256 V 45 V 49 h -248 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 20 h 129 v -40 z M 215,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 248 v 5 H 256 V 5 H 256 V 45 H 256 V 45 V 49 h -248 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 20 h 129 v -40 z M 215,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 255.5 H 255.5 M 8.5,48.5 M 8.5,48.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 180.5,5.5 v 40 h -129 M 51,10 m -5,14.3 l 3.68,-2.1 M 246.5,5.5 v 29 h -31 M 215,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(44, 6)" data-i="1"><path transform="translate(1,1)" d="m 8,0 h 127 v 5 H 135 V 5 H 135 V 34 H 135 V 34 V 38 h -127 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 24,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 39 v -29 z M 94,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 127 v 5 H 135 V 5 H 135 V 34 H 135 V 34 V 38 h -127 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 24,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 39 v -29 z M 94,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 134.5 H 134.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 63.5,5.5 v 29 h -39 M 24,10 m -5,14.3 l 3.68,-2.1 M 125.5,5.5 v 29 h -31 M 94,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(17, 6)" data-i="2"><path transform="translate(1,1)" d="m 8,0 h 37 v 5 H 45 V 5 H 45 V 23 H 45 V 23 V 27 h -37 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 37 v 5 H 45 V 5 H 45 V 23 H 45 V 23 V 27 h -37 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 44.5 H 44.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="10"><rect x="0" y="0" width="27" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">10</text></g></g><g transform="translate(87, 6)" data-i="3"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="2"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">2</text></g></g><g transform="translate(73,10)" data-t="-"><text x="0" y="14" fill="#ffffff">-</text></g><path transform="translate(25, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(95, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g><g transform="translate(208, 6)" data-i="4"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="3"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">3</text></g></g><g transform="translate(190,10)" data-t="×"><text x="0" y="14" fill="#ffffff">×</text></g><path transform="translate(52, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(216, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g></svg></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>24</b> — спершу 10 − 2 = 8, потім 8 × 3</p></div></div>
+  <div class="card cr reveal"><h3>в</h3><div class="aibw"><svg class="aib" viewBox="0 0 130 41" width="130" height="41" font-family="sans-serif" font-size="14.67" role="img" aria-label="9 / 2"><g transform="translate(0, 0)" data-i="0"><path transform="translate(1,1)" d="m 8,0 h 119 v 5 H 127 V 5 H 127 V 34 H 127 V 34 V 38 h -119 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 24,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 86,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 119 v 5 H 127 V 5 H 127 V 34 H 127 V 34 V 38 h -119 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 24,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 86,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 126.5 H 126.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 55.5,5.5 v 29 h -31 M 24,10 m -5,14.3 l 3.68,-2.1 M 117.5,5.5 v 29 h -31 M 86,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(17, 6)" data-i="1"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="9"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">9</text></g></g><g transform="translate(79, 6)" data-i="2"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="2"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">2</text></g></g><g transform="translate(65,10)" data-t="/"><text x="0" y="14" fill="#ffffff">/</text></g><path transform="translate(25, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(87, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g></svg></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>4.5</b> — ділення дає дріб</p></div></div>
+  <div class="card cr reveal"><h3>г · у змінній score число 5</h3><div class="aibw"><svg class="aib" viewBox="0 0 276 41" width="276" height="41" font-family="sans-serif" font-size="14.67" role="img" aria-label="get global score × 2"><g transform="translate(0, 0)" data-i="0"><path transform="translate(1,1)" d="m 8,0 h 265 v 5 H 273 V 5 H 273 V 34 H 273 V 34 V 38 h -265 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 146 v -29 z M 232,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 265 v 5 H 273 V 5 H 273 V 34 H 273 V 34 V 38 h -265 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 146 v -29 z M 232,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 272.5 H 272.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 197.5,5.5 v 29 h -146 M 51,10 m -5,14.3 l 3.68,-2.1 M 263.5,5.5 v 29 h -31 M 232,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(44, 6)" data-i="1"><path transform="translate(1,1)" d="m 8,0 h 144 v 5 H 152 V 5 H 152 V 23 H 152 V 23 V 27 h -144 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#a64c24"></path><path d="m 8,0 h 144 v 5 H 152 V 5 H 152 V 23 H 152 V 23 V 27 h -144 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#d05f2d"></path><path d="m 8,0 m 0.5,0.5 H 151.5 H 151.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#de8f6c" stroke-width="2" stroke-linecap="round"></path><g transform="translate(18,5)" data-t="get"><text x="0" y="14" fill="#ffffff">get</text></g><g transform="translate(44,5)" data-t="global score"><rect x="0" y="0" width="103" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">global score ▾</text></g></g><g transform="translate(225, 6)" data-i="2"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="2"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">2</text></g></g><g transform="translate(207,10)" data-t="×"><text x="0" y="14" fill="#ffffff">×</text></g><path transform="translate(52, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(233, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g></svg></div><p class="rv-hint">Клацніть, щоб перевірити.</p><div class="rv-body"><p><b>10</b> — змінна теж іде в гніздо Math</p></div></div>
 </div>
   </div></section>
 
@@ -642,20 +749,27 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
   <span class="label lm">Нове · числа з полів</span>
   <h2>Рахуємо те, що ввів користувач</h2>
 </div></div>
-<div class="two wide-l">
+<div class="two wide-l anim" data-max="3">
   <div>
-    <div class="cblk"><div class="cblk-h">when ButtonPlus.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-set">set LabelVidpovid.Text to</span> <span class="blk blk-num blk-op"><span class="blk blk-set">TextBox1.Text</span> + <span class="blk blk-set">TextBox2.Text</span></span></div></div></div>
+    <div class="aibw"><svg class="aib" viewBox="0 0 715 82" width="715" height="82" font-family="sans-serif" font-size="14.67" role="img" aria-label="when ButtonPlus.Click doset LabelVidpovid.Text to TextBox1.Text + TextBox2.Text"><g transform="translate(0, 0)" data-i="0"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 193 v 5 H 201 V 5 H 201 V 23 H 201 V 27 H 67 l -6,4 -3,0 -6,-4 h -7 a 8 8 0 0,0 -8,8 v 26 a 8 8 0 0,0 8,8 H 201 H 201 V 69 V 79 h -193 a 8 8 0 0,1 -8,-8 z" fill="#8e722a"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 193 v 5 H 201 V 5 H 201 V 23 H 201 V 27 H 67 l -6,4 -3,0 -6,-4 h -7 a 8 8 0 0,0 -8,8 v 26 a 8 8 0 0,0 8,8 H 201 H 201 V 69 V 79 h -193 a 8 8 0 0,1 -8,-8 z" fill="#b18e35"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 200.5 H 200.5 M 37,69 m 1.9895923599143455,-1.9895923599143455 a 8.5 8.5 0 0,0 6.0104076400856545,2.4895923599143455 l 155.5,0 H 200.5 M 0,79 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 8" fill="none" stroke="#c8b072" stroke-width="2" stroke-linecap="round"></path><g transform="translate(38, 28)" data-i="1" class="cue" data-k="set" data-cue="3"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 231 v 5 H 261 V 5 H 261 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 14 H 261 V 34 V 38 h -231.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#1e5236"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 231 v 5 H 261 V 5 H 261 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 14 H 261 V 34 V 38 h -231.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#266643"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 14.5 h 0.5 l 6,4 3,0 6,-4 H 260.5 H 260.5 M 261,5 m -5,14.3 l 3.68,-2.1 M 0,38 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 8" fill="none" stroke="#67947b" stroke-width="2" stroke-linecap="round"></path><g transform="translate(254, 0)" data-i="2" class="cue" data-cue="2"><path transform="translate(1,1)" d="m 8,0 h 412 v 5 H 420 V 5 H 420 V 34 H 420 V 34 V 38 h -412 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 162 v -29 z M 248,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 162 v -29 z" fill="#325a91"></path><path d="m 8,0 h 412 v 5 H 420 V 5 H 420 V 34 H 420 V 34 V 38 h -412 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 162 v -29 z M 248,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 162 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 419.5 H 419.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 213.5,5.5 v 29 h -162 M 51,10 m -5,14.3 l 3.68,-2.1 M 410.5,5.5 v 29 h -162 M 248,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(44, 6)" data-i="3" class="cue" data-k="t1" data-cue="1"><path transform="translate(1,1)" d="m 8,0 h 160 v 5 H 168 V 5 H 168 V 23 H 168 V 23 V 27 h -160 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#367a5a"></path><path d="m 8,0 h 160 v 5 H 168 V 5 H 168 V 23 H 168 V 23 V 27 h -160 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#439970"></path><path d="m 8,0 m 0.5,0.5 H 167.5 H 167.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#7bb89b" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="TextBox1"><rect x="0" y="0" width="84" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">TextBox1 ▾</text></g><g transform="translate(102,5)" data-t="."><text x="0" y="14" fill="#ffffff">.</text></g><g transform="translate(112,5)" data-t="Text"><rect x="0" y="0" width="51" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Text ▾</text></g></g><g transform="translate(241, 6)" data-i="4" class="cue" data-k="t2" data-cue="1"><path transform="translate(1,1)" d="m 8,0 h 160 v 5 H 168 V 5 H 168 V 23 H 168 V 23 V 27 h -160 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#367a5a"></path><path d="m 8,0 h 160 v 5 H 168 V 5 H 168 V 23 H 168 V 23 V 27 h -160 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#439970"></path><path d="m 8,0 m 0.5,0.5 H 167.5 H 167.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#7bb89b" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="TextBox2"><rect x="0" y="0" width="84" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">TextBox2 ▾</text></g><g transform="translate(102,5)" data-t="."><text x="0" y="14" fill="#ffffff">.</text></g><g transform="translate(112,5)" data-t="Text"><rect x="0" y="0" width="51" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Text ▾</text></g></g><g transform="translate(223,10)" data-t="+" data-k="plus"><text x="0" y="14" fill="#ffffff">+</text></g><path transform="translate(52, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(249, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g><g transform="translate(10,5)" data-t="set"><text x="0" y="14" fill="#ffffff">set </text></g><g transform="translate(39,5)" data-t="LabelVidpovid"><rect x="0" y="0" width="116" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">LabelVidpovid ▾</text></g><g transform="translate(160,5)" data-t="."><text x="0" y="14" fill="#ffffff">.</text></g><g transform="translate(170,5)" data-t="Text"><rect x="0" y="0" width="51" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Text ▾</text></g><g transform="translate(226,5)" data-t="to"><text x="0" y="14" fill="#ffffff"> to</text></g><path transform="translate(15, 0)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path><path transform="translate(262, 5)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(15, 39)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g><g transform="translate(10,5)" data-t="when"><text x="0" y="14" fill="#ffffff">when </text></g><g transform="translate(55,5)" data-t="ButtonPlus"><rect x="0" y="0" width="95" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">ButtonPlus ▾</text></g><g transform="translate(155,5)" data-t=".Click"><text x="0" y="14" fill="#ffffff">.Click</text></g><g transform="translate(10,32)" data-t="do"><text x="0" y="14" fill="#ffffff">do</text></g><path transform="translate(53, 28)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g></svg></div>
     <div class="hbox mt">Текст із поля App Inventor сам перетворює на <b>число</b>, коли воно потрапляє в синій блок Math.</div>
     <div class="hbox hr">У полях — властивість <span class="ic">NumbersOnly</span> ✔: на телефоні відкриється клавіатура з цифрами, букв не ввести.</div>
+    <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+      <div class="acaps" aria-live="polite">
+        <span class="acap" data-cue="0">У полях 7 і 3. Що станеться після «+»?</span>
+        <span class="acap" data-cue="1">TextBox1.Text і TextBox2.Text беруть текст із полів: 7 і 3</span>
+        <span class="acap" data-cue="2">У синьому блоці Math текст стає числом: 7 + 3</span>
+        <span class="acap" data-cue="3">Відповідь 10 іде в LabelVidpovid.Text — і зʼявляється на екрані</span>
+      </div></div>
   </div>
   <div class="scr-row">
     <div>
       <div class="scr">
         <div class="bar"></div>
-        <div class="el el-tb">7</div>
-        <div class="el el-tb">3</div>
+        <div class="el el-tb" data-k="f1">7</div>
+        <div class="el el-tb" data-k="f2">3</div>
         <div class="box bh"><div class="el el-btn">+</div><div class="el el-btn">−</div><div class="el el-btn">×</div><div class="el el-btn">/</div></div>
-        <div class="el el-ans" style="font-size:22px">10</div>
+        <div class="el el-ans" style="font-size:22px" data-k="ans"><span class="fx-hide" data-from="3">10</span></div>
       </div>
       <div class="scr-cap">натиснули «+»</div>
     </div>
@@ -693,9 +807,9 @@ Blocks   · when ButtonPlus.Click do  set LabelVidpovid.Text to  TextBox1.Text +
 </div></div>
 <table class="tb fam">
   <tr><th style="width:46%">Блок</th><th>Що дає</th><th>Приклад</th></tr>
-  <tr><td><span class="blk blk-num blk-op">random integer from <span class="blk blk-num">1</span> to <span class="blk blk-num">6</span></span></td><td><b>ціле</b> число від 1 до 6 — обидва кінці теж можуть випасти</td><td class="mono">4, 1, 6, 6, 2…</td></tr>
-  <tr><td><span class="blk blk-num">random fraction</span></td><td><b>дріб</b> від 0 до 1</td><td class="mono">0.374…</td></tr>
-  <tr><td><span class="blk blk-num blk-op">random set seed to <span class="blk blk-num">7</span></span></td><td>робить «випадкові» числа <b>однаковими</b> при кожному запуску — для перевірки</td><td class="mono">рідко</td></tr>
+  <tr><td><span class="blk blk-num blk-op vl">random integer from <span class="blk blk-num vl"><span class="nf">1</span></span> to <span class="blk blk-num vl"><span class="nf">6</span></span></span></td><td><b>ціле</b> число від 1 до 6 — обидва кінці теж можуть випасти</td><td class="mono">4, 1, 6, 6, 2…</td></tr>
+  <tr><td><span class="blk blk-num vl">random fraction</span></td><td><b>дріб</b> від 0 до 1</td><td class="mono">0.374…</td></tr>
+  <tr><td><span class="blk blk-num blk-op vl">random set seed to <span class="blk blk-num vl"><span class="nf">7</span></span></span></td><td>робить «випадкові» числа <b>однаковими</b> при кожному запуску — для перевірки</td><td class="mono">рідко</td></tr>
 </table>
 <div class="tip mt"><span class="tip-ico">🎯</span>
   <div>Сьогодні працюємо з першим: <b>random integer from … to …</b> — як кубик, тільки межі обираєш ти.</div></div>
@@ -707,18 +821,24 @@ Blocks   · when ButtonPlus.Click do  set LabelVidpovid.Text to  TextBox1.Text +
   <span class="label lm">Нове · застосунок «Кубик»</span>
   <h2>Натиснув — випало число</h2>
 </div></div>
-<div class="two wide-l">
+<div class="two wide-l anim" data-max="2">
   <div>
-    <div class="cblk"><div class="cblk-h">when ButtonKynuty.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-num blk-op">random integer from <span class="blk blk-num">1</span> to <span class="blk blk-num">6</span></span></div></div></div>
+    <div class="aibw"><svg class="aib" viewBox="0 0 524 82" width="524" height="82" font-family="sans-serif" font-size="14.67" role="img" aria-label="when ButtonKynuty.Click doset Label1.Text to random integer from 1 to 6"><g transform="translate(0, 0)" data-i="0" data-k="ev"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 209 v 5 H 217 V 5 H 217 V 23 H 217 V 27 H 67 l -6,4 -3,0 -6,-4 h -7 a 8 8 0 0,0 -8,8 v 26 a 8 8 0 0,0 8,8 H 217 H 217 V 69 V 79 h -209 a 8 8 0 0,1 -8,-8 z" fill="#8e722a"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 209 v 5 H 217 V 5 H 217 V 23 H 217 V 27 H 67 l -6,4 -3,0 -6,-4 h -7 a 8 8 0 0,0 -8,8 v 26 a 8 8 0 0,0 8,8 H 217 H 217 V 69 V 79 h -209 a 8 8 0 0,1 -8,-8 z" fill="#b18e35"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 216.5 H 216.5 M 37,69 m 1.9895923599143455,-1.9895923599143455 a 8.5 8.5 0 0,0 6.0104076400856545,2.4895923599143455 l 171.5,0 H 216.5 M 0,79 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 8" fill="none" stroke="#c8b072" stroke-width="2" stroke-linecap="round"></path><g transform="translate(38, 28)" data-i="1" data-k="set"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 183 v 5 H 213 V 5 H 213 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 14 H 213 V 34 V 38 h -183.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#1e5236"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 183 v 5 H 213 V 5 H 213 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 14 H 213 V 34 V 38 h -183.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#266643"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 14.5 h 0.5 l 6,4 3,0 6,-4 H 212.5 H 212.5 M 213,5 m -5,14.3 l 3.68,-2.1 M 0,38 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 8" fill="none" stroke="#67947b" stroke-width="2" stroke-linecap="round"></path><g transform="translate(206, 0)" data-i="2" class="cue" data-k="rnd" data-cue="1 2"><path transform="translate(1,1)" d="m 8,0 h 269 v 5 H 277 V 5 H 277 V 34 H 277 V 34 V 38 h -269 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 166,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 236,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 269 v 5 H 277 V 5 H 277 V 34 H 277 V 34 V 38 h -269 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 166,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 236,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 276.5 H 276.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 197.5,5.5 v 29 h -31 M 166,10 m -5,14.3 l 3.68,-2.1 M 267.5,5.5 v 29 h -31 M 236,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(159, 6)" data-i="3"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="1"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">1</text></g></g><g transform="translate(229, 6)" data-i="4"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="6"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">6</text></g></g><g transform="translate(18,10)" data-t="random integer from"><text x="0" y="14" fill="#ffffff">random integer from</text></g><g transform="translate(207,10)" data-t="to"><text x="0" y="14" fill="#ffffff">to</text></g><path transform="translate(167, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(237, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g><g transform="translate(10,5)" data-t="set"><text x="0" y="14" fill="#ffffff">set </text></g><g transform="translate(39,5)" data-t="Label1"><rect x="0" y="0" width="68" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Label1 ▾</text></g><g transform="translate(112,5)" data-t="."><text x="0" y="14" fill="#ffffff">.</text></g><g transform="translate(122,5)" data-t="Text"><rect x="0" y="0" width="51" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Text ▾</text></g><g transform="translate(178,5)" data-t="to"><text x="0" y="14" fill="#ffffff"> to</text></g><path transform="translate(15, 0)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path><path transform="translate(214, 5)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(15, 39)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g><g transform="translate(10,5)" data-t="when"><text x="0" y="14" fill="#ffffff">when </text></g><g transform="translate(55,5)" data-t="ButtonKynuty"><rect x="0" y="0" width="111" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">ButtonKynuty ▾</text></g><g transform="translate(171,5)" data-t=".Click"><text x="0" y="14" fill="#ffffff">.Click</text></g><g transform="translate(10,32)" data-t="do"><text x="0" y="14" fill="#ffffff">do</text></g><path transform="translate(53, 28)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g></svg></div>
     <div class="hbox mt">Кожне натискання — <b>новий</b> кидок. Число може повторитися: у справжнього кубика теж.</div>
     <div class="hbox hb">Межі міняються кліком по числу: <span class="ic">from 1 to 20</span> — кубик на 20 граней.</div>
+    <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+      <div class="acaps" aria-live="polite">
+        <span class="acap" data-cue="0">Label1 ще порожній. Що покаже кубик після «Кинути»?</span>
+        <span class="acap" data-cue="1">1-й кидок: random integer from 1 to 6 дав 4 — set кладе його в Label1</span>
+        <span class="acap" data-cue="2">2-й кидок: той самий блок, новий random — тепер 6</span>
+      </div></div>
   </div>
   <div class="scr-row">
     <div>
       <div class="scr">
         <div class="bar"></div>
-        <div class="el el-lbl" style="font-size:40px">4</div>
-        <div class="el el-btn">Кинути</div>
+        <div class="el el-lbl" style="font-size:40px" data-k="l1"><span class="fx-hide" data-from="1">4</span></div>
+        <div class="el el-btn" data-k="b1">Кинути</div>
       </div>
       <div class="scr-cap">1-й кидок</div>
     </div>
@@ -726,8 +846,8 @@ Blocks   · when ButtonPlus.Click do  set LabelVidpovid.Text to  TextBox1.Text +
     <div>
       <div class="scr">
         <div class="bar"></div>
-        <div class="el el-lbl" style="font-size:40px">6</div>
-        <div class="el el-btn">Кинути</div>
+        <div class="el el-lbl" style="font-size:40px" data-k="l2"><span class="fx-hide" data-from="2">6</span></div>
+        <div class="el el-btn" data-k="b2">Кинути</div>
       </div>
       <div class="scr-cap">2-й кидок</div>
     </div>
@@ -776,18 +896,22 @@ Blocks   · when ButtonKynuty.Click do  set Label1.Text to  random integer from 
   <span class="label lm">Нове · картинка грані</span>
   <h2>Число → назва картинки</h2>
 </div></div>
-<div class="two wide-l">
+<div class="two wide-l anim" data-max="4">
   <div>
-    <div class="blk-row"><span class="blk blk-var blk-op">initialize global chyslo to <span class="blk blk-num">0</span></span></div>
-    <div class="cblk mt"><div class="cblk-h">when ButtonKynuty.Click <span class="dl">do</span></div><div class="cblk-b">
-      <div class="blk-row"><span class="blk blk-var">set global chyslo to</span> <span class="blk blk-num blk-op">random integer from <span class="blk blk-num">1</span> to <span class="blk blk-num">6</span></span></div>
-      <div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-var">get global chyslo</span></div>
-      <div class="blk-row"><span class="blk blk-set">set Image1.Picture to</span> <span class="blk blk-text blk-multi"><span class="sk">join <span class="blk blk-text">"dice"</span></span><span class="sk"><span class="blk blk-var">get global chyslo</span></span><span class="sk"><span class="blk blk-text">".png"</span></span></span></div>
-    </div></div>
+    <div class="aibw"><svg class="aib" viewBox="0 0 232 30" width="232" height="30" font-family="sans-serif" font-size="14.67" role="img" aria-label="initialize global chyslo to 0chyslo = 4"><g transform="translate(0, 0)" data-i="0" data-k="init"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 191 v 5 H 199 V 5 H 199 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 199 V 23 V 27 h -191 a 8 8 0 0,1 -8,-8 z" fill="#a64c24"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 191 v 5 H 199 V 5 H 199 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 199 V 23 V 27 h -191 a 8 8 0 0,1 -8,-8 z" fill="#d05f2d"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 198.5 H 198.5 M 199,5 m -5,14.3 l 3.68,-2.1 M 0,27 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 8" fill="none" stroke="#de8f6c" stroke-width="2" stroke-linecap="round"></path><g transform="translate(192, 0)" data-i="1"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="0"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">0</text></g></g><g transform="translate(10,5)" data-t="initialize global"><text x="0" y="14" fill="#ffffff">initialize global</text></g><g transform="translate(111,5)" data-t="chyslo"><rect x="0" y="0" width="52" height="18" rx="4" ry="4" fill="#de8f6c" fill-opacity="1" stroke="#e7af96"></rect><text x="5" y="14" fill="#000000">chyslo</text></g><g transform="translate(168,5)" data-t="to"><text x="0" y="14" fill="#ffffff">to</text></g><path transform="translate(200, 5)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g></svg><span data-near="0" class="amark y" data-from="1">chyslo = 4</span></div>
+    <div class="aibw"><svg class="aib" viewBox="0 0 508 194" width="508" height="194" font-family="sans-serif" font-size="14.67" role="img" aria-label="when ButtonKynuty.Click do set global chyslo to random integer from 1 to 6 set Label1.Text to get global chysloLabel1: 4 set Image1.Picture to join &quot;dice&quot;get global chyslo&quot;.png&quot;"><g transform="translate(0, 0)" data-i="0"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 209 v 5 H 217 V 5 H 217 V 23 H 217 V 27 H 67 l -6,4 -3,0 -6,-4 h -7 a 8 8 0 0,0 -8,8 v 138 a 8 8 0 0,0 8,8 H 217 H 217 V 181 V 191 h -209 a 8 8 0 0,1 -8,-8 z" fill="#8e722a"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 209 v 5 H 217 V 5 H 217 V 23 H 217 V 27 H 67 l -6,4 -3,0 -6,-4 h -7 a 8 8 0 0,0 -8,8 v 138 a 8 8 0 0,0 8,8 H 217 H 217 V 181 V 191 h -209 a 8 8 0 0,1 -8,-8 z" fill="#b18e35"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 216.5 H 216.5 M 37,181 m 1.9895923599143455,-1.9895923599143455 a 8.5 8.5 0 0,0 6.0104076400856545,2.4895923599143455 l 171.5,0 H 216.5 M 0,191 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 8" fill="none" stroke="#c8b072" stroke-width="2" stroke-linecap="round"></path><g transform="translate(38, 28)" data-i="1" class="cue" data-k="setv" data-cue="1"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 150 v 5 H 180 V 5 H 180 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 14 H 180 V 34 V 38 h -150.5 l -6,4 -3,0 -6,-4 h -14.5 H 0 z" fill="#a64c24"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 150 v 5 H 180 V 5 H 180 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 14 H 180 V 34 V 38 h -150.5 l -6,4 -3,0 -6,-4 h -14.5 H 0 z" fill="#d05f2d"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 14.5 h 0.5 l 6,4 3,0 6,-4 H 179.5 H 179.5 M 180,5 m -5,14.3 l 3.68,-2.1 M 0.5,37.5 V 8" fill="none" stroke="#de8f6c" stroke-width="2" stroke-linecap="round"></path><g transform="translate(173, 0)" data-i="2" class="cue" data-k="rnd" data-cue="1"><path transform="translate(1,1)" d="m 8,0 h 269 v 5 H 277 V 5 H 277 V 34 H 277 V 34 V 38 h -269 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 166,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 236,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 269 v 5 H 277 V 5 H 277 V 34 H 277 V 34 V 38 h -269 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 166,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 236,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 276.5 H 276.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 197.5,5.5 v 29 h -31 M 166,10 m -5,14.3 l 3.68,-2.1 M 267.5,5.5 v 29 h -31 M 236,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(159, 6)" data-i="3"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="1"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">1</text></g></g><g transform="translate(229, 6)" data-i="4"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="6"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">6</text></g></g><g transform="translate(18,10)" data-t="random integer from"><text x="0" y="14" fill="#ffffff">random integer from</text></g><g transform="translate(207,10)" data-t="to"><text x="0" y="14" fill="#ffffff">to</text></g><path transform="translate(167, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(237, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g><g transform="translate(0, 39)" data-i="5" class="cue" data-cue="2"><path transform="translate(1,1)" d="m 0,0 h 15 l 6,4 3,0 6,-4 h 183 v 5 H 213 V 5 H 213 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 213 V 23 V 27 h -183.5 l -6,4 -3,0 -6,-4 h -14.5 H 0 z" fill="#1e5236"></path><path d="m 0,0 h 15 l 6,4 3,0 6,-4 h 183 v 5 H 213 V 5 H 213 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 213 V 23 V 27 h -183.5 l -6,4 -3,0 -6,-4 h -14.5 H 0 z" fill="#266643"></path><path d="m 0,0 m 0.5,0.5 H 14.5 h 0.5 l 6,4 3,0 6,-4 H 212.5 H 212.5 M 213,5 m -5,14.3 l 3.68,-2.1 M 0.5,26.5 V 0.5" fill="none" stroke="#67947b" stroke-width="2" stroke-linecap="round"></path><g transform="translate(206, 0)" data-i="6" class="cue" data-k="g1" data-cue="2"><path transform="translate(1,1)" d="m 8,0 h 150 v 5 H 158 V 5 H 158 V 23 H 158 V 23 V 27 h -150 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#a64c24"></path><path d="m 8,0 h 150 v 5 H 158 V 5 H 158 V 23 H 158 V 23 V 27 h -150 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#d05f2d"></path><path d="m 8,0 m 0.5,0.5 H 157.5 H 157.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#de8f6c" stroke-width="2" stroke-linecap="round"></path><g transform="translate(18,5)" data-t="get"><text x="0" y="14" fill="#ffffff">get</text></g><g transform="translate(44,5)" data-t="global chyslo"><rect x="0" y="0" width="109" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">global chyslo ▾</text></g></g><g transform="translate(0, 28)" data-i="7" class="cue" data-k="seti" data-cue="4"><path transform="translate(1,1)" d="m 0,0 h 15 l 6,4 3,0 6,-4 h 207 v 5 H 237 V 5 H 237 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 59 H 237 V 79 V 83 h -207.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#1e5236"></path><path d="m 0,0 h 15 l 6,4 3,0 6,-4 h 207 v 5 H 237 V 5 H 237 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 59 H 237 V 79 V 83 h -207.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#266643"></path><path d="m 0,0 m 0.5,0.5 H 14.5 h 0.5 l 6,4 3,0 6,-4 H 236.5 H 236.5 M 237,5 m -5,14.3 l 3.68,-2.1 M 0,83 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 0.5" fill="none" stroke="#67947b" stroke-width="2" stroke-linecap="round"></path><g transform="translate(230, 0)" data-i="8" class="cue" data-k="join" data-cue="3"><path transform="translate(1,1)" d="m 8,0 h 78 v 5 H 86 V 5 H 86 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 86 V 33 H 86 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 86 V 61 H 86 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 86 V 79 V 83 h -78 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#8f244b"></path><path d="m 8,0 h 78 v 5 H 86 V 5 H 86 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 86 V 33 H 86 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 86 V 61 H 86 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 3 H 86 V 79 V 83 h -78 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#b32d5e"></path><path d="m 8,0 m 0.5,0.5 H 85.5 H 85.5 M 86,5 m -5,14.3 l 3.68,-2.1 M 86,33 m -5,14.3 l 3.68,-2.1 M 86,61 m -5,14.3 l 3.68,-2.1 M 8.5,82.5 M 8.5,82.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#ca6c8e" stroke-width="2" stroke-linecap="round"></path><g transform="translate(79, 0)" data-i="9" data-k="dice"><path transform="translate(1,1)" d="m 8,0 h 77 v 5 H 85 V 5 H 85 V 23 H 85 V 23 V 27 h -77 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#8f244b"></path><path d="m 8,0 h 77 v 5 H 85 V 5 H 85 V 23 H 85 V 23 V 27 h -77 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#b32d5e"></path><path d="m 8,0 m 0.5,0.5 H 84.5 H 84.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#ca6c8e" stroke-width="2" stroke-linecap="round"></path><g transform="translate(18,5)" data-t="“"><text x="0" y="14" fill="#ffffff">“</text></g><g transform="translate(28,5)" data-t="dice"><rect x="0" y="0" width="37" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">dice</text></g><g transform="translate(70,5)" data-t="”"><text x="0" y="14" fill="#ffffff">”</text></g></g><g transform="translate(79, 28)" data-i="10" data-k="g2"><path transform="translate(1,1)" d="m 8,0 h 150 v 5 H 158 V 5 H 158 V 23 H 158 V 23 V 27 h -150 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#a64c24"></path><path d="m 8,0 h 150 v 5 H 158 V 5 H 158 V 23 H 158 V 23 V 27 h -150 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#d05f2d"></path><path d="m 8,0 m 0.5,0.5 H 157.5 H 157.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#de8f6c" stroke-width="2" stroke-linecap="round"></path><g transform="translate(18,5)" data-t="get"><text x="0" y="14" fill="#ffffff">get</text></g><g transform="translate(44,5)" data-t="global chyslo"><rect x="0" y="0" width="109" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">global chyslo ▾</text></g></g><g transform="translate(79, 56)" data-i="11" data-k="png"><path transform="translate(1,1)" d="m 8,0 h 79 v 5 H 87 V 5 H 87 V 23 H 87 V 23 V 27 h -79 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#8f244b"></path><path d="m 8,0 h 79 v 5 H 87 V 5 H 87 V 23 H 87 V 23 V 27 h -79 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#b32d5e"></path><path d="m 8,0 m 0.5,0.5 H 86.5 H 86.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#ca6c8e" stroke-width="2" stroke-linecap="round"></path><g transform="translate(18,5)" data-t="“"><text x="0" y="14" fill="#ffffff">“</text></g><g transform="translate(28,5)" data-t=".png"><rect x="0" y="0" width="39" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">.png</text></g><g transform="translate(72,5)" data-t="”"><text x="0" y="14" fill="#ffffff">”</text></g></g><g transform="translate(45,5)" data-t="join"><text x="0" y="14" fill="#ffffff">join</text></g><path transform="translate(87, 5)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(87, 33)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(87, 61)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g><g transform="translate(10,5)" data-t="set"><text x="0" y="14" fill="#ffffff">set </text></g><g transform="translate(39,5)" data-t="Image1"><rect x="0" y="0" width="73" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Image1 ▾</text></g><g transform="translate(117,5)" data-t="."><text x="0" y="14" fill="#ffffff">.</text></g><g transform="translate(127,5)" data-t="Picture"><rect x="0" y="0" width="70" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Picture ▾</text></g><g transform="translate(202,5)" data-t="to"><text x="0" y="14" fill="#ffffff"> to</text></g><path transform="translate(15, 0)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path><path transform="translate(238, 5)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(15, 84)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g><g transform="translate(10,5)" data-t="set"><text x="0" y="14" fill="#ffffff">set </text></g><g transform="translate(39,5)" data-t="Label1"><rect x="0" y="0" width="68" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Label1 ▾</text></g><g transform="translate(112,5)" data-t="."><text x="0" y="14" fill="#ffffff">.</text></g><g transform="translate(122,5)" data-t="Text"><rect x="0" y="0" width="51" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Text ▾</text></g><g transform="translate(178,5)" data-t="to"><text x="0" y="14" fill="#ffffff"> to</text></g><path transform="translate(15, 0)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path><path transform="translate(214, 5)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(15, 28)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g><g transform="translate(10,5)" data-t="set"><text x="0" y="14" fill="#ffffff">set</text></g><g transform="translate(35,5)" data-t="global chyslo"><rect x="0" y="0" width="109" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">global chyslo ▾</text></g><g transform="translate(149,5)" data-t="to"><text x="0" y="14" fill="#ffffff">to</text></g><path transform="translate(15, 0)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path><path transform="translate(181, 5)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(15, 39)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g><g transform="translate(10,5)" data-t="when"><text x="0" y="14" fill="#ffffff">when </text></g><g transform="translate(55,5)" data-t="ButtonKynuty"><rect x="0" y="0" width="111" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">ButtonKynuty ▾</text></g><g transform="translate(171,5)" data-t=".Click"><text x="0" y="14" fill="#ffffff">.Click</text></g><g transform="translate(10,32)" data-t="do"><text x="0" y="14" fill="#ffffff">do</text></g><path transform="translate(53, 28)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g></svg><span data-near="5" class="amark y" data-from="2">Label1: 4</span></div>
+    <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+      <div class="acaps" aria-live="polite">
+        <span class="acap" data-cue="0">Один кидок — і число йде у змінну, у Label1 і в назву картинки</span>
+        <span class="acap" data-cue="1">random дав 4 — set кладе його в змінну chyslo</span>
+        <span class="acap" data-cue="2">get бере 4 зі змінної — Label1 показує 4</span>
+        <span class="acap" data-cue="3">Ще один get — те саме 4. join склеює dice + 4 + .png = dice4.png</span>
+        <span class="acap" data-cue="4">dice4.png іде в Image1.Picture — на екрані грань 4</span>
+      </div></div>
   </div>
   <div>
-    <div class="hbox">Випало <b>4</b> → <span class="ic">join</span> склеює <span class="ic">dice</span> + <span class="ic">4</span> + <span class="ic">.png</span> = <b>dice4.png</b></div>
-    <div class="dlist mt"><img src="dice1.png" alt="грань 1"><img src="dice2.png" alt="грань 2"><img src="dice3.png" alt="грань 3"><img src="dice4.png" alt="грань 4"><img src="dice5.png" alt="грань 5"><img src="dice6.png" alt="грань 6"></div>
+    <div class="hbox cue" data-cue="3">Випало <b>4</b> → <span class="ic">join</span> склеює <span class="ic">dice</span> + <span class="ic">4</span> + <span class="ic">.png</span> = <b class="fx-hide" data-from="3" data-k="name">dice4.png</b></div>
+    <div class="dlist mt"><img src="dice1.png" alt="грань 1"><img src="dice2.png" alt="грань 2"><img src="dice3.png" alt="грань 3"><img src="dice4.png" alt="грань 4" class="cue" data-cue="4" data-k="img4"><img src="dice5.png" alt="грань 5"><img src="dice6.png" alt="грань 6"></div>
     <div class="hbox hr mt"><b>Навіщо змінна?</b> Два окремі <span class="ic">random</span> дадуть <b>два різні</b> числа:
       на екрані 2, а на картинці 5. Кидаємо <b>один раз</b> — у змінну, і беремо звідти.</div>
   </div>
@@ -960,9 +1084,9 @@ Blocks   · when ButtonKynuty.Click do  set Label1.Text to  random integer from 
   </div>
   <div class="dzc">
     <p class="mini">До пункту 1</p>
-    <div class="cblk"><div class="cblk-h">when ButtonMonetka.Click <span class="dl">do</span></div><div class="cblk-b"><div class="blk-row"><span class="blk blk-set">set Label2.Text to</span> <span class="blk blk-num blk-op">random integer from <span class="blk blk-num">1</span> to <span class="blk blk-num">2</span></span></div></div></div>
+    <div class="aibw"><svg class="aib" viewBox="0 0 524 82" width="524" height="82" font-family="sans-serif" font-size="14.67" role="img" aria-label="when ButtonMonetka.Click doset Label2.Text to random integer from 1 to 2"><g transform="translate(0, 0)" data-i="0"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 221 v 5 H 229 V 5 H 229 V 23 H 229 V 27 H 67 l -6,4 -3,0 -6,-4 h -7 a 8 8 0 0,0 -8,8 v 26 a 8 8 0 0,0 8,8 H 229 H 229 V 69 V 79 h -221 a 8 8 0 0,1 -8,-8 z" fill="#8e722a"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 221 v 5 H 229 V 5 H 229 V 23 H 229 V 27 H 67 l -6,4 -3,0 -6,-4 h -7 a 8 8 0 0,0 -8,8 v 26 a 8 8 0 0,0 8,8 H 229 H 229 V 69 V 79 h -221 a 8 8 0 0,1 -8,-8 z" fill="#b18e35"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 228.5 H 228.5 M 37,69 m 1.9895923599143455,-1.9895923599143455 a 8.5 8.5 0 0,0 6.0104076400856545,2.4895923599143455 l 183.5,0 H 228.5 M 0,79 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 8" fill="none" stroke="#c8b072" stroke-width="2" stroke-linecap="round"></path><g transform="translate(38, 28)" data-i="1"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 183 v 5 H 213 V 5 H 213 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 14 H 213 V 34 V 38 h -183.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#1e5236"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 183 v 5 H 213 V 5 H 213 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 14 H 213 V 34 V 38 h -183.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#266643"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 14.5 h 0.5 l 6,4 3,0 6,-4 H 212.5 H 212.5 M 213,5 m -5,14.3 l 3.68,-2.1 M 0,38 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 8" fill="none" stroke="#67947b" stroke-width="2" stroke-linecap="round"></path><g transform="translate(206, 0)" data-i="2"><path transform="translate(1,1)" d="m 8,0 h 269 v 5 H 277 V 5 H 277 V 34 H 277 V 34 V 38 h -269 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 166,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 236,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 269 v 5 H 277 V 5 H 277 V 34 H 277 V 34 V 38 h -269 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 166,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z M 236,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 276.5 H 276.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 197.5,5.5 v 29 h -31 M 166,10 m -5,14.3 l 3.68,-2.1 M 267.5,5.5 v 29 h -31 M 236,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(159, 6)" data-i="3"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="1"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">1</text></g></g><g transform="translate(229, 6)" data-i="4"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="2"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">2</text></g></g><g transform="translate(18,10)" data-t="random integer from"><text x="0" y="14" fill="#ffffff">random integer from</text></g><g transform="translate(207,10)" data-t="to"><text x="0" y="14" fill="#ffffff">to</text></g><path transform="translate(167, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(237, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g><g transform="translate(10,5)" data-t="set"><text x="0" y="14" fill="#ffffff">set </text></g><g transform="translate(39,5)" data-t="Label2"><rect x="0" y="0" width="68" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Label2 ▾</text></g><g transform="translate(112,5)" data-t="."><text x="0" y="14" fill="#ffffff">.</text></g><g transform="translate(122,5)" data-t="Text"><rect x="0" y="0" width="51" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Text ▾</text></g><g transform="translate(178,5)" data-t="to"><text x="0" y="14" fill="#ffffff"> to</text></g><path transform="translate(15, 0)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path><path transform="translate(214, 5)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(15, 39)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g><g transform="translate(10,5)" data-t="when"><text x="0" y="14" fill="#ffffff">when </text></g><g transform="translate(55,5)" data-t="ButtonMonetka"><rect x="0" y="0" width="123" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">ButtonMonetka ▾</text></g><g transform="translate(183,5)" data-t=".Click"><text x="0" y="14" fill="#ffffff">.Click</text></g><g transform="translate(10,32)" data-t="do"><text x="0" y="14" fill="#ffffff">do</text></g><path transform="translate(53, 28)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g></svg></div>
     <p class="mini mt">До пункту 2а</p>
-    <div class="blk-row"><span class="blk blk-set">set Label1.Text to</span> <span class="blk blk-num blk-op"><span class="blk blk-num blk-op"><span class="blk blk-num">10</span> − <span class="blk blk-num">4</span></span> × <span class="blk blk-num">2</span></span></div>
+    <div class="aibw"><svg class="aib" viewBox="0 0 465 56" width="465" height="56" font-family="sans-serif" font-size="14.67" role="img" aria-label="set Label1.Text to 10 − 4 × 2"><g transform="translate(0, 0)" data-i="0"><path transform="translate(1,1)" d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 183 v 5 H 213 V 5 H 213 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 25 H 213 V 45 V 49 h -183.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#1e5236"></path><path d="m 0,0 m 0,8 a 8 8 0 0,1 8,-8 h 7 l 6,4 3,0 6,-4 h 183 v 5 H 213 V 5 H 213 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 25 H 213 V 45 V 49 h -183.5 l -6,4 -3,0 -6,-4 h -6.5 a 8 8 0 0,1 -8,-8 z" fill="#266643"></path><path d="m 0,0 m 0.5,8 a 7.5 7.5 0 0,1 8,-7.5 H 14.5 h 0.5 l 6,4 3,0 6,-4 H 212.5 H 212.5 M 213,5 m -5,14.3 l 3.68,-2.1 M 0,49 m 2.6966991411008934,-2.6966991411008934 a 7.5 7.5 0 0,1 -2.1966991411008934,-5.303300858899107 V 8" fill="none" stroke="#67947b" stroke-width="2" stroke-linecap="round"></path><g transform="translate(206, 0)" data-i="1"><path transform="translate(1,1)" d="m 8,0 h 248 v 5 H 256 V 5 H 256 V 45 H 256 V 45 V 49 h -248 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 20 h 129 v -40 z M 215,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 248 v 5 H 256 V 5 H 256 V 45 H 256 V 45 V 49 h -248 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 51,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 20 h 129 v -40 z M 215,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 255.5 H 255.5 M 8.5,48.5 M 8.5,48.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 180.5,5.5 v 40 h -129 M 51,10 m -5,14.3 l 3.68,-2.1 M 246.5,5.5 v 29 h -31 M 215,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(44, 6)" data-i="2"><path transform="translate(1,1)" d="m 8,0 h 127 v 5 H 135 V 5 H 135 V 34 H 135 V 34 V 38 h -127 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 24,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 39 v -29 z M 94,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#325a91"></path><path d="m 8,0 h 127 v 5 H 135 V 5 H 135 V 34 H 135 V 34 V 38 h -127 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z M 24,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 39 v -29 z M 94,5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 9 h 31 v -29 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 134.5 H 134.5 M 8.5,37.5 M 8.5,37.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5 M 63.5,5.5 v 29 h -39 M 24,10 m -5,14.3 l 3.68,-2.1 M 125.5,5.5 v 29 h -31 M 94,10 m -5,14.3 l 3.68,-2.1" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(17, 6)" data-i="3"><path transform="translate(1,1)" d="m 8,0 h 37 v 5 H 45 V 5 H 45 V 23 H 45 V 23 V 27 h -37 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 37 v 5 H 45 V 5 H 45 V 23 H 45 V 23 V 27 h -37 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 44.5 H 44.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="10"><rect x="0" y="0" width="27" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">10</text></g></g><g transform="translate(87, 6)" data-i="4"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="4"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">4</text></g></g><g transform="translate(73,10)" data-t="-"><text x="0" y="14" fill="#ffffff">-</text></g><path transform="translate(25, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(95, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g><g transform="translate(208, 6)" data-i="5"><path transform="translate(1,1)" d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#325a91"></path><path d="m 8,0 h 29 v 5 H 37 V 5 H 37 V 23 H 37 V 23 V 27 h -29 H 8 V 20 c 0,-10 -8,8 -8,-7.5 s 8,2.5 8,-7.5 z" fill="#3f71b5"></path><path d="m 8,0 m 0.5,0.5 H 36.5 H 36.5 M 8.5,26.5 M 8.5,26.5 V 20 v -1.5 m -7.36,-0.5 q -1.52,-5.5 0,-11 m 7.36,1 V 0.5" fill="none" stroke="#799ccb" stroke-width="2" stroke-linecap="round"></path><g transform="translate(13,5)" data-t="2"><rect x="0" y="0" width="19" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" fill="#000000">2</text></g></g><g transform="translate(190,10)" data-t="×"><text x="0" y="14" fill="#ffffff">×</text></g><path transform="translate(52, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(216, 11)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path></g><g transform="translate(10,5)" data-t="set"><text x="0" y="14" fill="#ffffff">set </text></g><g transform="translate(39,5)" data-t="Label1"><rect x="0" y="0" width="68" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Label1 ▾</text></g><g transform="translate(112,5)" data-t="."><text x="0" y="14" fill="#ffffff">.</text></g><g transform="translate(122,5)" data-t="Text"><rect x="0" y="0" width="51" height="18" rx="4" ry="4" fill="#ffffff" fill-opacity="0.6"></rect><text x="5" y="14" text-anchor="start" fill="#000000">Text ▾</text></g><g transform="translate(178,5)" data-t="to"><text x="0" y="14" fill="#ffffff"> to</text></g><path transform="translate(15, 0)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path><path transform="translate(214, 5)" d="m 0,-5 v 5 c 0,10 -8,-8 -8,7.5 s 8,-2.5 8,7.5 v 5" fill="none"></path><path transform="translate(15, 50)" d="m -7,0 h 7 l 6,4 3,0 6,-4 h 7" fill="none"></path></g></svg></div>
   </div>
 </div>
   </div></section>
@@ -1030,7 +1154,259 @@ document.addEventListener('touchend', e => {
   if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
 }, {passive:true});
 
+/* ═════════ ПОКРОКОВІ АНІМАЦІЇ ═════════ */
+/* Що летить на кожному кроці. Група [ ] — летять разом, групи — одна за одною.
+   t — напис · c — колір · from/to — звідки й куди · miss — відскакує · knock — що збиває
+   Кольори — блоків App Inventor з цього файлу: Math, Variables, Text, властивість, подія */
+const MATH = '#3f71b5', VAR = '#d05f2d', TXT = '#b32d5e', PROP = '#266643', EVT = '#b18e35';
+const FLY = {
+  s5: {
+    1: [[{t:'5', c:MATH, from:'[data-k=i1]', to:'[data-k=r1]'}]],
+    2: [[{t:'5', c:MATH, from:'[data-k=i1]', to:'[data-k=x1]'}],
+        [{t:'20', c:MATH, from:'[data-k=x1]', to:'[data-k=r2]'}]],
+    3: [[{t:'12', c:MATH, from:'[data-k=i2]', to:'[data-k=r3]'}]],
+    4: [[{t:'12', c:MATH, from:'[data-k=i2]', to:'[data-k=p2]'}],
+        [{t:'14', c:MATH, from:'[data-k=p2]', to:'[data-k=r4]'}]]
+  },
+  s7: {
+    1: [[{t:'7', c:PROP, from:'[data-k=f1]', to:'[data-k=t1]'}, {t:'3', c:PROP, from:'[data-k=f2]', to:'[data-k=t2]'}]],
+    2: [[{t:'7', c:MATH, from:'[data-k=t1]', to:'[data-k=plus]'}, {t:'3', c:MATH, from:'[data-k=t2]', to:'[data-k=plus]'}]],
+    3: [[{t:'10', c:MATH, from:'[data-k=plus]', to:'[data-k=set]'}],
+        [{t:'10', c:PROP, from:'[data-k=set]', to:'[data-k=ans]'}]]
+  },
+  s10: {
+    1: [[{t:'Click', c:EVT, from:'[data-k=b1]', to:'[data-k=ev]'}],
+        [{t:'🎲 4', c:MATH, from:'[data-k=rnd]', to:'[data-k=set]'}],
+        [{t:'4', c:PROP, from:'[data-k=set]', to:'[data-k=l1]'}]],
+    2: [[{t:'Click', c:EVT, from:'[data-k=b2]', to:'[data-k=ev]'}],
+        [{t:'🎲 6', c:MATH, from:'[data-k=rnd]', to:'[data-k=set]'}],
+        [{t:'6', c:PROP, from:'[data-k=set]', to:'[data-k=l2]'}]]
+  },
+  s13: {
+    1: [[{t:'🎲 4', c:MATH, from:'[data-k=rnd]', to:'[data-k=setv]'}],
+        [{t:'4', c:VAR, from:'[data-k=setv]', to:'[data-k=init]'}]],
+    2: [[{t:'4', c:VAR, from:'[data-k=init]', to:'[data-k=g1]'}]],
+    3: [[{t:'4', c:VAR, from:'[data-k=init]', to:'[data-k=g2]'}],
+        [{t:'dice', c:TXT, from:'[data-k=dice]', to:'[data-k=name]'}, {t:'4', c:VAR, from:'[data-k=g2]', to:'[data-k=name]'}, {t:'.png', c:TXT, from:'[data-k=png]', to:'[data-k=name]'}]],
+    4: [[{t:'dice4.png', c:TXT, from:'[data-k=join]', to:'[data-k=seti]'}],
+        [{t:'dice4.png', c:TXT, from:'[data-k=seti]', to:'[data-k=img4]'}]]
+  }
+};
+const CALM = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const place = (x, y, sc, rot) => 'translate(' + x + 'px,' + y + 'px) translate(-50%,-50%) scale(' + sc + ') rotate(' + rot + 'deg)';
+
+function flyPart(a, el, frames, opts) {
+  const an = el.animate(frames, Object.assign({fill:'forwards'}, opts));
+  a.live.push(an);
+  return an;
+}
+function flyChip(fl) {
+  const chip = document.createElement('div');
+  chip.className = 'flyer';
+  chip.style.setProperty('--c', fl.c);
+  chip.innerHTML = '<i></i>';
+  chip.append(fl.t);
+  document.getElementById('stage').appendChild(chip);
+  return chip;
+}
+function flySplash(a, x, y, c) {
+  for (let i = 0; i < 10; i++) {
+    const d = document.createElement('div'), ang = i / 10 * Math.PI * 2, r = 45 + (i % 3) * 18;
+    d.className = 'flyer drop';
+    d.style.setProperty('--c', c);
+    document.getElementById('stage').appendChild(d);
+    flyPart(a, d, [{transform:place(x, y, 1, 0), opacity:1},
+                   {transform:place(x + Math.cos(ang) * r, y + Math.sin(ang) * r, .3, 0), opacity:0}],
+            {duration:520, easing:'ease-out'}).finished.then(() => d.remove()).catch(() => {});
+  }
+}
+async function flyOne(a, fl) {
+  const src = a.querySelector(fl.from), dst = a.querySelector(fl.to);
+  if (!src || !dst) return;
+  const box = document.getElementById('stage').getBoundingClientRect();
+  const r0 = src.getBoundingClientRect(), r1 = dst.getBoundingClientRect();
+  const x0 = r0.left + r0.width / 2 - box.left, y0 = r0.top + r0.height / 2 - box.top;
+  const x1 = r1.left + Math.min(r1.width / 2, 90) - box.left, y1 = r1.top + r1.height / 2 - box.top;
+  const topY = Math.max(24, Math.min(y0, y1) - 70);
+  let old = null;
+  if (fl.knock) {
+    old = flyChip(fl.knock);
+    flyPart(a, old, [{transform:place(x1, y1, 1, 0)}, {transform:place(x1, y1, 1, 0)}], {duration:1});
+  }
+  const chip = flyChip(fl);
+  try {
+    await flyPart(a, chip, [
+      {transform:place(x0, y0, .7, 0), opacity:0},
+      {transform:place((x0 + x1) / 2, topY, 1.3, -12), opacity:1, offset:.5},
+      {transform:place(x1, y1, 1, 0), opacity:1}
+    ], {duration:850, easing:'ease-in-out'}).finished;
+    if (fl.miss) {
+      (dst instanceof SVGElement) || flyPart(a, dst, [{transform:'translateX(0)'}, {transform:'translateX(-7px)'}, {transform:'translateX(7px)'},
+                       {transform:'translateX(-4px)'}, {transform:'translateX(0)'}], {duration:320, fill:'none'});
+      await flyPart(a, chip, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 + 70, y1 - 50, 1.05, 40), opacity:1, offset:.35},
+        {transform:place(x1 + 150, y1 + 170, .7, 200), opacity:0}
+      ], {duration:750, easing:'ease-in'}).finished;
+    } else {
+      flySplash(a, x1, y1, fl.c);
+      (dst instanceof SVGElement) || flyPart(a, dst, [{transform:'scale(1)'}, {transform:'scale(1.05)'}, {transform:'scale(1)'}], {duration:300, fill:'none'});
+      if (old) flyPart(a, old, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 - 130, y1 - 40, 1, -90), opacity:1, offset:.3},
+        {transform:place(x1 - 210, y1 + 240, .7, -320), opacity:0}
+      ], {duration:800, easing:'ease-in'}).finished.then(() => old.remove()).catch(() => {});
+    }
+  } catch (e) { /* політ перервано */ }
+  chip.remove();
+}
+function animStop(a) {
+  (a.live || []).forEach(an => an.cancel());
+  a.live = [];
+  a.run = (a.run || 0) + 1;
+  a.busy = false;
+  document.querySelectorAll('.flyer').forEach(f => f.remove());
+}
+/* Крок уперед: підпис і підсвітка одразу, а вигляд змінюється, коли значення долетить */
+async function animForward(a, s) {
+  animStop(a);
+  const plan = (FLY[a.closest('.slide').id] || {})[s];
+  if (!plan || CALM) { animShow(a, s); return; }
+  const run = a.run;
+  a.busy = true;
+  animShow(a, s, s - 1);
+  for (const group of plan) {
+    await Promise.all(group.map(fl => flyOne(a, fl)));
+    if (a.run !== run) return;
+  }
+  a.busy = false;
+  animShow(a, s);
+}
+function animShow(a, s, look = s) {
+  const max = +a.dataset.max;
+  a.dataset.s = s;
+  a.querySelectorAll('[data-from]').forEach(e => e.classList.toggle('pre', look < +e.dataset.from));
+  a.querySelectorAll('[data-bgfrom]').forEach(e => e.classList.toggle('prebg', look < +e.dataset.bgfrom));
+  a.querySelectorAll('[data-mid]').forEach(e => e.classList.toggle('mid', look >= +e.dataset.mid && look < +e.dataset.from));
+  a.querySelectorAll('[data-cue]').forEach(e => e.classList.toggle('now', e.dataset.cue.split(' ').includes(String(s))));
+  const btn = a.querySelector('[data-a="next"]');
+  /* кнопка лише веде далі; номер — у кроку, який зараз на екрані */
+  btn.textContent = s === 0 ? 'Почати →' : s < max ? 'Далі →' : 'Готово ✓';
+  a.querySelector('.acaps').dataset.step = s ? 'Крок ' + s + ' з ' + max : '';
+  btn.disabled = s >= max;
+}
+function animStep(a, d) {
+  const s = +a.dataset.s;
+  /* повторне натискання під час польоту — одразу показати результат */
+  if (a.busy && d > 0) { animStop(a); animShow(a, s); return; }
+  const n = Math.max(0, Math.min(+a.dataset.max, s + d));
+  if (n > s) animForward(a, n);
+  else { animStop(a); animShow(a, n); }
+}
+document.querySelectorAll('.anim').forEach(a => {
+  a.classList.add('armed');
+  animShow(a, 0);
+  a.querySelectorAll('.abtn').forEach(b => {
+    b.addEventListener('click', e => {
+      if (b.dataset.a === 'next') animStep(a, 1);
+      else { animStop(a); animShow(a, 0); }
+      if (e.detail > 0) b.blur();
+    });
+    /* пробіл на кнопці — це крок, а не наступний слайд */
+    b.addEventListener('keydown', e => { if (e.key === ' ') e.stopPropagation(); });
+  });
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  const a = document.querySelector('.slide.active .anim');
+  if (a) { e.preventDefault(); animStep(a, e.key === 'ArrowDown' ? 1 : -1); }
+});
+/* повернулись на слайд — анімація знову з початку */
+new MutationObserver(() => {
+  document.querySelectorAll('.slide:not(.active) .anim').forEach(a => { if (+a.dataset.s) { animStop(a); animShow(a, 0); } });
+}).observe(document.getElementById('stage'), {subtree:true, attributes:true, attributeFilter:['class'], childList:false});
+
+
 goTo(0);
+
+/* ═════════ БЛОКИ APP INVENTOR: SVG-контури, як малює Blockly ═════════
+   Формули контурів скопійовано з робочої області App Inventor. */
+function aiShapes() {
+  const NS = 'http://www.w3.org/2000/svg';
+  const mix = (hex, k, toWhite) => '#' + [1, 3, 5].map(i => {
+    const v = parseInt(hex.substr(i, 2), 16);
+    return Math.round(toWhite ? v + (255 - v) * k : v * k).toString(16).padStart(2, '0');
+  }).join('');
+  document.querySelectorAll('.blk.st, .blk.vl, .blk.top, .cblk').forEach(el => {
+    let svg = el.querySelector(':scope > svg.bsh');
+    if (!svg) {
+      svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('class', 'bsh');
+      for (let i = 0; i < 3; i++) svg.appendChild(document.createElementNS(NS, 'path'));
+      el.prepend(svg);
+    }
+    const w = el.offsetWidth, h = el.offsetHeight, c = el.classList;
+    const ins = c.contains('blk-multi') ? [...el.querySelectorAll(':scope > .sk')].filter(s => s.querySelector(':scope > .blk.vl')) : [];
+    const socks = () => ins.map(s => ' V' + s.offsetTop + ' c0,10 -8,-8 -8,7.5 s8,-2.5 8,7.5').join('');
+    if (!w || !h) return;
+    let d, lt, ox = 0;
+    const leftEdge = ' M2.7,' + (h - 2.7) + ' a7.5,7.5 0 0,1 -2.2,-5.3 V8';
+    if (c.contains('cblk')) {
+      const b = el.querySelector(':scope > .cblk-b');
+      const top = b.offsetTop, mx = b.offsetLeft, bot = Math.max(top + b.offsetHeight, top + 27);
+      d = 'M0,8 a8,8 0 0,1 8,-8 H' + w + ' V' + top + ' H' + (mx + 30) + ' l-6,4 -3,0 -6,-4 H' + (mx + 8) +
+          ' a8,8 0 0,0 -8,8 V' + (bot - 8) + ' a8,8 0 0,0 8,8 H' + w + ' V' + h + ' H8 a8,8 0 0,1 -8,-8 z';
+      lt = 'M0.5,8 a7.5,7.5 0 0,1 8,-7.5 H' + (w - 0.5) + leftEdge;
+    } else if (c.contains('vl')) {
+      ox = 8;
+      const W = w + 8;
+      d = 'M8,0 H' + W + socks() + ' V' + h + ' H8 V20 c0,-10 -8,8 -8,-7.5 s8,2.5 8,-7.5 z';
+      lt = 'M8.5,0.5 H' + (W - 0.5) + ' M8.5,' + (h - 0.5) + ' V18.5 m-7.36,-0.5 q-1.52,-5.5 0,-11 m7.36,1 V0.5';
+    } else {
+      const st = c.contains('st'), nx = el.nextElementSibling;
+      const sock = nx && nx.classList.contains('blk') && nx.classList.contains('vl');
+      d = 'M0,8 a8,8 0 0,1 8,-8 ' + (st ? 'h7 l6,4 3,0 6,-4 ' : '') + 'H' + w +
+          (ins.length ? socks() : sock ? ' V5 c0,10 -8,-8 -8,7.5 s8,-2.5 8,7.5' : '') + ' V' + h +
+          (st ? ' H30 l-6,4 -3,0 -6,-4' : '') + ' H8 a8,8 0 0,1 -8,-8 z';
+      lt = 'M0.5,8 a7.5,7.5 0 0,1 8,-7.5 ' + (st ? 'H14.5 h0.5 l6,4 3,0 6,-4 ' : '') + 'H' + (w - 0.5) + leftEdge;
+    }
+    const col = getComputedStyle(el).getPropertyValue('--bc').trim() || '#888888';
+    svg.style.left = -ox + 'px';
+    svg.setAttribute('width', w + ox + 1);
+    svg.setAttribute('height', h + 5);
+    const [dark, main, light] = svg.children;
+    dark.setAttribute('d', d); dark.setAttribute('fill', mix(col, 0.8)); dark.setAttribute('transform', 'translate(1,1)');
+    main.setAttribute('d', d); main.setAttribute('fill', col);
+    light.setAttribute('d', lt); light.setAttribute('fill', 'none'); light.setAttribute('stroke', mix(col, 0.3, true));
+    light.setAttribute('stroke-width', '1'); light.setAttribute('stroke-linecap', 'round');
+  });
+}
+aiShapes();
+if (document.fonts) document.fonts.ready.then(aiShapes);
+window.addEventListener('load', aiShapes);
+window.addEventListener('resize', aiShapes);
+window.addEventListener('beforeprint', aiShapes);
+document.addEventListener('click', () => requestAnimationFrame(aiShapes));
+document.addEventListener('keydown', () => requestAnimationFrame(aiShapes));
+
+/* позначки («Label1: 4») — праворуч від свого рядка в SVG-блоці */
+function aiMarks() {
+  document.querySelectorAll('.aibw > [data-near]').forEach(m => {
+    const w = m.parentElement, svg = w.querySelector('svg');
+    const g = svg && svg.querySelector('g[data-i="' + m.dataset.near + '"]');
+    const p = g && (g.querySelector(':scope > path:nth-of-type(2)') || g);
+    if (!p) return;
+    const wr = w.getBoundingClientRect(), pr = p.getBoundingClientRect(), sr = svg.getBoundingClientRect();
+    if (!wr.width) return;
+    m.style.left = (sr.right - wr.left + 10) + 'px';
+    m.style.top = (pr.top - wr.top + 2) + 'px';
+  });
+}
+aiMarks();
+window.addEventListener('load', aiMarks);
+window.addEventListener('resize', aiMarks);
+document.addEventListener('click', () => requestAnimationFrame(aiMarks));
+document.addEventListener('keydown', () => requestAnimationFrame(aiMarks));
 </script>
 </body>
 </html>

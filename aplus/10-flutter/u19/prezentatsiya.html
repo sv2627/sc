@@ -40,6 +40,7 @@
   Аркуш         rozdatka.html — 1 сторінка A4, для сховища
   Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
                 F — на весь екран  ·  Ctrl+P — експорт у PDF
+                ↓ ↑ — кроки анімації на слайдах s3, s4
   ────────────────────────────────────────────────────────────────
 -->
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -335,6 +336,51 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
 .gc .t3{font-size:14px;font-weight:700;color:var(--ink)}
 .gc .nw{background:var(--rose);color:#fff;font-size:11px;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:6px;vertical-align:2px}
 @media (max-height:800px){ .gc{padding:8px 12px} .gc .mi{font-size:26px} .gcs{gap:6px} }
+
+/* ─── ПОКРОКОВІ АНІМАЦІЇ УРОКУ 19 ───
+   У розмітці записаний КІНЦЕВИЙ стан, тому друк і PDF не змінюються.
+   .anim[data-max] — кількість кроків · data-from — з якого кроку діє вигляд
+   data-cue — на яких кроках підсвічено · data-k — звідки й куди летить значення
+   Нових кольорів немає: фон підсвітки — як у .lo, мітка — як у .lb */
+.actl,.amark,.only{display:none}
+.anim.armed .actl{display:flex;align-items:center;gap:10px;margin-top:10px;min-height:56px}
+.abtn{min-width:0;min-height:48px;padding:8px 16px;font-size:16px;white-space:nowrap;flex-shrink:0}
+.abtn:disabled{color:var(--dim);cursor:default}
+.acaps{flex:1;font-size:16.5px;line-height:1.35;font-weight:600;color:var(--ink)}
+.acaps::before{content:attr(data-step);display:block;font-family:var(--f-mono);font-size:13px;
+  font-weight:700;color:var(--accent)}
+.acap{display:none}
+.acap.now{display:block}
+.only.now{display:inline}
+.anim.armed .amark{display:inline-block}
+.amark{font-family:var(--f-mono);font-size:13px;font-weight:700;font-style:normal;
+       padding:1px 6px;border-radius:5px;margin-left:8px;white-space:nowrap}
+.amark.y{background:var(--sky);color:var(--blue)}
+.anim [data-from],.anim [data-bgfrom]{transition:color .35s,background-color .35s,font-size .35s}
+.cue.now{outline:2px solid var(--orange);animation:acue 1s ease-out}
+.cue.now:not(.blk){background:#fdf0d9;border-radius:4px}
+tr.cue.now td{background:#fdf0d9}
+@keyframes acue{0%{outline-offset:6px}100%{outline-offset:0}}
+@media screen{
+  .anim.armed .pre.amark,.pre.fx-gone{display:none}
+  .pre.fx-hide{visibility:hidden}
+  .prebg{background:transparent !important}
+}
+/* летючі значення: число чи текст вилітає з блоку й падає в гніздо */
+.flyer{position:absolute;left:0;top:0;z-index:4;pointer-events:none;display:inline-flex;align-items:center;gap:7px;
+       background:var(--surface);color:var(--ink);border:2.5px solid var(--c);border-radius:20px;padding:4px 12px;
+       font-family:var(--f-mono);font-size:17px;font-weight:700;white-space:nowrap;box-shadow:0 6px 16px rgba(2,83,179,.25)}
+.flyer i{width:14px;height:14px;border-radius:50%;background:var(--c);border:1px solid var(--dim)}
+.flyer.drop{padding:0;width:11px;height:11px;border-radius:50%;background:var(--c);border:1px solid var(--dim);box-shadow:none}
+@media print{.flyer{display:none !important}}
+@media (prefers-reduced-motion:reduce){
+  .cue.now{animation:none}
+  .anim [data-from],.anim [data-bgfrom]{transition:none}
+}
+@media print{
+  .actl,.amark,.only{display:none !important}
+  .cue.now{background:none !important;outline:0 !important}
+}
 </style></head>
 <body>
 
@@ -426,15 +472,15 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
       <h2>Віджет — це клас</h2>
     </div></div>
 
-    <div class="two" style="grid-template-columns:1.2fr 1fr">
+    <div class="two anim" data-max="4" style="grid-template-columns:1.2fr 1fr">
 <div class="dp">
 <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">свій віджет · у тому самому файлі, після MyApp</span></div>
-<div class="dp-code"><span class="sk">class</span> <span class="sk">GameCard</span> <span class="sk">extends</span> <span class="sk">StatelessWidget</span> {
+<div class="dp-code"><span class="sk">class</span> <span class="sk">GameCard</span> <span class="cue" data-cue="1"><span class="sk">extends</span> <span class="sk">StatelessWidget</span></span> {
   <span class="sk">const</span> <span class="sk">GameCard</span>({<span class="sk">super</span>.key});
 
-  @override
-  <span class="sk">Widget</span> <span class="sf">build</span>(<span class="sk">BuildContext</span> context) {
-    <span class="sk">return</span> <span class="sk">Container</span>(
+  <span class="cue" data-cue="3">@override</span>
+  <span class="cue" data-cue="2"><span class="sk">Widget</span> <span class="sf">build</span>(<span class="sk">BuildContext</span> context)</span> {
+    <span class="cue" data-cue="4" data-k="ret"><span class="sk">return</span> <span class="sk">Container</span></span>(
       <span class="cm">// картка з уроку 18</span>
     );
   }
@@ -442,17 +488,27 @@ body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
 
 <span class="cm">// використання — як будь-який віджет:</span>
 children: [
-  <span class="sk">GameCard</span>(),
-  <span class="sk">GameCard</span>(),
+  <span data-k="c1"><span class="sk">GameCard</span>()</span>,<span class="amark y" data-from="4">= Container</span>
+  <span data-k="c2"><span class="sk">GameCard</span>()</span>,<span class="amark y" data-from="4">= Container</span>
 ],</div>
 </div>
+      <div>
       <table class="tb">
         <tr><th>Що</th><th>Навіщо</th></tr>
-        <tr><td class="mono">extends StatelessWidget</td><td>GameCard — різновид віджета без стану: показує, що отримав, і сам не змінюється</td></tr>
-        <tr><td class="mono">build</td><td>повертає дерево віджетів, яке Flutter малює</td></tr>
-        <tr><td class="mono">@override</td><td>свій <span class="en">build</span> замість того, що в <span class="en">StatelessWidget</span></td></tr>
-        <tr><td class="mono">return</td><td>обовʼязковий — без нього нічого малювати</td></tr>
+        <tr class="cue" data-cue="1"><td class="mono">extends StatelessWidget</td><td>GameCard — різновид віджета без стану: показує, що отримав, і сам не змінюється</td></tr>
+        <tr class="cue" data-cue="2"><td class="mono">build</td><td>повертає дерево віджетів, яке Flutter малює</td></tr>
+        <tr class="cue" data-cue="3"><td class="mono">@override</td><td>свій <span class="en">build</span> замість того, що в <span class="en">StatelessWidget</span></td></tr>
+        <tr class="cue" data-cue="4"><td class="mono">return</td><td>обовʼязковий — без нього нічого малювати</td></tr>
       </table>
+        <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+          <div class="acaps" aria-live="polite">
+            <span class="acap" data-cue="0">Що робить кожна частина класу? Чотири кроки — чотири рядки таблиці</span>
+            <span class="acap" data-cue="1">extends StatelessWidget — GameCard стає віджетом без стану</span>
+            <span class="acap" data-cue="2">build — тут описуєш, що Flutter намалює</span>
+            <span class="acap" data-cue="3">@override — твій build замість того, що в StatelessWidget</span>
+            <span class="acap" data-cue="4">return віддає Container — його Flutter малює на місці кожного GameCard()</span>
+          </div></div>
+      </div>
     </div>
     <div class="hbox hm mt">Ви вже бачили такі класи: <span class="en">MyApp extends StatelessWidget</span> у кожному проєкті. Назва — з великої літери: <span class="en">GameCard</span></div>
   </div></section>
@@ -464,32 +520,43 @@ children: [
       <h2>Дані приходять через конструктор</h2>
     </div></div>
 
-    <div class="two" style="grid-template-columns:1.25fr 1fr">
+    <div class="two anim" data-max="5" style="grid-template-columns:1.25fr 1fr">
 <div class="dp">
 <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">поля і конструктор GameCard</span></div>
 <div class="dp-code"><span class="sk">class</span> <span class="sk">GameCard</span> <span class="sk">extends</span> <span class="sk">StatelessWidget</span> {
-  <span class="sk">const</span> <span class="sk">GameCard</span>({
-    <span class="sk">super</span>.key,
-    <span class="sk">required</span> <span class="sk">this</span>.title,
-    <span class="sk">required</span> <span class="sk">this</span>.price,
-  });
+  <span class="sk">const</span> <span class="sk">GameCard</span>(<span class="cue" data-cue="1">{</span>
+    <span class="cue" data-cue="5"><span class="sk">super</span>.key</span>,
+    <span class="cue" data-cue="2"><span class="sk">required</span></span> <span class="cue" data-cue="3" data-k="tt"><span class="sk">this</span>.title</span>,
+    <span class="cue" data-cue="2"><span class="sk">required</span></span> <span class="cue" data-cue="3" data-k="tp"><span class="sk">this</span>.price</span>,
+  <span class="cue" data-cue="1">}</span>);
 
-  <span class="sk">final</span> <span class="sk">String</span> title;
-  <span class="sk">final</span> <span class="sk">double</span> price;
+  <span class="cue" data-cue="4" data-k="ft"><span class="sk">final</span> <span class="sk">String</span> title;</span><span class="amark y" data-from="3">'Celeste'</span>
+  <span class="cue" data-cue="4" data-k="fp"><span class="sk">final</span> <span class="sk">double</span> price;</span><span class="amark y" data-from="3">19.99</span>
 
   <span class="cm">// у build: Text(title) і Text('$price USD')</span>
 }
 
-<span class="sk">GameCard</span>(title: <span class="ss">'Celeste'</span>, price: <span class="sn">19.99</span>),</div>
+<span class="sk">GameCard</span>(<span class="cue" data-cue="1">title:</span> <span class="ss" data-k="vt">'Celeste'</span>, <span class="cue" data-cue="1">price:</span> <span class="sn" data-k="vp">19.99</span>),</div>
 </div>
+      <div>
       <table class="tb">
         <tr><th>Частина</th><th>Що означає</th></tr>
-        <tr><td class="mono">{ }</td><td>іменовані параметри: при виклику пишемо імʼя — <span class="en">title:</span></td></tr>
-        <tr><td class="mono">required</td><td>обовʼязковий — без нього картку не створити</td></tr>
-        <tr><td class="mono">this.title</td><td>значення одразу в поле <span class="en">title</span></td></tr>
-        <tr><td class="mono">final</td><td>поле не міняється після створення</td></tr>
-        <tr><td class="mono">super.key</td><td>службовий ключ віджета — передаємо далі, поки просто пишемо</td></tr>
+        <tr class="cue" data-cue="1"><td class="mono">{ }</td><td>іменовані параметри: при виклику пишемо імʼя — <span class="en">title:</span></td></tr>
+        <tr class="cue" data-cue="2"><td class="mono">required</td><td>обовʼязковий — без нього картку не створити</td></tr>
+        <tr class="cue" data-cue="3"><td class="mono">this.title</td><td>значення одразу в поле <span class="en">title</span></td></tr>
+        <tr class="cue" data-cue="4"><td class="mono">final</td><td>поле не міняється після створення</td></tr>
+        <tr class="cue" data-cue="5"><td class="mono">super.key</td><td>службовий ключ віджета — передаємо далі, поки просто пишемо</td></tr>
       </table>
+        <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+          <div class="acaps" aria-live="polite">
+            <span class="acap" data-cue="0">Як 'Celeste' і 19.99 потрапляють у картку? Пʼять кроків — пʼять рядків таблиці</span>
+            <span class="acap" data-cue="1">{ } — параметри іменовані: у виклику пишеш title: і price:</span>
+            <span class="acap" data-cue="2">required — без title і price картку не створити</span>
+            <span class="acap" data-cue="3">this.title кладе 'Celeste' у поле title, this.price — 19.99 у price</span>
+            <span class="acap" data-cue="4">final — після створення значення в полях уже не змінити</span>
+            <span class="acap" data-cue="5">super.key — службовий ключ віджета: просто передаємо далі</span>
+          </div></div>
+      </div>
     </div>
   </div></section>
 
@@ -964,6 +1031,153 @@ document.addEventListener('touchend', e => {
   const dy = ty - e.changedTouches[0].clientY;
   if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
 }, {passive:true});
+
+/* ═════════ ПОКРОКОВІ АНІМАЦІЇ ═════════ */
+/* Що летить на кожному кроці. Група [ ] — летять разом, групи — одна за одною.
+   t — напис · c — колір · from/to — звідки й куди · miss — відскакує · knock — що збиває */
+const FLY = {
+  s3: {
+    4: [[{t:'Container', c:'var(--brand)', from:'[data-k=ret]', to:'[data-k=c1]'}, {t:'Container', c:'var(--brand)', from:'[data-k=ret]', to:'[data-k=c2]'}]]
+  },
+  s4: {
+    3: [[{t:"'Celeste'", c:'var(--blue)', from:'[data-k=vt]', to:'[data-k=tt]'}, {t:'19.99', c:'var(--orange)', from:'[data-k=vp]', to:'[data-k=tp]'}],
+        [{t:"'Celeste'", c:'var(--blue)', from:'[data-k=tt]', to:'[data-k=ft]'}, {t:'19.99', c:'var(--orange)', from:'[data-k=tp]', to:'[data-k=fp]'}]]
+  }
+};
+const CALM = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const place = (x, y, sc, rot) => 'translate(' + x + 'px,' + y + 'px) translate(-50%,-50%) scale(' + sc + ') rotate(' + rot + 'deg)';
+
+function flyPart(a, el, frames, opts) {
+  const an = el.animate(frames, Object.assign({fill:'forwards'}, opts));
+  a.live.push(an);
+  return an;
+}
+function flyChip(fl) {
+  const chip = document.createElement('div');
+  chip.className = 'flyer';
+  chip.style.setProperty('--c', fl.c);
+  chip.innerHTML = '<i></i>';
+  chip.append(fl.t);
+  document.getElementById('stage').appendChild(chip);
+  return chip;
+}
+function flySplash(a, x, y, c) {
+  for (let i = 0; i < 10; i++) {
+    const d = document.createElement('div'), ang = i / 10 * Math.PI * 2, r = 45 + (i % 3) * 18;
+    d.className = 'flyer drop';
+    d.style.setProperty('--c', c);
+    document.getElementById('stage').appendChild(d);
+    flyPart(a, d, [{transform:place(x, y, 1, 0), opacity:1},
+                   {transform:place(x + Math.cos(ang) * r, y + Math.sin(ang) * r, .3, 0), opacity:0}],
+            {duration:520, easing:'ease-out'}).finished.then(() => d.remove()).catch(() => {});
+  }
+}
+async function flyOne(a, fl) {
+  const src = a.querySelector(fl.from), dst = a.querySelector(fl.to);
+  if (!src || !dst) return;
+  const box = document.getElementById('stage').getBoundingClientRect();
+  const r0 = src.getBoundingClientRect(), r1 = dst.getBoundingClientRect();
+  const x0 = r0.left + r0.width / 2 - box.left, y0 = r0.top + r0.height / 2 - box.top;
+  const x1 = r1.left + Math.min(r1.width / 2, 90) - box.left, y1 = r1.top + r1.height / 2 - box.top;
+  const topY = Math.max(24, Math.min(y0, y1) - 70);
+  let old = null;
+  if (fl.knock) {
+    old = flyChip(fl.knock);
+    flyPart(a, old, [{transform:place(x1, y1, 1, 0)}, {transform:place(x1, y1, 1, 0)}], {duration:1});
+  }
+  const chip = flyChip(fl);
+  try {
+    await flyPart(a, chip, [
+      {transform:place(x0, y0, .7, 0), opacity:0},
+      {transform:place((x0 + x1) / 2, topY, 1.3, -12), opacity:1, offset:.5},
+      {transform:place(x1, y1, 1, 0), opacity:1}
+    ], {duration:850, easing:'ease-in-out'}).finished;
+    if (fl.miss) {
+      flyPart(a, dst, [{transform:'translateX(0)'}, {transform:'translateX(-7px)'}, {transform:'translateX(7px)'},
+                       {transform:'translateX(-4px)'}, {transform:'translateX(0)'}], {duration:320, fill:'none'});
+      await flyPart(a, chip, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 + 70, y1 - 50, 1.05, 40), opacity:1, offset:.35},
+        {transform:place(x1 + 150, y1 + 170, .7, 200), opacity:0}
+      ], {duration:750, easing:'ease-in'}).finished;
+    } else {
+      flySplash(a, x1, y1, fl.c);
+      flyPart(a, dst, [{transform:'scale(1)'}, {transform:'scale(1.05)'}, {transform:'scale(1)'}], {duration:300, fill:'none'});
+      if (old) flyPart(a, old, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 - 130, y1 - 40, 1, -90), opacity:1, offset:.3},
+        {transform:place(x1 - 210, y1 + 240, .7, -320), opacity:0}
+      ], {duration:800, easing:'ease-in'}).finished.then(() => old.remove()).catch(() => {});
+    }
+  } catch (e) { /* політ перервано */ }
+  chip.remove();
+}
+function animStop(a) {
+  (a.live || []).forEach(an => an.cancel());
+  a.live = [];
+  a.run = (a.run || 0) + 1;
+  a.busy = false;
+  document.querySelectorAll('.flyer').forEach(f => f.remove());
+}
+/* Крок уперед: підпис і підсвітка одразу, а вигляд змінюється, коли значення долетить */
+async function animForward(a, s) {
+  animStop(a);
+  const plan = (FLY[a.closest('.slide').id] || {})[s];
+  if (!plan || CALM) { animShow(a, s); return; }
+  const run = a.run;
+  a.busy = true;
+  animShow(a, s, s - 1);
+  for (const group of plan) {
+    await Promise.all(group.map(fl => flyOne(a, fl)));
+    if (a.run !== run) return;
+  }
+  a.busy = false;
+  animShow(a, s);
+}
+function animShow(a, s, look = s) {
+  const max = +a.dataset.max;
+  a.dataset.s = s;
+  a.querySelectorAll('[data-from]').forEach(e => e.classList.toggle('pre', look < +e.dataset.from));
+  a.querySelectorAll('[data-bgfrom]').forEach(e => e.classList.toggle('prebg', look < +e.dataset.bgfrom));
+  a.querySelectorAll('[data-mid]').forEach(e => e.classList.toggle('mid', look >= +e.dataset.mid && look < +e.dataset.from));
+  a.querySelectorAll('[data-cue]').forEach(e => e.classList.toggle('now', e.dataset.cue.split(' ').includes(String(s))));
+  const btn = a.querySelector('[data-a="next"]');
+  /* кнопка лише веде далі; номер — у кроку, який зараз на екрані */
+  btn.textContent = s === 0 ? 'Почати →' : s < max ? 'Далі →' : 'Готово ✓';
+  a.querySelector('.acaps').dataset.step = s ? 'Крок ' + s + ' з ' + max : '';
+  btn.disabled = s >= max;
+}
+function animStep(a, d) {
+  const s = +a.dataset.s;
+  /* повторне натискання під час польоту — одразу показати результат */
+  if (a.busy && d > 0) { animStop(a); animShow(a, s); return; }
+  const n = Math.max(0, Math.min(+a.dataset.max, s + d));
+  if (n > s) animForward(a, n);
+  else { animStop(a); animShow(a, n); }
+}
+document.querySelectorAll('.anim').forEach(a => {
+  a.classList.add('armed');
+  animShow(a, 0);
+  a.querySelectorAll('.abtn').forEach(b => {
+    b.addEventListener('click', e => {
+      if (b.dataset.a === 'next') animStep(a, 1);
+      else { animStop(a); animShow(a, 0); }
+      if (e.detail > 0) b.blur();
+    });
+    /* пробіл на кнопці — це крок, а не наступний слайд */
+    b.addEventListener('keydown', e => { if (e.key === ' ') e.stopPropagation(); });
+  });
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  const a = document.querySelector('.slide.active .anim');
+  if (a) { e.preventDefault(); animStep(a, e.key === 'ArrowDown' ? 1 : -1); }
+});
+/* повернулись на слайд — анімація знову з початку */
+new MutationObserver(() => {
+  document.querySelectorAll('.slide:not(.active) .anim').forEach(a => { if (+a.dataset.s) { animStop(a); animShow(a, 0); } });
+}).observe(document.getElementById('stage'), {subtree:true, attributes:true, attributeFilter:['class'], childList:false});
+
 
 goTo(0);
 </script>
