@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Практична № 2 «Статистика класу» · JavaScript · 8 клас · Урок 11</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (перший рік мови)
+  Клас          8 (13–14 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · понеділок · 11:45 · Медіатека
+  Урок          11 з 35 · 30.11.2026
+  Тема          Практична № 2 «Статистика класу» (тема 2.12 плану):
+                масив оцінок → функції sum, average, max, min,
+                лічильник, новий масив (фільтр), sort · пошук помилки
+                через console.log і breakpoint
+  Тривалість    45 хв — ТЕСТ за уроки 8–10 на аркуші 20 хв (сл. 2,
+                ноутбуки закриті) · згадуємо ~2 · рівні, родина,
+                max/min ~4 · П⭐ 7 · П⭐⭐ 5 · П⭐⭐⭐ 4 · здача, ДЗ ~2
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       17
+  ────────────────────────────────────────────────────────────────
+  СПИРАЄТЬСЯ НА уроки 8–10: for, накопичувач, лічильник · масив, length,
+     push · function, return, масив як аргумент, стрілкова (сл. 14 уроку 10)
+     · toFixed з I чверті · breakpoint у Sources з уроку 5
+  ⚠️ ТЕСТ — на папері: 2026-27-teacher/aplus/8-javascript/u11/test.html
+     (+ klyuch.html). На слайдах лише пункт плану «Сьогодні»; у назві
+     уроку слова «тест» немає.
+  ⚠️ ПОВНА РОДИНА (правило «всі види»): план 2.12 — sum, average, max,
+     min, фільтрація, sort (⭐⭐⭐). Сл. 5 — уся родина з результатами на
+     одному масиві + готові Math.max / Math.min для двох чисел.
+  ⚠️ ПОРЯДОК: пояснення max/min (сл. 6) → «передбач» (сл. 7);
+     фільтр і sort (сл. 8) — до практики ⭐⭐⭐.
+  ⚠️ САМОДОСТАТНІЙ: каркас index.html — блок «Старт» у kod.html ЦЬОГО
+     уроку (живе посилання на сл. 2 і 9).
+  ⚠️ ЗДАЧА — прізвище й рівень коментарем першими рядками script.js.
+     Оцінки й бали на слайдах не згадуються — критерії в конспекті.
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  СЬОГОДНІ      сл. 2 — на дошці весь час тесту
+  ЗГАДУЄМО      сл. 3 · РІВНІ сл. 4 · РОДИНА сл. 5 · MAX/MIN сл. 6
+  ПЕРЕДБАЧ      сл. 7 · НОВИЙ МАСИВ І SORT сл. 8
+  ПРАКТИКА      ⭐ сл. 9 (7 хв) · ⭐⭐ сл. 10 (5 хв) · ⭐⭐⭐ сл. 11 (4 хв)
+  ВИПРАВ        сл. 12 · ДОВІДНИК сл. 13 (на дошці з П⭐) · БАНК сл. 14
+  ЗДАЧА         сл. 15 · СЛОВА сл. 16 · ДОМАШНЄ сл. 17 — kod.html → CodePen,
+                код у Google Classroom 8 класу до 07.12 (dz.html)
+  РІЗАТИ ПЕРШИМ сл. 7 (передбач — усно одну картку) · 12 (виправ — тим,
+                хто закінчив) · 16. Практику НЕ різати
+  ПЛАН Б        тест затягнувся — ⭐ робимо всі, ⭐⭐ / ⭐⭐⭐ удома за
+                бажанням; практичну оцінюємо за тим, що є в script.js
+  ────────────────────────────────────────────────────────────────
+  Аркуш         rozdatka.html — 1 сторінка A4, для сховища
+  Код           kod.html — старт, ДЗ, код практичної на три рівні
+  Конспект      2026-27-teacher/aplus/8-javascript/u11/konspekt.md
+  Увесь код слайдів прогнано в node.
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand);white-space:nowrap}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:120px;white-space:nowrap}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── імітація діалогового вікна Chrome ─── */
+.dlg{border:2px solid var(--border);border-radius:12px;background:var(--surface);
+  overflow:hidden;box-shadow:0 4px 16px rgba(89,20,41,.10);max-width:460px;margin:0 auto}
+.dlg-bar{background:var(--surf2);border-bottom:1.5px solid var(--border);
+  padding:8px 14px;font-family:var(--f-mono);font-size:13px;color:var(--dim)}
+.dlg-body{padding:16px 18px;font-size:17.5px;color:var(--ink)}
+.dlg-in{margin-top:11px;border:1.5px solid var(--border);border-radius:7px;
+  padding:8px 11px;font-family:var(--f-mono);font-size:16px;color:var(--dim);background:var(--bg)}
+.dlg-btn{display:flex;gap:9px;justify-content:flex-end;padding:0 18px 15px}
+.dlg-btn span{border:1.5px solid var(--border);border-radius:8px;padding:7px 17px;font-size:15.5px}
+.dlg-btn span.ok{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8 ─── стовпчик reveal-карток, щільніший .solo,
+   вивід консолі під кодом */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+.dp-out.mono{font-family:var(--f-mono);white-space:pre-wrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 9 ─── інлайн-код не розривається, вивід консолі */
+.ic{white-space:nowrap}
+.dp-out.con{font-family:var(--f-mono);font-size:16px;line-height:1.55;white-space:pre-wrap;padding:10px 19px}
+.dp-out.con b{color:var(--faint);font-family:var(--f-body);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+table.ops td.c{text-align:center;font-family:var(--f-mono)}
+.three .mono{font-size:15.5px;line-height:1.55;margin-bottom:6px}
+a.lnk{color:var(--blue);font-family:var(--f-mono);font-size:.9em;border-bottom:1.5px solid var(--blue);text-decoration:none;word-break:break-all}
+/* ─── ДОДАНО ДЛЯ УРОКУ 11 ─── щільна таблиця родини, слова-картки з перекладом за кліком */
+table.ops.s5 td{font-size:15.5px;padding:7px 10px}
+table.ops.s5 td:first-child{white-space:nowrap}
+.chk-i.reveal{cursor:pointer}
+.chk-i .rv-body{display:none;font-family:var(--f-body);font-size:16px;color:var(--dim);margin-top:4px}
+.chk-i.open .rv-body{display:block}
+.chk-i .rv-hint{font-family:var(--f-body);font-size:14px}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Статистика класу</h1>
+      <p class="title-sub">Практична № 2 · масив оцінок і функції, що його рахують<br>
+        JavaScript · 8 клас · Урок 11 з 35 · 30 листопада</p>
+      <div class="chips">
+        <span class="chip">sum</span>
+        <span class="chip">average</span>
+        <span class="chip">max · min</span>
+        <span class="chip">лічильник</span>
+        <span class="chip">новий масив</span>
+        <span class="chip">sort</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lm">Сьогодні</span>
+      <h2>Тест — і практична «Статистика класу»</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t"><b>Тест за уроки 8–10</b> — на аркуші, <b>20 хвилин</b>. Ноутбуки закриті, потрібна ручка</span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t">Згадуємо: функція, яка проходить масив і повертає результат</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t"><b>Практична № 2</b>: масив оцінок → <span class="ic">sum</span>, <span class="ic">average</span>, <span class="ic">max</span>, <span class="ic">min</span>, лічильник, новий масив. Рівні ⭐ / ⭐⭐ / ⭐⭐⭐, прізвище і рівень — першими рядками <span class="ic">script.js</span></span></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hp">Нова папка <span class="ic">js-8/statystyka</span>: <span class="ic">index.html</span> + <span class="ic">script.js</span>.
+        Каркас <span class="ic">index.html</span> — блок «Старт» на сторінці<br>
+        <a class="lnk" href="https://sv2627.github.io/sc/aplus/8-javascript/u11/kod.html">https://sv2627.github.io/sc/aplus/8-javascript/u11/kod.html</a></div>
+      <div class="hbox hm">Результат — у <b>Console</b>: <span class="ic">F12</span> → вкладка Console</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ЗГАДУЄМО: ФУНКЦІЇ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔁</div><div>
+      <span class="label lb">Згадуємо · функції і домашнє уроку 10</span>
+      <h2>Що покаже консоль?</h2>
+    </div></div>
+    <div class="two" style="gap:16px">
+      <div class="card reveal" onclick="this.classList.toggle('open')" style="padding:14px 18px">
+        <div class="mono" style="font-size:15.5px;line-height:1.55;white-space:pre">function total(arr) {
+  let sum = 0;
+  for (let i = 0; i &lt; arr.length; i++) {
+    sum += arr[i];
+  }
+  return sum;
+}
+console.log(total([699, 199, 449, 319]));</div>
+        <p class="rv-hint">Це домашнє уроку 10. Скільки?</p>
+        <div class="rv-body" style="margin-top:6px"><p><b>1666</b> — «Разом: 1666 грн». Цикл додає, <span class="ic">return</span> віддає</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')" style="padding:14px 18px">
+        <div class="mono" style="font-size:15.5px;line-height:1.55;white-space:pre">function total(arr) {
+  let sum = 0;
+  for (let i = 0; i &lt; arr.length; i++) {
+    sum += arr[i];
+    return sum;
+  }
+}
+console.log(total([5, 7, 9]));</div>
+        <p class="rv-hint">Чому не 21?</p>
+        <div class="rv-body" style="margin-top:6px"><p><b>5</b> — <span class="ic">return</span> усередині циклу: функція вийшла на першому кроці. <span class="ic">return</span> — <b>після</b> <span class="ic">}</span> циклу</p></div></div>
+    </div>
+    <div class="card cp reveal mt" onclick="this.classList.toggle('open')" style="padding:12px 18px">
+      <div class="mono" style="font-size:15.5px;line-height:1.55;white-space:pre">function isCheap(price) { return price &lt; 300; }
+console.log(isCheap(199), isCheap(699));</div>
+      <p class="rv-hint">Спершу вголос, потім клацни</p>
+      <div class="rv-body" style="margin-top:6px"><p><b>true false</b> — порівняння саме дає відповідь, її й повертаємо</p></div></div>
+  </div></section>
+
+  <!-- ══════════ 4 ── РІВНІ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🪜</div><div>
+      <span class="label lo">Практична № 2</span>
+      <h2>Три рівні — кожен наступний містить попередній</h2>
+    </div></div>
+    <div class="lvl">
+      <div class="lv"><span class="lv-s">⭐</span>
+        <span class="lv-t"><b>Рахує.</b> Масив своїх оцінок, функції <span class="ic">sum</span> і <span class="ic">average</span>,
+          середній бал з одним знаком після коми</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐</span>
+        <span class="lv-t"><b>Порівнює.</b> + <span class="ic">max</span>, <span class="ic">min</span> і <span class="ic">countHigh</span> — скільки оцінок 10 і вище</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+        <span class="lv-t"><b>Відбирає.</b> + функція, що повертає <b>новий масив</b> лише з оцінками від 7,
+          і масив, відсортований від меншої до більшої</span></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">🧱</span>
+      <div>Спершу — робочий ⭐: правильна сума і середнє. Під кожною функцією — тестовий виклик у <span class="ic">console.log</span></div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ── УСЯ РОДИНА ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🗂️</div><div>
+      <span class="label lb">Уся родина — один масив</span>
+      <h2>Що рахує статистика · <span style="font-family:var(--f-mono);font-size:.8em">[10, 7, 12, 9, 4, 11]</span></h2>
+    </div></div>
+    <table class="ops s5">
+      <tr><th>Що</th><th>Функція</th><th>Як</th><th>Результат</th><th>Слово</th></tr>
+      <tr><td>сума</td><td class="o" style="width:auto">sum(marks)</td><td>накопичувач <span class="ic">s += a[i]</span></td><td class="r">53</td><td class="r">sum — сума</td></tr>
+      <tr><td>середнє</td><td class="o" style="width:auto">average(marks)</td><td><span class="ic">sum(a) / a.length</span></td><td class="r">8.8333…</td><td class="r">average — середнє</td></tr>
+      <tr><td>найвища · найнижча</td><td class="o" style="width:auto">max · min</td><td>старт з <span class="ic">a[0]</span>, у циклі <span class="ic">if</span></td><td class="r">12 · 4</td><td class="r">maximum · minimum</td></tr>
+      <tr><td>скільки 10 і вище</td><td class="o" style="width:auto">countHigh(marks)</td><td>лічильник <span class="ic">n++</span></td><td class="r">3</td><td class="r">count — рахувати</td></tr>
+      <tr><td>лише від 7</td><td class="o" style="width:auto">good(marks)</td><td>новий масив і <span class="ic">push</span></td><td class="r">[10, 7, 12, 9, 11]</td><td class="r">filter — відбір</td></tr>
+      <tr><td>по порядку</td><td class="o" style="width:auto">sort</td><td><span class="ic">a.sort((x, y) =&gt; x - y)</span></td><td class="r">[4, 7, 9, 10, 11, 12]</td><td class="r">sort — сортувати</td></tr>
+      <tr><td>готові: два числа</td><td class="o" style="width:auto">Math.max · min</td><td><span class="ic">Math.max(3, 8)</span></td><td class="r">8 · 3</td><td class="r">Math — математика</td></tr>
+    </table>
+    <div class="hbox hp" style="margin-bottom:0">Середнє красиво: <span class="ic">average(marks).toFixed(1)</span> → <span class="ic">'8.8'</span> — один знак після коми, як на уроці 5</div>
+  </div></section>
+
+  <!-- ══════════ 6 ── MAX І MIN ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🏔️</div><div>
+      <span class="label lm">Нове · max і min</span>
+      <h2>Найбільша: тримаємо «рекорд» і оновлюємо</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16.5px;line-height:1.62"><span class="sk">function</span> <span class="sf">max</span>(arr) {
+  <span class="sk">let</span> m = arr[<span class="sn">0</span>];         <span class="cm">// рекорд — перша оцінка</span>
+  <span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;</span> arr.length; i<span class="st">++</span>) {
+    <span class="sk">if</span> (arr[i] <span class="st">&gt;</span> m) {
+      m = arr[i];              <span class="cm">// новий рекорд</span>
+    }
+  }
+  <span class="sk">return</span> m;
+}
+console.<span class="sf">log</span>(<span class="sf">max</span>([<span class="sn">7</span>, <span class="sn">12</span>, <span class="sn">9</span>]));   <span class="cm">// 12</span></div>
+      </div>
+      <div>
+        <table class="ops">
+          <tr><th>i</th><th>arr[i]</th><th>більше за m?</th><th>m</th></tr>
+          <tr><td class="c">—</td><td class="c">—</td><td>старт</td><td class="c">7</td></tr>
+          <tr><td class="c">1</td><td class="c">12</td><td>так</td><td class="c">12</td></tr>
+          <tr><td class="c">2</td><td class="c">9</td><td>ні</td><td class="c">12</td></tr>
+        </table>
+        <div class="hbox hm"><b>min</b> — те саме, лише знак <span class="ic">&lt;</span> замість <span class="ic">&gt;</span></div>
+        <div class="hbox hr">Старт — з <span class="ic">arr[0]</span>, а не з <span class="ic">0</span>: інакше «рекорд» може бути числом, якого в масиві немає</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ПЕРЕДБАЧ ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що виведе кожен фрагмент?</h2>
+    </div></div>
+    <div class="two" style="gap:16px">
+      <div class="card reveal" onclick="this.classList.toggle('open')" style="padding:14px 18px">
+        <div class="mono" style="font-size:15.5px;line-height:1.55;white-space:pre">function min(arr) {
+  let m = 0;
+  for (let i = 0; i &lt; arr.length; i++) {
+    if (arr[i] &lt; m) m = arr[i];
+  }
+  return m;
+}
+console.log(min([7, 12, 9]));</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body" style="margin-top:6px"><p><b>0</b> — жодна оцінка не менша за 0, рекорд не оновився. Старт — <span class="ic">arr[0]</span></p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')" style="padding:14px 18px">
+        <div class="mono" style="font-size:15.5px;line-height:1.55;white-space:pre">function average(arr) {
+  return sum(arr) / arr.length;
+}
+console.log(average([8, 9, 10]));
+console.log(average([10, 11]));</div>
+        <p class="rv-hint">Вважай, що sum уже є. Два рядки?</p>
+        <div class="rv-body" style="margin-top:6px"><p><b>9</b> і <b>10.5</b> — функція викликає іншу функцію: спершу <span class="ic">sum</span>, потім ділення</p></div></div>
+    </div>
+    <div class="card cr reveal mt" onclick="this.classList.toggle('open')" style="padding:12px 18px">
+      <div class="mono" style="font-size:15.5px;line-height:1.55;white-space:pre">const avg = 26 / 3;
+console.log(avg.toFixed(1));</div>
+      <p class="rv-hint">Спершу вголос, потім клацни</p>
+      <div class="rv-body" style="margin-top:6px"><p><b>8.7</b> — 8.666… округлено до одного знака. <span class="ic">toFixed</span> дає <b>рядок</b> — рахувати з ним далі не треба</p></div></div>
+  </div></section>
+
+  <!-- ══════════ 8 ── НОВИЙ МАСИВ І SORT ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🧺</div><div>
+      <span class="label lb">Для ⭐⭐⭐ · новий масив і sort</span>
+      <h2>Відібрати в новий масив — і впорядкувати</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.45fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.58"><span class="sk">function</span> <span class="sf">good</span>(arr) {
+  <span class="sk">const</span> res = [];         <span class="cm">// новий</span>
+  <span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">0</span>; i <span class="st">&lt;</span> arr.length; i<span class="st">++</span>) {
+    <span class="sk">if</span> (arr[i] <span class="st">&gt;=</span> <span class="sn">7</span>) {
+      res.<span class="sf">push</span>(arr[i]); <span class="cm">// відбір</span>
+    }
+  }
+  <span class="sk">return</span> res;
+}
+console.<span class="sf">log</span>(<span class="sf">good</span>([<span class="sn">10</span>, <span class="sn">4</span>, <span class="sn">12</span>, <span class="sn">6</span>, <span class="sn">9</span>]));
+<span class="cm">// [10, 12, 9]</span>
+
+<span class="sk">const</span> m = [<span class="sn">10</span>, <span class="sn">4</span>, <span class="sn">12</span>, <span class="sn">9</span>];
+m.<span class="sf">sort</span>((a, b) <span class="st">=&gt;</span> a - b);
+console.<span class="sf">log</span>(m);   <span class="cm">// [4, 9, 10, 12]</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Старий масив <b>не змінюється</b> — <span class="ic">good</span> збирає нову відповідь у <span class="ic">res</span></div>
+        <div class="hbox hp"><span class="ic">(a, b) =&gt; a - b</span> — стрілкова з уроку 10: «від меншого до більшого». <span class="ic">b - a</span> — навпаки</div>
+        <div class="hbox hr"><span class="ic">sort()</span> без функції порівнює числа <b>як слова</b>: <span class="ic">[10, 4, 12, 9].sort()</span> → <span class="ic">[10, 12, 4, 9]</span></div>
+        <div class="hbox ho"><span class="ic">sort</span> міняє <b>сам</b> масив, як <span class="ic">push</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРАКТИКА ⭐ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практична · ⭐</span>
+        <span class="t">Сума і середній бал</span><span class="tmr">7 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1.12fr 1.18fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — сума</span>
+        <div class="mono" style="font-size:15px;line-height:1.55;white-space:pre">const marks = [10, 7, 12, 9, 4, 11];
+
+function sum(arr) {
+  let s = 0;
+  for (let i = 0; i &lt; arr.length; i++) {
+    s += arr[i];
+  }
+  return s;
+}
+console.log(sum(marks));   // 53</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Папка <span class="ic">js-8/statystyka</span>, каркас — блок «Старт»: <a class="lnk" href="https://sv2627.github.io/sc/aplus/8-javascript/u11/kod.html">https://sv2627.github.io/sc/aplus/8-javascript/u11/kod.html</a></li>
+          <li>Спершу — масив з прикладу і <span class="ic">sum</span>: має бути <b>53</b></li>
+          <li><span class="ic">average(arr)</span> — усередині виклич <span class="ic">sum</span>. Для прикладу — <b>8.833…</b></li>
+          <li>Вивід: <span class="ic">Середній бал: 8.8</span> — через <span class="ic">toFixed(1)</span></li>
+          <li>Тепер заміни масив на <b>8 своїх оцінок</b> — функції не міняються</li>
+          <li>Заміни <span class="ic">&lt;</span> на <span class="ic">&lt;=</span> у <span class="ic">sum</span> — що стало? Поверни</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПРАКТИКА ⭐⭐ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практична · ⭐⭐</span>
+        <span class="t">Найвища, найнижча, скільки 10+</span><span class="tmr">5 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1.12fr 1.18fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — найвища</span>
+        <div class="mono" style="font-size:15px;line-height:1.55;white-space:pre">function max(arr) {
+  let m = arr[0];
+  for (let i = 1; i &lt; arr.length; i++) {
+    if (arr[i] &gt; m) {
+      m = arr[i];
+    }
+  }
+  return m;
+}
+console.log(max(marks));   // 12</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно — у тому самому файлі</span>
+        <ul>
+          <li><span class="ic">max(arr)</span> — як у прикладі. Перевір: <b>12</b></li>
+          <li><span class="ic">min(arr)</span> — найнижча. Для прикладу — <b>4</b></li>
+          <li><span class="ic">countHigh(arr)</span> — скільки оцінок 10 і вище: лічильник з уроку 9. Має бути <b>3</b></li>
+          <li>Звіт трьома рядками: <span class="ic">Найвища: 12</span> · <span class="ic">Найнижча: 4</span> · <span class="ic">10 і вище: 3</span></li>
+          <li>Постав у <span class="ic">min</span> старт <span class="ic">let m = 0;</span> — що стало? Поверни <span class="ic">arr[0]</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПРАКТИКА ⭐⭐⭐ ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практична · ⭐⭐⭐</span>
+        <span class="t">Новий масив і порядок</span><span class="tmr">4 хвилини</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1.12fr 1.18fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — новий масив</span>
+        <div class="mono" style="font-size:15px;line-height:1.55;white-space:pre">function good(arr) {
+  const res = [];
+  for (let i = 0; i &lt; arr.length; i++) {
+    if (arr[i] &gt;= 7) {
+      res.push(arr[i]);
+    }
+  }
+  return res;
+}
+console.log(good(marks));
+// [10, 7, 12, 9, 11]</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li><span class="ic">good(arr)</span> — лише оцінки від 7. Виведи і новий, і старий масив: старий не змінився?</li>
+          <li><span class="ic">marks.sort((a, b) =&gt; a - b)</span> — виведи: <span class="ic">[4, 7, 9, 10, 11, 12]</span></li>
+          <li>Прибери <span class="ic">(a, b) =&gt; a - b</span> — який порядок тепер? Поверни</li>
+          <li><span class="ic">low(arr)</span> — новий масив з оцінок нижче 7: <span class="ic">[4]</span></li>
+          <li>Зверху вниз: <span class="ic">b - a</span> → <span class="ic">[12, 11, 10, 9, 7, 4]</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ · console.log і breakpoint</span>
+      <h2>Має бути 29, а в консолі NaN</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+<div class="dp-code" style="font-size:16.5px"><span class="sk">function</span> <span class="sf">sum</span>(marks) {
+  <span class="sk">let</span> s = <span class="sn">0</span>;
+  <span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">0</span>; i <span class="st">&lt;=</span> marks.length; i<span class="st">++</span>) {
+    s <span class="st">+=</span> marks[i];
+  }
+  <span class="sk">return</span> s;
+}
+console.<span class="sf">log</span>(<span class="sf">sum</span>([<span class="sn">10</span>, <span class="sn">7</span>, <span class="sn">12</span>]));</div>
+        <div class="dp-out con"><b>Консоль</b>NaN</div>
+      </div>
+      <div class="q3">
+        <div class="card cp reveal" onclick="this.classList.toggle('open')">
+          <h3>Як знайти? Клацни</h3>
+          <div class="rv-body">
+            <p><b>console.log:</b> у цикл перед <span class="ic">s += …</span> додай <span class="ic">console.log(i, marks[i]);</span> — останній рядок <b>3 undefined</b></p>
+            <p><b>breakpoint:</b> F12 → Sources → <span class="ic">script.js</span> → клік по номеру рядка 4 → оновити сторінку → дивимось <span class="ic">i</span> і <span class="ic">s</span> на кожному кроці</p>
+          </div></div>
+        <div class="card cr reveal" onclick="this.classList.toggle('open')">
+          <h3>Що не так? Клацни</h3>
+          <div class="rv-body">
+            <p><span class="ic">i &lt;= marks.length</span> заходить на <span class="ic">marks[3]</span> — його немає, це <span class="ic">undefined</span>. <span class="ic">29 + undefined</span> = <b>NaN</b>. Межа циклу — <span class="ic">&lt;</span></p>
+          </div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Уся статистика на одному екрані</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>sum — сума</h4><pre>let s = 0;
+for (…) s += arr[i];
+return s;</pre></div>
+      <div class="rf-c"><h4>average — середнє</h4><pre>return sum(arr) / arr.length;
+// вивід:
+avg.toFixed(1)   // '8.8'</pre></div>
+      <div class="rf-c"><h4>max · min</h4><pre>let m = arr[0];
+if (arr[i] &gt; m) m = arr[i];
+// min — знак &lt;</pre></div>
+      <div class="rf-c"><h4>скільки — лічильник</h4><pre>let n = 0;
+if (arr[i] &gt;= 10) n++;
+return n;</pre></div>
+      <div class="rf-c"><h4>новий масив</h4><pre>const res = [];
+if (a[i] &gt;= 7) res.push(a[i]);
+return res;</pre></div>
+      <div class="rf-c"><h4>sort — порядок</h4><pre>a.sort((x, y) =&gt; x - y); // ↑
+a.sort((x, y) =&gt; y - x); // ↓</pre></div>
+    </div>
+    <div class="tip to mt"><span class="tip-ico">🔦</span>
+      <div>Бачиш <span class="ic">NaN</span> — шукай <span class="ic">&lt;=</span> у циклі або <span class="ic">let s;</span> без нуля. Бачиш <span class="ic">undefined</span> — шукай <span class="ic">return</span></div></div>
+  </div></section>
+
+  <!-- ══════════ 14 ── БАНК ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Зробив усе?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Розмах.</b> <span class="ic">range(arr)</span> — різниця <span class="ic">max</span> і <span class="ic">min</span>. Для прикладу — 8</div>
+      <div class="bk"><b>Є дванадцять?</b> <span class="ic">hasTop(arr)</span> — <span class="ic">true</span> / <span class="ic">false</span> через <span class="ic">includes(12)</span></div>
+      <div class="bk"><b>Оцінки словами.</b> Для кожної оцінки — «високий», «достатній», «середній», «початковий»: функція <span class="ic">level(n)</span> з уроку 10 у циклі</div>
+      <div class="bk"><b>Дві групи.</b> Два масиви оцінок — чия середня вища? Одна <span class="ic">average</span> на обидва</div>
+      <div class="bk"><b>Скільки кожної.</b> <span class="ic">countOf(arr, x)</span> — скільки разів оцінка <span class="ic">x</span> у масиві</div>
+      <div class="bk"><b>Без найгіршої.</b> Середнє без найнижчої оцінки: <span class="ic">(sum - min) / (length - 1)</span></div>
+      <div class="bk"><b>Звіт одним рядком.</b> Шаблонний рядок: «Оцінок: 6, середня 8.8, найвища 12»</div>
+      <div class="bk"><b>Нова оцінка.</b> <span class="ic">push</span> ще однієї оцінки — і весь звіт ще раз. Функції ті самі</div>
+    </div>
+    <div class="hbox hm mt">Усі вісім — тим, що вже було: цикл, масив, функція</div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ЗДАЄМО ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">📤</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Підписати рівень і зберегти</h2>
+    </div></div>
+    <div class="two">
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span>
+          <span class="step-t">Усі функції — в одному <span class="ic">script.js</span>, під кожною — тестовий виклик</span></div>
+        <div class="step"><span class="step-n">2</span>
+          <span class="step-t">У консолі <b>жодного червоного рядка</b>, жодного <span class="ic">NaN</span> і <span class="ic">undefined</span></span></div>
+        <div class="step"><span class="step-n">3</span>
+          <span class="step-t">Прізвище і рівень — <b>першими рядками</b> <span class="ic">script.js</span>, потім <span class="ic">Ctrl+S</span></span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">statystyka/script.js</span></div>
+        <div class="dp-code" style="font-size:15.5px;line-height:1.6"><span class="cm">// Урок 11 · Практична № 2 «Статистика класу»
+// Прізвище Імʼя · рівень ⭐⭐
+// sum, average · max, min, countHigh</span>
+
+<span class="sk">const</span> marks = [<span class="sn">10</span>, <span class="sn">7</span>, <span class="sn">12</span>, …];
+<span class="sk">function</span> <span class="sf">sum</span>(arr) { … }
+…</div>
+      </div>
+    </div>
+    <p class="center mt" style="color:var(--faint);font-size:17px">Урок 12 · 7 грудня · Обʼєкти</p>
+  </div></section>
+
+  <!-- ══════════ 16 ── СЛОВА ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:14px"><div class="si">🔤</div><div>
+      <span class="label lb">Слова, які лишаються англійською</span>
+      <h2>Згадай переклад — потім клацни</h2>
+    </div></div>
+    <div class="chk">
+      <div class="chk-i reveal" onclick="this.classList.toggle('open')"><span class="chk-t">sum<span class="rv-hint"> · клацни</span><span class="rv-body">сума</span></span></div>
+      <div class="chk-i reveal" onclick="this.classList.toggle('open')"><span class="chk-t">average<span class="rv-hint"> · клацни</span><span class="rv-body">середнє</span></span></div>
+      <div class="chk-i reveal" onclick="this.classList.toggle('open')"><span class="chk-t">maximum<span class="rv-hint"> · клацни</span><span class="rv-body">найбільше</span></span></div>
+      <div class="chk-i reveal" onclick="this.classList.toggle('open')"><span class="chk-t">minimum<span class="rv-hint"> · клацни</span><span class="rv-body">найменше</span></span></div>
+      <div class="chk-i reveal" onclick="this.classList.toggle('open')"><span class="chk-t">count<span class="rv-hint"> · клацни</span><span class="rv-body">рахувати, кількість</span></span></div>
+      <div class="chk-i reveal" onclick="this.classList.toggle('open')"><span class="chk-t">filter<span class="rv-hint"> · клацни</span><span class="rv-body">відбирати, фільтр</span></span></div>
+      <div class="chk-i reveal" onclick="this.classList.toggle('open')"><span class="chk-t">sort<span class="rv-hint"> · клацни</span><span class="rv-body">сортувати, впорядкувати</span></span></div>
+      <div class="chk-i reveal" onclick="this.classList.toggle('open')"><span class="chk-t">result<span class="rv-hint"> · клацни</span><span class="rv-body">результат</span></span></div>
+      <div class="chk-i reveal" onclick="this.classList.toggle('open')"><span class="chk-t">breakpoint<span class="rv-hint"> · клацни</span><span class="rv-body">точка зупинки</span></span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ДОМАШНЄ ЗАВДАННЯ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання · 10 хвилин</span>
+      <h2>Звіт класу: допиши три функції</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">Заготовка — блок «Домашнє», кнопка «Скопіювати»:
+      <a class="lnk" href="https://sv2627.github.io/sc/aplus/8-javascript/u11/kod.html">https://sv2627.github.io/sc/aplus/8-javascript/u11/kod.html</a> ·
+      <strong>codepen.io</strong>, панель <b>JS</b>, кнопка <b>Console</b> ·
+      код — у <strong>Google Classroom · 8 клас</strong> до <strong>7 грудня</strong></div>
+    <div class="two" style="grid-template-columns:1.05fr 1fr;gap:16px;margin-top:10px">
+      <div class="steps" style="gap:8px">
+        <div class="step" style="padding:9px 15px"><span class="step-n">1</span><span class="step-t" style="font-size:16px">
+          <span class="ic">// ДОПИШИ ТУТ 1</span> — у <span class="ic">average</span>: <span class="ic">return sum(arr) / arr.length;</span>. Має стати <span class="ic">Середній бал: 8</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">2</span><span class="step-t" style="font-size:16px">
+          <span class="ic">// ДОПИШИ ТУТ 2</span> — у циклі <span class="ic">min</span>: <span class="ic">if (arr[i] &lt; m) m = arr[i];</span>.
+          Має стати <span class="ic">Найнижча: 1</span></span></div>
+        <div class="step" style="padding:9px 15px"><span class="step-n">3</span><span class="step-t" style="font-size:16px">
+          <span class="ic">// ДОПИШИ ТУТ 3</span> — у циклі <span class="ic">countLow</span>: <span class="ic">if (arr[i] &lt; 7) n++;</span>.
+          Має стати <span class="ic">Нижче 7: 2</span></span></div>
+      </div>
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">заготовка · головне</span></div>
+<div class="dp-code" style="font-size:13.5px;line-height:1.42;padding:10px 14px"><span class="sk">const</span> marks = [<span class="sn">9</span>, <span class="sn">12</span>, <span class="sn">6</span>, <span class="sn">10</span>, <span class="sn">7</span>, <span class="sn">11</span>, <span class="sn">1</span>];
+<span class="sk">function</span> <span class="sf">average</span>(arr) {
+  <span class="cm">// ДОПИШИ ТУТ 1</span>
+}
+<span class="sk">function</span> <span class="sf">min</span>(arr) {
+  <span class="sk">let</span> m = arr[<span class="sn">0</span>];
+  <span class="sk">for</span> (<span class="sk">let</span> i = <span class="sn">1</span>; i <span class="st">&lt;</span> arr.length; i<span class="st">++</span>) {
+    <span class="cm">// ДОПИШИ ТУТ 2</span>
+  }
+  <span class="sk">return</span> m;
+}
+<span class="cm">// countLow — так само, з n = 0 і ДОПИШИ ТУТ 3</span>
+<span class="cm">// зараз: undefined · 9 · 0</span></div>
+      </div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

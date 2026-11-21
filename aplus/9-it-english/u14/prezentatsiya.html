@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predefined sub-routines · IT-англійська · 9 клас · Урок 14</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          IT-англійська (Cambridge Lower Secondary Computing 0860)
+  Клас          9
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · четвер
+  Урок          14 з 36 · 03.12.2026
+  Тема          Predefined sub-routines · Готові підпрограми
+  Ціль          9CT.04 Know how to use predefined sub-routines in flowcharts
+                or pseudocode.
+  Тривалість    45 хв = письмовий тест 20 хв (на папері, з матеріалу II
+                чверті, уроки 9–12) + тема ≈ 25 хв · 16 слайдів ·
+                без компʼютерів
+  Акцент        rose (#af3b41)
+  ФОРМАТ        Читання вголос і переклад (14.10.2026); 9 кл. — відповіді
+                повним реченням (15.10.2026). Read aloud — s5, s7, s12 (id).
+  ────────────────────────────────────────────────────────────────
+  ТЕСТ          s2 стоїть на екрані 20 хв. Аркуші — 2026-27-teacher/aplus/
+                9-it-english/u14/test.html (6 варіантів) + klyuch.html.
+                Друк: python3 office/druk.py 9 03.12
+  ────────────────────────────────────────────────────────────────
+  ⛔ ДЖЕРЕЛО — ТІЛЬКИ СХЕМА CAMBRIDGE.
+     `0860 Computing Stage 9 Scheme of Work.docx`, юніт 9.3 Programming,
+     блок 9CT.04 — увесь, по порядку. Звідти дослівно:
+       • «Display the term ‘sub-routine’ … a sub-routine is a self-contained
+         program that can be called from other programs · can be used
+         multiple times in an algorithm and across different algorithms» — s5
+       • Action 1 = clap 3 times, jump twice, clap 3 times · Action 2 = turn
+         around three times, clap 10 times · послідовність із 9 інструкцій ·
+         три питання обговорення — s6
+       • «A set of commands that is given an identifier and can be called
+         from anywhere in an algorithm» + дві переваги — s7
+       • flowchart-підпрограма CalculateCelsius() (image28) і головна
+         блок-схема Start → CalculateCelsius() → Stop (image29) — s8,
+         перемальовано SVG
+       • «Give learners another flowchart, for example for a different
+         conversion … draw a flowchart that calls this flowchart» — s9
+       • subroutine addition() · програма answer / if / else · дані "yes",2,3
+         · "yes",1,19 · "no" і виводи з Additional notes — s10
+       • subtraction() з Additional notes · «extend … input which
+         mathematical calculation … call the appropriate subroutine» — s11
+       • «What is a subroutine? … How do you call a subroutine? Use its
+         identifier.» — s12
+       • Language юніта 9.3: Subroutine
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО ЗМІНЕНО / ДОДАНО ПОНАД СХЕМУ (і чому)
+     • ВИПРАВЛЕНО: на рисунку схеми формула «Fahrenheit = (Celsius-32) * 1.8»
+       і «OUTPUT result» — це не перетворення Цельсія у Фаренгейт
+       (20 °C дало б −21.6). Правильно fahrenheit = celsius * 1.8 + 32,
+       OUTPUT fahrenheit (20 → 68, 100 → 212, 0 → 32). Ідентифікатор
+       CalculateCelsius() лишено як у схемі.
+     • Action 1/2 — без «stand up / sit down» руками: клас читає
+       послідовність уголос і рахує дії (за бажанням учителя — виконати).
+     • Наші: s6 підрахунок оплесків · s8 значення 20/100/0 · s9 друга
+       конверсія miles → kilometres (схема: «for example for a different
+       conversion») · s11 ⭐⭐⭐ multiplication() (схема: «subtraction and
+       multiplication, etc.») · ДЗ п. 2–3.
+  ⚠️ ЧОГО ТУТ СВІДОМО НЕМАЄ
+     • підпрограми з параметрами / return — у блоці 9CT.04 їх немає
+     • SORT / FIND / FORMAT з річного плану — у схемі їх немає
+  ────────────────────────────────────────────────────────────────
+  СЛОВНИК       ТРИЧІ: s4 (вхід, 4) · s7 (word bank, 6) · s13 (вихід, 12)
+  ПРАКТИКИ      s6, s8, s9, s10, s11; відповіді в .reveal
+  ДОМАШНЄ       s15 = dz.html — 3 пункти, ≈ 10 хв, відповіді текстом
+  ────────────────────────────────────────────────────────────────
+  Аркуш A4      rozdatka.html — видається в кінці уроку, слайди на нього не посилаються
+  Конспект      2026-27-teacher/aplus/9-it-english/u14/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: IT-англійська всіх класів іде на rose. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--rose);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--rose)}
+.uk{color:var(--dim)}
+
+/* ═══ СЛОВНИК ═══ */
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mw{background:var(--surface);border:2px solid var(--pink);border-radius:14px;padding:15px 19px}
+.mw .w{font-family:var(--f-mono);font-weight:700;font-size:1.5rem;color:var(--rose);
+       line-height:1.2;margin-bottom:5px}
+.mw .t{font-size:17px;color:var(--dim);line-height:1.5}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.vp{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px}
+.vp .en{display:block;font-size:17px;margin-bottom:3px;line-height:1.3}
+.vp .uk{display:block;font-size:16.5px;line-height:1.45}
+/* картки слів: .vp .uk не має відкривати відповідь до кліку */
+.vp.reveal .rv-body{display:none}
+.vp.reveal.open .rv-body{display:block}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--rose);border-radius:6px;flex-shrink:0}
+
+/* ─── успадковано з уроків 4 і 8 ─── */
+/* графіки хвилі (inline SVG) */
+.gw{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:8px 10px 4px}
+.card .gw{border:0;padding:4px 0 0}
+.gw svg{display:block}
+/* слайд «тест» */
+.big-test{text-align:center}
+.big-test h2{font-size:2.6rem}
+/* словник на 16 слів — чотири колонки */
+.vg4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.defn{font-family:var(--f-ser);font-size:1.3rem;line-height:1.6;color:var(--ink)}
+
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 13px;font-size:17px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+.tbl td.m{font-family:var(--f-mono);font-weight:700}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .mw{padding:12px 15px} .mw .w{font-size:1.3rem} .mw .t{font-size:15.5px}
+  .vp{padding:9px 12px} .vp .en{font-size:16px} .vp .uk{font-size:15.5px}
+  .vg{gap:9px} .vg3{gap:8px} .vg4{gap:8px}
+  .big-test h2{font-size:2.2rem} .defn{font-size:1.15rem}
+  .gw{padding:6px 8px 2px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .tbl th,.tbl td{padding:7px 11px;font-size:15.5px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* ─── ДОДАНО: Words in use ─── */
+.wu{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px}
+.wu-i{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:8px 13px}
+.wu-w{display:block;font-family:var(--f-mono);font-weight:700;font-size:15.5px;
+      color:var(--accent);margin-bottom:3px}
+.wu-p{display:block;font-size:15px;line-height:1.34;margin-bottom:1px}
+.wu-p::before{content:"· ";color:var(--faint)}
+/* ─── ДОДАНО ДЛЯ УРОКУ 8: логічні схеми й читання вголос ─── */
+.lc{display:block;width:100%;height:auto;color:var(--ink)}
+.cw{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px}
+.cw .ex{font-family:var(--f-mono);font-weight:700;font-size:18px;color:var(--brand);margin-bottom:6px}
+.shp{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.shp .cw{text-align:center}
+.shp .cw .lc{max-height:92px}
+.shp .nm{font-family:var(--f-mono);font-weight:700;font-size:20px;color:var(--rose);margin-top:4px}
+.quiz{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.quiz .cw{text-align:center;padding:8px 6px}
+.quiz .q-n{font-family:var(--f-mono);font-weight:700;color:var(--faint);font-size:15px}
+.quiz .rv-body{margin-top:4px;font-family:var(--f-mono);font-weight:700;color:var(--rose);font-size:18px}
+.quiz .rv-hint{font-size:14px}
+.ra{display:flex;flex-direction:column;gap:9px}
+.ra-i{display:flex;align-items:flex-start;gap:14px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:11px;padding:10px 16px}
+.ra-n{width:30px;height:30px;border-radius:8px;background:#f0e5ee;color:var(--plum);
+      font-family:var(--f-mono);font-weight:700;font-size:15px;display:flex;
+      align-items:center;justify-content:center;flex-shrink:0}
+.ra-e{font-size:19px;line-height:1.5;color:var(--ink);font-weight:600}
+.ra-i .rv-body{margin-top:3px;font-size:17px;color:var(--dim);line-height:1.45}
+.ra-i .rv-hint{font-size:14px}
+.tt{border-collapse:collapse;background:var(--surface);border:1.5px solid var(--border);width:100%}
+.tt th,.tt td{border:1px solid var(--border);padding:5px 10px;text-align:center;font-family:var(--f-mono);font-size:17px}
+.tt th{font-size:13px;letter-spacing:1px;color:var(--faint)}
+.tt td.o{color:var(--brand);font-weight:700}
+.g6{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.g6 .cw{padding:8px 12px}
+.g6 .cw .ex{font-size:15.5px;margin-bottom:2px}
+.g6 .cw .lc{max-height:118px}
+.g6 .rv-body p{font-size:15.5px;line-height:1.4}
+.g6 .rv-hint{font-size:14px}
+@media (max-height:800px){
+  .ra-e{font-size:17px} .ra-i{padding:8px 13px} .ra{gap:7px}
+  .ra-i .rv-body{font-size:15.5px}
+  .cw .ex{font-size:16px}
+  .shp .cw .lc{max-height:74px}
+  .g6 .cw .lc{max-height:96px} .g6{gap:8px}
+  .tt th,.tt td{padding:4px 8px;font-size:15.5px}
+}
+/* ─── ДОДАНО ДЛЯ УРОКУ 9: блок-схеми циклу (inline SVG) ─── */
+.fcs{display:block;width:100%;height:auto;color:var(--ink)}
+.fcw{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px}
+.fcw .fcs{max-height:430px;width:auto;max-width:100%;margin:0 auto}
+.fcw.sm .fcs{max-height:360px}
+.fcw.big .fcs{max-height:480px}
+.shp4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.shp4 .cw{text-align:center}
+.shp4 .fcs{max-height:74px;width:auto;margin:0 auto}
+.shp4 .nm{font-family:var(--f-mono);font-weight:700;font-size:16px;color:var(--rose);margin-top:4px}
+.dp-code .k{color:#591429;font-weight:700}
+.vote{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vote .dp-code{font-size:16px;line-height:1.55;padding:10px 14px}
+.vote .rv-body p{font-size:16px;line-height:1.45}
+.vote .rv-hint{font-size:14px;padding:0 14px 8px}
+.vote .rv-body{padding:0 14px 10px;margin-top:0;font-family:var(--f-body)}
+code.nw,.nw{white-space:nowrap}
+@media (max-height:800px){
+  .fcw .fcs{max-height:340px} .fcw.sm .fcs{max-height:290px} .fcw.big .fcs{max-height:395px}
+  .shp4 .fcs{max-height:58px}
+  .vote .dp-code{font-size:14.5px;line-height:1.45;padding:8px 12px}
+  .vote .rv-body p{font-size:14.5px}
+}
+/* ─── ДОДАНО ДЛЯ УРОКУ 10: help sheet, розбір рядка for, чотири програми ─── */
+.anat{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.anat span{background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:6px 11px;font-size:16px;line-height:1.35}
+.anat b{font-family:var(--f-mono);color:var(--rose)}
+.hs{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.hs .dp-code{font-size:15.5px;line-height:1.55;padding:9px 14px}
+.hs .dp-bar{padding:6px 12px}
+.sent9{font-family:var(--f-ser);font-size:1.55rem;line-height:1.6;text-align:center;
+  background:var(--surface);border:2px solid var(--pink);border-radius:14px;padding:18px 24px}
+.vote.v4 .dp-code{font-size:14.5px;line-height:1.5;padding:8px 12px}
+.vote.v4 .dp-bar{padding:5px 12px}
+@media (max-height:800px){
+  .anat span{font-size:14.5px;padding:4px 9px}
+  .hs .dp-code{font-size:14px;line-height:1.45;padding:7px 11px} .hs{gap:8px}
+  .sent9{font-size:1.3rem;padding:13px 18px}
+  .vote.v4 .dp-code{font-size:13px;line-height:1.4;padding:6px 10px}
+  .vote.v4 .rv-body p{font-size:13.5px}
+}
+
+/* ─── ПОКРОКОВІ АНІМАЦІЇ УРОКУ 11 ───
+   У розмітці записаний КІНЦЕВИЙ стан, тому друк і PDF не змінюються.
+   .anim[data-max] — кількість кроків · data-from — з якого кроку діє вигляд
+   data-bgfrom — те саме для фону · data-mid — проміжний колір brown
+   data-cue — на яких кроках підсвічено · fx-hide — до свого кроку невидиме, місце тримає */
+.actl,.amark,.only{display:none}
+.anim.armed .actl{display:flex;align-items:center;gap:10px;margin-top:10px;min-height:56px}
+.abtn{min-width:0;min-height:48px;padding:8px 16px;font-size:16px;white-space:nowrap;flex-shrink:0}
+.abtn:disabled{color:var(--dim);cursor:default}
+.acaps{flex:1;font-size:16.5px;line-height:1.35;font-weight:600;color:var(--ink)}
+.acaps::before{content:attr(data-step);display:block;font-family:var(--f-mono);font-size:13px;
+  font-weight:700;color:var(--accent)}
+.acap{display:none}
+.acap.now{display:block}
+.only.now{display:inline}
+.anim.armed .amark{display:inline-block}
+.amark{font-family:var(--f-mono);font-size:13px;font-weight:700;font-style:normal;
+       padding:1px 6px;border-radius:5px;margin-left:8px;white-space:nowrap}
+.amark.y{background:#e8f2e4;color:#1f5c14}
+.amark.n{background:#fbeaea;color:#a01818}
+.anim [data-from],.anim [data-bgfrom]{transition:color .35s,background-color .35s,font-size .35s}
+.cue.now{background:#fdf0d9;outline:2px solid var(--orange);border-radius:4px;animation:acue 1s ease-out}
+.an.cue.now{border-radius:10px;border-color:var(--orange)}
+@keyframes acue{0%{outline-offset:6px}100%{outline-offset:0}}
+@media screen{
+  .anim.armed .pre.amark,.pre.fx-gone{display:none}
+  .pre.fx-txt{color:var(--ink) !important;font-weight:400 !important}
+  .pre.fx-size{font-size:17px !important}
+  .prebg{background:transparent !important}
+  .pre.mid{color:brown !important;font-weight:400 !important}
+  .pre.fx-hide{visibility:hidden}
+}
+/* летючі значення: колір чи клас вилітає з коду й падає на елемент */
+.flyer{position:absolute;left:0;top:0;z-index:4;pointer-events:none;display:inline-flex;align-items:center;gap:7px;
+       background:var(--surface);color:var(--ink);border:2.5px solid var(--c);border-radius:20px;padding:4px 12px;
+       font-family:var(--f-mono);font-size:17px;font-weight:700;white-space:nowrap;box-shadow:0 6px 16px rgba(89,20,41,.25)}
+.flyer i{width:14px;height:14px;border-radius:50%;background:var(--c);border:1px solid var(--dim)}
+.flyer.drop{padding:0;width:11px;height:11px;border-radius:50%;background:var(--c);border:1px solid var(--dim);box-shadow:none}
+@media print{.flyer{display:none !important}}
+@media (prefers-reduced-motion:reduce){
+  .cue.now{animation:none}
+  .anim [data-from],.anim [data-bgfrom]{transition:none}
+}
+@media print{
+  .actl,.amark,.only{display:none !important}
+  .cue.now{background:none !important;outline:0 !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 14: блок-схеми підпрограм ─── */
+.fcw .fcs.sub{max-height:420px}
+.fcw .fcs.main{max-height:230px}
+.fcw .fcs.km{max-height:300px}
+.fcw h3{font-size:1rem;color:var(--dim);font-family:var(--f-mono);margin-bottom:6px;text-align:center}
+.act{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.act .cw{padding:10px 14px}
+.seq{font-family:var(--f-mono);font-weight:700;font-size:17px;line-height:1.55;color:var(--brand)}
+.seq span{display:inline-block;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:2px 9px;margin:3px 2px}
+@media (max-height:800px){
+  .fcw .fcs.sub{max-height:330px} .fcw .fcs.main{max-height:180px} .fcw .fcs.km{max-height:230px}
+  .seq{font-size:15px;line-height:1.4} .seq span{padding:1px 7px;margin:2px 1px}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Predefined sub-routines</h1>
+      <p class="title-sub">Готові підпрограми · викликаємо за ідентифікатором у блок-схемі й псевдокоді<br>
+        IT-англійська · 9 клас · Урок 14 з 36 · 3 грудня</p>
+      <div class="chips">
+        <span class="chip">sub-routine</span>
+        <span class="chip">identifier</span>
+        <span class="chip">to call</span>
+        <span class="chip">flowchart · pseudocode</span>
+        <span class="chip">9CT.04</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🗓️</div><div>
+      <span class="label lm">Today</span>
+      <h2>Сьогодні</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t"><b>Тест — 20 хвилин</b> на аркуші: уроки 9–12 (цикли, <span class="ic nw">for</span>, масиви, рядки)</span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t"><span class="en">What is a sub-routine?</span> — Action 1 і Action 2</span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">Підпрограма в блок-схемі: <span class="ic nw">CalculateCelsius()</span></span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t">Підпрограма в псевдокоді: <span class="ic nw">addition()</span> · <span class="ic nw">subtraction()</span></span></div>
+      <div class="step"><span class="step-n">5</span><span class="step-t"><span class="en">How do you call a sub-routine?</span> — відповіді повним реченням</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ТЕСТ 20 ХВ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="big-test">
+      <span class="label lm">Test · 20 min</span>
+      <h2>Спершу — тест за уроки 9–12</h2>
+      <p class="mt">Ручка. Вісім завдань на одному аркуші. Код пишемо так, як на уроках.</p>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ПЕРЕВІРКА ДЗ УРОКУ 12 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lo">Check · homework lesson 12</span>
+      <h2>Домашнє уроку 12</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal">
+        <h3>1 · Full sentence</h3>
+        <p><span class="en">Why would you need to find out how many letters are in a word?</span></p>
+        <p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p>We need to find out how many letters are in a word to make sure it is the correct length, or to check if a word is entered.</p></div>
+      </div>
+      <div class="card reveal">
+        <h3>2 · word = "Python"</h3>
+        <p>а) великими літерами · б) <span class="ic nw">print(len(word))</span></p>
+        <p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p>а) <span class="ic nw">print(word.upper())</span> → PYTHON<br>б) 6</p></div>
+      </div>
+      <div class="card reveal">
+        <h3>3 · The password</h3>
+        <div class="dp"><div class="dp-code"><span class="k">if</span> len(password) &gt; <span class="sn">8</span>:</div></div>
+        <p class="rv-hint">Клацни.</p>
+        <div class="rv-body"><p>The error is &gt;. It should be &gt;=, because a password with 8 characters must be accepted.</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 ── MINI-VOCAB ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Words first</span>
+      <h2>Чотири слова, які сьогодні прозвучать</h2>
+    </div></div>
+    <div class="mini">
+      <div class="mw"><div class="w">sub-routine</div>
+        <div class="t">підпрограма — окремий шматок алгоритму з власним імʼям</div></div>
+      <div class="mw"><div class="w">identifier</div>
+        <div class="t">ідентифікатор, імʼя: <span class="ic">addition()</span></div></div>
+      <div class="mw"><div class="w">to call</div>
+        <div class="t">викликати — запустити підпрограму за її імʼям</div></div>
+      <div class="mw"><div class="w">predefined</div>
+        <div class="t">готовий, написаний заздалегідь</div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 ── READ ALOUD 1 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🗣️</div><div>
+      <span class="label lp">Read aloud · discuss</span>
+      <h2>What is a sub-routine?</h2>
+    </div></div>
+    <div class="card" style="margin-bottom:12px">
+      <h3>Explain your understanding of the term ‘sub-routine’. Then add to the answer of your classmate.</h3>
+      <p>Спершу кілька відповідей класу — тоді клацаємо.</p>
+    </div>
+    <div class="ra"><div class="ra-i reveal"><span class="ra-n">1</span><div><div class="ra-e">A sub-routine is a self-contained program that can be called from other programs.</div><div class="rv-hint">переклад</div><div class="rv-body">Підпрограма — самостійна програма, яку можна викликати з інших програм.</div></div></div><div class="ra-i reveal"><span class="ra-n">2</span><div><div class="ra-e">Sub-routines can be used multiple times in an algorithm.</div><div class="rv-hint">переклад</div><div class="rv-body">Підпрограми можна використати багато разів в одному алгоритмі.</div></div></div><div class="ra-i reveal"><span class="ra-n">3</span><div><div class="ra-e">Sub-routines can be used across different algorithms.</div><div class="rv-hint">переклад</div><div class="rv-body">Підпрограми можна використати в різних алгоритмах.</div></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ПРАКТИКА 1: ACTIONS ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="prac" style="padding:12px 18px"><div class="prac-h" style="margin-bottom:4px"><span class="badge">Practice 1 · whole class</span><span class="t">Follow the sub-routines</span><span class="tmr">4 хвилини</span></div><p class="prac-lead" style="margin-bottom:0">Читаємо по одній інструкції по черзі. Хто читає <b>Action 1</b> чи <b>Action 2</b> — розгортає її вголос.</p></div>
+    <div class="act mt">
+      <div class="cw"><div class="ex">Define: Action 1</div><p style="font-size:17px">clap 3 times, jump twice, clap 3 times</p></div>
+      <div class="cw"><div class="ex">Define: Action 2</div><p style="font-size:17px">turn around three times, clap 10 times</p></div>
+    </div>
+    <div class="seq mt"><span>Stand up</span><span>Action 2</span><span>Action 1</span><span>Sit down</span><span>Stand up</span><span>Action 1</span><span>Action 2</span><span>Action 1</span><span>Sit down</span></div>
+    <div class="two mt" style="gap:10px">
+      <div class="ra"><div class="ra-i reveal"><span class="ra-n">1</span><div><div class="ra-e">What did you do for Action 1? How did you know what you had to do?</div><div class="rv-hint">відповідь</div><div class="rv-body">For Action 1 I clapped 3 times, jumped twice and clapped 3 times. I knew it from the definition of Action 1.</div></div></div><div class="ra-i reveal"><span class="ra-n">2</span><div><div class="ra-e">Why was it easier to write Action 1 instead of ‘clap 3 times, jump twice, clap 3 times’ each time?</div><div class="rv-hint">відповідь</div><div class="rv-body">Because we wrote the commands only once, and then we used the name Action 1 many times.</div></div></div>
+      </div>
+      <div class="ra"><div class="ra-i reveal"><span class="ra-n">⭐⭐</span><div><div class="ra-e">How many times is Action 1 called? And Action 2?</div><div class="rv-hint">відповідь</div><div class="rv-body">Action 1 is called 3 times. Action 2 is called 2 times.</div></div></div><div class="ra-i reveal"><span class="ra-n">⭐⭐⭐</span><div><div class="ra-e">How many claps are there in the whole sequence?</div><div class="rv-hint">відповідь</div><div class="rv-body">There are 38 claps: Action 1 — 6 claps × 3 = 18, Action 2 — 10 claps × 2 = 20.</div></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── READ ALOUD 2 + WORD BANK ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">📄</div><div>
+      <span class="label lp">Read aloud · word bank</span>
+      <h2>A sub-routine is…</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.25fr 1fr;align-items:start">
+      <div class="ra"><div class="ra-i reveal"><span class="ra-n">1</span><div><div class="ra-e">A sub-routine is a set of commands that is given an identifier and can be called from anywhere in an algorithm.</div><div class="rv-hint">переклад</div><div class="rv-body">Підпрограма — набір команд, якому дали ідентифікатор і який можна викликати з будь-якого місця алгоритму.</div></div></div><div class="ra-i reveal"><span class="ra-n">2</span><div><div class="ra-e">You do not need to write the same code every time it is used.</div><div class="rv-hint">переклад</div><div class="rv-body">Не треба писати той самий код щоразу, коли він потрібен.</div></div></div><div class="ra-i reveal"><span class="ra-n">3</span><div><div class="ra-e">Each small program only has to be written once, but can be used many times within a larger program.</div><div class="rv-hint">переклад</div><div class="rv-body">Кожну маленьку програму пишуть лише раз, а використовують багато разів у більшій програмі.</div></div></div>
+      </div>
+      <div class="vg" style="grid-template-columns:1fr">
+        <div class="vp"><span class="en">a set of commands</span><span class="uk">набір команд</span></div>
+        <div class="vp"><span class="en">from anywhere</span><span class="uk">з будь-якого місця</span></div>
+        <div class="vp"><span class="en">multiple times</span><span class="uk">багато разів</span></div>
+        <div class="vp"><span class="en">self-contained</span><span class="uk">самостійний, окремий</span></div>
+        <div class="vp"><span class="en">to follow an algorithm</span><span class="uk">виконати алгоритм крок за кроком</span></div>
+        <div class="vp"><span class="en">to extend a program</span><span class="uk">розширити програму</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРАКТИКА 2: FLOWCHART ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac" style="padding:12px 18px"><div class="prac-h" style="margin-bottom:4px"><span class="badge">Practice 2 · in pairs</span><span class="t">A flowchart sub-routine</span><span class="tmr">4 хвилини</span></div><p class="prac-lead" style="margin-bottom:0">Головна блок-схема <b>викликає</b> підпрограму за її ідентифікатором. Виконайте алгоритм у парі.</p></div>
+    <div class="two mt" style="grid-template-columns:.8fr 1fr 1.25fr;display:grid;gap:14px;align-items:start">
+      <div class="fcw"><h3>the main flowchart</h3><svg class="fcs main" viewBox="0 0 300 206" role="img" aria-label="Start, CalculateCelsius(), Stop" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono, Menlo, Consolas, monospace" font-size="15"><defs><marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs><rect x="44" y="4" width="212" height="46" rx="20" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="32.2" text-anchor="middle" fill="currentColor" font-weight="700">Start</text><line x1="150.0" y1="50" x2="150.0" y2="78" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah1)"/><rect x="14" y="80" width="272" height="46" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="108.2" text-anchor="middle" fill="currentColor" font-weight="700">CalculateCelsius()</text><line x1="150.0" y1="126" x2="150.0" y2="154" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah1)"/><rect x="44" y="156" width="212" height="46" rx="20" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="184.2" text-anchor="middle" fill="currentColor" font-weight="700">Stop</text></svg></div>
+      <div class="fcw"><h3>the sub-routine</h3><svg class="fcs sub" viewBox="0 0 300 358" role="img" aria-label="CalculateCelsius(): INPUT celsius, fahrenheit = celsius * 1.8 + 32, OUTPUT fahrenheit, stop" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono, Menlo, Consolas, monospace" font-size="15"><defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs><rect x="16" y="4" width="268" height="46" rx="20" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="32.2" text-anchor="middle" fill="currentColor" font-weight="700">CalculateCelsius()</text><line x1="150.0" y1="50" x2="150.0" y2="78" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah2)"/><polygon points="30,80 286,80 270,126 14,126" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="108.2" text-anchor="middle" fill="currentColor" font-weight="700">INPUT celsius</text><line x1="150.0" y1="126" x2="150.0" y2="154" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah2)"/><rect x="14" y="156" width="272" height="46" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="175.8" text-anchor="middle" fill="currentColor" font-weight="700">fahrenheit =</text><text x="150.0" y="192.8" text-anchor="middle" fill="currentColor" font-weight="700">celsius * 1.8 + 32</text><line x1="150.0" y1="202" x2="150.0" y2="230" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah2)"/><polygon points="30,232 286,232 270,278 14,278" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="260.2" text-anchor="middle" fill="currentColor" font-weight="700">OUTPUT fahrenheit</text><line x1="150.0" y1="278" x2="150.0" y2="306" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah2)"/><rect x="44" y="308" width="212" height="46" rx="20" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="336.2" text-anchor="middle" fill="currentColor" font-weight="700">stop</text></svg></div>
+      <div class="ra"><div class="ra-i reveal"><span class="ra-n">⭐</span><div><div class="ra-e">The user enters 20. What is the output?</div><div class="rv-hint">відповідь</div><div class="rv-body">The output is 68: 20 * 1.8 + 32.</div></div></div><div class="ra-i reveal"><span class="ra-n">⭐⭐</span><div><div class="ra-e">The user enters 100. And 0?</div><div class="rv-hint">відповідь</div><div class="rv-body">100 gives 212. 0 gives 32.</div></div></div><div class="ra-i reveal"><span class="ra-n">⭐⭐⭐</span><div><div class="ra-e">Explain the steps you followed. Start with: <i>First, the main flowchart calls…</i></div><div class="rv-hint">відповідь</div><div class="rv-body">First, the main flowchart calls CalculateCelsius(). The sub-routine inputs celsius, calculates fahrenheit and outputs it. Then the main flowchart stops.</div></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПРАКТИКА 3: ІНША КОНВЕРСІЯ ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="prac" style="padding:12px 18px"><div class="prac-h" style="margin-bottom:4px"><span class="badge">Practice 3 · on paper</span><span class="t">Call another sub-routine</span><span class="tmr">4 хвилини</span></div><p class="prac-lead" style="margin-bottom:0">Ось інша підпрограма — для іншої конверсії. Намалюй <b>головну</b> блок-схему, яка її викликає.</p></div>
+    <div class="two mt" style="grid-template-columns:1fr 1.3fr;align-items:start">
+      <div class="fcw"><h3>the sub-routine</h3><svg class="fcs km" viewBox="0 0 300 358" role="img" aria-label="CalculateKilometres(): INPUT miles, kilometres = miles * 1.6, OUTPUT kilometres, stop" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono, Menlo, Consolas, monospace" font-size="15"><defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs><rect x="16" y="4" width="268" height="46" rx="20" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="32.2" text-anchor="middle" fill="currentColor" font-weight="700">CalculateKilometres()</text><line x1="150.0" y1="50" x2="150.0" y2="78" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah3)"/><polygon points="30,80 286,80 270,126 14,126" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="108.2" text-anchor="middle" fill="currentColor" font-weight="700">INPUT miles</text><line x1="150.0" y1="126" x2="150.0" y2="154" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah3)"/><rect x="14" y="156" width="272" height="46" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="175.8" text-anchor="middle" fill="currentColor" font-weight="700">kilometres =</text><text x="150.0" y="192.8" text-anchor="middle" fill="currentColor" font-weight="700">miles * 1.6</text><line x1="150.0" y1="202" x2="150.0" y2="230" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah3)"/><polygon points="30,232 286,232 270,278 14,278" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="260.2" text-anchor="middle" fill="currentColor" font-weight="700">OUTPUT kilometres</text><line x1="150.0" y1="278" x2="150.0" y2="306" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah3)"/><rect x="44" y="308" width="212" height="46" rx="20" fill="#fff" stroke="currentColor" stroke-width="2.2"/><text x="150.0" y="336.2" text-anchor="middle" fill="currentColor" font-weight="700">stop</text></svg></div>
+      <div>
+        <div class="lvl">
+          <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">Draw a flowchart that calls <span class="ic nw">CalculateKilometres()</span>: Start → … → Stop.</span></div>
+          <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">Call it <b>two</b> times. The user enters 10, then 5. What are the two outputs?</span></div>
+          <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">One main flowchart: call <span class="ic nw">CalculateCelsius()</span>, then <span class="ic nw">CalculateKilometres()</span>.</span></div>
+        </div>
+        <div class="card reveal" style="margin-top:10px;padding:12px 16px">
+          <h3>Check</h3>
+          <p class="rv-hint">Спершу листочок, потім клацни.</p>
+          <div class="rv-body"><p>⭐ Start → <span class="ic nw">CalculateKilometres()</span> → Stop · ⭐⭐ Start → <span class="ic nw">CalculateKilometres()</span> → <span class="ic nw">CalculateKilometres()</span> → Stop; outputs 16 and 8 · ⭐⭐⭐ Start → <span class="ic nw">CalculateCelsius()</span> → <span class="ic nw">CalculateKilometres()</span> → Stop.</p></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── PSEUDOCODE + ПРАКТИКА 4 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">📄</div><div>
+      <span class="label lb">Read aloud · pseudocode</span>
+      <h2>A sub-routine in pseudocode</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.25fr 1fr;align-items:start">
+      <div>
+        <div class="dp"><div class="dp-bar"><span class="dp-title">the sub-routine</span></div><div class="dp-code" style="font-size:15px;line-height:1.5;white-space:pre"><span class="k">subroutine</span> addition()
+  firstNumber = input(<span class="ss">"Enter the first number"</span>)
+  secondNumber = input(<span class="ss">"Enter the second number"</span>)
+  result = firstNumber + secondNumber
+  print(firstNumber, <span class="ss">" + "</span>, secondNumber, <span class="ss">" = "</span>, result)
+<span class="k">endsubroutine</span></div></div>
+        <div class="dp mt"><div class="dp-bar"><span class="dp-title">the program that calls it</span></div><div class="dp-code" style="font-size:15px;line-height:1.5;white-space:pre">answer = input(<span class="ss">"Do you want to add two numbers together?"</span>)
+<span class="k">if</span>(answer == <span class="ss">"yes"</span>):
+  addition()
+<span class="k">else</span>:
+  print(<span class="ss">"Program exiting"</span>)</div></div>
+      </div>
+      <div>
+        <p class="note" style="margin-bottom:8px"><b>Practice 4 · in pairs</b> — follow the program with this data. Що виведе?</p>
+        <div class="ra"><div class="ra-i reveal"><span class="ra-n">1</span><div><div class="ra-e">"yes", 2, 3</div><div class="rv-hint">відповідь</div><div class="rv-body">2 + 3 = 5</div></div></div><div class="ra-i reveal"><span class="ra-n">2</span><div><div class="ra-e">"yes", 1, 19</div><div class="rv-hint">відповідь</div><div class="rv-body">1 + 19 = 20</div></div></div><div class="ra-i reveal"><span class="ra-n">3</span><div><div class="ra-e">"no"</div><div class="rv-hint">відповідь</div><div class="rv-body">Program exiting — the sub-routine is not called.</div></div></div><div class="ra-i reveal"><span class="ra-n">⭐⭐⭐</span><div><div class="ra-e">Which line calls the sub-routine?</div><div class="rv-hint">відповідь</div><div class="rv-body">The line <span class="ic nw">addition()</span> calls it. We use its identifier.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ПРАКТИКА 5: EXTEND ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="prac" style="padding:10px 18px"><div class="prac-h" style="margin-bottom:4px"><span class="badge">Practice 5 · in pairs</span><span class="t">Extend the program</span><span class="tmr">5 хвилин</span></div><p class="prac-lead" style="margin-bottom:0">Користувач вводить, яку дію виконати, — програма <b>викликає</b> потрібну підпрограму.</p></div>
+    <div class="two mt" style="grid-template-columns:1.15fr 1fr;align-items:start">
+      <div class="dp"><div class="dp-bar"><span class="dp-title">a predefined sub-routine</span></div><div class="dp-code" style="font-size:14.5px;line-height:1.45;white-space:pre"><span class="k">subroutine</span> subtraction()
+  firstNumber = input(<span class="ss">"Enter the first number"</span>)
+  secondNumber = input(<span class="ss">"Enter the second number"</span>)
+  result = firstNumber - secondNumber
+  print(firstNumber, <span class="ss">" - "</span>, secondNumber, <span class="ss">" = "</span>, result)
+<span class="k">endsubroutine</span></div></div>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">The user enters 9, then 4. What does <span class="ic nw">subtraction()</span> output?</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">Write the program: input <span class="ic nw">"add"</span> or <span class="ic nw">"subtract"</span>, then call <span class="ic nw">addition()</span> or <span class="ic nw">subtraction()</span>.</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">Write the sub-routine <span class="ic nw">multiplication()</span> and add it to your program.</span></div>
+      </div>
+    </div>
+    <div class="card reveal" style="margin-top:10px;padding:10px 16px">
+      <h3>Check</h3>
+      <p class="rv-hint">Спершу листочок, потім клацни.</p>
+      <div class="rv-body"><div class="hs" style="grid-template-columns:.8fr 1.2fr">
+        <div class="dp"><div class="dp-code" style="white-space:pre;font-size:14px;line-height:1.45">calculation = input(<span class="ss">"add or subtract?"</span>)
+<span class="k">if</span>(calculation == <span class="ss">"add"</span>):
+  addition()
+<span class="k">elif</span>(calculation == <span class="ss">"subtract"</span>):
+  subtraction()
+<span class="k">else</span>:
+  print(<span class="ss">"Program exiting"</span>)</div></div>
+        <div class="dp"><div class="dp-code" style="white-space:pre;font-size:13.5px;line-height:1.45"><span class="k">subroutine</span> multiplication()
+  firstNumber = input(<span class="ss">"Enter the first number"</span>)
+  secondNumber = input(<span class="ss">"Enter the second number"</span>)
+  result = firstNumber * secondNumber
+  print(firstNumber, <span class="ss">" * "</span>, secondNumber, <span class="ss">" = "</span>, result)
+<span class="k">endsubroutine</span></div></div>
+      </div>
+      <p class="note mt">⭐ 9 - 4 = 5</p></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── DISCUSSION ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">💬</div><div>
+      <span class="label lp">Discussion · answer in English</span>
+      <h2>How do you call a sub-routine?</h2>
+    </div></div>
+    <p class="note">Відповідай повним реченням. Клацни — зразок відповіді.</p>
+    <div class="ra mt"><div class="ra-i reveal"><span class="ra-n">1</span><div><div class="ra-e">What is a sub-routine?</div><div class="rv-hint">зразок</div><div class="rv-body">A sub-routine is a section of code with a name that can be called from another program.</div></div></div><div class="ra-i reveal"><span class="ra-n">2</span><div><div class="ra-e">How do you call a sub-routine in a flowchart or pseudocode?</div><div class="rv-hint">зразок</div><div class="rv-body">You call a sub-routine by its identifier.</div></div></div><div class="ra-i reveal"><span class="ra-n">3</span><div><div class="ra-e">Why do we use sub-routines?</div><div class="rv-hint">зразок</div><div class="rv-body">We use sub-routines because we do not need to write the same code every time it is used.</div></div></div><div class="ra-i reveal"><span class="ra-n">⭐</span><div><div class="ra-e">How many times can you call one sub-routine?</div><div class="rv-hint">зразок</div><div class="rv-body">You can call one sub-routine multiple times, from anywhere in an algorithm.</div></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── СЛОВНИК ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">📖</div><div>
+      <span class="label lp">Key vocabulary</span>
+      <h2>Дванадцять слів цього уроку</h2>
+    </div></div>
+    <div class="vg4" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="vp"><span class="en">sub-routine</span><span class="uk">підпрограма</span></div>
+      <div class="vp"><span class="en">predefined</span><span class="uk">готовий, заздалегідь написаний</span></div>
+      <div class="vp"><span class="en">identifier</span><span class="uk">ідентифікатор, імʼя</span></div>
+      <div class="vp"><span class="en">to call</span><span class="uk">викликати</span></div>
+      <div class="vp"><span class="en">self-contained</span><span class="uk">самостійний</span></div>
+      <div class="vp"><span class="en">a set of commands</span><span class="uk">набір команд</span></div>
+      <div class="vp"><span class="en">from anywhere</span><span class="uk">з будь-якого місця</span></div>
+      <div class="vp"><span class="en">multiple times</span><span class="uk">багато разів</span></div>
+      <div class="vp"><span class="en">to follow an algorithm</span><span class="uk">виконати алгоритм</span></div>
+      <div class="vp"><span class="en">to extend a program</span><span class="uk">розширити програму</span></div>
+      <div class="vp"><span class="en">flowchart</span><span class="uk">блок-схема</span></div>
+      <div class="vp"><span class="en">pseudocode</span><span class="uk">псевдокод</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── I CAN ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">☑️</div><div>
+      <span class="label lr">I can…</span>
+      <h2>Чек-лист уроку</h2>
+    </div></div>
+    <div class="can">
+      <div class="can-i"><div class="can-b"></div><div>I can say what a <span class="en">sub-routine</span> is — in a full sentence.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can follow a flowchart that <span class="en">calls</span> a sub-routine by its <span class="en">identifier</span>.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can draw a flowchart that calls a <span class="en">predefined</span> sub-routine.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can follow pseudocode with <span class="ic nw">subroutine … endsubroutine</span> and say the output.</div></div>
+      <div class="can-i"><div class="can-b"></div><div>I can explain why sub-routines are used <span class="en">multiple times</span>.</div></div>
+    </div>
+    <p class="center mt" style="color:var(--faint);font-size:16px">Урок 15 · 10 грудня · Compiler and interpreter</p>
+  </div></section>
+
+  <!-- ══════════ 16 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lo">Homework</span>
+      <h2>Домашнє завдання</h2>
+    </div></div>
+    <div class="hbox hm">Відповіді — <strong>повідомленням на платформі</strong> до <strong>10 грудня</strong>.</div>
+    <div class="steps mt">
+      <div class="step"><span class="step-n">1</span>
+        <span class="step-t">Дай відповідь <b>повним реченням</b> англійською: <span class="en">What is a sub-routine?</span></span></div>
+      <div class="step"><span class="step-n">2</span>
+        <span class="step-t">Підпрограма <span class="ic nw">subtraction()</span> з уроку. Користувач вводить <b>10</b>, потім <b>4</b>. Що вона виведе?</span></div>
+      <div class="step"><span class="step-n">3</span>
+        <span class="step-t">За зразком <span class="ic nw">subtraction()</span> напиши в псевдокоді підпрограму <span class="ic nw">multiplication()</span> — 5 рядків.</span></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

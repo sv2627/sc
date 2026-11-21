@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Список + стан. Практична № 4 · Мобільна розробка Flutter · 10 клас · Урок 23</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Мобільна розробка Flutter (Flutter I + II за рік)
+  Клас          10
+  Школа         A+ · четвер 14:20, к. 309
+  Урок          23 з 68 · 03.12.2026
+  Тема          Список + стан. Практична № 4
+  Тривалість    45 хв — повторення 3 хв + сьогодні, додати рядок,
+                родина List, кошик і лічильник, передбач 12 хв
+                + практика 1 8 хв + список обʼєктів 2 хв
+                + Практична № 4 18 хв + ДЗ 2 хв
+  Акцент        blue (#0253b3)
+  Слайдів       16
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. DartPad АБО first_app у VS Code — код однаковий.
+     Практика 1 — з нуля (екран зі станом, як на уроках 20–21).
+  ПЛАН          Додавання з TextField через setState, видалення,
+                лічильник в AppBar. Оцінка — ПРАКТИЧНА № 4 (критерії —
+                у конспекті, не на слайдах). Тесту в цьому уроці немає:
+                тест II чверті був 02.12 (урок 22).
+  Місток        Слайд 2 — повторення уроку 22 (ListView). Далі: урок 24
+                (ср 09.12) — картинки й assets.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ФОРМАТ «ПРИКЛАД → ТЕПЕР САМОСТІЙНО» — слайд 8; практична — 10–11.
+     ⛔ НЕ РІЗАТИ слайди 4, 6, 8, 10.
+     ЯКЩО НЕ ВСТИГАЄТЕ — родина List (5), передбач (7) — усно;
+     слайд 9 (обʼєкти) — лише тим, хто йде на ⭐⭐⭐.
+  ✅ КОД ПЕРЕВІРЕНО у Docker (Flutter 3.44 · Dart 3.12):
+     flutter analyze — 0 зауважень для всіх блоків kod.html і
+     розвʼязку ДЗ; widget-тести на 800×600 і 420×640 — без
+     переповнення, додавання, порожнє не додається, видалення,
+     галочка, лічильники Shopping / Tasks / Movies. Таблиця слайда 5 —
+     dart run. Тексти помилок слайдів 7, 12 — з тесту й аналізатора
+     (поле в Row — урок 21).
+  ────────────────────────────────────────────────────────────────
+  Код           kod.html — ДЗ, практика 1, зразок практичної ⭐–⭐⭐⭐
+  ДЗ            dz.html — «Список фільмів», до 09.12, Google Classroom
+  Аркуш         rozdatka.html — 1 сторінка A4, для сховища
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: акцент курсу — синій із палітри. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#eef1f8; --border:#dcdfe9;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(2,83,179,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lr{background:#fae7e8;color:var(--rose)}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(2,83,179,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#f9fbfd;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:14px 19px;font-family:var(--f-mono);
+        font-size:16px;border-top:1.5px solid var(--border);white-space:pre-wrap}
+.dp-out .lbl{font-family:var(--f-body);font-size:13px;color:var(--faint);
+             text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:6px}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #f9fbfd */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#6b6a72;font-style:italic}/* коментар */
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--blue);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid #b9c8e6;border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--blue);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--blue)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+.uk{color:var(--dim)}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--blue);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .dp-out{font-size:14.5px;padding:11px 15px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .demo,.solo{padding:10px 13px}
+  .demo .dp-code,.solo .dp-code{font-size:14.5px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .bank{gap:8px} .bk{padding:9px 12px;font-size:15px}
+  .refg{gap:6px} .rf{padding:6px 9px}
+  .rf .rt{font-size:13px;flex-basis:110px} .rf .rc{font-size:13px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+.demo .dp-code{border:1px solid var(--border);border-radius:9px;padding:11px 14px;
+  font-size:16px;line-height:1.65}
+
+/* довідник конструкцій — слайд 18 */
+.refg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rf{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+    padding:8px 12px;display:flex;align-items:baseline;gap:10px}
+.rf .rt{font-size:14.5px;color:var(--dim);flex:0 0 128px;line-height:1.3}
+.rf .rc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--brand);
+        line-height:1.35;flex:1}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4 ─── */
+.rv-body .mono{font-family:var(--f-mono);white-space:pre-wrap}
+.hbox.hp{border-color:var(--plum)}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10 (повторення) ─── */
+/* код у рядку не розривається між рядками */
+.en{white-space:nowrap}
+/* текст помилки — це речення, а не код: переноситься, щоб не розпирати картку */
+.en.err{white-space:normal}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10 (лічильник) ─── */
+.vid{position:relative;width:100%;max-width:min(1000px,calc((100vh - 270px) * 16 / 9));margin:0 auto;
+     aspect-ratio:16/9;border-radius:13px;overflow:hidden;border:1.5px solid var(--border);background:#000}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.dp-code.tree{line-height:1.5}
+.demo .dp-code{font-family:var(--f-mono)}
+.dp.small .dp-code{font-size:14px;line-height:1.42;padding:11px 16px}
+@media print{ .vid{display:none !important} }
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 12 ─── */
+.solo li{margin-bottom:3px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 13 ─── */
+.dp.tight .dp-code{font-size:13.5px;line-height:1.36;padding:9px 15px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 19 ─── */
+/* міні-картки на слайді — як на екрані застосунку */
+.gcs{display:flex;flex-direction:column;gap:8px}
+.gc{width:300px;background:#fff;border:2px solid var(--blue);border-radius:14px;padding:10px 14px;
+    display:flex;align-items:center;gap:12px;font-family:var(--f-body)}
+.gc .mi{font-size:30px;line-height:1}
+.gc .t1{font-weight:800;font-size:17px;color:var(--ink);line-height:1.2}
+.gc .t2{font-size:13.5px;color:var(--dim)}
+.gc .t3{font-size:14px;font-weight:700;color:var(--ink)}
+.gc .nw{background:var(--rose);color:#fff;font-size:11px;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:6px;vertical-align:2px}
+@media (max-height:800px){ .gc{padding:8px 12px} .gc .mi{font-size:26px} .gcs{gap:6px} }
+
+/* ─── ПОКРОКОВІ АНІМАЦІЇ УРОКУ 19 ───
+   У розмітці записаний КІНЦЕВИЙ стан, тому друк і PDF не змінюються.
+   .anim[data-max] — кількість кроків · data-from — з якого кроку діє вигляд
+   data-cue — на яких кроках підсвічено · data-k — звідки й куди летить значення
+   Нових кольорів немає: фон підсвітки — як у .lo, мітка — як у .lb */
+.actl,.amark,.only{display:none}
+.anim.armed .actl{display:flex;align-items:center;gap:10px;margin-top:10px;min-height:56px}
+.abtn{min-width:0;min-height:48px;padding:8px 16px;font-size:16px;white-space:nowrap;flex-shrink:0}
+.abtn:disabled{color:var(--dim);cursor:default}
+.acaps{flex:1;font-size:16.5px;line-height:1.35;font-weight:600;color:var(--ink)}
+.acaps::before{content:attr(data-step);display:block;font-family:var(--f-mono);font-size:13px;
+  font-weight:700;color:var(--accent)}
+.acap{display:none}
+.acap.now{display:block}
+.only.now{display:inline}
+.anim.armed .amark{display:inline-block}
+.amark{font-family:var(--f-mono);font-size:13px;font-weight:700;font-style:normal;
+       padding:1px 6px;border-radius:5px;margin-left:8px;white-space:nowrap}
+.amark.y{background:var(--sky);color:var(--blue)}
+.anim [data-from],.anim [data-bgfrom]{transition:color .35s,background-color .35s,font-size .35s}
+.cue.now{outline:2px solid var(--orange);animation:acue 1s ease-out}
+.cue.now:not(.blk){background:#fdf0d9;border-radius:4px}
+tr.cue.now td{background:#fdf0d9}
+@keyframes acue{0%{outline-offset:6px}100%{outline-offset:0}}
+@media screen{
+  .anim.armed .pre.amark,.pre.fx-gone{display:none}
+  .pre.fx-hide{visibility:hidden}
+  .prebg{background:transparent !important}
+}
+/* летючі значення: число чи текст вилітає з блоку й падає в гніздо */
+.flyer{position:absolute;left:0;top:0;z-index:4;pointer-events:none;display:inline-flex;align-items:center;gap:7px;
+       background:var(--surface);color:var(--ink);border:2.5px solid var(--c);border-radius:20px;padding:4px 12px;
+       font-family:var(--f-mono);font-size:17px;font-weight:700;white-space:nowrap;box-shadow:0 6px 16px rgba(2,83,179,.25)}
+.flyer i{width:14px;height:14px;border-radius:50%;background:var(--c);border:1px solid var(--dim)}
+.flyer.drop{padding:0;width:11px;height:11px;border-radius:50%;background:var(--c);border:1px solid var(--dim);box-shadow:none}
+@media print{.flyer{display:none !important}}
+@media (prefers-reduced-motion:reduce){
+  .cue.now{animation:none}
+  .anim [data-from],.anim [data-bgfrom]{transition:none}
+}
+@media print{
+  .actl,.amark,.only{display:none !important}
+  .cue.now{background:none !important;outline:0 !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 22 ─── */
+/* рядки списку на слайді — як ListTile у Card на екрані застосунку */
+.lt-list{display:flex;flex-direction:column;gap:6px;width:100%;max-width:380px}
+.lt{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:8px 12px;
+    display:flex;align-items:center;gap:12px;font-family:var(--f-body);box-shadow:0 1px 3px rgba(2,83,179,.08)}
+.lt .av{width:34px;height:34px;border-radius:50%;background:var(--sky);color:var(--blue);font-weight:800;
+        display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.lt .tt{flex:1;min-width:0}
+.lt .t1{font-weight:700;font-size:16px;color:var(--ink);line-height:1.2}
+.lt .t2{font-size:13.5px;color:var(--dim)}
+.lt .tr{font-weight:800;font-size:14.5px;color:var(--ink);white-space:nowrap}
+.lt.sel{background:var(--sky);border-color:var(--blue)}
+.lt .tag{font-family:var(--f-mono);font-size:11.5px;font-weight:700;color:var(--blue);background:var(--surf2);
+         border:1px solid var(--border);border-radius:5px;padding:0 5px;margin-left:6px;white-space:nowrap}
+/* смуга переповнення — як у Flutter: жовто-чорна */
+.ovf{height:18px;border-radius:0 0 10px 10px;background:repeating-linear-gradient(135deg,var(--orange) 0 10px,#2e2f2b 10px 20px)}
+.ovf-cap{font-family:var(--f-mono);font-size:13px;font-weight:700;color:var(--rose);margin-top:6px}
+@media (max-height:800px){ .lt{padding:6px 10px} .lt .av{width:28px;height:28px;font-size:13px} .lt-list{gap:4px}
+  .lt .t1{font-size:14.5px} .lt .t2{font-size:12.5px} }
+@media print{ .ovf{-webkit-print-color-adjust:exact;print-color-adjust:exact} }
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Список + стан. Практична № 4</h1>
+      <p class="title-sub">Користувач сам додає й видаляє рядки, а шапка рахує, скільки їх<br>Мобільна розробка Flutter · 10 клас · Урок 23 з 68 · 3 грудня</p>
+      <div class="chips">
+        <span class="chip">повторення</span>
+        <span class="chip">список — поле стану</span>
+        <span class="chip">add · removeAt</span>
+        <span class="chip">лічильник в AppBar</span>
+        <span class="chip">List&lt;Task&gt;</span>
+        <span class="chip">Практична № 4</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lb">Повторення · 3 хв</span>
+      <h2>Урок 22: три питання</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · Скільки рядків</h3>
+  <p>Від чого залежить, скільки рядків побудує <span class="en">ListView.builder</span>?</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p>Від <span class="en">itemCount</span>. Тому пишемо <span class="en">itemCount: games.length</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · Частини ListTile</h3>
+  <p>Де в <span class="en">ListTile</span> ціна праворуч, а де жанр під назвою?</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p>Ціна — <span class="en">trailing</span>, жанр — <span class="en">subtitle</span>, назва — <span class="en">title</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · Список під полем</h3>
+  <p><span class="en">Column</span>: зверху поле, під ним <span class="en">ListView</span>. Що не забути?</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p><span class="en">Expanded(child: ListView.builder(…))</span> — інакше <span class="en err">Vertical viewport was given unbounded height.</span></p></div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lb">Сьогодні</span>
+      <h2>Список, що змінюється</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.2fr;align-items:center">
+      <div class="lt-list">
+        <div class="lt sel"><div class="tt"><div class="t1">Shopping: 3</div></div></div>
+        <div class="lt"><div class="tt"><div class="t2">Item · <b style="color:var(--ink)">Eggs</b></div></div><div class="tr">Add</div></div>
+        <div class="lt"><div class="av">🛒</div><div class="tt"><div class="t1">Milk</div></div><div class="tr">🗑</div></div>
+        <div class="lt"><div class="av">🛒</div><div class="tt"><div class="t1">Bread</div></div><div class="tr">🗑</div></div>
+        <div class="lt"><div class="av">🛒</div><div class="tt"><div class="t1">Eggs</div></div><div class="tr">🗑</div></div>
+      </div>
+      <table class="tb">
+        <tr><th>Що</th><th>Як</th></tr>
+        <tr><td>список — поле стану</td><td class="mono">final List&lt;String&gt; _items = […];</td></tr>
+        <tr><td>додати</td><td class="mono">setState(() { _items.add(text); });</td></tr>
+        <tr><td>видалити рядок</td><td class="mono">setState(() { _items.removeAt(i); });</td></tr>
+        <tr><td>лічильник у шапці</td><td class="mono">Text('Shopping: ${_items.length}')</td></tr>
+      </table>
+    </div>
+    <div class="hbox hm mt">Усе з попередніх уроків: поле вводу (21), <span class="en">setState</span> (20), <span class="en">ListView.builder</span> (22). Сьогодні складаємо разом — і це Практична № 4</div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">➕</div><div>
+      <span class="label lm">Головне сьогодні</span>
+      <h2>Додати рядок</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+<div class="dp small">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">у класі стану екрана</span></div>
+<div class="dp-code"><span class="sk">final</span> <span class="sk">TextEditingController</span> _item = <span class="sk">TextEditingController</span>();
+<span class="sk">final</span> <span class="sk">List</span>&lt;<span class="sk">String</span>&gt; _items = [<span class="ss">'Milk'</span>, <span class="ss">'Bread'</span>];
+
+<span class="sk">void</span> <span class="sf">_add</span>() {
+  <span class="sk">String</span> text = _item.text.<span class="sf">trim</span>();
+  <span class="sk">if</span> (text.isEmpty) <span class="sk">return</span>;   <span class="cm">// порожнє не додаємо</span>
+  <span class="sf">setState</span>(() {
+    _items.<span class="sf">add</span>(text);
+  });
+  _item.<span class="sf">clear</span>();               <span class="cm">// поле знову порожнє</span>
+}
+
+<span class="cm">// у build:</span>
+<span class="sk">ListView</span>.<span class="sf">builder</span>(itemCount: _items.length, …)</div>
+</div>
+      <table class="tb">
+        <tr><th>Крок</th><th>Що відбувається</th></tr>
+        <tr><td>1</td><td>кнопка <span class="en">Add</span> викликає <span class="en">_add</span></td></tr>
+        <tr><td>2</td><td>беремо текст поля, пробіли по краях — геть</td></tr>
+        <tr><td>3</td><td><span class="en">setState</span>: у списку стало на один рядок більше</td></tr>
+        <tr><td>4</td><td><span class="en">build</span> знову: <span class="en">_items.length</span> уже 3 — і в списку, і в шапці</td></tr>
+      </table>
+    </div>
+    <div class="hbox ho mt">Список, який змінюється, — <b>без</b> <span class="en">const</span>. <span class="en">final</span> можна: змінна та сама, змінюється вміст</div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🧬</div><div>
+      <span class="label lm">Уся родина</span>
+      <h2>Що вміє List</h2>
+    </div></div>
+
+    <p class="note" style="margin-bottom:8px">Стартовий список: <span class="en">['Milk', 'Bread', 'Eggs']</span>. Кожен рядок — продовження попереднього</p>
+    <table class="tb">
+      <tr><th>Код</th><th>Що робить</th><th>Список після</th></tr>
+      <tr><td class="mono">a.add('Tea')</td><td>у кінець</td><td class="mono">[Milk, Bread, Eggs, Tea]</td></tr>
+      <tr><td class="mono">a.removeAt(0)</td><td>геть за номером</td><td class="mono">[Bread, Eggs, Tea]</td></tr>
+      <tr><td class="mono">a.insert(0, 'Jam')</td><td>на початок (на місце 0)</td><td class="mono">[Jam, Bread, Eggs, Tea]</td></tr>
+      <tr><td class="mono">a.remove('Eggs')</td><td>геть за значенням</td><td class="mono">[Jam, Bread, Tea]</td></tr>
+      <tr><td class="mono">a.length · a.contains('Tea')</td><td>скільки · чи є</td><td class="mono">3 · true</td></tr>
+      <tr><td class="mono">a.isEmpty · a.clear()</td><td>порожній? · усе геть</td><td class="mono">false · []</td></tr>
+    </table>
+    <div class="hbox hm mt">У списку на екрані зручніше <span class="en">removeAt(i)</span>: номер рядка <span class="en">i</span> дає сам <span class="en">itemBuilder</span></div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🗑️</div><div>
+      <span class="label lm">Видалити і порахувати</span>
+      <h2>Кошик у рядку, число в шапці</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+<div class="dp small">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">у build</span></div>
+<div class="dp-code">appBar: <span class="sk">AppBar</span>(title: <span class="sk">Text</span>(<span class="ss">'Shopping: ${_items.length}'</span>)),
+…
+itemBuilder: (<span class="sk">BuildContext</span> context, <span class="sk">int</span> i) {
+  <span class="sk">return</span> <span class="sk">ListTile</span>(
+    title: <span class="sk">Text</span>(_items[i]),
+    trailing: <span class="sk">IconButton</span>(
+      icon: <span class="sk">const</span> <span class="sk">Icon</span>(<span class="sk">Icons</span>.delete),
+      onPressed: () {
+        <span class="sf">setState</span>(() {
+          _items.<span class="sf">removeAt</span>(i);
+        });
+      },
+    ),
+  );
+},</div>
+</div>
+      <div>
+        <div class="steps" style="gap:9px">
+          <div class="step"><span class="step-n">1</span><span class="step-t">Кожен рядок має свій кошик — і свій номер <span class="en">i</span></span></div>
+          <div class="step"><span class="step-n">2</span><span class="step-t">Натиснули кошик у рядку 1 — <span class="en">removeAt(1)</span> прибрав саме його</span></div>
+          <div class="step"><span class="step-n">3</span><span class="step-t"><span class="en">setState</span> — і список, і шапка перемалювались: <span class="en">Shopping: 2</span></span></div>
+        </div>
+        <div class="hbox ho mt"><span class="en">onPressed</span> — функція <span class="en">() { … }</span>, бо треба передати <span class="en">i</span>. Просто <span class="en">_items.removeAt(i)</span> — це виклик зараз, а не «потім»</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🔮</div><div>
+      <span class="label lb">Передбач</span>
+      <h2>Що станеться?</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · const-список</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:14.5px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">final List&lt;String&gt; _items =
+    const ['Milk'];
+// натиснули Add:
+_items.add('Bread');</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p>Червоний екран: <span class="en err">Unsupported operation: Cannot add to an unmodifiable list</span>. <span class="en">const</span>-список змінювати не можна</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · Без setState</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:14.5px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">// у шапці: Items: 1
+onPressed: () {
+  _items.add('Bread');
+},</p>
+  <p>Що в шапці після натискання?</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p>Досі <span class="en">Items: 1</span> і рядка <span class="en">Bread</span> не видно. У списку вже два, але <span class="en">build</span> не викликався</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · Який рядок зник</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:14.5px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">// ['Milk', 'Bread', 'Eggs']
+_items.removeAt(1);</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p>Зник <span class="en">Bread</span>: номери з 0. Лишилось <span class="en">['Milk', 'Eggs']</span></p></div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Практика 1 · 8 хв</span>
+      <h2>Приклад — і самостійно: список покупок</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.12fr 1fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · учитель на дошці</span>
+<div class="dp-code"><span class="cm">// build: Column — у ньому два діти</span>
+<span class="sk">Row</span>(children: [
+  <span class="sk">Expanded</span>(child: <span class="sk">TextField</span>(controller: _item)),
+  <span class="sk">ElevatedButton</span>(onPressed: _add,
+      child: <span class="sk">const</span> <span class="sk">Text</span>(<span class="ss">'Add'</span>)),
+]),
+<span class="sk">Expanded</span>(
+  child: <span class="sk">ListView</span>.<span class="sf">builder</span>(
+    itemCount: _items.length,
+    itemBuilder: (context, i) =&gt;
+        <span class="sk">ListTile</span>(title: <span class="sk">Text</span>(_items[i])),
+  ),
+),</div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Старт — порожній проєкт: у DartPad приклад Counter, у VS Code — <span class="en">first_app</span></li>
+          <li>Екран <span class="en">ShoppingScreen extends StatefulWidget</span>: поле <span class="en">Item</span>, кнопка <span class="en">Add</span>, під ними список</li>
+          <li>Метод <span class="en">_add</span> — як на слайді 4; не забудь <span class="en">dispose</span> для контролера</li>
+          <li>⭐⭐ У шапці — <span class="en">Shopping: 3</span>, число міняється саме</li>
+          <li>⭐⭐⭐ Кошик праворуч у кожному рядку — <span class="en">removeAt(i)</span></li>
+        </ul>
+        <p class="note" style="margin-top:6px">Готовий код — <a href="https://sv2627.github.io/sc/aplus/10-flutter/u23/kod.html" target="_blank" rel="noopener" style="text-decoration:underline"><span class="en">sv2627.github.io/sc/aplus/10-flutter/u23/kod.html</span></a></p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🧱</div><div>
+      <span class="label lm">Для ⭐⭐⭐</span>
+      <h2>Список обʼєктів: завдання з галочкою</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.15fr 1fr">
+<div class="dp small">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">сутність → class</span></div>
+<div class="dp-code"><span class="sk">class</span> <span class="sk">Task</span> {
+  <span class="sk">final</span> <span class="sk">String</span> title;
+  <span class="sk">bool</span> done;   <span class="cm">// міняє галочка — не final</span>
+  <span class="sk">Task</span>(<span class="sk">this</span>.title, {<span class="sk">this</span>.done = <span class="sk">false</span>});
+}
+<span class="sk">final</span> <span class="sk">List</span>&lt;<span class="sk">Task</span>&gt; _tasks = [<span class="sk">Task</span>(<span class="ss">'Read chapter 3'</span>)];
+
+<span class="cm">// у рядку списку:</span>
+leading: <span class="sk">Checkbox</span>(
+  value: t.done,
+  onChanged: (<span class="sk">bool</span>? v) {
+    <span class="sf">setState</span>(() { t.done = v ?? <span class="sk">false</span>; });
+  },
+),</div>
+</div>
+      <div>
+        <table class="tb">
+          <tr><th>Що</th><th>Як</th></tr>
+          <tr><td>додати</td><td class="mono">_tasks.add(Task(text))</td></tr>
+          <tr><td>рядок</td><td class="mono">Task t = _tasks[i];</td></tr>
+          <tr><td>закреслити</td><td class="mono">decoration: t.done ? TextDecoration.lineThrough : null</td></tr>
+          <tr><td>скільки зроблено</td><td>цикл <span class="en">for</span>: <span class="en">if (t.done) n++;</span></td></tr>
+          <tr><td>у шапці</td><td class="mono">'Tasks: $done / ${_tasks.length}'</td></tr>
+        </table>
+        <div class="hbox hm mt">Завдання має назву і стан — це сутність, тому <span class="en">class</span>, а не <span class="en">Map</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🛠️</div><div>
+      <span class="label lo">Практична № 4 · 18 хв</span>
+      <h2>Список із додаванням</h2>
+    </div></div>
+
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Самостійно</span><span class="t">Свій список: завдання, покупки, фільми, книжки — на вибір</span></div>
+      <p class="prac-lead">Новий екран зі станом. Першим рядком — коментар із прізвищем і рівнем</p>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span><span class="lv-t"><span class="en">ListView.builder</span> зі списку-поля стану, 2–3 рядки на старті. Кнопка <span class="en">Add</span> додає рядок <span class="en">New item</span> через <span class="en">setState</span> — список росте</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t"><span class="en">TextField</span> + <span class="en">Add</span>: додається введений текст, поле чиститься, порожнє не додається. Кошик праворуч видаляє свій рядок</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">Список обʼєктів <span class="en">List&lt;Task&gt;</span> з <span class="en">Checkbox</span> у кожному рядку, зроблене закреслено. У шапці <span class="en">Tasks: 1 / 3</span>. Порожній список — напис <span class="en">No tasks yet</span></span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lo">Практична № 4</span>
+      <h2>Що має працювати</h2>
+    </div></div>
+
+    <div class="can">
+      <div class="can-i"><span class="can-b"></span><span>Запускається без червоних помилок і без жовто-чорних смуг</span></div>
+      <div class="can-i"><span class="can-b"></span><span>Натиснув <span class="en">Add</span> — у списку новий рядок; рядків багато — список гортається</span></div>
+      <div class="can-i"><span class="can-b"></span><span>⭐⭐ Порожнє поле або самі пробіли — рядок <b>не</b> додається; після додавання поле порожнє</span></div>
+      <div class="can-i"><span class="can-b"></span><span>⭐⭐ Кошик видаляє саме той рядок, у якому натиснули</span></div>
+      <div class="can-i"><span class="can-b"></span><span>⭐⭐⭐ Галочка закреслює; число в шапці міняється від галочки, додавання й видалення</span></div>
+      <div class="can-i"><span class="can-b"></span><span>Покажи вчителю на екрані. Код — у Google Classroom 10 класу, першим рядком <span class="en">// Прізвище · рівень ⭐⭐</span></span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🔨</div><div>
+      <span class="label lo">Перевір себе · зламай і полагодь</span>
+      <h2>Що скаже редактор?</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · Без функції</h3>
+  <p><span class="en">onPressed: _items.removeAt(i),</span></p>
+  <p class="rv-hint">Що буде?</p>
+  <div class="rv-body"><p>Помилка: <span class="en err">The argument type 'String' can't be assigned to the parameter type 'VoidCallback?'.</span> Обгорни: <span class="en">() { setState(() { _items.removeAt(i); }); }</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · Поле в Row</h3>
+  <p><span class="en">Row(children: [TextField(…), ElevatedButton(…)])</span></p>
+  <p class="rv-hint">Що буде?</p>
+  <div class="rv-body"><p>Червоний екран: <span class="en err">An InputDecorator, which is typically created by a TextField, cannot have an unbounded width.</span> Поле — в <span class="en">Expanded</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · Список у Column</h3>
+  <p><span class="en">Column(children: [Row(…), ListView.builder(…)])</span></p>
+  <p class="rv-hint">Що буде?</p>
+  <div class="rv-body"><p>Червоний екран: <span class="en err">Vertical viewport was given unbounded height.</span> Список — в <span class="en">Expanded</span></p></div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lp">Тримати відкритим</span>
+      <h2>Довідник уроку</h2>
+    </div></div>
+
+    <div class="refg">
+      <div class="rf"><span class="rt">список-стан</span><span class="rc">final List&lt;String&gt; _items = ['Milk'];</span></div>
+      <div class="rf"><span class="rt">додати</span><span class="rc">setState(() { _items.add(text); });</span></div>
+      <div class="rf"><span class="rt">видалити</span><span class="rc">setState(() { _items.removeAt(i); });</span></div>
+      <div class="rf"><span class="rt">порожнє — ні</span><span class="rc">if (text.isEmpty) return;</span></div>
+      <div class="rf"><span class="rt">почистити поле</span><span class="rc">_item.clear();</span></div>
+      <div class="rf"><span class="rt">у шапці</span><span class="rc">AppBar(title: Text('Items: ${_items.length}'))</span></div>
+      <div class="rf"><span class="rt">поле + кнопка</span><span class="rc">Row(children: [Expanded(child: TextField(…)), ElevatedButton(…)])</span></div>
+      <div class="rf"><span class="rt">список під ними</span><span class="rc">Expanded(child: ListView.builder(…))</span></div>
+      <div class="rf"><span class="rt">кошик</span><span class="rc">trailing: IconButton(icon: const Icon(Icons.delete), onPressed: () { … })</span></div>
+      <div class="rf"><span class="rt">сутність</span><span class="rc">class Task { final String title; bool done; }</span></div>
+      <div class="rf"><span class="rt">галочка</span><span class="rc">Checkbox(value: t.done, onChanged: (bool? v) { … })</span></div>
+      <div class="rf"><span class="rt">порожній список</span><span class="rc">if (_tasks.isEmpty) const Text('No tasks yet'),</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🏦</div><div>
+      <span class="label lp">Банк завдань · для тих, хто закінчив</span>
+      <h2>Ще вісім доробок</h2>
+    </div></div>
+
+    <div class="bank">
+      <div class="bk"><b>1.</b> Нове — нагору: <span class="en">_items.insert(0, text)</span> замість <span class="en">add</span></div>
+      <div class="bk"><b>2.</b> Додавати й клавішею Enter: у <span class="en">TextField</span> — <span class="en">onSubmitted: (String v) =&gt; _add()</span></div>
+      <div class="bk"><b>3.</b> Без повторів: <span class="en">if (_items.contains(text)) return;</span> і червоне <span class="en">Already in the list</span></div>
+      <div class="bk"><b>4.</b> Кнопка <span class="en">Clear all</span> у шапці: <span class="en">actions: [IconButton(…)]</span>, усередині <span class="en">_items.clear()</span></div>
+      <div class="bk"><b>5.</b> Номер у колі ліворуч: <span class="en">CircleAvatar(child: Text('${i + 1}'))</span> — після видалення номери самі зсуваються</div>
+      <div class="bk"><b>6.</b> Кнопка <span class="en">Add</span> сіра, поки поле порожнє: <span class="en">onChanged</span> поля + <span class="en">null</span> за умовою (урок 21)</div>
+      <div class="bk"><b>7.</b> Зроблені — вниз: після галочки <span class="en">_tasks.remove(t); _tasks.add(t);</span></div>
+      <div class="bk"><b>8.</b> Кнопка <span class="en">Delete done</span>: прибрати всі зроблені — <span class="en">_tasks.removeWhere((t) =&gt; t.done)</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">⚠️</div><div>
+      <span class="label lo">Пастки</span>
+      <h2>Найчастіші проблеми</h2>
+    </div></div>
+
+    <div class="steps" style="gap:9px">
+      <div class="step"><span class="step-n">1</span><span class="step-t"><b>Додав — а на екрані нічого</b> — <span class="en">add</span> без <span class="en">setState</span></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t"><b><span class="en err">Cannot add to an unmodifiable list</span></b> — список оголошено з <span class="en">const</span></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t"><b>Список створено в <span class="en">build</span></b> — після кожного <span class="en">setState</span> він знову стартовий. Список — поле стану</span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t"><b>Видаляється не той рядок</b> — <span class="en">removeAt(0)</span> замість <span class="en">removeAt(i)</span></span></div>
+      <div class="step"><span class="step-n">5</span><span class="step-t"><b>Червоний екран про <span class="en">unbounded</span></b> — <span class="en">TextField</span> у <span class="en">Row</span> чи <span class="en">ListView</span> у <span class="en">Column</span> без <span class="en">Expanded</span></span></div>
+      <div class="step"><span class="step-n">6</span><span class="step-t"><b>Галочка не ставиться</b> — <span class="en">done</span> оголошено <span class="en">final</span> або в <span class="en">onChanged</span> немає <span class="en">setState</span></span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>Список фільмів</h2>
+    </div></div>
+
+    <div class="hbox hm" style="margin-top:0">У <strong>DartPad</strong> — вдома Flutter SDK не потрібен. Стартовий код — <a href="https://sv2627.github.io/sc/aplus/10-flutter/u23/kod.html" target="_blank" rel="noopener" style="text-decoration:underline"><strong>sv2627.github.io/sc/aplus/10-flutter/u23/kod.html</strong></a>, перший блок: скопіюй, встав, Run.
+      Код — у <strong>Google Classroom</strong> до <strong>9 грудня</strong>, першим рядком — коментар із прізвищем.</div>
+    <div class="steps mt" style="gap:10px">
+      <div class="step"><span class="step-n">1</span><span class="step-t">
+        У шапці замість <span class="en">Movies</span> — <span class="en">Movies: 2</span>: число фільмів у списку, <span class="en">_movies.length</span></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">
+        Праворуч у кожному рядку — кошик <span class="en">IconButton</span>, що видаляє свій фільм через <span class="en">setState</span> і <span class="en">removeAt(i)</span></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">
+        <b>Перевір:</b> додай <span class="en">Coco</span> — у шапці <span class="en">Movies: 3</span>; видали <span class="en">Inception</span> — <span class="en">Movies: 2</span></span></div>
+    </div>
+    <div class="tip"><span class="tip-ico">💡</span><span>Місця позначені <span class="en">ДОПИШИ ТУТ</span>. Поле і кнопка <span class="en">Add</span> уже працюють — міняти їх не треба</span></div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+  /* відео на іншому слайді — на паузу */
+  document.querySelectorAll('.slide:not(.active) iframe').forEach(f => {
+    try { f.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); } catch (e) {}
+  });
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+/* ═════════ ПОКРОКОВІ АНІМАЦІЇ ═════════ */
+/* Що летить на кожному кроці. Група [ ] — летять разом, групи — одна за одною.
+   t — напис · c — колір · from/to — звідки й куди · miss — відскакує · knock — що збиває */
+const FLY = {};
+const CALM = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const place = (x, y, sc, rot) => 'translate(' + x + 'px,' + y + 'px) translate(-50%,-50%) scale(' + sc + ') rotate(' + rot + 'deg)';
+
+function flyPart(a, el, frames, opts) {
+  const an = el.animate(frames, Object.assign({fill:'forwards'}, opts));
+  a.live.push(an);
+  return an;
+}
+function flyChip(fl) {
+  const chip = document.createElement('div');
+  chip.className = 'flyer';
+  chip.style.setProperty('--c', fl.c);
+  chip.innerHTML = '<i></i>';
+  chip.append(fl.t);
+  document.getElementById('stage').appendChild(chip);
+  return chip;
+}
+function flySplash(a, x, y, c) {
+  for (let i = 0; i < 10; i++) {
+    const d = document.createElement('div'), ang = i / 10 * Math.PI * 2, r = 45 + (i % 3) * 18;
+    d.className = 'flyer drop';
+    d.style.setProperty('--c', c);
+    document.getElementById('stage').appendChild(d);
+    flyPart(a, d, [{transform:place(x, y, 1, 0), opacity:1},
+                   {transform:place(x + Math.cos(ang) * r, y + Math.sin(ang) * r, .3, 0), opacity:0}],
+            {duration:520, easing:'ease-out'}).finished.then(() => d.remove()).catch(() => {});
+  }
+}
+async function flyOne(a, fl) {
+  const src = a.querySelector(fl.from), dst = a.querySelector(fl.to);
+  if (!src || !dst) return;
+  const box = document.getElementById('stage').getBoundingClientRect();
+  const r0 = src.getBoundingClientRect(), r1 = dst.getBoundingClientRect();
+  const x0 = r0.left + r0.width / 2 - box.left, y0 = r0.top + r0.height / 2 - box.top;
+  const x1 = r1.left + Math.min(r1.width / 2, 90) - box.left, y1 = r1.top + r1.height / 2 - box.top;
+  const topY = Math.max(24, Math.min(y0, y1) - 70);
+  let old = null;
+  if (fl.knock) {
+    old = flyChip(fl.knock);
+    flyPart(a, old, [{transform:place(x1, y1, 1, 0)}, {transform:place(x1, y1, 1, 0)}], {duration:1});
+  }
+  const chip = flyChip(fl);
+  try {
+    await flyPart(a, chip, [
+      {transform:place(x0, y0, .7, 0), opacity:0},
+      {transform:place((x0 + x1) / 2, topY, 1.3, -12), opacity:1, offset:.5},
+      {transform:place(x1, y1, 1, 0), opacity:1}
+    ], {duration:850, easing:'ease-in-out'}).finished;
+    if (fl.miss) {
+      flyPart(a, dst, [{transform:'translateX(0)'}, {transform:'translateX(-7px)'}, {transform:'translateX(7px)'},
+                       {transform:'translateX(-4px)'}, {transform:'translateX(0)'}], {duration:320, fill:'none'});
+      await flyPart(a, chip, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 + 70, y1 - 50, 1.05, 40), opacity:1, offset:.35},
+        {transform:place(x1 + 150, y1 + 170, .7, 200), opacity:0}
+      ], {duration:750, easing:'ease-in'}).finished;
+    } else {
+      flySplash(a, x1, y1, fl.c);
+      flyPart(a, dst, [{transform:'scale(1)'}, {transform:'scale(1.05)'}, {transform:'scale(1)'}], {duration:300, fill:'none'});
+      if (old) flyPart(a, old, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 - 130, y1 - 40, 1, -90), opacity:1, offset:.3},
+        {transform:place(x1 - 210, y1 + 240, .7, -320), opacity:0}
+      ], {duration:800, easing:'ease-in'}).finished.then(() => old.remove()).catch(() => {});
+    }
+  } catch (e) { /* політ перервано */ }
+  chip.remove();
+}
+function animStop(a) {
+  (a.live || []).forEach(an => an.cancel());
+  a.live = [];
+  a.run = (a.run || 0) + 1;
+  a.busy = false;
+  document.querySelectorAll('.flyer').forEach(f => f.remove());
+}
+/* Крок уперед: підпис і підсвітка одразу, а вигляд змінюється, коли значення долетить */
+async function animForward(a, s) {
+  animStop(a);
+  const plan = (FLY[a.closest('.slide').id] || {})[s];
+  if (!plan || CALM) { animShow(a, s); return; }
+  const run = a.run;
+  a.busy = true;
+  animShow(a, s, s - 1);
+  for (const group of plan) {
+    await Promise.all(group.map(fl => flyOne(a, fl)));
+    if (a.run !== run) return;
+  }
+  a.busy = false;
+  animShow(a, s);
+}
+function animShow(a, s, look = s) {
+  const max = +a.dataset.max;
+  a.dataset.s = s;
+  a.querySelectorAll('[data-from]').forEach(e => e.classList.toggle('pre', look < +e.dataset.from));
+  a.querySelectorAll('[data-bgfrom]').forEach(e => e.classList.toggle('prebg', look < +e.dataset.bgfrom));
+  a.querySelectorAll('[data-mid]').forEach(e => e.classList.toggle('mid', look >= +e.dataset.mid && look < +e.dataset.from));
+  a.querySelectorAll('[data-cue]').forEach(e => e.classList.toggle('now', e.dataset.cue.split(' ').includes(String(s))));
+  const btn = a.querySelector('[data-a="next"]');
+  /* кнопка лише веде далі; номер — у кроку, який зараз на екрані */
+  btn.textContent = s === 0 ? 'Почати →' : s < max ? 'Далі →' : 'Готово ✓';
+  a.querySelector('.acaps').dataset.step = s ? 'Крок ' + s + ' з ' + max : '';
+  btn.disabled = s >= max;
+}
+function animStep(a, d) {
+  const s = +a.dataset.s;
+  /* повторне натискання під час польоту — одразу показати результат */
+  if (a.busy && d > 0) { animStop(a); animShow(a, s); return; }
+  const n = Math.max(0, Math.min(+a.dataset.max, s + d));
+  if (n > s) animForward(a, n);
+  else { animStop(a); animShow(a, n); }
+}
+document.querySelectorAll('.anim').forEach(a => {
+  a.classList.add('armed');
+  animShow(a, 0);
+  a.querySelectorAll('.abtn').forEach(b => {
+    b.addEventListener('click', e => {
+      if (b.dataset.a === 'next') animStep(a, 1);
+      else { animStop(a); animShow(a, 0); }
+      if (e.detail > 0) b.blur();
+    });
+    /* пробіл на кнопці — це крок, а не наступний слайд */
+    b.addEventListener('keydown', e => { if (e.key === ' ') e.stopPropagation(); });
+  });
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  const a = document.querySelector('.slide.active .anim');
+  if (a) { e.preventDefault(); animStep(a, e.key === 'ArrowDown' ? 1 : -1); }
+});
+/* повернулись на слайд — анімація знову з початку */
+new MutationObserver(() => {
+  document.querySelectorAll('.slide:not(.active) .anim').forEach(a => { if (+a.dataset.s) { animStop(a); animShow(a, 0); } });
+}).observe(document.getElementById('stage'), {subtree:true, attributes:true, attributeFilter:['class'], childList:false});
+
+
+goTo(0);
+</script>
+</body>
+</html>

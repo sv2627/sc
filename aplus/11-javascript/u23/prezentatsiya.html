@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Міні-проєкт III «Вікторина на сторінці»: старт · JavaScript · 11 клас · Урок 23</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (основа мови)
+  Клас          11 (16–17 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум)
+  Урок          23 з 35 · 02.12.2026 · СЕРЕДА (урок 22 — резерв без дати)
+  Тема          Міні-проєкт III «Вікторина на сторінці»: старт (тема 3.24)
+  Тривалість    45 хв — ПИСЬМОВА 20 (на папері, сл. 2) · тема ~23 · ДЗ 2
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       17
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ПЕРШІ 20 ХВ — письмова за уроки 15–21 (рішення 21.11.2026: тест
+     з кожного предмета на тижні 30.11–04.12). Аркуші — у приватному
+     репозиторії: 2026-27-teacher/aplus/11-javascript/u23/test.html
+     (3 варіанти) + klyuch.html. На слайдах аркуша немає — лише пункт
+     плану «Сьогодні» (сл. 2). Тема — скорочена до ~23 хв.
+  СПИРАЄТЬСЯ НА урок 18: масив обʼєктів, createElement, append,
+     textContent для чужого тексту; урок 19: обробник у циклі,
+     лічильник у змінній над обробником; урок 9: includes
+  НОВЕ          масив усередині обʼєкта (q.options[1]) · showQuestion(i)
+                рендерить кнопки · addEventListener усередині функції
+                рендеру (типова помилка плану — сл. 11, картка 3)
+  ⚠️ САМОДОСТАТНІЙ: старт (index.html, style.css, script.js з масивом
+     questions і знайденими елементами) — kod.html ЦЬОГО уроку, сл. 5.
+  ⚠️ ДЗ — CodePen (JS, Console), до 07.12. Здача — Google Classroom.
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  СЬОГОДНІ сл. 2 (на дошці під час письмової)
+  ВСТУП         що вийде 3 · рівні 4 · старт 5 · масив в обʼєкті 6–7
+  КРОК 1        сл. 8 → ПРАКТИКА 1 сл. 9 (7 хв)
+  КРОК 2        сл. 10–11 → ПРАКТИКА 2 сл. 12 (8 хв)
+  ДОВІДНИК 13 · ТЕСТИ 14 · ЗБЕРЕГТИ 15 · ДАЛІ 16 · ДЗ 17
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО РІЗАТИ ПЕРШИМ: сл. 4 (лише назвати); сл. 7 — одна картка;
+     сл. 11 — лише картка 2. Сл. 5, 8, 10, 17 — НЕ різати.
+  ────────────────────────────────────────────────────────────────
+  План          office/plany/05-javascript-8.md, тема 3.24, розділ 7
+  Роздатка      rozdatka.html — 1 сторінка A4, сховище
+  Код           kod.html — старт, ДЗ, фінальний script.js кроку
+  Конспект      2026-27-teacher/aplus/11-javascript/u23/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:96px}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6 ─── */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.tree{font-family:var(--f-mono);font-size:16px;line-height:1.6;white-space:pre;color:var(--ink)}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8 ─── */
+.dp-out.con{font-family:var(--f-mono);font-size:16px;line-height:1.55;white-space:pre-wrap;padding:10px 19px}
+.dp-out.con b{color:var(--faint);font-family:var(--f-body);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+.three .mono{font-size:15.5px;line-height:1.55;margin-bottom:6px}
+table.ops td.c{text-align:center;font-family:var(--f-mono)}
+.ic{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 12 ─── інлайн-код не розривається між рядками */
+.ic{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 16 ─── */
+/* «вікно браузера» — як виглядає сторінка */
+.br{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);background:#fff;
+    box-shadow:0 2px 10px rgba(89,20,41,.07)}
+.br-body{padding:14px 20px;font-family:Arial,Helvetica,sans-serif;color:#222}
+.br-body .bh1{font-size:26px;font-weight:700;color:#591429;margin-bottom:6px}
+.br-body p{font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.45;margin:5px 0;color:#222}
+.br-body p.g{font-size:19px}
+.br-body p.s{background:#ffe9a8;display:inline-block;padding:0 4px}
+.br-body p.n{color:#555;font-style:italic}
+.br-body .chg{outline:2px dashed #0253b3;outline-offset:2px}
+.dp-code.sm{font-size:14px;line-height:1.5;padding:10px 14px}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 18 ─── картки каталогу в «вікні браузера» */
+.cat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.cat .cd{border:1px solid #c9b8bd;border-radius:9px;padding:7px 10px;font-family:Arial,Helvetica,sans-serif}
+.cat .cd h4{font-size:16px;color:#591429;margin:0 0 2px}
+.cat .cd .pr{font-size:15px;font-weight:700;color:#222}
+.cat .cd .gn{font-size:13px;color:#555}
+.cat .cd.sl{border-left:5px solid #1d7a3a;background:#eef7f0}
+a.lnk{color:var(--blue);font-family:var(--f-mono);font-size:.9em;border-bottom:1.5px solid var(--blue);text-decoration:none;word-break:break-all}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 19 ─── кнопки у «вікні браузера» і блок App Inventor */
+.br-body .bt{display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:16px;
+  border:1px solid #8a7a7e;border-radius:6px;background:#f3f0f0;padding:5px 12px;margin:2px 4px 2px 0;color:#222}
+.br-body .bt.on{background:#591429;color:#fff;border-color:#591429}
+.br.dk .br-body{background:#22232a;color:#eee}
+.br.dk .br-body .bh1{color:#f4a6b3}
+.br.dk .br-body p{color:#eee}
+.br.dk .br-body .bt{background:#3a3b44;color:#eee;border-color:#666}
+.br.dk .cat .cd{border-color:#555}
+.br.dk .cat .cd h4{color:#f4a6b3}
+.br.dk .cat .cd .pr,.br.dk .cat .cd .gn{color:#ddd}
+.br.dk .cat .cd.sl{background:#23402c;border-left-color:#4caf6a}
+.cat .cd.pk{outline:3px solid #0253b3;outline-offset:-1px}
+.ai{display:inline-block;background:#8f5a10;color:#fff;border-radius:10px 10px 10px 0;
+  padding:10px 16px 12px;font-family:var(--f-body);font-weight:700;font-size:18px;line-height:1.5}
+.ai .ai-in{display:block;background:#fbf7f7;color:var(--ink);border-radius:6px;margin:8px 0 0 18px;
+  padding:6px 12px;font-weight:600;font-size:16px}
+.big-ctr{font-family:Arial,Helvetica,sans-serif;font-size:30px;font-weight:700;color:#591429;margin:6px 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 20 ─── поля у «вікні браузера» */
+.br-body .fld{display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:16px;min-width:110px;
+  border:1px solid #8a7a7e;border-radius:4px;background:#fff;padding:4px 8px;margin:2px 4px 2px 0;color:#222}
+.br-body .fld.err{border:2px solid #c0392b;background:#fdecea}
+.br-body .res{font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:700;color:#591429;margin:4px 0}
+.br-body .lb{font-family:Arial,Helvetica,sans-serif;font-size:16px;color:#222;margin-right:4px}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+
+
+  <!-- ══════════ 1 ── ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Міні-проєкт III «Вікторина на сторінці»: старт</h1>
+      <p class="title-sub">Питання з масиву обʼєктів, кнопки-відповіді й бали<br>
+        JavaScript · 11 клас · Урок 23 з 35 · 2 грудня</p>
+      <div class="chips">
+        <span class="chip">масив обʼєктів</span>
+        <span class="chip">options: [ ]</span>
+        <span class="chip">showQuestion(i)</span>
+        <span class="chip">createElement</span>
+        <span class="chip">'click'</span>
+        <span class="chip">score++</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🗓️</div><div>
+      <span class="label lm">Сьогодні</span>
+      <h2>Спершу аркуш — потім вікторина</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t"><b>Письмова робота · 20 хвилин</b> — уроки 15–21, на аркуші ручкою. Ноутбуки закриті, телефони в сумках</span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t"><b>Старт міні-проєкту · 25 хвилин</b> — перше питання вікторини зʼявляється на сторінці й приймає відповідь</span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t"><b>Домашнє</b> — пʼять питань своєї теми, на останньому слайді</span></div>
+    </div>
+    <div class="hbox hp mt">Здав аркуш раніше — відкривай ноутбук і копіюй старт з <span class="ic">kod.html</span> (слайд 5)</div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ЩО ВИЙДЕ ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🎯</div><div>
+      <span class="label lm">Що вийде сьогодні</span>
+      <h2>Питання на сторінці — і воно відповідає</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.2fr 1fr">
+      <div class="br"><div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">js-11/viktoryna/index.html</span></div><div class="br-body"><div class="bh1">Вікторина GameStore</div>
+        <p class="g" style="font-weight:700">Яка гра — про будування з блоків?</p>
+        <p><span class="bt" style="display:block;width:240px">Celeste</span>
+           <span class="bt on" style="display:block;width:240px">Minecraft</span>
+           <span class="bt" style="display:block;width:240px">Portal 2</span></p>
+        <p style="font-size:19px">Правильно!</p>
+        <div class="res" style="font-size:20px">Бали: 1</div>
+      </div></div>
+      <div>
+        <div class="hbox hm">Питання, варіанти й відповідь — <b>у масиві</b>. Кнопки малює JavaScript</div>
+        <div class="hbox hp">Сьогодні — одне питання. Урок 24 — перехід до наступного й екран результату. Урок 25 — доробка і показ</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ТРИ РІВНІ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">🪜</div><div>
+      <span class="label lo">Міні-проєкт · три уроки · три рівні</span>
+      <h2>До уроку 25 — свій рівень</h2>
+    </div></div>
+    <div class="lvl">
+      <div class="lv"><span class="lv-s">⭐</span>
+        <span class="lv-t"><b>Працює.</b> 5 питань із масиву обʼєктів, кнопки варіантів, бали, екран результату</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐</span>
+        <span class="lv-t"><b>Видно, що сталося.</b> + правильна й хибна відповідь — класами, прогрес «3/5», кнопка «Грати знову»</span></div>
+      <div class="lv"><span class="lv-s">⭐⭐⭐</span>
+        <span class="lv-t"><b>Як справжня.</b> + питання перемішуються, різні бали за питання, найкращий результат памʼятається</span></div>
+    </div>
+    <div class="hbox hm mt"><b>Сьогодні</b> для всіх рівнів одна мета: перше питання показується і приймає відповідь</div>
+  </div></section>
+
+  <!-- ══════════ 5 ── СТАРТ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📁</div><div>
+      <span class="label lm">Старт</span>
+      <h2>Нова папка — три файли</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t">Папка <span class="ic">js-11/viktoryna</span>: <span class="ic">index.html</span>, <span class="ic">style.css</span>, <span class="ic">script.js</span></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">Усі три — блоки «Старт» на сторінці, кнопка <b>Скопіювати</b>:<br>
+        <a class="lnk" href="https://sv2627.github.io/sc/aplus/11-javascript/u23/kod.html">https://sv2627.github.io/sc/aplus/11-javascript/u23/kod.html</a></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">Відкрий <span class="ic">index.html</span> у Chrome: «Тут буде питання» і «Бали: 0» — кнопок ще немає. <b>F12</b> → Console</span></div>
+    </div>
+    <div class="hbox hp mt">У стартовому <span class="ic">script.js</span> — масив <span class="ic">questions</span> із 5 питань і знайдені <span class="ic">questionEl</span>, <span class="ic">optionsEl</span>, <span class="ic">msg</span>, <span class="ic">scoreEl</span>. Свої питання — удома</div>
+  </div></section>
+
+  <!-- ══════════ 6 ── МАСИВ У ОБʼЄКТІ ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🪆</div><div>
+      <span class="label lm">Нове · масив усередині обʼєкта</span>
+      <h2>Питання — обʼєкт, а варіанти в ньому — масив</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js · старт</span></div>
+<div class="dp-code" style="font-size:15.5px;line-height:1.6;padding:12px 16px"><span class="sk">const</span> questions = [
+  { question: <span class="ss">'Яка гра — про будування з блоків?'</span>,
+    options: [<span class="ss">'Celeste'</span>, <span class="ss">'Minecraft'</span>, <span class="ss">'Portal 2'</span>],
+    answer: <span class="ss">'Minecraft'</span> },
+  { question: <span class="ss">'Скільки буде 7 * 8?'</span>,
+    options: [<span class="ss">'54'</span>, <span class="ss">'56'</span>, <span class="ss">'64'</span>],
+    answer: <span class="ss">'56'</span> },
+  <span class="cm">// … ще три</span>
+];
+
+questions[<span class="sn">0</span>].options       <span class="cm">// ['Celeste', 'Minecraft', 'Portal 2']</span>
+questions[<span class="sn">0</span>].options[<span class="sn">1</span>]    <span class="cm">// 'Minecraft'</span></div>
+</div>
+      <div>
+        <div class="hbox hm">Читаємо зліва направо: <b>номер питання</b> → <b>.options</b> → <b>номер варіанта</b></div>
+        <div class="hbox hp"><span class="ic">answer</span> — дослівно один із варіантів. Тоді перевірка — одне <span class="ic">===</span></div>
+        <div class="hbox ho">Урок 18: масив ігор. Тепер у кожній «грі» — ще й свій масив</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ПЕРЕДБАЧ: ДОСТУП ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач · масив questions зі старту</span>
+      <h2>Що в Console?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">questions[1].options[1]</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>'56'</b> — друге питання, другий варіант. Рядок у лапках</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">questions.length
+questions[4].options.length</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>5</b> і <b>3</b> — питань пʼять, у кожного три варіанти</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const q = questions[0];
+q.options.includes(q.answer)</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>true</b> — відповідь є серед варіантів. <span class="ic">includes</span> з уроку 9</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ── КРОК 1 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🧱</div><div>
+      <span class="label lm">Крок 1 · showQuestion(i)</span>
+      <h2>Текст питання — і по кнопці на кожен варіант</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.65;padding:12px 18px"><span class="sk">function</span> <span class="sf">showQuestion</span>(i) {
+  <span class="sk">const</span> q = questions[i];
+  questionEl.textContent = q.question;
+  optionsEl.innerHTML = <span class="ss">''</span>;     <span class="cm">// старі кнопки геть</span>
+
+  <span class="sk">for</span> (<span class="sk">const</span> opt <span class="sk">of</span> q.options) {
+    <span class="sk">const</span> btn = document.<span class="sf">createElement</span>(<span class="ss">'button'</span>);
+    btn.textContent = opt;
+    optionsEl.<span class="sf">append</span>(btn);
+  }
+}
+
+<span class="sf">showQuestion</span>(<span class="sn">0</span>);</div>
+</div>
+      <div>
+        <div class="hbox hm"><span class="ic">i</span> — номер питання. Одна функція покаже будь-яке з пʼяти</div>
+        <div class="hbox hp">Цикл і <span class="ic">createElement</span> — як картки на уроці 18</div>
+        <div class="hbox hr">Варіант <span class="ic">'&lt;a&gt;'</span> — через <span class="ic">textContent</span>: лишиться текстом, а не стане посиланням</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Питання на сторінці</span><span class="tmr">7 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">const q = questions[0];
+questionEl.textContent =
+  q.question;</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Набери приклад — на сторінці перше питання?</li>
+          <li>Допиши цикл: по кнопці на кожен варіант — три кнопки</li>
+          <li>Загорни все у <span class="ic">function showQuestion(i)</span> і виклич <span class="ic">showQuestion(0)</span></li>
+          <li>Виклич <span class="ic">showQuestion(2)</span> — кнопка <b>&lt;a&gt;</b> видна текстом? Поверни 0</li>
+          <li>Прибери рядок <span class="ic">optionsEl.innerHTML = ''</span> і виклич функцію двічі — скільки кнопок? Поверни</li>
+          <li>⭐⭐ Над питанням — «Питання 1 з 5»: <span class="ic">`${i + 1} з ${questions.length}`</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── КРОК 2 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">👂</div><div>
+      <span class="label lm">Крок 2 · обробник у циклі</span>
+      <h2>Кожна кнопка знає, яку відповідь вона несе</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js · усередині циклу, перед append</span></div>
+<div class="dp-code" style="font-size:15.5px;line-height:1.6;padding:12px 16px"><span class="cm">// над функцією: let score = 0;</span>
+
+btn.<span class="sf">addEventListener</span>(<span class="ss">'click'</span>, () <span class="st">=&gt;</span> {
+  <span class="sk">if</span> (opt <span class="st">===</span> q.answer) {
+    score<span class="st">++</span>;
+    msg.textContent = <span class="ss">'Правильно!'</span>;
+  } <span class="sk">else</span> {
+    msg.textContent = <span class="ss">`Ні. Правильно: ${q.answer}`</span>;
+  }
+  scoreEl.textContent = <span class="ss">`Бали: ${score}`</span>;
+});</div>
+</div>
+      <div>
+        <div class="hbox hm">Обробник — <b>усередині</b> циклу: у ньому <span class="ic">opt</span> саме цієї кнопки (як картка на уроці 19)</div>
+        <div class="hbox hp"><span class="ic">let score = 0</span> — <b>над</b> функцією, інакше бали щоразу з нуля</div>
+        <div class="hbox ho">Перевірка — <span class="ic">===</span> двох рядків: варіант кнопки і <span class="ic">q.answer</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПЕРЕДБАЧ: КЛІКИ ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач · показано питання 1</span>
+      <h2>Що на сторінці?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">// клік «Celeste»,
+// потім «Minecraft»,
+// потім знову «Minecraft»</div>
+        <p class="rv-hint">Скільки балів? Клацни</p>
+        <div class="rv-body"><p><b>Бали: 2</b> — кнопки поки не вимикаються. Це урок 24</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">btn.addEventListener('click',
+  () =&gt; {
+    let score = 0;
+    score++;
+    …
+  });
+// три правильні кліки</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>Бали: 1</b> — щоразу нова змінна з нуля. <span class="ic">let score</span> — над функцією</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">showQuestion(0);
+const bs = document
+  .querySelectorAll('#options button');
+for (const b of bs)
+  b.addEventListener('click',
+    () =&gt; console.log('клік'));
+showQuestion(1);</div>
+        <p class="rv-hint">Клік по кнопці питання 2 — є «клік»? Клацни</p>
+        <div class="rv-body"><p><b>Ні</b> — це вже <b>нові</b> кнопки, а обробники висять на старих, яких немає. Тому обробник — у <span class="ic">showQuestion</span></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">Відповідь приймається</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">btn.addEventListener(
+  'click', () =&gt; {
+    console.log(opt);
+  });</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Приклад у циклі — клік по кнопці пише в Console її варіант?</li>
+          <li>Замість Console — <span class="ic">if (opt === q.answer)</span>: «Правильно!» або «Ні. Правильно: …» у <span class="ic">#msg</span></li>
+          <li><span class="ic">let score = 0</span> над функцією; правильна — <span class="ic">score++</span> і «Бали: 1» у <span class="ic">#score</span></li>
+          <li>Перенеси <span class="ic">let score = 0</span> в обробник — що з балами? Поверни</li>
+          <li>⭐⭐ Кнопка «Далі» під варіантами: <span class="ic">let current = 0</span>, клік — <span class="ic">current++</span> і <span class="ic">showQuestion(current)</span></li>
+          <li>⭐⭐⭐ Натиснута кнопка — клас <span class="ic">correct</span> або <span class="ic">wrong</span> (вони вже є в <span class="ic">style.css</span>)</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Вікторина: старт</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>питання</h4><pre>{ question: '…?',
+  options: ['…', '…'],
+  answer: '…' }</pre></div>
+      <div class="rf-c"><h4>дістати</h4><pre>questions[i]
+q.options[1]
+q.options.length</pre></div>
+      <div class="rf-c"><h4>показати</h4><pre>questionEl.textContent
+  = q.question;
+optionsEl.innerHTML = '';</pre></div>
+      <div class="rf-c"><h4>кнопка</h4><pre>const btn = document
+  .createElement('button');
+btn.textContent = opt;
+optionsEl.append(btn);</pre></div>
+      <div class="rf-c"><h4>перевірити</h4><pre>btn.addEventListener(
+  'click', () =&gt; {
+  if (opt === q.answer) …
+});</pre></div>
+      <div class="rf-c"><h4>бали</h4><pre>let score = 0; // над
+score++;
+`Бали: ${score}`</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ТЕСТИ ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">✅</div><div>
+      <span class="label lm">Перевір себе</span>
+      <h2>Таблиця тестів</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Що робиш</th><th>Що має статися</th></tr>
+      <tr><td>відкрив сторінку</td><td>«Яка гра — про будування з блоків?» і три кнопки</td></tr>
+      <tr><td>клік «Minecraft»</td><td>«Правильно!» · «Бали: 1»</td></tr>
+      <tr><td>клік «Celeste»</td><td>«Ні. Правильно: Minecraft» · бали не змінились</td></tr>
+      <tr><td>у коді <span class="ic">showQuestion(2)</span></td><td>три кнопки, перша — текст <b>&lt;a&gt;</b>, не посилання</td></tr>
+      <tr><td>F12 → Console</td><td>жодного червоного рядка</td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 15 ── ЗБЕРЕГТИ ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🗂️</div><div>
+      <span class="label lm">Зберегти</span>
+      <h2>Папку не видаляй — це перший з трьох уроків</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">viktoryna/script.js</span></div>
+<div class="dp-code"><span class="cm">// Міні-проєкт III «Вікторина на сторінці»</span>
+<span class="cm">// Прізвище Імʼя · урок 23</span>
+<span class="cm">// зроблено: showQuestion, кнопки, бали</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Коментар — <b>першим рядком</b> <span class="ic">script.js</span>, потім <b>Ctrl + S</b> в усіх трьох файлах</div>
+        <div class="hbox hp">У понеділок продовжуємо в цій самій папці <span class="ic">js-11/viktoryna</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ДАЛІ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🚀</div><div>
+      <span class="label lm">Далі</span>
+      <h2>Після уроку 23</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Сьогодні руками</h3><ul>
+        <li>масив усередині обʼєкта: <span class="ic">q.options[1]</span></li>
+        <li><span class="ic">showQuestion(i)</span> малює кнопки</li>
+        <li>обробник у циклі — свій <span class="ic">opt</span></li>
+        <li>бали в змінній над функцією</li>
+      </ul></div>
+      <div class="card cp"><h3>Урок 24 · понеділок 7 грудня</h3><ul>
+        <li>перехід до наступного питання</li>
+        <li>екран результату</li>
+        <li>класи <span class="ic">.correct</span> / <span class="ic">.wrong</span></li>
+        <li>прогрес «3/5»</li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання</strong> — на наступному слайді.</div>
+  </div></section>
+
+  <!-- ══════════ 17 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання · 10 хвилин</span>
+      <h2>Мої питання</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">Блок «Домашнє» — у панель <b>JS</b> на <strong>codepen.io</strong>, результат — кнопка <b>Console</b>:
+      <a class="lnk" href="https://sv2627.github.io/sc/aplus/11-javascript/u23/kod.html">https://sv2627.github.io/sc/aplus/11-javascript/u23/kod.html</a> ·
+      код — у <strong>Google Classroom · 11 клас</strong> до <strong>7 грудня</strong></div>
+    <div class="two" style="grid-template-columns:1fr 1.05fr;gap:16px">
+      <div class="steps" style="gap:8px">
+        <div class="step" style="padding:7px 13px"><span class="step-n">1</span><span class="step-t" style="font-size:15.5px">
+          Обери <b>свою тему</b>: гра, спорт, предмет, фільм</span></div>
+        <div class="step" style="padding:7px 13px"><span class="step-n">2</span><span class="step-t" style="font-size:15.5px">
+          <b>ДОПИШИ 1</b> — ще чотири питання в тому самому вигляді: <span class="ic">question</span>, три <span class="ic">options</span>, <span class="ic">answer</span></span></div>
+        <div class="step" style="padding:7px 13px"><span class="step-n">3</span><span class="step-t" style="font-size:15.5px">
+          <b>ДОПИШИ 2</b> — заміни перше питання на своє. Відповідь — <b>дослівно</b> один з варіантів</span></div>
+      </div>
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">CodePen · JS · перевірка внизу</span></div>
+<div class="dp-code" style="font-size:13.5px;line-height:1.45;padding:9px 13px"><span class="sk">const</span> questions = [
+  { question: <span class="ss">'…?'</span>,
+    options: [<span class="ss">'…'</span>, <span class="ss">'…'</span>, <span class="ss">'…'</span>],
+    answer: <span class="ss">'…'</span> },
+  <span class="cm">// ДОПИШИ 1 — ще чотири</span>
+];
+
+console.<span class="sf">log</span>(questions.length);
+console.<span class="sf">log</span>(questions[<span class="sn">0</span>].options.length);
+<span class="sk">for</span> (<span class="sk">const</span> q <span class="sk">of</span> questions) {
+  console.<span class="sf">log</span>(q.options.<span class="sf">includes</span>(q.answer));
+}</div>
+</div>
+    </div>
+    <div class="hbox hp" style="margin-bottom:0"><b>Перевір:</b> у Console — <b>5</b>, <b>3</b> і пʼять разів <b>true</b>. Є <b>false</b> — відповідь не збігається з варіантом до літери</div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
+
