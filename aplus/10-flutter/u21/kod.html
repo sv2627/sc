@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 21 · код уроку · Flutter 10 клас</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#eef1f8;--border:#dcdfe9;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--blue);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#aab4cc}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:760px}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+padding:24px 26px;display:block;box-shadow:0 1px 3px rgba(2,83,179,.05);
+transition:border-color .18s,background .18s,transform .18s,box-shadow .18s}
+a.card:hover{border-color:var(--accent);background:var(--surf2);transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(2,83,179,.09)}
+.card .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);display:block;margin-bottom:9px}
+.card h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin-bottom:7px;line-height:1.2}
+.card p{font-size:16.5px;color:var(--dim)}
+.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:26px;
+box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--accent);display:block;margin-bottom:8px}
+.hero p{font-size:17px;color:var(--dim)}
+.hero ul{margin:0;padding-left:22px;font-size:17px;color:var(--dim)}
+.hero li{margin-bottom:6px}
+.hero li:last-child{margin-bottom:0}
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 7px;border-radius:5px}
+.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+font-size:15px;color:var(--dim)}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}
+.card{padding:19px 20px}.hero{padding:18px 20px}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:18px;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;
+  background:var(--surf2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.codebar b{font-family:var(--f-head);color:var(--accent)}
+.copy{font:700 16px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:10px 18px;min-height:44px;cursor:pointer}
+.copy.ok{background:#1d7a3a}
+pre.dart{font-family:var(--f-mono);font-size:15px;line-height:1.55;padding:18px;overflow-x:auto;
+  white-space:pre;tab-size:2;color:var(--ink)}
+.cm{color:#5c6b5e;font-style:italic}
+
+.steps-note{font-size:16.5px;color:var(--dim);margin-top:10px}
+.open{display:inline-block;font:700 16px var(--f-body);background:#1d7a3a;color:#fff;border-radius:10px;
+  padding:10px 18px;min-height:44px;margin-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">10 клас · Flutter</a><span class="sep">/</span><a href="./">Урок 21</a><span class="sep">/</span><span>Код</span></nav>
+<div class="kicker">Урок 21 / 68 · 26.11.2026 · код уроку</div>
+<h1>Код уроку і домашнього</h1>
+<p class="lead">Домашнє — для DartPad, вдома Flutter SDK не потрібен: «Скопіювати», відкрий <a href="https://dartpad.dev/?sample=counter" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px solid">dartpad.dev</a>, заміни весь код і натисни Run. Код уроку працює і в DartPad, і в <code>lib/main.dart</code> у VS Code. Пояснення — у коментарях після <code>//</code>.</p>
+<div class="kicker" style="margin-top:28px">Домашнє завдання · до 2 грудня · DartPad</div>
+<div class="codebox"><div class="codebar"><b>Квиток у кіно · допиши два місця</b>
+  <button class="copy" data-for="dz">Скопіювати</button></div>
+<pre class="dart" id="dz"><span class="cm">// Домашнє · урок 21 · «Квиток у кіно». Прізвище: ...</span>
+<span class="cm">// DartPad: заміни весь код цим, натисни Run. Допиши два місця з позначкою ДОПИШИ ТУТ.</span>
+<span class="cm">// Має вийти: вводиш вік, натискаєш Check — під кнопкою квиток і ціна.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.deepPurple),
+      home: const TicketScreen(),
+    );
+  }
+}
+
+class TicketScreen extends StatefulWidget {
+  const TicketScreen({super.key});
+
+  @override
+  State&lt;TicketScreen&gt; createState() =&gt; _TicketScreenState();
+}
+
+class _TicketScreenState extends State&lt;TicketScreen&gt; {
+  final TextEditingController _age = TextEditingController(); <span class="cm">// що введено в поле</span>
+  bool _is3D = false; <span class="cm">// галочка «3D»</span>
+  String _result = ''; <span class="cm">// напис під кнопкою</span>
+
+  void _check() {
+    int? age = int.tryParse(_age.text); <span class="cm">// текст -&gt; число; не число -&gt; null</span>
+    setState(() {
+      <span class="cm">// 1. ДОПИШИ ТУТ: заміни рядок нижче на if / else if / else:</span>
+      <span class="cm">//    age == null -&gt; 'Enter your age'</span>
+      <span class="cm">//    age &lt; 12    -&gt; 'Child ticket: 5 USD'</span>
+      <span class="cm">//    інакше      -&gt; 'Adult ticket: 8 USD'</span>
+      _result = 'Age: $age';
+    });
+  }
+
+  @override
+  void dispose() {
+    _age.dispose(); <span class="cm">// контролер прибираємо разом з екраном</span>
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Cinema'), centerTitle: true),
+      body: Center(
+        child: SizedBox(
+          width: 320,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: _age,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Age', border: OutlineInputBorder()),
+              ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: _is3D,
+                    onChanged: (bool? v) {
+                      setState(() {
+                        _is3D = v ?? false;
+                      });
+                    },
+                  ),
+                  const Text('3D'),
+                ],
+              ),
+              ElevatedButton(onPressed: _check, child: const Text('Check')),
+              const SizedBox(height: 16),
+              Text(_result, style: const TextStyle(fontSize: 22)),
+              <span class="cm">// 2. ДОПИШИ ТУТ: напис 3D glasses included — лише тоді, коли галочка 3D стоїть.</span>
+              <span class="cm">//    Підказка: if (...) Text('...'),</span>
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}</pre></div>
+<div class="kicker" style="margin-top:34px">Практика 1 · фінальний вигляд</div>
+<div class="codebox"><div class="codebar"><b>1 · Привітання: TextField, кнопка, напис ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="p1">Скопіювати</button></div>
+<pre class="dart" id="p1"><span class="cm">// Урок 21 · практика 1 · привітання: поле вводу, кнопка, напис.</span>
+<span class="cm">// Текст з поля читаємо через TextEditingController, напис міняємо через setState.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: const HelloScreen(),
+    );
+  }
+}
+
+class HelloScreen extends StatefulWidget {
+  const HelloScreen({super.key});
+
+  @override
+  State&lt;HelloScreen&gt; createState() =&gt; _HelloScreenState();
+}
+
+class _HelloScreenState extends State&lt;HelloScreen&gt; {
+  final TextEditingController _name = TextEditingController();
+  String _greeting = '';
+  bool _error = false; <span class="cm">// ⭐⭐ поле порожнє — напис червоний</span>
+
+  void _sayHello() {
+    setState(() {
+      <span class="cm">// trim() прибирає пробіли по краях: '  ' -&gt; ''</span>
+      if (_name.text.trim().isEmpty) {
+        _greeting = 'Enter your name'; <span class="cm">// ⭐⭐</span>
+        _error = true;
+      } else {
+        _greeting = 'Hello, ${_name.text.trim()}!';
+        _error = false;
+      }
+    });
+  }
+
+  <span class="cm">// ⭐⭐⭐ очистити поле і напис</span>
+  void _clear() {
+    _name.clear();
+    setState(() {
+      _greeting = '';
+      _error = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Hello'), centerTitle: true),
+      body: Center(
+        child: SizedBox(
+          width: 320, <span class="cm">// TextField займає всю ширину — обмежуємо</span>
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: _name,
+                decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(onPressed: _sayHello, child: const Text('Say hello')),
+                  const SizedBox(width: 12),
+                  OutlinedButton(onPressed: _clear, child: const Text('Clear')), <span class="cm">// ⭐⭐⭐</span>
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                _greeting,
+                style: TextStyle(fontSize: 24, color: _error ? Colors.red : Colors.black),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}</pre></div>
+<p class="steps-note">Старт практики 1 — порожній проєкт: у DartPad — приклад Counter, у VS Code — <code>first_app</code>. Екран зі станом пишемо з нуля, як на уроці 20.</p>
+<div class="kicker" style="margin-top:34px">Поточна робота · зразок</div>
+<div class="codebox"><div class="codebar"><b>2 · Замовлення гри: поля, Switch, Checkbox, умови ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="p2">Скопіювати</button></div>
+<pre class="dart" id="p2"><span class="cm">// Урок 21 · зразок поточної роботи «Замовлення гри» · рівні ⭐–⭐⭐⭐.</span>
+<span class="cm">// Поля вводу, Switch і Checkbox; результат і помилки — умовний рендер.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: const OrderScreen(),
+    );
+  }
+}
+
+class OrderScreen extends StatefulWidget {
+  const OrderScreen({super.key});
+
+  @override
+  State&lt;OrderScreen&gt; createState() =&gt; _OrderScreenState();
+}
+
+class _OrderScreenState extends State&lt;OrderScreen&gt; {
+  static const double price = 19.99; <span class="cm">// ціна гри Celeste</span>
+
+  final TextEditingController _name = TextEditingController(); <span class="cm">// ⭐</span>
+  final TextEditingController _qty = TextEditingController(); <span class="cm">// ⭐⭐</span>
+  bool _gift = false; <span class="cm">// ⭐ Switch: подарункова упаковка</span>
+  bool _student = false; <span class="cm">// ⭐⭐⭐ Checkbox: знижка 10 %</span>
+  String _result = '';
+  bool _error = false;
+
+  void _order() {
+    int? qty = int.tryParse(_qty.text); <span class="cm">// ⭐⭐ '2' -&gt; 2, 'two' -&gt; null</span>
+    setState(() {
+      if (qty == null || qty &lt;= 0) {
+        _result = 'Enter a number from 1';
+        _error = true;
+        return;
+      }
+      double total = qty * price;
+      if (_gift) total += 2; <span class="cm">// ⭐⭐⭐ упаковка +2 USD</span>
+      if (_student) total *= 0.9; <span class="cm">// ⭐⭐⭐ −10 %</span>
+      _result = '${_name.text}: ${total.toStringAsFixed(2)} USD';
+      _error = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _qty.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Order: Celeste'), centerTitle: true),
+      body: Center(
+        child: SizedBox(
+          width: 340,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: _name,
+                <span class="cm">// ⭐⭐⭐ кожна літера -&gt; build знову, щоб кнопка ожила</span>
+                onChanged: (String v) =&gt; setState(() {}),
+                decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _qty,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Quantity', border: OutlineInputBorder()),
+              ),
+              Row(
+                children: [
+                  Switch(
+                    value: _gift,
+                    onChanged: (bool v) {
+                      setState(() {
+                        _gift = v;
+                      });
+                    },
+                  ),
+                  const Text('Gift wrap'),
+                  const SizedBox(width: 12),
+                  <span class="cm">// ⭐⭐⭐ у Checkbox значення bool? — тому v ?? false</span>
+                  Checkbox(
+                    value: _student,
+                    onChanged: (bool? v) {
+                      setState(() {
+                        _student = v ?? false;
+                      });
+                    },
+                  ),
+                  const Text('Student'),
+                ],
+              ),
+              if (_gift) const Text('🎁 +2 USD'), <span class="cm">// ⭐ є лише тоді, коли Switch увімкнено</span>
+              const SizedBox(height: 8),
+              ElevatedButton(
+                <span class="cm">// ⭐⭐⭐ поки імʼя порожнє — кнопка сіра</span>
+                onPressed: _name.text.isEmpty ? null : _order,
+                child: const Text('Order'),
+              ),
+              const SizedBox(height: 14),
+              if (_result.isNotEmpty)
+                Text(
+                  _result,
+                  style: TextStyle(fontSize: 22, color: _error ? Colors.red : Colors.green.shade800),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}</pre></div>
+
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.for).innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+  b.textContent = 'Скопійовано ✓'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Скопіювати'; b.classList.remove('ok'); }, 2000);
+});
+</script>
+</body>
+</html>

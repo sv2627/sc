@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · JavaScript · 11 клас · Урок 20</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          JavaScript I
+  Клас          11
+  Урок          20 / 35 · 25.11.2026 · середа
+  Тема          Читаємо введення зі сторінки
+  ────────────────────────────────────────────────────────────────
+  ⚠️ СХОВИЩЕ. У класі не роздається, друкується на випадок тривоги.
+     Комп'ютер не потрібен. Дані — кавʼярня, не конвертер зі слайдів.
+  КЛЮЧ  1) 20 · NaN · 0 · 7 · 7.5
+        2) а) '23' · б) 5 · в) '2.50'
+        3) 'input' · Number · .value · textContent
+        4) 5 разів (кожна літера «Олена») · 1 раз
+        5) .checked · .value · .value · рядок
+        6) р.1 value читати В обробнику (перенести в р.3) ·
+           р.4 Number(text) — інакше '2' + 1 = '21' ·
+           р.5 textContent, а не value (у <p> немає value)
+        7) go.addEventListener('click', () => {
+             const a = Number(age.value);
+             if (age.value === '') out.textContent = 'Введи вік';
+             else out.textContent = `Через 5 років тобі ${a + 5}`; });
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · фонову графіку НЕ вмикати
+  ОБСЯГ         Рівно одна сторінка A4. Перевірено вимірюванням.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b > h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b h2 .tag{float:right; margin-left:4mm; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.4fr 1fr}
+.two.k46{grid-template-columns:1fr 1.4fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7.2mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:10pt; font-weight:700; padding-bottom:.4mm}
+
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.6mm 1.8mm; font-size:10.5pt; text-align:left}
+table.t th{font-size:9.5pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:30mm; text-align:center}
+table.g td,table.g th{text-align:center; height:8.4mm; padding:1mm 1.2mm; font-size:10pt}
+table.t td.m{font-family:var(--fm); font-weight:700}
+
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.5mm 0; font-size:11pt; vertical-align:bottom}
+table.voc td.en{width:48%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+pre.c{font-family:var(--fm); font-size:10.5pt; line-height:1.34; border:var(--line);
+  padding:1.6mm 2.2mm; white-space:pre-wrap; font-weight:700}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+.wb{border:var(--line); min-height:16mm; padding:1.4mm 2mm}
+.b h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+table.t td,table.t th{padding:1.15mm 1.8mm}
+.ln.s{height:5.8mm}
+pre.c{line-height:1.22}
+.wb .cap{font-family:var(--fm); font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:.6px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>JavaScript &#183; 11 клас &#183; Урок 20 / 35 &#183; 25 листопада</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Читаємо введення зі сторінки</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Прочитати поле</p>
+        <p><code>const t = field.value;</code> &#8212; <b>завжди рядок</b></p>
+        <p>прапорець: <code>box.checked</code> &#8594; <code>true</code> / <code>false</code></p>
+      </div>
+      <div>
+        <p class="rh">Рядок у число</p>
+        <p><code>Number('7.5')</code> &#8594; 7.5 &#183; <code>Number('')</code> &#8594; <b>0</b></p>
+        <p><code>parseInt('7.5')</code> &#8594; 7 &#183; не число &#8594; <code>NaN</code></p>
+      </div>
+      <div>
+        <p class="rh">Події полів</p>
+        <p><code>'input'</code> &#8212; на кожну літеру</p>
+        <p><code>'change'</code> &#8212; змінили й залишили поле</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b">
+    <h2>1 &#183; Що поверне?</h2>
+    <table class="t" style="table-layout:fixed">
+      <tr><td class="m">Number('20')</td><td class="m">Number('20 грн')</td><td class="m">Number('')</td><td class="m">parseInt('7.5')</td><td class="m">parseFloat('7.5')</td></tr>
+      <tr><td style="height:8mm"></td><td></td><td></td><td></td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="b">
+    <h2>2 &#183; У полях a і b ввели 2 і 3. Що вийде?</h2>
+    <table class="t" style="table-layout:fixed">
+      <tr><td class="m">а) a.value + b.value</td><td class="m">б) Number(a.value) + Number(b.value)</td><td class="m">в) (5 / 2).toFixed(2)</td></tr>
+      <tr><td style="height:8mm"></td><td></td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="b">
+    <h2>3 &#183; Допиши: кава 45 грн, у полі #cups кількість, ціна &#8212; одразу в #sum<span class="tag">4 пропуски</span></h2>
+    <pre class="c" style="line-height:1.45">cups.addEventListener(__________, () =&gt; {
+  const n = ____________(cups.________);
+  sum.________________ = `${n * 45} грн`;
+});</pre>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>4 &#183; Скільки разів?</h2>
+      <p class="q">У поле <code>#name</code> набрали «Олена» і клацнули деінде.</p>
+      <div class="sl"><span>'input':</span></div>
+      <div class="sl"><span>'change':</span></div>
+    </div>
+    <div>
+      <h2>5 &#183; Що читати?</h2>
+      <table class="t">
+        <tr><td>прапорець «Із собою»</td><td class="a" style="width:30mm"></td></tr>
+        <tr><td>&lt;select&gt; розміру</td><td class="a"></td></tr>
+        <tr><td>&lt;textarea&gt; побажань</td><td class="a"></td></tr>
+        <tr><td>value в type="number" &#8212; число чи рядок?</td><td class="a"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b two k64">
+    <div>
+      <h2>6 &#183; Знайди три біди<span class="tag">3 біди</span></h2>
+      <pre class="c">1  const text = cups.value;
+2  const btn = document.querySelector('#add');
+3  btn.addEventListener('click', () =&gt; {
+4    const n = text + 1;
+5    sum.value = `Чашок: ${n}`;
+6  });</pre>
+    </div>
+    <div>
+      <p class="q">Номер рядка і як має бути:</p>
+      <div class="sl"><span>1)</span></div>
+      <div class="sl"><span>2)</span></div>
+      <div class="sl"><span>3)</span></div>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>7 &#183; Напиши сам: поле #age, кнопка #go, абзац #out<span class="tag">порожнє &#8594; «Введи вік»</span></h2>
+    <p class="q">Клік — у <code>#out</code> «Через 5 років тобі 21» (ввели 16). <code>age</code>, <code>go</code>, <code>out</code> уже знайдено.</p>
+    <div class="ln s"></div><div class="ln s"></div><div class="ln s"></div>
+  </div>
+
+  <div class="ft">
+    <span>JavaScript &#183; 11 клас</span>
+    <span>Урок 20 &#183; 25.11.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

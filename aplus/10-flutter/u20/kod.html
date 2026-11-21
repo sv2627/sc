@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 20 · код уроку · Flutter 10 клас</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#eef1f8;--border:#dcdfe9;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--blue);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#aab4cc}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:760px}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+padding:24px 26px;display:block;box-shadow:0 1px 3px rgba(2,83,179,.05);
+transition:border-color .18s,background .18s,transform .18s,box-shadow .18s}
+a.card:hover{border-color:var(--accent);background:var(--surf2);transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(2,83,179,.09)}
+.card .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);display:block;margin-bottom:9px}
+.card h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin-bottom:7px;line-height:1.2}
+.card p{font-size:16.5px;color:var(--dim)}
+.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:26px;
+box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--accent);display:block;margin-bottom:8px}
+.hero p{font-size:17px;color:var(--dim)}
+.hero ul{margin:0;padding-left:22px;font-size:17px;color:var(--dim)}
+.hero li{margin-bottom:6px}
+.hero li:last-child{margin-bottom:0}
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 7px;border-radius:5px}
+.foot{margin-top:44px;padding-top:22px;border-top:1px solid var(--border);
+font-size:15px;color:var(--dim)}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}
+.card{padding:19px 20px}.hero{padding:18px 20px}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:18px;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;
+  background:var(--surf2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.codebar b{font-family:var(--f-head);color:var(--accent)}
+.copy{font:700 16px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:10px 18px;min-height:44px;cursor:pointer}
+.copy.ok{background:#1d7a3a}
+pre.dart{font-family:var(--f-mono);font-size:15px;line-height:1.55;padding:18px;overflow-x:auto;
+  white-space:pre;tab-size:2;color:var(--ink)}
+.cm{color:#5c6b5e;font-style:italic}
+
+.steps-note{font-size:16.5px;color:var(--dim);margin-top:10px}
+.open{display:inline-block;font:700 16px var(--f-body);background:#1d7a3a;color:#fff;border-radius:10px;
+  padding:10px 18px;min-height:44px;margin-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">10 клас · Flutter</a><span class="sep">/</span><a href="./">Урок 20</a><span class="sep">/</span><span>Код</span></nav>
+<div class="kicker">Урок 20 / 68 · 25.11.2026 · код уроку</div>
+<h1>Код уроку</h1>
+<p class="lead">Код працює і в DartPad (<a href="https://dartpad.dev/?sample=counter" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px solid">dartpad.dev</a>: «Скопіювати», заміни весь код, Run), і в <code>lib/main.dart</code> у VS Code (заміни весь файл, Ctrl+S, hot restart). Пояснення — у коментарях після <code>//</code>. Домашнього завдання до цього уроку немає.</p>
+<div class="kicker" style="margin-top:28px">Урок · старт</div>
+<div class="codebox"><div class="codebar"><b>Старт · каталог з уроку 19: Game, games, GameCard без стану</b>
+  <button class="copy" data-for="start">Скопіювати</button></div>
+<pre class="dart" id="start"><span class="cm">// Урок 20 · старт · каталог з уроку 19: сутність Game, список games, віджет GameCard.</span>
+<span class="cm">// DartPad: заміни весь код цим і натисни Run. VS Code: заміни весь lib/main.dart, Ctrl+S, hot restart.</span>
+<span class="cm">// GameCard тут — StatelessWidget: показує гру і сам не змінюється. Сьогодні додамо йому стан.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+<span class="cm">// Гра — сутність -&gt; class. Це дані, не віджет.</span>
+class Game {
+  final String title;
+  final String genre;
+  final double price;
+
+  const Game(this.title, this.genre, this.price);
+}
+
+const List&lt;Game&gt; games = [
+  Game('Stardew Valley', 'Farming sim', 14.99),
+  Game('Celeste', 'Platformer', 19.99),
+  Game('Terraria', 'Sandbox', 9.99),
+];
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(title: const Text('Game store'), centerTitle: true),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (Game g in games) GameCard(game: g), <span class="cm">// одна картка на кожну гру</span>
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+<span class="cm">// Свій віджет без стану: отримує гру через конструктор і показує її.</span>
+class GameCard extends StatelessWidget {
+  const GameCard({super.key, required this.game});
+
+  final Game game;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 340,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.indigo, width: 2),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.sports_esports, size: 40, color: Colors.indigo),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                game.title,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Text(game.genre, style: const TextStyle(color: Colors.black54)),
+              const SizedBox(height: 4),
+              Text('${game.price} USD', style: const TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}</pre></div>
+<p class="steps-note">Свій код каталогу з уроку 19 є — можна брати його. Немає — бери «Старт». Він же — старт практики 2.</p>
+<div class="kicker" style="margin-top:34px">Практика 1 · фінальний вигляд</div>
+<div class="codebox"><div class="codebar"><b>1 · GameCard зі станом: сердечко і кошик ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="p1">Скопіювати</button></div>
+<pre class="dart" id="p1"><span class="cm">// Урок 20 · практика 1 · GameCard зі станом: сердечко «подобається» і кількість у кошику.</span>
+<span class="cm">// У кожної картки свій стан: лайкнув одну гру — інші не змінились.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class Game {
+  final String title;
+  final String genre;
+  final double price;
+
+  const Game(this.title, this.genre, this.price);
+}
+
+const List&lt;Game&gt; games = [
+  Game('Stardew Valley', 'Farming sim', 14.99),
+  Game('Celeste', 'Platformer', 19.99),
+  Game('Terraria', 'Sandbox', 9.99),
+];
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(title: const Text('Game store'), centerTitle: true),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (Game g in games) GameCard(game: g),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+<span class="cm">// Клас 1 — сам віджет. Тут лише те, що приходить ззовні (game), і createState.</span>
+class GameCard extends StatefulWidget {
+  const GameCard({super.key, required this.game});
+
+  final Game game;
+
+  @override
+  State&lt;GameCard&gt; createState() =&gt; _GameCardState();
+}
+
+<span class="cm">// Клас 2 — стан. Тут поля, які змінюються, методи і build.</span>
+class _GameCardState extends State&lt;GameCard&gt; {
+  bool _liked = false; <span class="cm">// приклад: сердечко</span>
+  int _inCart = 0; <span class="cm">// самостійно: кількість у кошику</span>
+
+  void _toggleLike() {
+    setState(() {
+      _liked = !_liked; <span class="cm">// false -&gt; true -&gt; false ...</span>
+    });
+  }
+
+  void _add() {
+    setState(() {
+      _inCart++;
+    });
+  }
+
+  void _remove() {
+    setState(() {
+      _inCart--;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span class="cm">// ⭐⭐⭐ сума за цю гру; гра — з віджета, тому widget.game</span>
+    double total = _inCart * widget.game.price;
+    return Container(
+      width: 340,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        <span class="cm">// ⭐⭐⭐ є в кошику — зелена рамка</span>
+        border: Border.all(color: _inCart &gt; 0 ? Colors.green : Colors.indigo, width: 2),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.game.title, <span class="cm">// поле віджета — через widget.</span>
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Text('${widget.game.price} USD'),
+                Text('In cart: $_inCart'),
+                if (_inCart &gt; 0) Text('Total: ${total.toStringAsFixed(2)} USD'),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: _toggleLike, <span class="cm">// без дужок: передаємо метод, а не викликаємо</span>
+            icon: Icon(
+              _liked ? Icons.favorite : Icons.favorite_border,
+              color: Colors.red,
+            ),
+          ),
+          <span class="cm">// ⭐⭐ «−» сіра, коли в кошику 0: onPressed: null вимикає кнопку</span>
+          IconButton(onPressed: _inCart &gt; 0 ? _remove : null, icon: const Icon(Icons.remove)),
+          IconButton(onPressed: _add, icon: const Icon(Icons.add)),
+        ],
+      ),
+    );
+  }
+}</pre></div>
+<div class="kicker" style="margin-top:34px">Практика 2 · фінальний вигляд</div>
+<div class="codebox"><div class="codebar"><b>2 · Переглядач ігор: стан у всього екрана ⭐–⭐⭐⭐</b>
+  <button class="copy" data-for="p2">Скопіювати</button></div>
+<pre class="dart" id="p2"><span class="cm">// Урок 20 · практика 2 · переглядач ігор: стан — у всього екрана.</span>
+<span class="cm">// Номер гри _index живе в State екрана; кнопки міняють його через setState.</span>
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class Game {
+  final String title;
+  final String genre;
+  final double price;
+
+  const Game(this.title, this.genre, this.price);
+}
+
+const List&lt;Game&gt; games = [
+  Game('Stardew Valley', 'Farming sim', 14.99),
+  Game('Celeste', 'Platformer', 19.99),
+  Game('Terraria', 'Sandbox', 9.99),
+  Game('Hades II', 'Action', 29.99),
+];
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorSchemeSeed: Colors.indigo),
+      home: const GameViewer(), <span class="cm">// екран — окремий віджет зі станом</span>
+    );
+  }
+}
+
+class GameViewer extends StatefulWidget {
+  const GameViewer({super.key});
+
+  @override
+  State&lt;GameViewer&gt; createState() =&gt; _GameViewerState();
+}
+
+class _GameViewerState extends State&lt;GameViewer&gt; {
+  int _index = 0; <span class="cm">// ⭐ яка гра на екрані</span>
+  final List&lt;Game&gt; _cart = []; <span class="cm">// ⭐⭐⭐ кошик: сам список final, але вміст міняється</span>
+
+  void _next() {
+    setState(() {
+      _index++;
+    });
+  }
+
+  void _prev() {
+    setState(() {
+      _index--;
+    });
+  }
+
+  void _buy() {
+    setState(() {
+      _cart.add(games[_index]); <span class="cm">// ⭐⭐⭐</span>
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Game g = games[_index];
+    double sum = 0;
+    for (Game c in _cart) {
+      sum += c.price;
+    }
+    return Scaffold(
+      backgroundColor: Colors.grey.shade200,
+      appBar: AppBar(title: Text('Cart: ${_cart.length}'), centerTitle: true), <span class="cm">// ⭐⭐⭐</span>
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GameCard(game: g),
+            Text('${_index + 1} / ${games.length}'), <span class="cm">// ⭐⭐ номер гри</span>
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                <span class="cm">// ⭐⭐ на першій грі «Prev» сіра, на останній — «Next»</span>
+                ElevatedButton(onPressed: _index &gt; 0 ? _prev : null, child: const Text('Prev')),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  onPressed: _index &lt; games.length - 1 ? _next : null,
+                  child: const Text('Next'),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(onPressed: _buy, child: const Text('Buy')), <span class="cm">// ⭐⭐⭐</span>
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (_cart.isNotEmpty) Text('Total: ${sum.toStringAsFixed(2)} USD'), <span class="cm">// ⭐⭐⭐</span>
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+<span class="cm">// Картка без стану — як на уроці 19: лише показує гру, яку отримала.</span>
+class GameCard extends StatelessWidget {
+  const GameCard({super.key, required this.game});
+
+  final Game game;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 340,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.indigo, width: 2),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.sports_esports, size: 40, color: Colors.indigo),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                game.title,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Text(game.genre, style: const TextStyle(color: Colors.black54)),
+              const SizedBox(height: 4),
+              Text('${game.price} USD', style: const TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}</pre></div>
+
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.for).innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+  b.textContent = 'Скопійовано ✓'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Скопіювати'; b.classList.remove('ok'); }, 2000);
+});
+</script>
+</body>
+</html>

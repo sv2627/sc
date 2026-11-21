@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Перша подія: click · JavaScript · 11 клас · Урок 19</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          JavaScript I (основа мови)
+  Клас          11 (16–17 років)
+  Школа         A+ (Архітектурно-Інженерний Колегіум)
+  Урок          19 з 35 · 23.11.2026 · ПОНЕДІЛОК
+  Тема          Перша подія: click (тема 3.20 плану)
+  Тривалість    45 хв — згадуємо 4 · показ ~13 · практика ~28
+  Акцент        бордовий (бренд A+) — --accent:var(--brand)
+  Слайдів       29
+  ────────────────────────────────────────────────────────────────
+  СПИРАЄТЬСЯ НА уроки 16–18: querySelector · textContent · classList ·
+     масив обʼєктів · createElement / append · render(list);
+     урок 10: функція, стрілкова функція () => { }
+  НОВЕ          addEventListener('click', обробник) · обробник — імʼя
+                без дужок або стрілкова функція · три способи підписатися
+                (атрибут onclick, властивість el.onclick, addEventListener) ·
+                лічильник: змінна ПОЗА обробником · classList.toggle +
+                contains для кнопки «Тема» · родина подій (сл. 17) ·
+                обробник на кожну картку в циклі · фільтр кнопками
+                через render · чому <script> — в кінці body (null)
+  ⚠️ САМОДОСТАТНІЙ: старт (index.html з кнопками, style.css, script.js
+     з масивом games і готовою render) — kod.html ЦЬОГО уроку, сл. 5.
+  ⚠️ App Inventor (сл. 6) — лише для тих, у кого він був у 6 класі.
+  ⚠️ ДЗ — CodePen (HTML + JS), до 25.11. Здача — Google Classroom.
+  ────────────────────────────────────────────────────────────────
+  НОМЕРИ СЛАЙДІВ людські (1 = титул); id у коді на одиницю менший
+  ЗГАДУЄМО      сл. 2–3 — 4 хв · ЩО ВИЙДЕ сл. 4 · СТАРТ сл. 5 · НАВІЩО сл. 6
+  ПОДІЯ         сл. 7–10 → ПРАКТИКА 1 сл. 11 (6 хв)
+  ЛІЧИЛЬНИК     сл. 12–13 → ПРАКТИКА 2 сл. 14 (8 хв)
+  ТЕМА, РОДИНА  сл. 15–18 → ПРАКТИКА 3 сл. 19 (8 хв)
+  ФІЛЬТР        сл. 20–22 → ПРАКТИКА 4 сл. 23 (6 хв)
+  ДОВІДНИК сл. 24 (на дошці з П2) · ТЕСТИ 25 · БАНК 26 · ЗДАЧА 27 ·
+  ДАЛІ 28 · ДЗ 29
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ЩО РІЗАТИ ПЕРШИМ: сл. 6 (усно); сл. 9 (три способи — лише
+     таблицю); сл. 18 (передбач — одна картка); сл. 22 (виправ — тим,
+     хто закінчив). Сл. 8 (без дужок) і 21 (script у кінці) — НЕ різати.
+  ────────────────────────────────────────────────────────────────
+  План          office/plany/05-javascript-8.md, тема 3.20
+  Роздатка      rozdatka.html — 1 сторінка A4, сховище
+  Код           kod.html — старт, ДЗ, фінальний script.js
+  Конспект      2026-27-teacher/aplus/11-javascript/u19/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--brand);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* оператор порівняння */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+.chk{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.chk-i{display:flex;align-items:center;gap:11px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+.chk-b{font-size:1.35rem;line-height:1;color:var(--brand);flex-shrink:0}
+.chk-t{font-family:var(--f-mono);font-size:16px;color:var(--ink)}
+.tmr{font-family:var(--f-mono);font-size:15px;color:#9c5b00;background:#fdf0d9;
+     border:1.5px solid #f2ddb5;border-radius:8px;padding:5px 12px;margin-left:auto;flex-shrink:0}
+
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+
+/* таблиця операторів */
+table.ops{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+table.ops td,table.ops th{border-bottom:1px solid var(--border);padding:9px 14px;
+  font-size:17px;text-align:left;color:var(--ink)}
+table.ops th{background:var(--surf2);font-family:var(--f-mono);font-size:13px;
+  letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);font-weight:700}
+table.ops tr:last-child td{border-bottom:0}
+table.ops td.o{font-family:var(--f-mono);font-weight:700;color:var(--brand);width:88px}
+table.ops td.r{font-family:var(--f-mono);color:var(--blue);width:96px}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО: слайд-довідник (уся родина конструкцій на одному екрані) ─── */
+.rf{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rf-c{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--brand);
+  border-radius:10px;padding:9px 13px}
+.rf-c h4{font-family:var(--f-mono);font-size:13px;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--brand);margin-bottom:5px}
+.rf-c pre{font-family:var(--f-mono);font-size:15.5px;line-height:1.48;white-space:pre-wrap;color:var(--ink);
+  font-variant-ligatures:none}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6 ─── */
+.solo li{font-size:16.5px;line-height:1.55;margin-bottom:4px}
+.tree{font-family:var(--f-mono);font-size:16px;line-height:1.6;white-space:pre;color:var(--ink)}
+.q3{display:grid;grid-template-columns:1fr;gap:10px}
+.q3 .card{padding:13px 17px}
+.q3 .card h3{font-size:1.1rem;margin-bottom:0}
+.q3 .card p{font-size:16.5px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 8 ─── */
+.dp-out.con{font-family:var(--f-mono);font-size:16px;line-height:1.55;white-space:pre-wrap;padding:10px 19px}
+.dp-out.con b{color:var(--faint);font-family:var(--f-body);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+.three .mono{font-size:15.5px;line-height:1.55;margin-bottom:6px}
+table.ops td.c{text-align:center;font-family:var(--f-mono)}
+.ic{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 12 ─── інлайн-код не розривається між рядками */
+.ic{white-space:nowrap}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 16 ─── */
+/* «вікно браузера» — як виглядає сторінка */
+.br{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);background:#fff;
+    box-shadow:0 2px 10px rgba(89,20,41,.07)}
+.br-body{padding:14px 20px;font-family:Arial,Helvetica,sans-serif;color:#222}
+.br-body .bh1{font-size:26px;font-weight:700;color:#591429;margin-bottom:6px}
+.br-body p{font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.45;margin:5px 0;color:#222}
+.br-body p.g{font-size:19px}
+.br-body p.s{background:#ffe9a8;display:inline-block;padding:0 4px}
+.br-body p.n{color:#555;font-style:italic}
+.br-body .chg{outline:2px dashed #0253b3;outline-offset:2px}
+.dp-code.sm{font-size:14px;line-height:1.5;padding:10px 14px}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 18 ─── картки каталогу в «вікні браузера» */
+.cat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.cat .cd{border:1px solid #c9b8bd;border-radius:9px;padding:7px 10px;font-family:Arial,Helvetica,sans-serif}
+.cat .cd h4{font-size:16px;color:#591429;margin:0 0 2px}
+.cat .cd .pr{font-size:15px;font-weight:700;color:#222}
+.cat .cd .gn{font-size:13px;color:#555}
+.cat .cd.sl{border-left:5px solid #1d7a3a;background:#eef7f0}
+a.lnk{color:var(--blue);font-family:var(--f-mono);font-size:.9em;border-bottom:1.5px solid var(--blue);text-decoration:none;word-break:break-all}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 19 ─── кнопки у «вікні браузера» і блок App Inventor */
+.br-body .bt{display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:16px;
+  border:1px solid #8a7a7e;border-radius:6px;background:#f3f0f0;padding:5px 12px;margin:2px 4px 2px 0;color:#222}
+.br-body .bt.on{background:#591429;color:#fff;border-color:#591429}
+.br.dk .br-body{background:#22232a;color:#eee}
+.br.dk .br-body .bh1{color:#f4a6b3}
+.br.dk .br-body p{color:#eee}
+.br.dk .br-body .bt{background:#3a3b44;color:#eee;border-color:#666}
+.br.dk .cat .cd{border-color:#555}
+.br.dk .cat .cd h4{color:#f4a6b3}
+.br.dk .cat .cd .pr,.br.dk .cat .cd .gn{color:#ddd}
+.br.dk .cat .cd.sl{background:#23402c;border-left-color:#4caf6a}
+.cat .cd.pk{outline:3px solid #0253b3;outline-offset:-1px}
+.ai{display:inline-block;background:#8f5a10;color:#fff;border-radius:10px 10px 10px 0;
+  padding:10px 16px 12px;font-family:var(--f-body);font-weight:700;font-size:18px;line-height:1.5}
+.ai .ai-in{display:block;background:#fbf7f7;color:var(--ink);border-radius:6px;margin:8px 0 0 18px;
+  padding:6px 12px;font-weight:600;font-size:16px}
+.big-ctr{font-family:Arial,Helvetica,sans-serif;font-size:30px;font-weight:700;color:#591429;margin:6px 0}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+
+  <!-- ══════════ 1 ── ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Перша подія: click</h1>
+      <p class="title-sub">Сторінка відповідає на дії людини<br>
+        JavaScript · 11 клас · Урок 19 з 35 · 23 листопада</p>
+      <div class="chips">
+        <span class="chip">&lt;button&gt;</span>
+        <span class="chip">addEventListener</span>
+        <span class="chip">'click'</span>
+        <span class="chip">count++</span>
+        <span class="chip">classList.toggle</span>
+        <span class="chip">фільтр кнопками</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ── ЗГАДУЄМО: УРОК 18 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lb">Згадуємо · урок 18</span>
+      <h2>Що станеться?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const g = { name: 'Celeste',
+            price: 449 };
+g.price - 50</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>399</b> — крапка + назва властивості</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">for (const g of games) {
+  catalog.innerHTML =
+    `&lt;h3&gt;${g.name}&lt;/h3&gt;`;
+}</div>
+        <p class="rv-hint">Скільки заголовків? Клацни</p>
+        <div class="rv-body"><p><b>Один</b>, останній: <span class="ic">=</span> щоразу стирає. Дописати — <span class="ic">+=</span></p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const h = document
+  .createElement('h3');
+h.textContent = 'Minecraft';</div>
+        <p class="rv-hint">Що видно на сторінці? Клацни</p>
+        <div class="rv-body"><p><b>Нічого</b> — елемент лише в памʼяті. Бракує <span class="ic">catalog.append(h)</span></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ── ЗГАДУЄМО: ДЗ УРОКУ 18 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🏠</div><div>
+      <span class="label lb">Згадуємо · домашнє уроку 18</span>
+      <h2>Мої ігри</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">CodePen · JS · що треба було дописати</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.6;padding:12px 16px">games.<span class="sf">push</span>({ name: <span class="ss">'Hollow Knight'</span>, price: <span class="sn">259</span> });
+<span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> games) {
+  list.innerHTML <span class="st">+=</span> <span class="ss">`&lt;p&gt;${g.name} — ${g.price} грн&lt;/p&gt;`</span>;
+  sum <span class="st">+=</span> g.price;
+}
+<span class="sk">const</span> p = document.<span class="sf">createElement</span>(<span class="ss">'p'</span>);
+p.textContent = <span class="ss">`Ігор: ${games.length}, разом: ${sum} грн`</span>;
+document.body.<span class="sf">append</span>(p);</div>
+      </div>
+      <div class="q3">
+        <div class="card reveal" onclick="this.classList.toggle('open')"><h3>Разом «1347300»</h3>
+          <p class="rv-hint">Чому склеїлось? Клацни</p><div class="rv-body"><p>Ціна в лапках <span class="ic">'300'</span> — рядок. Ціна — числом: <span class="ic">price: 300</span></p></div></div>
+        <div class="card cp reveal" onclick="this.classList.toggle('open')"><h3>Лише три рядки</h3>
+          <p class="rv-hint">Де помилка? Клацни</p><div class="rv-body"><p><span class="ic">push</span> стоїть <b>після</b> циклу — цикл уже пройшов</p></div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 ── ЩО ВИЙДЕ ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🎯</div><div>
+      <span class="label lm">Що вийде наприкінці</span>
+      <h2>Кнопки працюють: лічильник, тема, фільтр</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1fr">
+      <div class="br"><div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">до кліку</span></div><div class="br-body"><div class="bh1">GameStore</div>
+        <p><span class="bt">Привіт</span><span class="bt">🌙 Темна</span></p>
+        <p><span class="bt">+1</span><span class="bt">−1</span><span class="bt">Скинути</span> Кліків: 0</p>
+        <p><span class="bt on">Усі</span><span class="bt">Дешеві</span></p>
+        <div class="cat">
+          <div class="cd"><h4>Minecraft</h4><div class="pr">699 грн</div></div>
+          <div class="cd sl"><h4>Terraria</h4><div class="pr">199 грн</div></div>
+          <div class="cd"><h4>Celeste</h4><div class="pr">449 грн</div></div>
+        </div></div></div>
+      <div class="br dk"><div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">після кількох кліків</span></div><div class="br-body"><div class="bh1">GameStore</div>
+        <p><span class="bt">Привіт</span><span class="bt">☀️ Світла</span></p>
+        <p><span class="bt">+1</span><span class="bt">−1</span><span class="bt">Скинути</span> Кліків: 7</p>
+        <p><span class="bt">Усі</span><span class="bt on">Дешеві</span></p>
+        <div class="cat">
+          <div class="cd sl pk"><h4>Terraria</h4><div class="pr">199 грн</div></div>
+          <div class="cd sl"><h4>Portal 2</h4><div class="pr">279 грн</div></div>
+        </div></div></div>
+    </div>
+    <div class="tip tm mt"><span class="tip-ico">👆</span><div>Досі скрипт робив усе одразу при відкритті. Сьогодні код <b>чекає</b> на клік</div></div>
+  </div></section>
+
+  <!-- ══════════ 5 ── СТАРТ ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📁</div><div>
+      <span class="label lm">Старт</span>
+      <h2>Нова папка — три файли</h2>
+    </div></div>
+    <div class="steps">
+      <div class="step"><span class="step-n">1</span><span class="step-t">Папка <span class="ic">js-11/klik</span>: <span class="ic">index.html</span>, <span class="ic">style.css</span>, <span class="ic">script.js</span></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">Усі три — блоки «Старт» на сторінці, кнопка <b>Скопіювати</b>:<br>
+        <a class="lnk" href="https://sv2627.github.io/sc/aplus/11-javascript/u19/kod.html">https://sv2627.github.io/sc/aplus/11-javascript/u19/kod.html</a></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">Відкрий <span class="ic">index.html</span> у Chrome: кнопки є, каталог є — але кнопки <b>нічого не роблять</b>. <b>F12</b> → Console</span></div>
+    </div>
+    <div class="hbox hp mt">У стартовому <span class="ic">script.js</span> уже є масив <span class="ic">games</span> і функція <span class="ic">render(list)</span> — каталог малюється. Пишемо під ними</div>
+  </div></section>
+
+  <!-- ══════════ 6 ── НАВІЩО ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">⚡</div><div>
+      <span class="label lo">Навіщо</span>
+      <h2>Подія — щось сталося. Обробник — що на це зробити</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1fr 1.15fr">
+      <div>
+        <p style="font-size:16px;color:var(--dim);margin-bottom:8px">App Inventor, 6 клас — у кого був:</p>
+        <div class="ai">when Button1 .Click<br>do<span class="ai-in">set Label1 .Text to "Привіт"</span></div>
+      </div>
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js · те саме</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px">button1.<span class="sf">addEventListener</span>(<span class="ss">'click'</span>, () <span class="st">=&gt;</span> {
+  label1.textContent = <span class="ss">'Привіт'</span>;
+});</div>
+</div>
+    </div>
+    <div class="three mt">
+      <div class="hbox hm" style="margin:0"><b>Подія</b> — клік, натиснута клавіша, введена літера</div>
+      <div class="hbox hp" style="margin:0"><b>Обробник</b> — функція, яку браузер викличе <b>сам</b></div>
+      <div class="hbox ho" style="margin:0">Без подій сторінка показує й завмирає. Ігри, форми, кнопки «Купити» — усе на подіях</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 ── ADDEVENTLISTENER ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">👂</div><div>
+      <span class="label lm">Нове · addEventListener</span>
+      <h2>Знайти кнопку — підписатися на клік</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div>
+        <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">index.html</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.6;padding:10px 18px"><span class="sk">&lt;button</span> id=<span class="ss">"hello"</span><span class="sk">&gt;</span>Привіт<span class="sk">&lt;/button&gt;</span>
+<span class="sk">&lt;p</span> id=<span class="ss">"msg"</span><span class="sk">&gt;</span>Натисни кнопку<span class="sk">&lt;/p&gt;</span></div>
+</div>
+        <div class="dp mt">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:12px 18px"><span class="sk">const</span> hello = document.<span class="sf">querySelector</span>(<span class="ss">'#hello'</span>);
+<span class="sk">const</span> msg = document.<span class="sf">querySelector</span>(<span class="ss">'#msg'</span>);
+
+hello.<span class="sf">addEventListener</span>(<span class="ss">'click'</span>, () <span class="st">=&gt;</span> {
+  msg.textContent = <span class="ss">'Привіт, GameStore!'</span>;
+  console.<span class="sf">log</span>(<span class="ss">'клік'</span>);
+});</div>
+</div>
+      </div>
+      <table class="ops">
+        <tr><th>Частина</th><th>Що це</th></tr>
+        <tr><td class="o" style="width:auto">hello.</td><td>на якому елементі чекаємо</td></tr>
+        <tr><td class="o" style="width:auto">addEventListener</td><td>«слухати подію»</td></tr>
+        <tr><td class="o" style="width:auto">'click'</td><td>яку — назва в лапках, малими</td></tr>
+        <tr><td class="o" style="width:auto">() =&gt; { … }</td><td>обробник: що зробити</td></tr>
+      </table>
+    </div>
+    <div class="hbox hm mt">Код у <span class="ic">{ }</span> <b>не</b> виконується одразу — лише коли натиснули. Натиснули 5 разів — 5 разів</div>
+  </div></section>
+
+  <!-- ══════════ 8 ── ОБРОБНИК: БЕЗ ДУЖОК ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🧷</div><div>
+      <span class="label lr">Обробник — функція з уроку 10</span>
+      <h2>Віддаємо функцію, а не викликаємо її</h2>
+    </div></div>
+    <div class="pair">
+      <div class="right"><span class="lbl">так · стрілкова функція на місці</span>
+        <div class="mono">hello.addEventListener('click', () =&gt; {
+  msg.textContent = 'Привіт!';
+});</div>
+        <span class="lbl" style="margin-top:12px">так · імʼя готової функції, без ()</span>
+        <div class="mono">function sayHi() {
+  msg.textContent = 'Привіт!';
+}
+hello.addEventListener('click', sayHi);</div></div>
+      <div class="wrong"><span class="lbl">ні · з дужками</span>
+        <div class="mono">hello.addEventListener('click', sayHi());
+
+// sayHi() виконалась ОДРАЗУ, при відкритті,
+// а браузеру віддали те, що вона повернула —
+// undefined. Клік нічого не робить,
+// і помилки в Console немає</div></div>
+    </div>
+    <div class="hbox hm mt"><span class="ic">sayHi</span> — сама функція, «ось рецепт». <span class="ic">sayHi()</span> — виконати її зараз, «ось готова страва»</div>
+  </div></section>
+
+  <!-- ══════════ 9 ── ТРИ СПОСОБИ ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🧰</div><div>
+      <span class="label lb">Уся родина</span>
+      <h2>Три способи підписатися на клік</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Запис</th><th>Де</th><th>Що з ним</th></tr>
+      <tr><td><span class="ic">&lt;button onclick="sayHi()"&gt;</span></td><td>атрибут у HTML</td><td>старий спосіб: JS змішаний з HTML</td></tr>
+      <tr><td><span class="ic">hello.onclick = sayHi;</span></td><td>властивість у JS</td><td>лише <b>один</b> обробник: другий присвоєний стирає перший</td></tr>
+      <tr><td><span class="ic">hello.addEventListener('click', sayHi);</span></td><td>метод у JS</td><td><b>скільки завгодно</b> обробників; так пишемо ми</td></tr>
+      <tr><td><span class="ic">hello.removeEventListener('click', sayHi);</span></td><td>метод у JS</td><td>відписатися — лише від функції з <b>імʼям</b></td></tr>
+    </table>
+    <div class="two mt">
+      <div class="hbox hm" style="margin:0">У чужому коді й старих підручниках побачиш <span class="ic">onclick</span> — тепер знаєш, що це те саме</div>
+      <div class="hbox hp" style="margin:0">У атрибуті — <b>з дужками</b> (це рядок коду), у JS — <b>без</b></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 ── ПЕРЕДБАЧ: КЛІК ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач · натиснули кнопку один раз</span>
+      <h2>Що в консолі?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">hello.addEventListener(
+  'click',
+  () =&gt; console.log('A')
+);
+hello.addEventListener(
+  'click',
+  () =&gt; console.log('B')
+);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>A, потім B</b> — обидва обробники, у порядку підписки</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">hello.addEventListener(
+  'Click',
+  () =&gt; console.log('A')
+);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>Нічого</b> — події «Click» не буває. Назва — малими: <span class="ic">'click'</span></p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">function hi() {
+  console.log('hi');
+}
+hello.addEventListener(
+  'click', hi()
+);</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>hi — ще до кліку</b>, при відкритті. Після кліку — нічого: дужки зайві</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 ── ПРАКТИКА 1 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 1</span>
+        <span class="t">Кнопка «Привіт»</span><span class="tmr">6 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — у script.js</span>
+        <div class="mono">const hello =
+  document.querySelector('#hello');
+hello.addEventListener('click', () =&gt; {
+  console.log('клік');
+});</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Набери приклад, натисни «Привіт» тричі — скільки рядків у Console?</li>
+          <li>У тому самому обробнику — текст у <span class="ic">#msg</span>: «Привіт, GameStore!»</li>
+          <li>Ще одна дія в тому ж обробнику: <span class="ic">msg.classList.add('big')</span></li>
+          <li>Перепиши через функцію з імʼям <span class="ic">sayHi</span>. Постав дужки <span class="ic">sayHi()</span> — що змінилось? Прибери</li>
+          <li>⭐⭐ Заголовок <span class="ic">#title</span> теж слухає клік: міняє колір через <span class="ic">style.color</span></li>
+          <li>⭐⭐⭐ Обробник пише в <span class="ic">#msg</span> час кліку: <span class="ic">new Date().toLocaleTimeString()</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ── ЛІЧИЛЬНИК ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔢</div><div>
+      <span class="label lm">Лічильник</span>
+      <h2>Змінна живе <b>поза</b> обробником</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:16px;line-height:1.7;padding:14px 18px"><span class="sk">const</span> plus = document.<span class="sf">querySelector</span>(<span class="ss">'#plus'</span>);
+<span class="sk">const</span> out = document.<span class="sf">querySelector</span>(<span class="ss">'#count'</span>);
+<span class="sk">let</span> count = <span class="sn">0</span>;               <span class="cm">// 1 раз, при відкритті</span>
+
+plus.<span class="sf">addEventListener</span>(<span class="ss">'click'</span>, () <span class="st">=&gt;</span> {
+  count<span class="st">++</span>;                    <span class="cm">// на кожен клік</span>
+  out.textContent = <span class="ss">`Кліків: ${count}`</span>;
+});</div>
+</div>
+      <div>
+        <div class="hbox hm"><span class="ic">let count = 0</span> — <b>над</b> обробником: виконується один раз і памʼятає число між кліками</div>
+        <div class="hbox hp"><span class="ic">let</span>, а не <span class="ic">const</span> — значення міняється</div>
+        <div class="hbox ho">Змінив число — <b>онови сторінку</b>: <span class="ic">textContent</span> сам не переписується</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ── ПЕРЕДБАЧ: ЛІЧИЛЬНИК ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач · натиснули «+1» тричі</span>
+      <h2>Що на сторінці?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">plus.addEventListener('click',
+  () =&gt; {
+    let count = 0;
+    count++;
+    out.textContent = count;
+  });</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>1</b> — щоразу нова змінна з нуля. Винести <span class="ic">let count</span> над обробник</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">const count = 0;
+plus.addEventListener('click',
+  () =&gt; {
+    count++;
+    out.textContent = count;
+  });</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>0</b> і червоне: <span class="ic">TypeError: Assignment to constant variable</span> — потрібен <span class="ic">let</span></p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">let count = 0;
+out.textContent = count;
+plus.addEventListener('click',
+  () =&gt; {
+    count++;
+  });</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>0</b> — число росте, а сторінку не оновили. <span class="ic">textContent</span> — у обробник</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ── ПРАКТИКА 2 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 2</span>
+        <span class="t">Лічильник кліків</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад — «+1»</span>
+        <div class="mono">let count = 0;
+plus.addEventListener('click', () =&gt; {
+  count++;
+  out.textContent =
+    `Кліків: ${count}`;
+});</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>«+1» за прикладом — після 5 кліків «Кліків: 5»</li>
+          <li>Кнопка <span class="ic">#minus</span>: <span class="ic">count--</span> і той самий текст</li>
+          <li>Кнопка <span class="ic">#reset</span>: <span class="ic">count = 0</span></li>
+          <li>Перенеси <span class="ic">let count = 0</span> усередину обробника «+1» — що бачиш? Поверни</li>
+          <li>⭐⭐ Нижче нуля не можна: у «−1» перевір <span class="ic">if (count &gt; 0)</span></li>
+          <li>⭐⭐⭐ Текст оновлює одна функція <span class="ic">show()</span> — її викликають усі три обробники; від 10 кліків — клас <span class="ic">gold</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ── ТЕМА ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🌙</div><div>
+      <span class="label lm">Кнопка «Тема» · classList з уроку 17</span>
+      <h2>Один клік — увімкнути, другий — вимкнути</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:15.5px;line-height:1.65;padding:12px 16px"><span class="sk">const</span> theme = document.<span class="sf">querySelector</span>(<span class="ss">'#theme'</span>);
+
+theme.<span class="sf">addEventListener</span>(<span class="ss">'click'</span>, () <span class="st">=&gt;</span> {
+  document.body.classList.<span class="sf">toggle</span>(<span class="ss">'dark'</span>);
+
+  <span class="sk">if</span> (document.body.classList.<span class="sf">contains</span>(<span class="ss">'dark'</span>)) {
+    theme.textContent = <span class="ss">'☀️ Світла'</span>;
+  } <span class="sk">else</span> {
+    theme.textContent = <span class="ss">'🌙 Темна'</span>;
+  }
+});</div>
+</div>
+      <div>
+        <div class="hbox hm"><span class="ic">toggle</span> — є клас <span class="ic">dark</span>? прибрати. Немає? додати</div>
+        <div class="hbox hp"><span class="ic">contains('dark')</span> — <span class="ic">true</span> чи <span class="ic">false</span>: питаємо, <b>яка зараз</b> тема</div>
+        <div class="hbox ho">Як виглядає <span class="ic">.dark</span> — у <span class="ic">style.css</span> старту. JS лише вмикає клас</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ── ОБРОБНИК НА КОЖНУ КАРТКУ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🃏</div><div>
+      <span class="label lm">Подія в циклі</span>
+      <h2>Клік по картці — вибрати гру</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js · усередині render</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.6;padding:12px 16px"><span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> list) {
+  <span class="sk">const</span> card = document.<span class="sf">createElement</span>(<span class="ss">'div'</span>);
+  card.classList.<span class="sf">add</span>(<span class="ss">'card'</span>);
+  <span class="cm">// … h3, ціна — як на уроці 18</span>
+
+  card.<span class="sf">addEventListener</span>(<span class="ss">'click'</span>, () <span class="st">=&gt;</span> {
+    card.classList.<span class="sf">toggle</span>(<span class="ss">'picked'</span>);
+    msg.textContent = <span class="ss">`Обрано: ${g.name}`</span>;
+  });
+
+  catalog.<span class="sf">append</span>(card);
+}</div>
+</div>
+      <div>
+        <div class="hbox hm">Кожна картка отримує <b>свій</b> обробник — у ньому її <span class="ic">card</span> і її <span class="ic">g</span></div>
+        <div class="hbox hp">Слухати можна будь-що: <span class="ic">div</span>, <span class="ic">h1</span>, картинку — не лише кнопку</div>
+        <div class="hbox ho">Обробник — <b>до</b> <span class="ic">append</span> чи після — однаково, поки є змінна <span class="ic">card</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ── РОДИНА ПОДІЙ ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">📚</div><div>
+      <span class="label lb">Уся родина</span>
+      <h2>Не лише click</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Назва події</th><th>Коли спрацьовує</th></tr>
+      <tr><td class="o" style="width:220px">'click'</td><td>натиснули й відпустили кнопку миші (або тап)</td></tr>
+      <tr><td class="o">'dblclick'</td><td>подвійний клік</td></tr>
+      <tr><td class="o">'mouseenter' · 'mouseleave'</td><td>курсор зайшов на елемент · вийшов з нього</td></tr>
+      <tr><td class="o">'input'</td><td>у полі змінився текст — на <b>кожну</b> літеру · урок 20</td></tr>
+      <tr><td class="o">'change'</td><td>поле змінили й залишили, вибрали пункт у списку · урок 20</td></tr>
+      <tr><td class="o">'keydown'</td><td>натиснули клавішу на клавіатурі</td></tr>
+      <tr><td class="o">'submit'</td><td>відправили форму</td></tr>
+    </table>
+    <div class="hbox hm mt">Запис для всіх однаковий: <span class="ic">el.addEventListener('назва', обробник)</span>. Міняється лише назва</div>
+  </div></section>
+
+  <!-- ══════════ 18 ── ПЕРЕДБАЧ: РОДИНА ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔮</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Що спрацює?</h2>
+    </div></div>
+    <div class="three">
+      <div class="card reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">document.body.classList
+  .toggle('dark');
+document.body.classList
+  .toggle('dark');
+document.body.classList
+  .contains('dark')</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>false</b> — увімкнули й вимкнули</p></div></div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">title.addEventListener(
+  'mouseenter',
+  () =&gt; console.log('над')
+);
+// курсор пройшов
+// над заголовком 2 рази</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>«над» двічі</b> — клацати не треба</p></div></div>
+      <div class="card cr reveal" onclick="this.classList.toggle('open')">
+        <div class="mono">plus.addEventListener(
+  'input',
+  () =&gt; count++
+);
+// натиснули «+1» 3 рази</div>
+        <p class="rv-hint">Спершу вголос, потім клацни</p>
+        <div class="rv-body"><p><b>count = 0</b> — у кнопки немає події <span class="ic">input</span>, вона буває в полях</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 ── ПРАКТИКА 3 ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 3</span>
+        <span class="t">Тема і вибір картки</span><span class="tmr">8 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">theme.addEventListener('click',
+  () =&gt; {
+    document.body.classList
+      .toggle('dark');
+  });</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Кнопка «Тема» за прикладом — сторінка темнішає і світлішає</li>
+          <li>Текст кнопки міняється: «☀️ Світла» / «🌙 Темна» через <span class="ic">contains</span></li>
+          <li>У <span class="ic">render</span>: клік по картці — клас <span class="ic">picked</span> і «Обрано: …» у <span class="ic">#msg</span></li>
+          <li>Напиши <span class="ic">'Click'</span> з великої в одному обробнику — що з кнопкою? Поверни</li>
+          <li>⭐⭐ Заголовок на <span class="ic">mouseenter</span> отримує клас <span class="ic">big</span>, на <span class="ic">mouseleave</span> — втрачає</li>
+          <li>⭐⭐⭐ Подвійний клік (<span class="ic">dblclick</span>) по картці прибирає її: <span class="ic">card.remove()</span></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 ── ФІЛЬТР ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔎</div><div>
+      <span class="label lm">render з уроку 18 + клік</span>
+      <h2>Кнопки «Усі» і «Дешеві»</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.4fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js</span></div>
+<div class="dp-code" style="font-size:15px;line-height:1.6;padding:12px 16px"><span class="sk">const</span> cheapGames = [];
+<span class="sk">for</span> (<span class="sk">const</span> g <span class="sk">of</span> games) {
+  <span class="sk">if</span> (g.price <span class="st">&lt;</span> <span class="sn">300</span>) cheapGames.<span class="sf">push</span>(g);
+}
+
+document.<span class="sf">querySelector</span>(<span class="ss">'#all'</span>)
+  .<span class="sf">addEventListener</span>(<span class="ss">'click'</span>, () <span class="st">=&gt;</span> <span class="sf">render</span>(games));
+
+document.<span class="sf">querySelector</span>(<span class="ss">'#cheap'</span>)
+  .<span class="sf">addEventListener</span>(<span class="ss">'click'</span>, () <span class="st">=&gt;</span> <span class="sf">render</span>(cheapGames));</div>
+</div>
+      <div>
+        <div class="hbox hm"><span class="ic">render</span> починає з <span class="ic">innerHTML = ''</span> — тому кожен клік <b>перемальовує</b> каталог, а не дописує</div>
+        <div class="hbox hp">Тут обробник — стрілкова, бо <span class="ic">render</span> треба передати масив: <span class="ic">() =&gt; render(games)</span></div>
+        <div class="hbox hr"><span class="ic">addEventListener('click', render(games))</span> — дужки, той самий слайд 8</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 21 ── SCRIPT У КІНЦІ BODY ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">📍</div><div>
+      <span class="label lr">Найчастіша помилка уроку</span>
+      <h2><span class="ic">&lt;script&gt;</span> — останнім у <span class="ic">body</span></h2>
+    </div></div>
+    <div class="pair">
+      <div class="wrong"><span class="lbl">script у head — кнопки ще немає</span>
+        <div class="mono">&lt;head&gt;
+  &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;button id="plus"&gt;+1&lt;/button&gt;
+
+// Console:
+// TypeError: Cannot read properties
+// of null (reading 'addEventListener')</div></div>
+      <div class="right"><span class="lbl">script в кінці — усе вже на сторінці</span>
+        <div class="mono">&lt;body&gt;
+  &lt;button id="plus"&gt;+1&lt;/button&gt;
+  …
+  &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/body&gt;</div></div>
+    </div>
+    <div class="two mt">
+      <div class="hbox hm" style="margin:0">Браузер читає HTML згори вниз. Скрипт угорі шукає кнопку, якої ще немає, — <span class="ic">querySelector</span> повертає <span class="ic">null</span></div>
+      <div class="hbox hp" style="margin:0">Те саме <span class="ic">null</span> — коли помилка в селекторі: <span class="ic">'plus'</span> без <span class="ic">#</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 22 ── ВИПРАВ ══════════ -->
+  <section class="slide" id="s21"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🔧</div><div>
+      <span class="label lo">Виправ — не запускай, знайди очима</span>
+      <h2>Кнопки мовчать</h2>
+    </div></div>
+    <div class="two" style="grid-template-columns:1.3fr 1fr">
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">script.js · зламано навмисно</span></div>
+<div class="dp-code" style="font-size:15.5px;line-height:1.65;padding:12px 16px"><span class="sk">const</span> plus = document.<span class="sf">querySelector</span>(<span class="ss">'plus'</span>);
+<span class="sk">const</span> cheap = document.<span class="sf">querySelector</span>(<span class="ss">'#cheap'</span>);
+
+plus.<span class="sf">addEventListener</span>(<span class="ss">'click'</span>, () <span class="st">=&gt;</span> {
+  <span class="sk">let</span> count = <span class="sn">0</span>;
+  count<span class="st">++</span>;
+  out.textContent = count;
+});
+cheap.<span class="sf">addEventListener</span>(<span class="ss">'click'</span>, <span class="sf">render</span>(cheapGames));</div>
+</div>
+      <div class="card cp reveal" onclick="this.classList.toggle('open')">
+  <h3>Три біди</h3>
+  <p class="rv-hint">Знайди всі три, потім клацни</p>
+  <div class="rv-body"><p><b>1.</b> <span class="ic">'plus'</span> без <span class="ic">#</span> — <span class="ic">null</span>, далі TypeError</p><p><b>2.</b> <span class="ic">let count</span> усередині — завжди 1. Винести над обробник</p><p><b>3.</b> <span class="ic">render(cheapGames)</span> з дужками — виконалось одразу. Треба <span class="ic">() =&gt; render(cheapGames)</span></p></div></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 23 ── ПРАКТИКА 4 ══════════ -->
+  <section class="slide" id="s22"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Практика 4</span>
+        <span class="t">Фільтр кнопками</span><span class="tmr">6 хвилин</span></div>
+      <div class="two" style="gap:14px;grid-template-columns:1fr 1.4fr">
+      <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+        <div class="mono">document.querySelector('#all')
+  .addEventListener('click',
+    () =&gt; render(games));</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Кнопка «Усі» за прикладом</li>
+          <li>Масив <span class="ic">cheapGames</span> і кнопка «Дешеві» — лише Terraria і Portal 2</li>
+          <li>Перенеси <span class="ic">&lt;script&gt;</span> у <span class="ic">head</span> — прочитай помилку в Console. Поверни</li>
+          <li>Натискай «Усі» / «Дешеві» по черзі — дублів немає? Чому?</li>
+          <li>⭐⭐ Натиснута кнопка фільтра — клас <span class="ic">on</span>, у другої — прибрати</li>
+          <li>⭐⭐⭐ Кнопка «Дорожчі за 400» без нового масиву вручну: функція <span class="ic">over(price)</span> повертає масив</li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 24 ── ДОВІДНИК ══════════ -->
+  <section class="slide" id="s23"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">📌</div><div>
+      <span class="label lm">Довідник — на дошці, поки пишемо</span>
+      <h2>Подія click</h2>
+    </div></div>
+    <div class="rf">
+      <div class="rf-c"><h4>підписатися</h4><pre>btn.addEventListener(
+  'click', () =&gt; {
+    // що зробити
+  });</pre></div>
+      <div class="rf-c"><h4>функція з імʼям</h4><pre>function sayHi() { … }
+btn.addEventListener(
+  'click', sayHi);
+// без () !</pre></div>
+      <div class="rf-c"><h4>лічильник</h4><pre>let count = 0;   // поза
+btn.addEventListener('click',
+  () =&gt; { count++;
+    out.textContent = count; });</pre></div>
+      <div class="rf-c"><h4>тема</h4><pre>body.classList.toggle('dark');
+body.classList
+  .contains('dark') // true/false</pre></div>
+      <div class="rf-c"><h4>інші події</h4><pre>'dblclick'  'mouseenter'
+'mouseleave' 'input'
+'change'  'keydown'</pre></div>
+      <div class="rf-c"><h4>null?</h4><pre>// селектор без # або .
+// &lt;script&gt; не в кінці body
+//  → querySelector дав null</pre></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 25 ── ТЕСТИ ══════════ -->
+  <section class="slide" id="s24"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">✅</div><div>
+      <span class="label lm">Перевір себе</span>
+      <h2>Таблиця тестів</h2>
+    </div></div>
+    <table class="ops">
+      <tr><th>Що робиш</th><th>Що має статися</th></tr>
+      <tr><td>«Привіт»</td><td>у <span class="ic">#msg</span> — «Привіт, GameStore!»</td></tr>
+      <tr><td>«+1» пʼять разів, потім «−1»</td><td>«Кліків: 5», потім «Кліків: 4»</td></tr>
+      <tr><td>«Скинути»</td><td>«Кліків: 0»</td></tr>
+      <tr><td>«Тема» двічі</td><td>темна → світла, текст кнопки міняється</td></tr>
+      <tr><td>«Дешеві», потім «Усі»</td><td>2 картки, потім 5 — без дублів</td></tr>
+      <tr><td>F12 → Console</td><td>жодного червоного рядка</td></tr>
+    </table>
+  </div></section>
+
+  <!-- ══════════ 26 ── БАНК ══════════ -->
+  <section class="slide" id="s25"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:16px"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Кошик.</b> Клік по картці додає ціну до суми: «У кошику: 2 гри, 478 грн»</div>
+      <div class="bk"><b>Сортування.</b> Кнопка «Дешеві спершу» — новий масив, найдешевша гра шукається циклом</div>
+      <div class="bk"><b>Лайк.</b> На кожній картці кнопка ❤, клік — число лайків цієї гри +1</div>
+      <div class="bk"><b>Кубик.</b> Кнопка «Кинути» — у <span class="ic">#msg</span> <span class="ic">Math.floor(Math.random() * 6) + 1</span></div>
+      <div class="bk"><b>Жанри.</b> Кнопка на кожен жанр — <span class="ic">render</span> ігор цього жанру</div>
+      <div class="bk"><b>Розмір шрифту.</b> «A+» і «A−» міняють <span class="ic">style.fontSize</span> каталогу на 2px</div>
+      <div class="bk"><b>Секрет.</b> 5 кліків по заголовку — на сторінці зʼявляється прихована гра</div>
+      <div class="bk"><b>Підказка.</b> <span class="ic">mouseenter</span> на картці — у <span class="ic">#msg</span> її жанр</div>
+    </div>
+    <div class="hbox hm mt">Усі вісім — тільки тим, що вже було</div>
+  </div></section>
+
+  <!-- ══════════ 27 ── ЗБЕРЕГТИ ══════════ -->
+  <section class="slide" id="s26"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🗂️</div><div>
+      <span class="label lm">Здаємо</span>
+      <h2>Підписати рівень і зберегти</h2>
+    </div></div>
+    <div class="two">
+      <div class="dp">
+        <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span>
+          <span class="dp-dot dg2"></span><span class="dp-title">klik/script.js</span></div>
+<div class="dp-code"><span class="cm">// Урок 19 · Перша подія: click</span>
+<span class="cm">// Прізвище Імʼя · рівень: ⭐⭐</span>
+<span class="cm">// зроблено: привіт, лічильник, тема, фільтр</span></div>
+      </div>
+      <div>
+        <div class="hbox hm">Коментар — <b>першим рядком</b> <span class="ic">script.js</span>, потім <b>Ctrl + S</b> в усіх трьох файлах</div>
+        <div class="hbox hp">Закоментовані спроби можна лишити — підпиши, яка практика</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 28 ── ДАЛІ ══════════ -->
+  <section class="slide" id="s27"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:12px"><div class="si">🚀</div><div>
+      <span class="label lm">Далі</span>
+      <h2>Після уроку 19</h2>
+    </div></div>
+    <div class="two">
+      <div class="card"><h3>Сьогодні руками</h3><ul>
+        <li><span class="ic">addEventListener('click', …)</span></li>
+        <li>обробник без дужок або стрілкова</li>
+        <li>лічильник і кнопка «Тема»</li>
+        <li>фільтр каталогу кнопками</li>
+      </ul></div>
+      <div class="card cp"><h3>Урок 20 · середа 25 листопада</h3><ul>
+        <li>поле вводу: <span class="ic">input.value</span></li>
+        <li>рядок у число: <span class="ic">Number()</span></li>
+        <li>конвертер гривня → євро, подія <span class="ic">input</span></li>
+      </ul></div>
+    </div>
+    <div class="hbox hm mt"><strong>Домашнє завдання</strong> — на наступному слайді.</div>
+  </div></section>
+
+  <!-- ══════════ 29 ── ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s28"><div class="slide-inner">
+    <div class="sh" style="margin-bottom:10px"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання · 10 хвилин</span>
+      <h2>Лічильник лайків</h2>
+    </div></div>
+    <div class="hbox hm" style="margin-top:0">Два блоки «Домашнє» — у панелі <b>HTML</b> і <b>JS</b> на <strong>codepen.io</strong>:
+      <a class="lnk" href="https://sv2627.github.io/sc/aplus/11-javascript/u19/kod.html">https://sv2627.github.io/sc/aplus/11-javascript/u19/kod.html</a> ·
+      код JS — у <strong>Google Classroom · 11 клас</strong> до <strong>25 листопада</strong></div>
+    <div class="two" style="grid-template-columns:1fr 1.05fr;gap:16px">
+      <div class="steps" style="gap:8px">
+        <div class="step" style="padding:7px 13px"><span class="step-n">1</span><span class="step-t" style="font-size:15.5px">
+          <b>ДОПИШИ 1</b> — у обробнику <span class="ic">#like</span>: <span class="ic">count++;</span> і <span class="ic">out.textContent = `❤ ${count}`;</span></span></div>
+        <div class="step" style="padding:7px 13px"><span class="step-n">2</span><span class="step-t" style="font-size:15.5px">
+          <b>ДОПИШИ 2</b> — обробник для <span class="ic">#reset</span>: <span class="ic">count = 0;</span> і той самий рядок з текстом</span></div>
+        <div class="step" style="padding:7px 13px"><span class="step-n">3</span><span class="step-t" style="font-size:15.5px">
+          <b>ДОПИШИ 3</b> — обробник для <span class="ic">#theme</span>: <span class="ic">document.body.classList.toggle('dark');</span></span></div>
+      </div>
+      <div class="dp">
+  <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">CodePen · JS · головне</span></div>
+<div class="dp-code" style="font-size:13.5px;line-height:1.45;padding:9px 13px"><span class="sk">const</span> like = document.<span class="sf">querySelector</span>(<span class="ss">'#like'</span>);
+<span class="sk">const</span> reset = document.<span class="sf">querySelector</span>(<span class="ss">'#reset'</span>);
+<span class="sk">const</span> theme = document.<span class="sf">querySelector</span>(<span class="ss">'#theme'</span>);
+<span class="sk">const</span> out = document.<span class="sf">querySelector</span>(<span class="ss">'#out'</span>);
+<span class="sk">let</span> count = <span class="sn">0</span>;
+
+like.<span class="sf">addEventListener</span>(<span class="ss">'click'</span>, () <span class="st">=&gt;</span> {
+  <span class="cm">// ДОПИШИ 1</span>
+});
+<span class="cm">// ДОПИШИ 2 — reset.addEventListener(…)</span>
+<span class="cm">// ДОПИШИ 3 — theme.addEventListener(…)</span></div>
+</div>
+    </div>
+    <div class="hbox hp" style="margin-bottom:0"><b>Перевір:</b> 5 кліків по ❤ — «❤ 5», «Скинути» — «❤ 0», «Тема» — сторінка темнішає</div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>
+

@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Форма: поля і підписи · Front-end II · 7 клас · Урок 11</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Front-end II (адаптивна верстка, Grid, за зразком)
+  Клас          7
+  Школа         A+ (Архітектурно-Інженерний Колегіум) · середа 13:25 · к. 309
+  Урок          11 з 36 · 25.11.2026
+                Папка u11 = тема 2.12 плану (зсув на один після зняття
+                резерву 2.10, див. конспект u10).
+  Тема          Форма: поля і підписи (тема 2.12 плану, ядро)
+  Тривалість    45 хв — згадуємо 2 · розминка 4 · показ 11 ·
+                практика 22 · передбач/помилки 2 · перевір 2 · ДЗ 2
+  Акцент        blue (#0253b3) — --accent:var(--blue), як уроки 1–10
+  Слайдів       21 (s0…s20) · sN = id, людський номер на 1 більший
+  CSS           копія u10 + блок «ДОДАНО ДЛЯ УРОКУ 11» (живі поля
+                форми: .fm, .fr, .tyg)
+  JS            + поля на слайдах: клавіші в полі не гортають слайди;
+                живі форми на слайдах не перезавантажують колоду
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. VS Code + Chrome. Інтернет — для kod.html.
+  ПЛАН          office/plany/03-frontend-7.md, тема 2.12: form, input
+                з type text, email, tel, date, number; label for та id;
+                placeholder; button. Чесно: форма нікуди не надсилає
+                дані — серверної частини немає. Артефакт — форма з
+                4 полів і кнопкою.
+  ПОВНА РОДИНА  s10 — типи input: text · email · tel · date · number ·
+                password (+ checkbox/radio — анонс уроку 12)
+                s7  — label: for + id АБО поле всередині label
+                s15 — button: submit (за замовчуванням) · reset · button
+  ────────────────────────────────────────────────────────────────
+  ЗГАДУЄМО      s2 ДЗ уроку 10 (картка піци) · s3 розминка: кнопка,
+                що оживає, з пам'яті
+  НОВЕ          s4 форма · s5 input і placeholder · s7 label ·
+                s10 типи · s11 стовпчиком · s15 кнопки
+  ПРАКТИКА      s3  розминка  папка u11, кнопка з пам'яті      4 хв
+                s6  крок 1  форма: поле і кнопка               4 хв
+                s9  крок 2  підписи label                      5 хв
+                s12 крок 3  форма запису з 4 полів             8 хв
+                s16 крок 4  кнопки · ⭐⭐⭐ min/max              5 хв
+                разом 26 хв + передбач s8, s13, помилки s17
+                s14 довідник · s18 банк · s19 перевір і здай
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ПРИ БРАКУ ЧАСУ: знімати s2 (лише відповідь), s13 (передбач),
+     s17 (помилки), s18 (банк). НЕ різати: s3, s6, s9, s12, s16
+     (кроки), s14 (довідник), s19 (перевір і здай), s20 (ДЗ).
+  ⛔ ЧОГО ТУТ СВІДОМО НЕМАЄ: select, option, textarea, checkbox,
+     radio, required, :focus на полях, name (урок 12, 02.12);
+     action/method і надсилання (немає сервера — JavaScript 8);
+     pattern; Emmet (рішення 26.09); Git.
+  ⚠️ Оцінювання — тільки в конспекті.
+  ────────────────────────────────────────────────────────────────
+  Роздатка      rozdatka.html — лише для сховища, у класі не роздається
+  ДЗ            dz.html — ті самі пункти, що на s20; код — kod.html
+                (кнопка «Скопіювати»), здача — Google Classroom 7 кл.
+                до 02.12 (урок 12)
+  Конспект      2026-27-teacher/aplus/7-frontend/u11/konspekt.md
+  ────────────────────────────────────────────────────────────────
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#f6eef0; --border:#e7d9dd;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(89,20,41,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(89,20,41,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(89,20,41,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.4rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lr{background:#fae7e8;color:var(--rose)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lp{background:#f0e6f2;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)} .card.cr h3{color:var(--rose)}
+.card.cp h3{color:var(--plum)} .card.co h3{color:#9c5b00}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.hbox.hm{border-color:var(--brand)} .hbox.hr{border-color:var(--rose)}
+.hbox.ho{border-color:var(--orange)} .hbox.hp{border-color:var(--plum)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip.tr{background:#fbeaea;border-color:#efcdcd}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(89,20,41,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#fdf9f9;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:18px 22px;font-family:var(--f-body);border-top:1.5px solid var(--border)}
+.dp-out h1{font-size:1.9rem;color:var(--ink);font-family:var(--f-head)}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #fdf9f9 */
+.sk{color:#591429;font-weight:700}  /* ключове слово / тег */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.st{color:#0f6b52}                  /* атрибут / селектор */
+.cm{color:#7a6a6d;font-style:italic}/* коментар */
+
+.tree{font-family:var(--f-mono);font-size:17px;line-height:1.85;color:var(--dim);
+      background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:18px 22px;white-space:pre}
+.tree b{color:var(--accent);font-weight:700}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid var(--pink);border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--brand);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--brand)}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.big{text-align:center}
+.big .big-ico{font-size:4rem;margin-bottom:16px}
+.big h2{font-size:2.6rem;margin-bottom:14px;color:var(--accent)}
+.big .big-time{display:inline-block;font-family:var(--f-mono);font-size:19px;color:#9c5b00;
+               background:#fdf0d9;border:1.5px solid #f2ddb5;
+               border-radius:9px;padding:8px 18px;margin-bottom:20px}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.themes{display:flex;flex-direction:column;gap:8px}
+.th{display:flex;align-items:center;gap:15px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:11px;padding:11px 17px}
+.th-n{width:29px;height:29px;border-radius:8px;background:var(--surf2);
+      color:var(--accent);font-family:var(--f-mono);font-weight:700;font-size:15px;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.th-t{flex:1;font-size:18px;color:var(--ink)}
+.th-h{font-family:var(--f-mono);font-size:14.5px;color:var(--faint);flex-shrink:0}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+
+/* ═══ ДОДАНО ДЛЯ УРОКУ 1: макет «два екрани» (слайд 6) і лічильники ═══ */
+.scrs{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
+.scr-cap{font-family:var(--f-mono);font-size:16px;color:var(--dim);text-align:center;margin-bottom:8px}
+.scr-win{border:2px solid var(--border);border-radius:10px;background:var(--surface);
+         padding:11px;overflow:hidden;box-shadow:0 1px 3px rgba(89,20,41,.06)}
+.scr-win.bad{border-color:var(--rose)}
+.scr-bar{height:15px;border-radius:5px;background:var(--sky);margin-bottom:10px}
+.scr-cards{display:flex;gap:8px}
+.scr-cards .blk{height:60px;border-radius:7px;background:var(--pink);flex:1 0 90px}
+.scr-line{height:9px;border-radius:5px;background:var(--border);margin-top:10px}
+.scr-line.s{width:58%}
+.scr-win.bad .scr-cards{width:235%}
+.scr-tag{font-family:var(--f-mono);font-size:16px;text-align:center;margin-top:10px;color:var(--dim)}
+.scr-tag.bad{color:var(--rose);font-weight:700}
+.nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center}
+.num{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:18px 12px;
+     box-shadow:0 1px 3px rgba(89,20,41,.05)}
+.num b{display:block;font-family:var(--f-mono);font-size:2.3rem;color:var(--accent);line-height:1.2}
+.num span{display:block;font-size:17px;color:var(--dim);margin-top:6px}
+.ptime{margin-left:auto;font-family:var(--f-mono);font-size:17px;color:#9c5b00;
+       background:#fdf0d9;border:1.5px solid #f2ddb5;border-radius:9px;padding:6px 14px;flex-shrink:0}
+.prac-lead{font-size:18px;line-height:1.65;color:var(--dim);margin-bottom:13px}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 2 ─── */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+.tri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:stretch}
+.pc{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:12px 15px;font-family:var(--f-mono);font-size:16px;line-height:1.65;white-space:pre-wrap}
+.pc b{color:var(--brand)}
+.pc .lbl{font-family:var(--f-body);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--faint);display:block;margin-bottom:7px}
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:9px 13px;font-size:17px;text-align:left}
+.tbl th{font-family:var(--f-mono);font-size:12.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center;font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3: «приклад → тепер самостійно» ─── */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+.mono{font-family:var(--f-mono);font-size:16.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+.wrong,.right{border-radius:12px;padding:14px 17px;border:2px solid;background:var(--surface)}
+.wrong{border-color:var(--rose)} .right{border-color:#1c6b4e}
+.wrong .lbl,.right .lbl{font-family:var(--f-mono);font-size:13px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block}
+.wrong .lbl{color:var(--rose)} .right .lbl{color:#1c6b4e}
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+.diagram{width:100%;height:auto;display:block;margin:4px 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4: живі мініатюри сітки й довідник ─── */
+/* .gd — справжній display:grid на слайді: учень бачить результат коду */
+.gd{display:grid;gap:10px;background:var(--surface);border:1.5px solid var(--border);
+    border-radius:12px;padding:12px}
+.gd .c{background:var(--sky);border:1.5px solid #b9c8e6;border-radius:8px;min-height:50px;
+    display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);
+    font-weight:700;font-size:16px;color:var(--blue)}
+.gd .c.p{background:#fbe3e8;border-color:var(--pink);color:var(--brand)}
+.gd.sm .c{min-height:38px;font-size:14.5px}
+/* .fx — той самий набір карток у Flexbox із переносом, для порівняння */
+.fx{display:flex;flex-wrap:wrap;gap:10px;background:var(--surface);border:1.5px solid var(--border);
+    border-radius:12px;padding:12px}
+.fx .c{flex:1 0 26%;background:var(--sky);border:1.5px solid #b9c8e6;border-radius:8px;min-height:50px;
+    display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);
+    font-weight:700;font-size:16px;color:var(--blue)}
+.gcap{font-family:var(--f-mono);font-size:15px;color:var(--dim);text-align:center;margin:7px 0 0}
+.gcap.bad{color:var(--rose);font-weight:700}
+.over{overflow:hidden;border:2px solid var(--rose);border-radius:12px;padding:8px}
+/* довідник властивостей — слайд 19 */
+.refg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rf{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+    padding:8px 12px;display:flex;align-items:baseline;gap:10px}
+.rf .rt{font-size:15px;color:var(--dim);flex:0 0 150px;line-height:1.3}
+.rf .rc{font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--brand);
+        line-height:1.35;flex:1}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 5: нового CSS немає — живі мініатюри .gd з уроку 4,
+   span і лінії задано інлайн-стилем на самих комірках (учень бачить
+   справжній результат правила). ─── */
+
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 6: практична — макет-зразок, смужка «Швидше», чек-лист ─── */
+/* смужка-підказка біля кожного кроку */
+.hint{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px;margin-top:9px;
+  padding:6px 14px;border-radius:10px;background:#fdf3e2;border:1.5px solid #f2ddb5;font-size:16px;line-height:1.4;color:var(--ink)}
+.hint .hk{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.3px;
+  text-transform:uppercase;color:#9c5b00}
+.hint code{font-family:var(--f-mono);font-weight:700;color:var(--brand)}
+kbd{font-family:var(--f-mono);font-size:.9em;background:var(--surface);border:1px solid var(--border);
+  border-bottom-width:3px;border-radius:7px;padding:1px 8px;white-space:nowrap}
+/* макет готової сторінки-каталогу */
+.mock{background:#fff;border:1.5px solid var(--border);border-radius:13px;overflow:hidden;
+  box-shadow:0 2px 10px rgba(89,20,41,.07)}
+.mock .m-hd{background:var(--brand);color:#fff;padding:10px 16px;display:flex;justify-content:space-between;
+  align-items:center;font-size:16px;font-weight:800}
+.mock .m-hd span{font-weight:600;font-size:14.5px;opacity:.95}
+.mock .m-body{padding:12px 16px 14px}
+.mock .m-h1{font-family:var(--f-head);font-size:22px;font-weight:800;color:var(--ink);margin-bottom:8px}
+.mock .gd{padding:0;border:0;gap:8px}
+.mock .gd .c{min-height:54px;flex-direction:column;font-size:13.5px;line-height:1.3}
+.mock .gd .c small{font-weight:400;color:var(--dim);font-size:12.5px}
+.mock .m-ft{border-top:1.5px solid var(--border);padding:7px 16px;font-size:13px;color:var(--dim)}
+/* чек-лист самоперевірки */
+.chk{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+.ck{display:flex;align-items:flex-start;gap:11px;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:10px;padding:9px 13px;font-size:17px;line-height:1.45;color:var(--ink)}
+.ck .bx{flex-shrink:0;width:22px;height:22px;border:2.5px solid var(--blue);border-radius:5px;margin-top:2px}
+.ck .st{flex-shrink:0;font-size:14px;letter-spacing:1px;min-width:44px;margin-top:2px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 7: нового CSS немає — лише класи уроків 1–6 ─── */
+/* ─── ДОДАНО ДЛЯ УРОКУ 8: нового CSS немає — лише класи уроків 1–6 ─── */
+/* ─── ДОДАНО ДЛЯ УРОКУ 9: живі демо позиціонування ───
+   Усе тут — справжній position на слайді: учень бачить результат
+   того самого правила, яке пише. Кольори — лише токени палітри. */
+/* .pz — «сторінка» для демо; сама relative, щоб нічого не втекло зі слайда */
+.pz{position:relative;background:var(--surface);border:1.5px solid var(--border);
+    border-radius:12px;padding:14px;min-height:150px}
+.pz-cap{position:absolute;left:12px;bottom:6px;font-family:var(--f-mono);font-size:13px;color:var(--faint)}
+/* рядок із трьох блоків для relative */
+.prow{display:flex;gap:12px}
+.pb{width:110px;height:64px;border-radius:9px;background:var(--sky);border:1.5px solid #b9c8e6;
+    display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);
+    font-weight:700;font-size:15px;color:var(--blue)}
+.pb.mv{position:relative;top:22px;left:34px;background:#fbe3e8;border-color:var(--pink);color:var(--brand);z-index:1}
+.pb.ghost{position:absolute;background:transparent;border:2px dashed var(--faint);color:var(--faint);font-weight:400}
+/* міні-картка товару */
+.mc{background:var(--surface);border:2px solid var(--blue);border-radius:10px;
+    width:190px;padding:8px;font-size:14.5px;line-height:1.35;color:var(--ink)}
+.mc.rel{position:relative}
+.mc .im{height:70px;border-radius:6px;background:var(--sky);margin-bottom:6px;
+    display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+.mc b{display:block;font-family:var(--f-head);font-size:15px;color:var(--ink)}
+.bdg{position:absolute;top:8px;right:8px;background:var(--rose);color:#fff;
+     font-family:var(--f-mono);font-weight:700;font-size:13px;padding:3px 8px;border-radius:6px}
+.bdg.nw{background:#1c6b4e;right:auto;left:8px}
+.bdg.inl{position:static;display:inline-block;margin:4px 0}
+/* z-index: три квадрати внахлест */
+.zq{position:relative;height:190px}
+.zq span{position:absolute;width:120px;height:120px;border-radius:12px;border:2px solid var(--ink);
+    display:flex;align-items:flex-start;justify-content:flex-start;padding:7px 9px;
+    font-family:var(--f-mono);font-weight:700;font-size:14.5px;color:var(--ink)}
+/* скрол-вікно для sticky: шапка справді прилипає, якщо гортати колесом */
+.sbox{height:250px;overflow:auto;border:2px solid var(--blue);border-radius:12px;background:var(--surface)}
+.sbox .sh2{position:sticky;top:0;z-index:2;background:var(--brand);color:#fff;
+    padding:9px 14px;font-weight:800;font-size:15.5px}
+.sbox .ln2{margin:9px 14px;height:30px;border-radius:7px;background:var(--surf2);border:1px solid var(--border);
+    font-family:var(--f-mono);font-size:13px;color:var(--dim);display:flex;align-items:center;padding:0 10px}
+.ptab td,.ptab th{padding:7px 12px}
+.ptab td:first-child{font-family:var(--f-mono);font-weight:700;color:var(--brand);white-space:nowrap}
+@media print{.sbox{height:auto;overflow:visible}}
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem}
+  .card{padding:14px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .prac{padding:13px 17px} .demo,.solo{padding:10px 13px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .mono{font-size:15px;line-height:1.55}
+  .pc{font-size:15px;line-height:1.55}
+  .tbl th,.tbl td{padding:6px 11px;font-size:15.5px}
+  .bk{padding:9px 12px;font-size:15px}
+  .lv{padding:9px 13px} .lv-t{font-size:16px}
+  .tip{font-size:16px;padding:10px 13px;margin:8px 0}
+  .hbox{font-size:16px;padding:10px 14px}
+  .step{padding:10px 14px} .step-t{font-size:16px}
+  .ck{font-size:15.5px;padding:7px 11px}
+  .sbox{height:215px} .zq{height:170px}
+  .title-h1{font-size:2.7rem}
+}
+/* ─── ДОДАНО ДЛЯ УРОКУ 10 (використовується й тут): живі демо :hover, transition, transform ───
+   Усе тут — справжні правила на слайді: наведи мишу — побачиш те саме,
+   що учень отримає у своєму коді. Кольори — лише токени палітри. */
+/* кнопки: різко (без transition) і плавно */
+.hb{display:inline-block;font-family:var(--f-head);font-weight:800;font-size:17px;
+    padding:12px 22px;border-radius:10px;background:var(--sky);color:var(--blue);
+    border:2px solid var(--blue);cursor:pointer;min-height:48px}
+.hb:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.hb.soft{transition:background-color .6s,color .6s,border-color .6s}
+.hb:active{transform:translateY(3px)}
+.hrow{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:center;
+      background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:16px 14px}
+/* картка, що піднімається і збільшується при наведенні */
+.hc{transition:transform .3s,box-shadow .3s;cursor:pointer}
+.hc:hover{transform:translateY(-6px) scale(1.05);box-shadow:0 10px 22px rgba(89,20,41,.18)}
+/* transform-плитки: пунктир — де плитка стояла, синя — куди поїхала */
+.tfg{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.tfc{position:relative;height:118px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px}
+.tfc .g,.tfc .t{position:absolute;left:50%;top:44%;width:66px;height:44px;margin:-22px 0 0 -33px;border-radius:7px}
+.tfc .g{border:2px dashed var(--faint)}
+.tfc .t{background:#fbe3e8;border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;
+        font-family:var(--f-mono);font-weight:700;font-size:13px;color:var(--brand)}
+.tfc .cap{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-family:var(--f-mono);
+          font-size:12.5px;font-weight:700;color:var(--ink)}
+/* timing-функції: наведи на рамку — п'ять кульок їдуть однакові 2 секунди */
+.tmg{background:var(--surface);border:2px solid var(--blue);border-radius:12px;padding:12px 16px;cursor:pointer}
+.tmr{display:flex;align-items:center;gap:12px;margin:6px 0}
+.tmr .nm{flex:0 0 110px;font-family:var(--f-mono);font-weight:700;font-size:15px;color:var(--brand)}
+.trk{position:relative;flex:0 0 330px;height:26px;border-bottom:2px dotted var(--border)}
+.dt{position:absolute;left:0;top:2px;width:22px;height:22px;border-radius:50%;background:var(--blue);
+    transition:transform 2s ease}
+.tmg:hover .dt{transform:translateX(306px)}
+.dt.lin{transition-timing-function:linear}
+.dt.ein{transition-timing-function:ease-in}
+.dt.eout{transition-timing-function:ease-out}
+.dt.eio{transition-timing-function:ease-in-out}
+.tmr .ds{font-size:15px;color:var(--dim)}
+@media print{.dt{transform:none !important}}
+@media (max-height:800px){
+  .tfc{height:100px}
+  .tmr{margin:3px 0}
+}
+/* ─── ДОДАНО ДЛЯ УРОКУ 11: живі поля форми ───
+   Усе тут — справжні form, label, input і button на слайді: клацни
+   в поле, на підпис, на кнопку — побачиш те саме, що учень у Chrome.
+   Кольори — лише токени палітри. */
+.fm{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.fm p{margin:0 0 10px;font-size:17px;line-height:1.4}
+.fm p:last-child{margin-bottom:0}
+.fm label{display:block;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;cursor:pointer}
+.fm label.inl{display:inline;font-weight:600}
+.fm input{font-family:var(--f-body);font-size:17px;padding:7px 10px;border:1.5px solid var(--faint);
+  border-radius:7px;background:#fff;color:var(--ink);width:100%;max-width:320px;min-height:42px}
+.fm input:focus{outline:3px solid var(--blue);outline-offset:1px}
+.fm button{font-family:var(--f-head);font-weight:800;font-size:16px;padding:10px 20px;border-radius:9px;
+  border:2px solid var(--blue);background:var(--sky);color:var(--blue);cursor:pointer;min-height:46px;margin-right:8px}
+.fm button.dk{background:var(--blue);color:#fff}
+.fm .bare input{width:auto}
+/* «як браузер показує без CSS» — поля в рядок */
+.fm.raw label{display:inline;font-weight:400}
+.fm.raw input{width:auto;max-width:190px;border:1px solid #767676;border-radius:2px;padding:2px 4px;min-height:0;font-size:16px}
+.fm.raw button{font-family:system-ui,sans-serif;font-weight:400;font-size:15px;padding:2px 8px;border:1px solid #767676;
+  border-radius:3px;background:#efefef;color:#000;min-height:0}
+/* таблиця типів із живим полем у кожному рядку */
+.tyg td{vertical-align:middle}
+.tyg input{font-family:var(--f-body);font-size:16px;padding:5px 8px;border:1.5px solid var(--faint);
+  border-radius:6px;background:#fff;color:var(--ink);width:230px;min-height:38px}
+.tyg input:focus{outline:3px solid var(--blue);outline-offset:1px}
+.fmsg{font-family:var(--f-mono);font-size:14.5px;color:var(--brand);min-height:1.4em;margin-top:6px}
+@media (max-height:800px){
+  .fm{padding:10px 14px} .fm p{margin-bottom:7px}
+  .fm input{min-height:36px;padding:5px 9px;font-size:16px}
+  .tyg input{min-height:32px;padding:3px 7px}
+}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+<!-- ══════════ 1 · ТИТУЛ ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Форма: поля і підписи</h1>
+      <p class="title-sub">Сторінка запису в клуб: поля, підписи й кнопка<br>
+        Front-end II · 7 клас · Урок 11 з 36 · 25 листопада</p>
+      <div class="chips">
+        <span class="chip">form</span>
+        <span class="chip">input · type</span>
+        <span class="chip">label for · id</span>
+        <span class="chip">placeholder</span>
+        <span class="chip">button</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 · СЬОГОДНІ ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🗺️</div><div>
+      <span class="label lb">Сьогодні</span>
+      <h2>Сайт питає — людина відповідає</h2>
+    </div></div>
+    <div class="two">
+      <div class="themes">
+        <div class="th"><span class="th-n">1</span><span class="th-t"><b>Згадуємо</b> — домашнє і кнопка з пам'яті</span><span class="th-h">6 хв</span></div>
+        <div class="th"><span class="th-n">2</span><span class="th-t"><b>form · input · label</b> — поле, підпис, кнопка</span><span class="th-h">11 хв</span></div>
+        <div class="th"><span class="th-n">3</span><span class="th-t"><b>Практика</b> — форма запису в клуб</span><span class="th-h">22 хв</span></div>
+        <div class="th"><span class="th-n">4</span><span class="th-t"><b>Перевір і здай</b> · домашнє</span><span class="th-h">6 хв</span></div>
+      </div>
+      <form class="fm live" aria-label="Демо: форма запису в клуб">
+        <p><label for="d1-name">Ім'я</label><input type="text" id="d1-name" placeholder="Олена"></p>
+        <p><label for="d1-mail">Email</label><input type="email" id="d1-mail" placeholder="olena@gmail.com"></p>
+        <p><label for="d1-day">Перше заняття</label><input type="date" id="d1-day"></p>
+        <p><button class="dk">Записатися</button></p>
+        <div class="fmsg"></div>
+      </form>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 · ЗГАДУЄМО: ДЗ УРОКУ 10 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">🍕</div><div>
+      <span class="label lo">Домашнє уроку 10 · звіряємо</span>
+      <h2>Картка піци, що оживає</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="pz" style="display:flex;justify-content:center;padding:22px 14px 34px">
+          <div class="mc rel hc"><div class="im">🍕</div><b>Піца «Маргарита»</b>199 грн</div>
+          <span class="pz-cap">наведи мишу — так мало вийти</span>
+        </div>
+      </div>
+      <div class="card cm reveal">
+        <h3>ДОПИШИ ТУТ 1, 2 і 3</h3>
+        <p class="rv-hint">Звір зі своїм — потім клацни.</p>
+        <div class="rv-body">
+          <div class="pc" style="font-size:15.5px">.card {
+  <b>transition</b>: transform 0.3s; }
+.card:hover {
+  <b>transform</b>: scale(1.05); }
+.btn:hover {
+  <b>transform</b>: translateY(-4px); }</div>
+          <p style="margin-top:8px"><span class="ic">transition</span> — у <b>звичайному</b> <span class="ic">.card</span>, тоді плавно і туди, і назад</p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 4 · РОЗМИНКА ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Розминка</span>
+        <span class="t">Кнопка, що оживає — з пам'яті</span><span class="ptime">4 хвилини</span></div>
+      <div class="two">
+        <div class="demo" style="margin-bottom:0"><span class="lbl">Старт</span>
+          <div class="mono">u11/
+  zapys.html
+  style.css</div>
+          <p class="note" style="margin-top:8px">Стартовий код обох файлів — кнопка «Скопіювати»:<br>
+            <a href="https://sv2627.github.io/sc/aplus/7-frontend/u11/kod.html" style="color:var(--blue);font-weight:700;word-break:break-all">https://sv2627.github.io/sc/aplus/7-frontend/u11/kod.html</a><br>
+            блоки «Старт · zapys.html» і «Старт · style.css»</p>
+        </div>
+        <div class="solo"><span class="lbl">Тепер самостійно — без підказок</span>
+          <ul>
+            <li>Нова папка <span class="ic">u11</span>, у ній <span class="ic">zapys.html</span> і <span class="ic">style.css</span> зі стартового коду</li>
+            <li>Кнопка «Правила клубу» під мишею: фон <span class="ic">#591429</span>, текст білий</li>
+            <li>Колір міняється <b>плавно</b>, за 0.3 секунди — і туди, і назад</li>
+            <li><kbd>Ctrl</kbd>+<kbd>S</kbd> → <kbd>F5</kbd>: наведи мишу — плавно?</li>
+            <li>⭐⭐ Кнопка ще й піднімається на 3px</li>
+          </ul>
+          <div class="reveal" style="margin-top:8px"><p class="rv-hint">Перевірка — клацни після 4 хвилин.</p>
+            <div class="rv-body"><div class="mono" style="font-size:15px">.btn { transition: all 0.3s; }
+.btn:hover { background-color: #591429;
+  color: white; transform: translateY(-3px); }</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 5 · ФОРМА ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">📮</div><div>
+      <span class="label lb">Нове · form</span>
+      <h2>Форма — те, що сайт питає в людини</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">zapys.html</span></div>
+          <div class="dp-code">&lt;<span class="sk">form</span>&gt;
+  &lt;<span class="sk">input</span> <span class="st">type</span>=<span class="ss">"text"</span>&gt;
+  &lt;<span class="sk">button</span>&gt;Записатися&lt;/<span class="sk">button</span>&gt;
+&lt;/<span class="sk">form</span>&gt;</div>
+        </div>
+        <form class="fm raw live mt" aria-label="Живий результат без CSS">
+          <input type="text"> <button>Записатися</button>
+          <div class="fmsg"></div>
+        </form>
+        <p class="gcap">живий результат, без CSS — клацни в поле, напиши слово</p>
+      </div>
+      <div>
+        <table class="tbl ptab">
+          <tr><th>Тег</th><th>Що це</th></tr>
+          <tr><td>&lt;form&gt;</td><td><b>коробка</b> для всієї форми</td></tr>
+          <tr><td>&lt;input&gt;</td><td><b>поле</b>, куди пишуть. Одиночний тег — без <span class="ic">&lt;/input&gt;</span></td></tr>
+          <tr><td>&lt;button&gt;</td><td><b>кнопка</b> форми</td></tr>
+        </table>
+        <div class="tip to"><span class="tip-ico">📭</span><div><b>Куди підуть дані?</b> Нікуди. Сервера в нас немає: кнопка лише <b>перезавантажує сторінку</b>, поля стають порожні. Надсилати навчимося в JavaScript</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 6 · INPUT І PLACEHOLDER ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">✏️</div><div>
+      <span class="label lb">input · placeholder</span>
+      <h2>Підказка в полі, яка сама зникає</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">zapys.html</span></div>
+          <div class="dp-code">&lt;<span class="sk">input</span> <span class="st">type</span>=<span class="ss">"text"</span> <span class="st">placeholder</span>=<span class="ss">"Ім'я"</span>&gt;
+&lt;<span class="sk">input</span> <span class="st">type</span>=<span class="ss">"text"</span> <span class="st">value</span>=<span class="ss">"Ім'я"</span>&gt;</div>
+        </div>
+        <form class="fm live mt" aria-label="Живий результат: placeholder і value">
+          <p class="bare"><input type="text" placeholder="Ім'я"> <span class="note">placeholder</span></p>
+          <p class="bare"><input type="text" value="Ім'я"> <span class="note">value</span></p>
+        </form>
+        <p class="gcap">почни писати в обидва поля</p>
+      </div>
+      <div>
+        <table class="tbl ptab">
+          <tr><th>Атрибут</th><th>Що робить</th></tr>
+          <tr><td>type="text"</td><td>яке поле: <b>текст</b></td></tr>
+          <tr><td>placeholder</td><td><b>підказка</b>: зникає, щойно пишеш; стерти — з'явиться знову</td></tr>
+          <tr><td>value</td><td><b>справжній</b> текст у полі — щоб написати своє, треба стерти</td></tr>
+        </table>
+        <div class="hbox hm">Підказка — в <span class="ic">placeholder</span>. У <span class="ic">value</span> — те, що вже вписано</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 7 · КРОК 1 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Крок 1 з 4</span>
+        <span class="t">Форма: поле і кнопка</span><span class="ptime">4 хвилини</span></div>
+      <div class="two">
+        <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+          <div class="mono">&lt;form&gt;
+  &lt;input type="text"
+         placeholder="Ім'я"&gt;
+  &lt;button&gt;Записатися&lt;/button&gt;
+&lt;/form&gt;</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>У <span class="ic">zapys.html</span> на місці коментаря «Крок 1» — форма, як у прикладі</li>
+            <li><kbd>Ctrl</kbd>+<kbd>S</kbd> → <kbd>F5</kbd>. Напиши ім'я: куди зникла підказка?</li>
+            <li>Натисни «Записатися». Що сталося з полем?</li>
+            <li>Друге поле — <span class="ic">placeholder="Прізвище"</span>, перед кнопкою</li>
+            <li>⭐⭐ Заміни в другому <span class="ic">placeholder</span> на <span class="ic">value</span>. Чим відрізняється? Поверни</li>
+            <li>⭐⭐⭐ Прибери з поля <span class="ic">type="text"</span>. Поле змінилось? Запиши коментарем</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 · LABEL ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">🏷️</div><div>
+      <span class="label lb">label · for · id</span>
+      <h2>Підпис знає своє поле</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">спосіб 1 · for = id</span></div>
+          <div class="dp-code">&lt;<span class="sk">label</span> <span class="st">for</span>=<span class="ss">"name"</span>&gt;Ім'я&lt;/<span class="sk">label</span>&gt;
+&lt;<span class="sk">input</span> <span class="st">type</span>=<span class="ss">"text"</span> <span class="st">id</span>=<span class="ss">"name"</span>&gt;</div>
+        </div>
+        <div class="dp mt">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">спосіб 2 · поле всередині label</span></div>
+          <div class="dp-code">&lt;<span class="sk">label</span>&gt;Нік
+  &lt;<span class="sk">input</span> <span class="st">type</span>=<span class="ss">"text"</span>&gt;
+&lt;/<span class="sk">label</span>&gt;</div>
+        </div>
+      </div>
+      <div>
+        <form class="fm live" aria-label="Живий результат: клацни на підпис">
+          <p><label for="d7-name">Ім'я</label><input type="text" id="d7-name"></p>
+          <p><label class="inl">Нік <input type="text" style="max-width:220px"></label></p>
+        </form>
+        <p class="gcap">клацни на слово «Ім'я» чи «Нік» — курсор стрибне в поле</p>
+        <div class="hbox mt"><span class="ic">for</span> у підписі = <span class="ic">id</span> у полі, <b>слово в слово</b>. Не збіглися — підпис «нічий»</div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 · ПЕРЕДБАЧ: LABEL ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🤔</div><div>
+      <span class="label lp">Передбач</span>
+      <h2>Що станеться, коли клацнеш на підпис?</h2>
+    </div></div>
+    <div class="two">
+      <div class="card reveal">
+        <h3><span class="ic">&lt;label for="mail"&gt;Пошта&lt;/label&gt;</span><br><span class="ic">&lt;input type="email" id="email"&gt;</span></h3>
+        <p class="rv-hint">Скажи вголос — потім клацни.</p>
+        <div class="rv-body"><p><b>Нічого.</b> <span class="ic">mail</span> ≠ <span class="ic">email</span> — підпис не знає свого поля</p></div>
+      </div>
+      <div class="card cm reveal">
+        <h3><span class="ic">&lt;label&gt;Пошта &lt;input type="email"&gt;&lt;/label&gt;</span></h3>
+        <p class="rv-hint">Скажи вголос — потім клацни.</p>
+        <div class="rv-body"><p>Курсор <b>у полі</b>: поле всередині підпису — <span class="ic">for</span> і <span class="ic">id</span> не потрібні</p></div>
+      </div>
+      <div class="card cp reveal">
+        <h3>Два поля з однаковим <span class="ic">id="name"</span>, другий підпис — <span class="ic">for="name"</span></h3>
+        <p class="rv-hint">Подумай — потім клацни.</p>
+        <div class="rv-body"><p>Курсор стрибне в <b>перше</b> поле. <span class="ic">id</span> на сторінці — один-єдиний</p></div>
+      </div>
+      <div class="card co reveal">
+        <h3><span class="ic">&lt;label for="name"&gt;</span> стоїть <b>після</b> свого поля</h3>
+        <p class="rv-hint">Подумай — потім клацни.</p>
+        <div class="rv-body"><p><b>Працює.</b> Важить пара <span class="ic">for</span> = <span class="ic">id</span>, а не порядок. Але читати зручніше, коли підпис перед полем</p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 10 · КРОК 2 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Крок 2 з 4</span>
+        <span class="t">Підписи до полів</span><span class="ptime">5 хвилин</span></div>
+      <div class="two">
+        <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+          <div class="mono">&lt;p&gt;
+  &lt;label for="name"&gt;Ім'я&lt;/label&gt;
+  &lt;input type="text" id="name"
+         placeholder="Олена"&gt;
+&lt;/p&gt;</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Кожне поле — у свій <span class="ic">&lt;p&gt;</span>, перед полем — <span class="ic">label</span>, як у прикладі</li>
+            <li>Поле «Прізвище» — свій <span class="ic">id</span> і свій <span class="ic">for</span></li>
+            <li>Клацни на підпис — курсор у полі? Перевір обидва</li>
+            <li>Зміни <span class="ic">id="name"</span> на <span class="ic">id="name2"</span>, клацни на «Ім'я». Що змінилось? Поверни</li>
+            <li>⭐⭐ Поле «Нік» другим способом — усередині <span class="ic">label</span>, без <span class="ic">for</span> і <span class="ic">id</span></li>
+            <li>⭐⭐⭐ Перестав <span class="ic">label</span> «Прізвище» <b>після</b> поля. Клік по підпису ще працює? Поверни назад</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 11 · ТИПИ ПОЛІВ ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🧰</div><div>
+      <span class="label lb">type · уся родина</span>
+      <h2>Шість типів поля <span class="ic">input</span></h2>
+    </div></div>
+    <form class="live" aria-label="Живі поля шести типів">
+    <table class="tbl ptab tyg">
+      <tr><th>type</th><th>Для чого</th><th>Спробуй</th></tr>
+      <tr><td>text</td><td>будь-який текст: ім'я, місто. <b>За замовчуванням</b></td><td><input type="text" placeholder="Київ" aria-label="text"></td></tr>
+      <tr><td>email</td><td>пошта — без <b>@</b> браузер не пустить далі</td><td><input type="email" placeholder="olena@gmail.com" aria-label="email"></td></tr>
+      <tr><td>tel</td><td>телефон — на смартфоні клавіатура з цифрами</td><td><input type="tel" placeholder="+380 67 123 45 67" aria-label="tel"></td></tr>
+      <tr><td>date</td><td>дата — з календариком</td><td><input type="date" aria-label="date"></td></tr>
+      <tr><td>number</td><td>число — стрілочки ▲▼, слова не впишеш</td><td><input type="number" placeholder="12" aria-label="number"></td></tr>
+      <tr><td>password</td><td>пароль — замість літер крапки</td><td><input type="password" value="kava2026" aria-label="password"></td></tr>
+    </table>
+    </form>
+    <p class="note mt">Галочки й кружечки — теж <span class="ic">input</span>: <span class="ic">checkbox</span> і <span class="ic">radio</span>. Це наступний урок</p>
+  </div></section>
+
+  <!-- ══════════ 12 · СТОВПЧИКОМ ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">📐</div><div>
+      <span class="label lb">Трохи CSS</span>
+      <h2>Підпис над полем, поля стовпчиком</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">style.css</span></div>
+          <div class="dp-code"><span class="sk">label</span> {
+  display: <span class="ss">block</span>;      <span class="cm">/* свій рядок */</span>
+  font-weight: <span class="ss">bold</span>;
+}
+<span class="sk">input</span> {
+  padding: <span class="sn">0.4rem</span>;
+  width: <span class="sn">250px</span>;
+}</div>
+        </div>
+        <div class="tip"><span class="tip-ico">💡</span><div><span class="ic">label</span> і <span class="ic">input</span> — <b>рядкові</b>: стають в один рядок. <span class="ic">display: block</span> ставить підпис окремим рядком</div></div>
+      </div>
+      <div>
+        <p class="scr-cap">без CSS</p>
+        <div class="fm raw"><label for="d11a">Ім'я</label> <input type="text" id="d11a"> <label for="d11b">Email</label> <input type="email" id="d11b"></div>
+        <p class="scr-cap mt">з CSS</p>
+        <div class="fm"><p><label for="d11c">Ім'я</label><input type="text" id="d11c" style="width:250px"></p>
+          <p><label for="d11d">Email</label><input type="email" id="d11d" style="width:250px"></p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 · КРОК 3 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Крок 3 з 4</span>
+        <span class="t">Форма запису в клуб — 4 поля</span><span class="ptime">8 хвилин</span></div>
+      <div class="two">
+        <div class="demo" style="margin-bottom:0"><span class="lbl">Приклад</span>
+          <div class="mono">&lt;p&gt;
+  &lt;label for="mail"&gt;Email&lt;/label&gt;
+  &lt;input type="email" id="mail"
+         placeholder="olena@gmail.com"&gt;
+&lt;/p&gt;
+
+label { display: block; }</div></div>
+        <div class="solo"><span class="lbl">Тепер самостійно</span>
+          <ul>
+            <li>Чотири поля, кожне з <span class="ic">label</span>: <b>Ім'я</b> · <b>Email</b> · <b>Телефон</b> · <b>Дата першого заняття</b></li>
+            <li>Тип кожного — зі слайда «Шість типів». Прізвище можна стерти</li>
+            <li>У <span class="ic">style.css</span> — підписи над полями, як у прикладі</li>
+            <li>Клацни в поле дати — є календарик? У поле email напиши слово без @ і натисни кнопку</li>
+            <li>⭐⭐ П'яте поле — <b>Вік</b>, <span class="ic">type="number"</span>. Спробуй вписати слово</li>
+            <li>⭐⭐ Телефон — <span class="ic">placeholder="+380 67 123 45 67"</span></li>
+            <li>⭐⭐⭐ Поле <b>Пароль</b>: що бачиш, коли пишеш?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 · ПЕРЕДБАЧ: ТИПИ ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🎯</div><div>
+      <span class="label lp">Передбач</span>
+      <h2>Яке поле покаже браузер?</h2>
+    </div></div>
+    <div class="two">
+      <div class="card reveal">
+        <h3><span class="ic">&lt;input type="emial"&gt;</span></h3>
+        <p class="rv-hint">Скажи вголос — потім клацни.</p>
+        <div class="rv-body"><p>Звичайне <b>текстове</b> поле: такого типу браузер не знає й ставить <span class="ic">text</span>. Без @ пропустить</p></div>
+      </div>
+      <div class="card cm reveal">
+        <h3><span class="ic">&lt;input&gt;</span> — без <span class="ic">type</span></h3>
+        <p class="rv-hint">Скажи вголос — потім клацни.</p>
+        <div class="rv-body"><p>Теж <b>текстове</b>: <span class="ic">text</span> — за замовчуванням</p></div>
+      </div>
+      <div class="card cp reveal">
+        <h3><span class="ic">type="number"</span>, пишемо «десять»</h3>
+        <p class="rv-hint">Скажи вголос — потім клацни.</p>
+        <div class="rv-body"><p>Слово <b>не впишеться</b>. Тільки цифри: <span class="ic">10</span></p></div>
+      </div>
+      <div class="card co reveal">
+        <h3><span class="ic">type="date" placeholder="День народження"</span></h3>
+        <p class="rv-hint">Подумай — потім клацни.</p>
+        <div class="rv-body"><p>Підказки <b>не видно</b>: у поля дати свій шаблон <span class="ic">дд.мм.рррр</span>. Що вписати — каже <span class="ic">label</span></p></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 · ДОВІДНИК ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lo">Довідник — лишається на дошці</span>
+      <h2>Форма на одному екрані</h2>
+    </div></div>
+    <div class="refg">
+      <div class="rf"><span class="rt">Коробка форми</span><span class="rc">&lt;form&gt; … &lt;/form&gt;</span></div>
+      <div class="rf"><span class="rt">Поле · одиночний тег</span><span class="rc">&lt;input type="text"&gt;</span></div>
+      <div class="rf"><span class="rt">Типи поля</span><span class="rc">text · email · tel · date · number · password</span></div>
+      <div class="rf"><span class="rt">Підказка в полі</span><span class="rc">placeholder="Олена"</span></div>
+      <div class="rf"><span class="rt">Підпис, спосіб 1</span><span class="rc">&lt;label for="name"&gt; + id="name"</span></div>
+      <div class="rf"><span class="rt">Підпис, спосіб 2</span><span class="rc">&lt;label&gt;Нік &lt;input&gt;&lt;/label&gt;</span></div>
+      <div class="rf"><span class="rt">Кнопка</span><span class="rc">&lt;button&gt;Записатися&lt;/button&gt;</span></div>
+      <div class="rf"><span class="rt">Очистити поля</span><span class="rc">&lt;button type="reset"&gt;</span></div>
+      <div class="rf"><span class="rt">Підпис над полем</span><span class="rc">label { display: block; }</span></div>
+      <div class="rf"><span class="rt">Межі числа</span><span class="rc">type="number" min="10" max="17"</span></div>
+    </div>
+    <p class="note mt">Клацни на підпис — курсор у полі: пара <span class="ic">for</span> = <span class="ic">id</span> працює · <kbd>Ctrl</kbd>+<kbd>S</kbd> → <kbd>F5</kbd></p>
+  </div></section>
+
+  <!-- ══════════ 16 · КНОПКИ ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🔘</div><div>
+      <span class="label lb">button · уся родина</span>
+      <h2>Три кнопки форми</h2>
+    </div></div>
+    <div class="two">
+      <div>
+        <div class="dp">
+          <div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">zapys.html</span></div>
+          <div class="dp-code">&lt;<span class="sk">button</span>&gt;Записатися&lt;/<span class="sk">button</span>&gt;
+&lt;<span class="sk">button</span> <span class="st">type</span>=<span class="ss">"reset"</span>&gt;Очистити&lt;/<span class="sk">button</span>&gt;
+&lt;<span class="sk">button</span> <span class="st">type</span>=<span class="ss">"button"</span>&gt;Ще подумаю&lt;/<span class="sk">button</span>&gt;</div>
+        </div>
+        <table class="tbl ptab mt">
+          <tr><th>type</th><th>Що робить</th></tr>
+          <tr><td>submit</td><td><b>надсилає</b> форму — у нас перезавантажує сторінку. Так за замовчуванням</td></tr>
+          <tr><td>reset</td><td><b>очищає</b> всі поля форми</td></tr>
+          <tr><td>button</td><td><b>нічого</b>, поки не навчимо її в JavaScript</td></tr>
+        </table>
+      </div>
+      <div>
+        <form class="fm live" aria-label="Живий результат: три кнопки">
+          <p><label for="d15-name">Ім'я</label><input type="text" id="d15-name" value="Олена"></p>
+          <p><button class="dk">Записатися</button><button type="reset">Очистити</button><button type="button">Ще подумаю</button></p>
+          <div class="fmsg"></div>
+        </form>
+        <p class="gcap">натисни кожну кнопку</p>
+        <div class="tip to"><span class="tip-ico">⚠️</span><div>Кнопка має бути <b>всередині</b> <span class="ic">&lt;form&gt;</span>. Поза формою вона не знає, яку форму надсилати</div></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 · КРОК 4 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Крок 4 з 4</span>
+        <span class="t">Кнопки · ⭐⭐⭐ межі числа</span><span class="ptime">5 хвилин</span></div>
+      <div class="demo"><span class="lbl">Приклад</span>
+        <div class="mono">&lt;button&gt;Записатися&lt;/button&gt;  &lt;button type="reset"&gt;Очистити&lt;/button&gt;</div></div>
+      <div class="solo"><span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Біля «Записатися» — кнопка «Очистити». Заповни всі поля, натисни її</li>
+          <li>Третя кнопка — <span class="ic">type="button"</span> «Ще подумаю». Що вона робить?</li>
+          <li>Перенеси «Записатися» за <span class="ic">&lt;/form&gt;</span>, натисни. Що змінилось? Поверни</li>
+          <li>⭐⭐ Кнопки оживають, як «Правила клубу» в розминці: <span class="ic">button:hover</span> і <span class="ic">transition</span></li>
+          <li>⭐⭐⭐ Вік — лише від 10 до 17: <span class="ic">min="10" max="17"</span>. Клацай стрілочки ▲▼: де вони зупиняються?</li>
+          <li>⭐⭐⭐ Дата заняття — не раніше 1 грудня: <span class="ic">min="2026-12-01"</span>. Що в календарику?</li>
+        </ul>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 · ЗНАЙДИ ПОМИЛКИ ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🔎</div><div>
+      <span class="label lo">Передбач</span>
+      <h2>Форма зламана. Знайди чотири помилки</h2>
+    </div></div>
+    <div class="two">
+      <div class="pc"><span style="color:var(--dim)">1</span>  &lt;form&gt;
+<span style="color:var(--dim)">2</span>    &lt;label for="phone"&gt;Телефон&lt;/label&gt;
+<span style="color:var(--dim)">3</span>    &lt;input type="tel" id="tel"&gt;
+<span style="color:var(--dim)">4</span>    &lt;label for="age"&gt;Вік&lt;/label&gt;
+<span style="color:var(--dim)">5</span>    &lt;input type="nubmer" id="age"&gt;
+<span style="color:var(--dim)">6</span>    &lt;label for="nick"&gt;Нік&lt;/label&gt;
+<span style="color:var(--dim)">7</span>    &lt;input type="text" id="nick"
+<span style="color:var(--dim)"> </span>           value="Твій нік"&gt;
+<span style="color:var(--dim)">8</span>  &lt;/form&gt;
+<span style="color:var(--dim)">9</span>  &lt;button&gt;Записатися&lt;/button&gt;</div>
+      <div class="card cp reveal">
+        <h3>Назви всі чотири з номером рядка</h3>
+        <p class="rv-hint">Знайди всі чотири, потім клацни.</p>
+        <div class="rv-body">
+          <p><b>3.</b> <span class="ic">id="tel"</span>, а підпис чекає <span class="ic">phone</span> — має бути однаково</p>
+          <p><b>5.</b> <span class="ic">nubmer</span> — літери переплутано: вийшло текстове поле. Треба <span class="ic">number</span></p>
+          <p><b>7.</b> Підказка в <span class="ic">value</span> — її доведеться стирати. Треба <span class="ic">placeholder</span></p>
+          <p><b>9.</b> Кнопка поза формою — нічого не надсилає. Перед <span class="ic">&lt;/form&gt;</span></p>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 19 · БАНК ══════════ -->
+  <section class="slide" id="s18"><div class="slide-inner">
+    <div class="sh"><div class="si">🎒</div><div>
+      <span class="label lp">Закінчив раніше?</span>
+      <h2>Банк завдань — бери будь-яке</h2>
+    </div></div>
+    <div class="bank">
+      <div class="bk"><b>Кабінет клубу.</b> Поле <b>Пароль</b> — <span class="ic">type="password"</span> з підписом. Що бачить сусід за плечем?</div>
+      <div class="bk"><b>Хвилини гри.</b> <span class="ic">type="number" min="0" max="120" step="15"</span> — на скільки стрибають стрілочки?</div>
+      <div class="bk"><b>Поле пошуку.</b> У шапці — <span class="ic">&lt;input type="search" placeholder="Пошук гри"&gt;</span>. Напиши слово: що з'явилось праворуч?</div>
+      <div class="bk"><b>Улюблений колір.</b> <span class="ic">&lt;input type="color"&gt;</span> з підписом. Клацни на нього</div>
+      <div class="bk"><b>Час заняття.</b> Знайди сам: <span class="ic">type="time"</span>. Що за поле?</div>
+      <div class="bk"><b>Підпис-кнопка.</b> <span class="ic">label { cursor: pointer; }</span> — під мишею рука, як на посиланні</div>
+      <div class="bk">⭐⭐ <b>Дві колонки.</b> Ім'я і Прізвище в одному рядку: обидва <span class="ic">&lt;p&gt;</span> — в <span class="ic">&lt;div class="row"&gt;</span>, а <span class="ic">.row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }</span></div>
+      <div class="bk">⭐⭐⭐ <b>Уся форма в сітці.</b> <span class="ic">form { display: grid; grid-template-columns: 1fr 1fr; }</span> — що стало з кнопками? Як поставити їх на всю ширину?</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 20 · ПЕРЕВІР І ЗДАЙ ══════════ -->
+  <section class="slide" id="s19"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lb">Останні 2 хвилини</span>
+      <h2>Перевір і здай</h2>
+    </div></div>
+    <div class="chk">
+      <div class="ck"><span class="bx"></span><span>«Правила клубу» плавно темніє під мишею</span></div>
+      <div class="ck"><span class="bx"></span><span>Форма: 4 поля і кнопка — <b>всередині</b> <span class="ic">&lt;form&gt;</span></span></div>
+      <div class="ck"><span class="bx"></span><span>Кожне поле — свого типу: text · email · tel · date</span></div>
+      <div class="ck"><span class="bx"></span><span>Клацаю на кожен підпис — курсор у його полі</span></div>
+      <div class="ck"><span class="bx"></span><span>⭐⭐ Вік — <span class="ic">number</span>, кнопка «Очистити» працює</span></div>
+      <div class="ck"><span class="bx"></span><span>⭐⭐⭐ Вік від 10 до 17 — <span class="ic">min</span> і <span class="ic">max</span></span></div>
+    </div>
+    <div class="hbox hm mt"><strong>Здати:</strong> у першому рядку <span class="ic">zapys.html</span> — коментар з іменем і рівнем.
+      <kbd>Ctrl</kbd>+<kbd>S</kbd>. Сторінка відкрита в Chrome, VS Code — поруч.</div>
+  </div></section>
+
+  <!-- ══════════ 21 · ДОМАШНЄ ══════════ -->
+  <section class="slide" id="s20"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lo">Домашнє завдання · 10 хвилин</span>
+      <h2>На codepen.io: форма замовлення піци</h2>
+    </div></div>
+    <div class="hbox hm" style="margin:0 0 12px">Код — кнопка «Скопіювати» на
+      <a href="https://sv2627.github.io/sc/aplus/7-frontend/u11/kod.html" style="color:var(--blue);font-weight:700;word-break:break-all">https://sv2627.github.io/sc/aplus/7-frontend/u11/kod.html</a>, блоки 1 і 2.
+      Посилання на CodePen або код з поля HTML — у <strong>Google Classroom · 7 клас</strong> до <strong>2 грудня</strong></div>
+    <div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">поле HTML · частина</span></div>
+<div class="dp-code" style="font-size:14px;line-height:1.5;padding:10px 14px">&lt;<span class="sk">p</span>&gt;
+  <span class="cm">&lt;!-- ДОПИШИ ТУТ 1: підпис «Телефон» для поля нижче --&gt;</span>
+  &lt;<span class="sk">input</span> <span class="st">type</span>=<span class="ss">"tel"</span> <span class="st">id</span>=<span class="ss">"phone"</span> <span class="st">placeholder</span>=<span class="ss">"+380 67 123 45 67"</span>&gt;
+&lt;/<span class="sk">p</span>&gt;
+<span class="cm">&lt;!-- ДОПИШИ ТУТ 2: підпис і поле «Дата доставки» --&gt;</span>
+<span class="cm">&lt;!-- ДОПИШИ ТУТ 3 ⭐⭐⭐: підпис і поле «Кількість піц», від 1 до 5 --&gt;</span></div>
+    </div>
+    <div class="steps" style="gap:8px;margin-top:12px">
+      <div class="step" style="padding:7px 16px"><span class="step-n">1</span><span class="step-t">
+        <b>ДОПИШИ ТУТ 1 і 2.</b> Має вийти: клацаєш на слово «Телефон» чи «Дата доставки» — курсор у полі, у даті є календарик.
+        Підказка — крок 2 і 3: <span class="ic">label for</span> = <span class="ic">id</span> поля</span></div>
+      <div class="step" style="padding:7px 16px"><span class="step-n">2</span><span class="step-t">
+        ⭐⭐⭐ <b>ДОПИШИ ТУТ 3.</b> Має вийти: у полі тільки число, стрілочки ▲▼ ходять від 1 до 5.
+        Підказка: <span class="ic">type="number"</span>, <span class="ic">min</span> і <span class="ic">max</span></span></div>
+    </div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  // у полі форми клавіші пишуть текст, а не гортають слайди
+  if (e.target.closest && e.target.closest('input, textarea, select, form button')) return;
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+// живі форми на слайдах: «Записатися» не перезавантажує колоду, лише каже, що сталося б
+document.querySelectorAll('form.live').forEach(f => f.addEventListener('submit', e => {
+  e.preventDefault();
+  const m = f.querySelector('.fmsg');
+  if (m) m.textContent = 'У тебе на сторінці: перезавантаження, поля порожні';
+}));
+document.querySelectorAll('form.live').forEach(f => f.addEventListener('reset', () => {
+  const m = f.querySelector('.fmsg'); if (m) m.textContent = '';
+}));
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+goTo(0);
+</script>
+</body>
+</html>

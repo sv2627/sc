@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ввід і умови на екрані · Мобільна розробка Flutter · 10 клас · Урок 21</title>
+<!--
+────────────────────────────────────────────────────────────────
+  Курс          Мобільна розробка Flutter (Flutter I + II за рік)
+  Клас          10
+  Школа         A+ · четвер 14:20, к. 309
+  Урок          21 з 68 · 26.11.2026
+  Тема          Ввід і умови на екрані
+  Тривалість    45 хв — повторення 4 хв + TextField, контролер, родина,
+                текст → число, передбач 9 хв + практика 1 8 хв
+                + Switch, Checkbox, умовний рендер, передбач 6 хв
+                + поточна робота 16 хв + ДЗ 2 хв
+  Акцент        blue (#0253b3)
+  Слайдів       18
+  ────────────────────────────────────────────────────────────────
+  ✅ З НОУТБУКАМИ. DartPad АБО first_app у VS Code — код однаковий.
+     Практика 1 — з нуля (екран зі станом, як на уроці 20).
+  ПЛАН          TextField + TextEditingController, Switch, Checkbox,
+                умовний рендер. Оцінка — ПОТОЧНА (критерії — у конспекті,
+                не на слайдах).
+  Місток        Слайд 2 — повторення уроку 20 (setState). Далі: урок 22
+                (ср 02.12) — ListView.
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ФОРМАТ «ПРИКЛАД → ТЕПЕР САМОСТІЙНО» — слайд 8; поточна — 12–13.
+     ⛔ НЕ РІЗАТИ слайди 4, 6, 8, 9, 12.
+     ЯКЩО НЕ ВСТИГАЄТЕ — родина TextField (5), передбач (7, 11) — усно.
+  ✅ КОД ПЕРЕВІРЕНО 21.11.2026 у Docker (Flutter 3.44 · Dart 3.12):
+     flutter analyze — 0 зауважень; widget-тести з Roboto на
+     800×600 і 420×640 — без переповнення, ввід, галочки, суми
+     39.98 / 41.98 / 37.78, ДЗ і розвʼязок. Тексти помилок —
+     з аналізатора й тесту; tryParse — dart run.
+  ────────────────────────────────────────────────────────────────
+  Код           kod.html — ДЗ, практика 1, зразок поточної ⭐–⭐⭐⭐
+  ДЗ            dz.html — «Квиток у кіно», до 02.12, Google Classroom
+  Аркуш         rozdatka.html — 1 сторінка A4, для сховища
+  Керування     ← →  ·  Space  ·  свайп  ·  клік по лівому/правому краю
+                F — на весь екран  ·  Ctrl+P — експорт у PDF
+                ↓ ↑ — кроки анімації на слайді s3
+  ────────────────────────────────────────────────────────────────
+-->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ ПАЛІТРА A+ — світла тема, кольори з aplus.ua ═══
+   #591429 бордовий (шапка сайту) · #0253b3 синій · #363732 текст
+   #f4a6b3 рожевий · #fbf7f7 фон · #ff9c00 помаранчевий · Montserrat + Merriweather
+   ПРАВИЛО КОНТРАСТУ (світла тема): основний текст ≥7:1, вторинний ≥4.5:1.
+   --pink і --orange — ТІЛЬКИ заливки й рамки, ніколи не текст.
+   Нових кольорів не заводимо: акцент курсу — синій із палітри. */
+:root{
+  --bg:#fbf7f7; --surface:#ffffff; --surf2:#eef1f8; --border:#dcdfe9;
+  --brand:#591429; --blue:#0253b3; --rose:#af3b41; --plum:#602857;
+  --pink:#f4a6b3; --orange:#ff9c00; --sky:#e2e7f6;
+  --ink:#2e2f2b; --dim:#55564f; --faint:#7b7a74;
+  --accent:var(--blue);
+  --f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+  --f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+  --f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+     display:flex;flex-direction:column;height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);
+  background-size:44px 44px}
+#progress{height:4px;background:linear-gradient(90deg,var(--accent),var(--brand));transition:width .45s ease;flex-shrink:0;position:relative;z-index:3}
+#stage{flex:1;position:relative;overflow:hidden;z-index:1}
+
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:30px 54px;opacity:0;transform:translateX(56px);pointer-events:none;
+  transition:opacity .4s cubic-bezier(.4,0,.2,1),transform .4s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.out{opacity:0;transform:translateX(-56px)}
+.slide-inner{max-width:1060px;width:100%}
+
+.tapzone{position:absolute;top:0;bottom:0;width:9%;z-index:2;cursor:pointer;border:0;background:transparent;-webkit-tap-highlight-color:transparent}
+.tapzone.tl{left:0}
+.tapzone.tr{right:0}
+.tapzone:active{background:rgba(2,83,179,.05)}
+
+#nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 24px;
+     border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;position:relative;z-index:3;min-height:60px}
+.nbtn{background:var(--surface);border:1.5px solid var(--border);color:var(--ink);
+  padding:13px 30px;border-radius:11px;cursor:pointer;font-family:var(--f-body);
+  font-size:17px;font-weight:700;min-height:48px;min-width:130px;
+  transition:background .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.nbtn:hover,.nbtn:active{background:var(--surf2);border-color:var(--accent)}
+#ctr{font-family:var(--f-mono);font-size:15px;color:var(--dim);min-width:72px;text-align:center}
+#dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:5px;background:var(--border);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--accent);width:26px}
+
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;color:var(--ink)}
+h2{font-weight:800;font-size:2.1rem}
+h3{font-weight:700;font-size:1.3rem}
+p{font-size:19px;line-height:1.75;color:var(--ink)}
+strong,b{color:var(--brand);font-weight:700}
+ul{margin-left:22px}
+li{font-size:19px;line-height:1.8;color:var(--ink);margin-bottom:7px}
+
+.title-wrap{text-align:center}
+.title-h1{font-size:3.2rem;font-weight:900;letter-spacing:-1px;color:var(--accent);margin-bottom:14px}
+.title-sub{font-family:var(--f-ser);font-size:1.3rem;color:var(--dim);margin-bottom:26px;line-height:1.6}
+.chips{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--surface);border:1.5px solid var(--border);border-radius:22px;padding:8px 18px;font-size:16px;color:var(--dim)}
+
+.sh{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.si{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:1.5rem;flex-shrink:0;background:var(--sky)}
+.label{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;
+       text-transform:uppercase;padding:4px 10px;border-radius:5px;margin-bottom:11px;font-weight:700}
+.lb{background:var(--sky);color:var(--blue)}
+.lm{background:#f3e3e7;color:var(--brand)}
+.lo{background:#fdf0d9;color:#9c5b00}
+.lr{background:#fae7e8;color:var(--rose)}
+.lp{background:#f0e5ee;color:var(--plum)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 22px;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.card h3{margin-bottom:9px;color:var(--accent)}
+.card p,.card li{font-size:17px;line-height:1.7;color:var(--dim)}
+.card.cm h3{color:var(--brand)}
+
+.hbox{background:var(--surface);border-left:4px solid var(--accent);border-radius:0 11px 11px 0;
+      padding:14px 18px;margin:11px 0;font-size:18px;color:var(--ink);line-height:1.7;
+      box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hbox.hm{border-color:var(--brand)}
+.hbox.ho{border-color:var(--orange)}
+.hbox.hb{border-color:var(--blue)}
+
+.tip{display:flex;align-items:flex-start;gap:12px;background:var(--sky);
+     border:1.5px solid #c6d2ee;border-radius:11px;padding:14px 17px;
+     margin:12px 0;font-size:18px;line-height:1.7;color:var(--ink)}
+.tip.tm{background:#f6eaee;border-color:#e3c9d1}
+.tip.to{background:#fdf3e2;border-color:#f2ddb5}
+.tip-ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+
+.ic{font-family:var(--f-mono);background:var(--surf2);border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;font-size:.87em;color:var(--brand)}
+
+/* ─── блок коду: світлий, друкується без заливання тонером ─── */
+.dp{border-radius:13px;overflow:hidden;border:1.5px solid var(--border);font-family:var(--f-mono);
+    box-shadow:0 2px 10px rgba(2,83,179,.07);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.dp-bar{background:var(--surf2);padding:10px 15px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.dp-dot{width:11px;height:11px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg2{background:#28c840}
+.dp-title{flex:1;text-align:center;color:var(--dim);font-size:13px}
+.dp-code{background:#f9fbfd;color:var(--ink);padding:16px 19px;font-size:17px;line-height:1.75;white-space:pre-wrap}
+.dp-out{background:#fff;color:var(--ink);padding:14px 19px;font-family:var(--f-mono);
+        font-size:16px;border-top:1.5px solid var(--border);white-space:pre-wrap}
+.dp-out .lbl{font-family:var(--f-body);font-size:13px;color:var(--faint);
+             text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:6px}
+/* підсвітка синтаксису — усі пари перевірені на ≥5:1 щодо #f9fbfd */
+.sk{color:#591429;font-weight:700}  /* ключове слово */
+.ss{color:#0253b3}                  /* рядок */
+.sn{color:#a34500}                  /* число */
+.sf{color:#7a2a5c}                  /* функція */
+.cm{color:#6b6a72;font-style:italic}/* коментар */
+
+/* проста таблиця */
+.tb{width:100%;border-collapse:collapse;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:17px;line-height:1.5;color:var(--ink)}
+.tb th{font-family:var(--f-head);font-weight:800;color:var(--blue);background:var(--surf2);font-size:16px}
+.tb td.mono{font-family:var(--f-mono)}
+.tb tr:last-child td{border-bottom:0}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:15px;background:var(--surface);
+      border:1.5px solid var(--border);border-radius:12px;padding:14px 18px}
+.step-n{width:34px;height:34px;border-radius:9px;background:var(--sky);color:var(--accent);
+        font-family:var(--f-mono);font-weight:700;font-size:16px;display:flex;
+        align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:18px;line-height:1.6;color:var(--ink)}
+
+/* ─── практичний блок із рівнями ⭐ ─── */
+.prac{background:var(--surf2);border:2px solid #b9c8e6;border-radius:14px;padding:18px 22px}
+.prac-h{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.prac-h .badge{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+   background:var(--blue);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700}
+.prac-h .t{font-family:var(--f-head);font-size:1.35rem;font-weight:800;color:var(--blue)}
+.prac-h .tmr{font-family:var(--f-mono);font-size:14.5px;color:var(--dim);margin-left:auto}
+.prac-lead{font-size:17.5px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.lvl{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:flex-start;gap:13px;background:var(--surface);
+    border:1.5px solid var(--border);border-radius:10px;padding:12px 16px}
+.lv-s{font-size:17px;flex-shrink:0;letter-spacing:1px;min-width:56px}
+.lv-t{font-size:17.5px;line-height:1.65;color:var(--ink)}
+
+.reveal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reveal .rv-hint{color:var(--faint);font-size:16px;font-style:italic}
+.reveal .rv-body{display:none;margin-top:12px}
+.reveal.open .rv-body{display:block}
+.reveal.open .rv-hint{display:none}
+
+.center{text-align:center}
+.mt{margin-top:16px}
+.note{font-size:16.5px;color:var(--faint);line-height:1.6}
+
+.en{font-family:var(--f-mono);font-weight:700;color:var(--blue)}
+.uk{color:var(--dim)}
+
+/* чекбокси */
+.can{display:flex;flex-direction:column;gap:10px}
+.can-i{display:flex;align-items:center;gap:14px;background:var(--surface);
+       border:1.5px solid var(--border);border-radius:11px;padding:12px 17px;
+       font-size:17.5px;line-height:1.5}
+.can-b{width:23px;height:23px;border:2px solid var(--blue);border-radius:6px;flex-shrink:0}
+
+/* ─── компактний режим для низьких екранів (дошка 1280×720, ноутбуки 13") ─── */
+@media (max-height:800px){
+  .slide{padding:18px 44px}
+  h2{font-size:1.8rem} h3{font-size:1.2rem}
+  .sh{margin-bottom:12px}
+  .si{width:42px;height:42px;font-size:1.25rem;border-radius:11px}
+  p,li{font-size:17px;line-height:1.6}
+  .card{padding:15px 17px} .card p,.card li{font-size:16px;line-height:1.55}
+  .hbox{font-size:16.5px;padding:11px 15px;margin:8px 0}
+  .tip{font-size:16.5px;padding:11px 14px;margin:9px 0}
+  .tip-ico{font-size:1.2rem}
+  .label{margin-bottom:8px}
+  .mt{margin-top:11px}
+  .two{gap:16px} .three{gap:12px}
+  .step{padding:11px 14px} .step-t{font-size:16.5px}
+  .step-n{width:30px;height:30px;font-size:15px}
+  .can-i{font-size:16px;padding:10px 14px}
+  .prac{padding:14px 17px} .lv{padding:10px 13px} .lv-t{font-size:16px}
+  .title-h1{font-size:2.6rem} .title-sub{font-size:1.15rem;margin-bottom:20px}
+  .dp-code{font-size:15px;line-height:1.6} .dp-bar{padding:7px 12px}
+  .dp-out{font-size:14.5px;padding:11px 15px}
+  .tb th,.tb td{padding:7px 11px;font-size:15.5px}
+  .demo,.solo{padding:10px 13px}
+  .demo .dp-code,.solo .dp-code{font-size:14.5px}
+  .solo li{font-size:15.5px;line-height:1.5}
+  .bank{gap:8px} .bk{padding:9px 12px;font-size:15px}
+  .refg{gap:6px} .rf{padding:6px 9px}
+  .rf .rt{font-size:13px;flex-basis:110px} .rf .rc{font-size:13px}
+}
+
+@media print{
+  body{overflow:visible !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{overflow:visible !important}
+  body::before{display:none !important}
+  #nav,#progress,.tapzone{display:none !important}
+  #stage{overflow:visible !important;position:static !important;flex:none !important}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .slide,.slide.out,.slide.active{
+    display:flex !important;opacity:1 !important;transform:none !important;
+    position:relative !important;pointer-events:all !important;
+    page-break-after:always;break-after:page;
+    width:100vw;height:100vh;padding:44px 68px;inset:auto}
+  .slide:last-of-type{page-break-after:avoid;break-after:avoid}
+  .title-h1{-webkit-text-fill-color:var(--accent) !important;background:none !important}
+  .reveal .rv-body{display:block !important}
+  .reveal .rv-hint{display:none !important}
+}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 3 ─── */
+/* блок «приклад → тепер самостійно» */
+.demo{border:2px solid var(--blue);border-radius:12px;background:var(--surface);
+      padding:13px 16px;margin-bottom:11px}
+.demo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--blue);display:block;margin-bottom:7px}
+.solo{border:2px dashed var(--brand);border-radius:12px;background:var(--surf2);
+      padding:13px 16px}
+.solo .lbl{font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--brand);display:block;margin-bottom:7px}
+.solo ul{margin:0 0 0 20px}
+.solo li{font-size:17px;line-height:1.62;margin-bottom:5px;color:var(--ink)}
+.demo .dp-code{border:1px solid var(--border);border-radius:9px;padding:11px 14px;
+  font-size:16px;line-height:1.65}
+
+/* довідник конструкцій — слайд 18 */
+.refg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rf{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+    padding:8px 12px;display:flex;align-items:baseline;gap:10px}
+.rf .rt{font-size:14.5px;color:var(--dim);flex:0 0 128px;line-height:1.3}
+.rf .rc{font-family:var(--f-mono);font-size:14.5px;font-weight:700;color:var(--brand);
+        line-height:1.35;flex:1}
+
+/* банк додаткових завдань */
+.bank{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.bk{background:var(--surface);border:1.5px solid var(--border);border-left:4px solid var(--plum);
+    border-radius:0 10px 10px 0;padding:11px 15px;font-size:16.5px;line-height:1.6;color:var(--ink)}
+.bk b{color:var(--plum)}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 4 ─── */
+.rv-body .mono{font-family:var(--f-mono);white-space:pre-wrap}
+.hbox.hp{border-color:var(--plum)}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ ──────────────────────────────────────────
+   JetBrains Mono склеює === в один довгий знак, !== в перекреслену
+   рівність, <= і >= в ≤ і ≥, => в стрілку. Діти мають бачити кожен
+   символ окремо — саме так вони його набирають. Правило успадковується,
+   тому одного на файл досить; не прибирати. ─────────────────────── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10 (повторення) ─── */
+/* код у рядку не розривається між рядками */
+.en{white-space:nowrap}
+/* текст помилки — це речення, а не код: переноситься, щоб не розпирати картку */
+.en.err{white-space:normal}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 10 (лічильник) ─── */
+.vid{position:relative;width:100%;max-width:min(1000px,calc((100vh - 270px) * 16 / 9));margin:0 auto;
+     aspect-ratio:16/9;border-radius:13px;overflow:hidden;border:1.5px solid var(--border);background:#000}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.dp-code.tree{line-height:1.5}
+.demo .dp-code{font-family:var(--f-mono)}
+.dp.small .dp-code{font-size:14px;line-height:1.42;padding:11px 16px}
+@media print{ .vid{display:none !important} }
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 12 ─── */
+.solo li{margin-bottom:3px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 13 ─── */
+.dp.tight .dp-code{font-size:13.5px;line-height:1.36;padding:9px 15px}
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 19 ─── */
+/* міні-картки на слайді — як на екрані застосунку */
+.gcs{display:flex;flex-direction:column;gap:8px}
+.gc{width:300px;background:#fff;border:2px solid var(--blue);border-radius:14px;padding:10px 14px;
+    display:flex;align-items:center;gap:12px;font-family:var(--f-body)}
+.gc .mi{font-size:30px;line-height:1}
+.gc .t1{font-weight:800;font-size:17px;color:var(--ink);line-height:1.2}
+.gc .t2{font-size:13.5px;color:var(--dim)}
+.gc .t3{font-size:14px;font-weight:700;color:var(--ink)}
+.gc .nw{background:var(--rose);color:#fff;font-size:11px;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:6px;vertical-align:2px}
+@media (max-height:800px){ .gc{padding:8px 12px} .gc .mi{font-size:26px} .gcs{gap:6px} }
+
+/* ─── ПОКРОКОВІ АНІМАЦІЇ УРОКУ 19 ───
+   У розмітці записаний КІНЦЕВИЙ стан, тому друк і PDF не змінюються.
+   .anim[data-max] — кількість кроків · data-from — з якого кроку діє вигляд
+   data-cue — на яких кроках підсвічено · data-k — звідки й куди летить значення
+   Нових кольорів немає: фон підсвітки — як у .lo, мітка — як у .lb */
+.actl,.amark,.only{display:none}
+.anim.armed .actl{display:flex;align-items:center;gap:10px;margin-top:10px;min-height:56px}
+.abtn{min-width:0;min-height:48px;padding:8px 16px;font-size:16px;white-space:nowrap;flex-shrink:0}
+.abtn:disabled{color:var(--dim);cursor:default}
+.acaps{flex:1;font-size:16.5px;line-height:1.35;font-weight:600;color:var(--ink)}
+.acaps::before{content:attr(data-step);display:block;font-family:var(--f-mono);font-size:13px;
+  font-weight:700;color:var(--accent)}
+.acap{display:none}
+.acap.now{display:block}
+.only.now{display:inline}
+.anim.armed .amark{display:inline-block}
+.amark{font-family:var(--f-mono);font-size:13px;font-weight:700;font-style:normal;
+       padding:1px 6px;border-radius:5px;margin-left:8px;white-space:nowrap}
+.amark.y{background:var(--sky);color:var(--blue)}
+.anim [data-from],.anim [data-bgfrom]{transition:color .35s,background-color .35s,font-size .35s}
+.cue.now{outline:2px solid var(--orange);animation:acue 1s ease-out}
+.cue.now:not(.blk){background:#fdf0d9;border-radius:4px}
+tr.cue.now td{background:#fdf0d9}
+@keyframes acue{0%{outline-offset:6px}100%{outline-offset:0}}
+@media screen{
+  .anim.armed .pre.amark,.pre.fx-gone{display:none}
+  .pre.fx-hide{visibility:hidden}
+  .prebg{background:transparent !important}
+}
+/* летючі значення: число чи текст вилітає з блоку й падає в гніздо */
+.flyer{position:absolute;left:0;top:0;z-index:4;pointer-events:none;display:inline-flex;align-items:center;gap:7px;
+       background:var(--surface);color:var(--ink);border:2.5px solid var(--c);border-radius:20px;padding:4px 12px;
+       font-family:var(--f-mono);font-size:17px;font-weight:700;white-space:nowrap;box-shadow:0 6px 16px rgba(2,83,179,.25)}
+.flyer i{width:14px;height:14px;border-radius:50%;background:var(--c);border:1px solid var(--dim)}
+.flyer.drop{padding:0;width:11px;height:11px;border-radius:50%;background:var(--c);border:1px solid var(--dim);box-shadow:none}
+@media print{.flyer{display:none !important}}
+@media (prefers-reduced-motion:reduce){
+  .cue.now{animation:none}
+  .anim [data-from],.anim [data-bgfrom]{transition:none}
+}
+@media print{
+  .actl,.amark,.only{display:none !important}
+  .cue.now{background:none !important;outline:0 !important}
+}
+</style></head>
+<body>
+
+<div id="progress"></div>
+
+<div id="stage">
+  <button class="tapzone tl" onclick="prev()" aria-label="Назад"></button>
+  <button class="tapzone tr" onclick="next()" aria-label="Далі"></button>
+
+  <!-- ══════════ 1 ══════════ -->
+  <section class="slide active" id="s0"><div class="slide-inner">
+    <div class="title-wrap">
+      <h1 class="title-h1">Ввід і умови на екрані</h1>
+      <p class="title-sub">Застосунок, який читає, що ввів користувач, і показує різне за умовою<br>Мобільна розробка Flutter · 10 клас · Урок 21 з 68 · 26 листопада</p>
+      <div class="chips">
+        <span class="chip">повторення</span>
+        <span class="chip">TextField</span>
+        <span class="chip">TextEditingController</span>
+        <span class="chip">int.tryParse</span>
+        <span class="chip">Switch</span>
+        <span class="chip">Checkbox</span>
+        <span class="chip">умовний рендер</span>
+        <span class="chip">поточна робота</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 2 ══════════ -->
+  <section class="slide" id="s1"><div class="slide-inner">
+    <div class="sh"><div class="si">🔁</div><div>
+      <span class="label lb">Повторення · 4 хв</span>
+      <h2>Урок 20: три питання</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · Без setState</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:14.5px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">void _next() {
+  _index++;
+}</p>
+  <p>Натиснули <span class="en">Next</span> тричі. Що на екрані?</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p>Та сама перша гра. <span class="en">_index</span> уже 3, але <span class="en">build</span> не викликався. Потрібно <span class="en">setState(() { _index++; });</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · Де поле стану</h3>
+  <p>Чому <span class="en">int count = 0;</span> всередині <span class="en">build</span> завжди показує 0?</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p>Кожен <span class="en">build</span> створює змінну заново. Поле, що памʼятає, — у класі стану, поза <span class="en">build</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · Сіра кнопка</h3>
+  <p>Як вимкнути <span class="en">Prev</span> на першій грі?</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p class="mono" style="font-family:var(--f-mono);font-size:14.5px;color:var(--ink)">onPressed: _index &gt; 0 ? _prev : null</p></div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 3 ══════════ -->
+  <section class="slide" id="s2"><div class="slide-inner">
+    <div class="sh"><div class="si">📝</div><div>
+      <span class="label lb">Сьогодні</span>
+      <h2>Чотири речі для форми</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.2fr;align-items:center">
+      <div class="gcs">
+        <div class="gc" style="flex-direction:column;align-items:stretch;gap:8px">
+          <div class="t1">Order: Celeste</div>
+          <div style="border:1.5px solid var(--dim);border-radius:6px;padding:6px 10px;font-size:14px;color:var(--dim)">Name · <b style="color:var(--ink)">Olha</b></div>
+          <div style="border:1.5px solid var(--dim);border-radius:6px;padding:6px 10px;font-size:14px;color:var(--dim)">Quantity · <b style="color:var(--ink)">2</b></div>
+          <div class="t2">◉ Gift wrap &nbsp; ☑ Student</div>
+          <div class="t3" style="color:#1d7a3a">Olha: 37.78 USD</div>
+        </div>
+      </div>
+      <table class="tb">
+        <tr><th>Що</th><th>Навіщо</th></tr>
+        <tr><td class="mono">TextField</td><td>поле, куди користувач пише текст</td></tr>
+        <tr><td class="mono">Switch</td><td>перемикач так / ні</td></tr>
+        <tr><td class="mono">Checkbox</td><td>галочка так / ні</td></tr>
+        <tr><td class="mono">if · ? :</td><td>показати різне за умовою</td></tr>
+      </table>
+    </div>
+    <div class="hbox hm mt">Усе це — стан. Користувач щось змінив — ми записали в поле стану через <span class="en">setState</span> — Flutter перемалював. Як на уроці 20</div>
+  </div></section>
+
+  <!-- ══════════ 4 ══════════ -->
+  <section class="slide" id="s3"><div class="slide-inner">
+    <div class="sh"><div class="si">⌨️</div><div>
+      <span class="label lm">Головне сьогодні</span>
+      <h2>TextField і контролер</h2>
+    </div></div>
+
+    <div class="two anim" data-max="4" style="grid-template-columns:1.25fr 1fr">
+<div class="dp small">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">у класі стану екрана</span></div>
+<div class="dp-code"><span class="cue" data-cue="1" data-k="ctl"><span class="sk">final</span> <span class="sk">TextEditingController</span> _name =
+    <span class="sk">TextEditingController</span>();</span>
+<span class="sk">String</span> _greeting = <span class="ss">''</span>;
+
+<span class="sk">void</span> <span class="sf">_sayHello</span>() {
+  <span class="cue" data-cue="4"><span class="sf">setState</span>(() {
+    _greeting = <span class="ss">'Hello, ${_name.text}!'</span>;
+  });</span>
+}
+
+<span class="cm">// у build, у children:</span>
+<span class="cue" data-cue="2" data-k="fld"><span class="sk">TextField</span>(controller: _name)</span>,<span class="amark y" data-from="3">Olha</span>
+<span class="sk">ElevatedButton</span>(onPressed: _sayHello, …),
+<span class="cue" data-cue="4" data-k="out"><span class="sk">Text</span>(_greeting)</span>,<span class="amark y" data-from="4">Hello, Olha!</span></div>
+</div>
+      <div>
+      <table class="tb">
+        <tr><th>Крок</th><th>Що відбувається</th></tr>
+        <tr class="cue" data-cue="1"><td class="mono">контролер</td><td>обʼєкт, який памʼятає текст поля</td></tr>
+        <tr class="cue" data-cue="2"><td class="mono">controller:</td><td>поле і контролер звʼязані</td></tr>
+        <tr class="cue" data-cue="3"><td class="mono">_name.text</td><td>користувач пише — текст одразу в контролері</td></tr>
+        <tr class="cue" data-cue="4"><td class="mono">setState</td><td>кнопка бере <span class="en">_name.text</span> і міняє напис</td></tr>
+      </table>
+        <div class="actl"><button class="nbtn abtn" type="button" data-a="next"></button><button class="nbtn abtn" type="button" data-a="reset" aria-label="Спочатку">↺</button>
+          <div class="acaps" aria-live="polite">
+            <span class="acap" data-cue="0">Як імʼя з поля потрапляє в напис? Чотири кроки</span>
+            <span class="acap" data-cue="1">Створюємо контролер — поле стану, один раз</span>
+            <span class="acap" data-cue="2">TextField(controller: _name) — поле працює з цим контролером</span>
+            <span class="acap" data-cue="3">Користувач написав Olha — це вже _name.text</span>
+            <span class="acap" data-cue="4">Кнопка: setState — напис стає Hello, Olha!</span>
+          </div></div>
+      </div>
+    </div>
+    <div class="hbox hm mt">Контролер прибираємо разом з екраном: <span class="en">@override void dispose() { _name.dispose(); super.dispose(); }</span></div>
+  </div></section>
+
+  <!-- ══════════ 5 ══════════ -->
+  <section class="slide" id="s4"><div class="slide-inner">
+    <div class="sh"><div class="si">🎛️</div><div>
+      <span class="label lm">Уся родина</span>
+      <h2>Що вміє TextField</h2>
+    </div></div>
+
+    <table class="tb">
+      <tr><th>Параметр</th><th>Приклад</th><th>Що дає</th></tr>
+      <tr><td class="mono">controller</td><td class="mono">controller: _name</td><td>читати й чистити текст: <span class="en">_name.text</span>, <span class="en">_name.clear()</span></td></tr>
+      <tr><td class="mono">labelText</td><td class="mono">InputDecoration(labelText: 'Name')</td><td>підпис над полем</td></tr>
+      <tr><td class="mono">hintText</td><td class="mono">hintText: 'e.g. Olha'</td><td>сіра підказка, поки поле порожнє</td></tr>
+      <tr><td class="mono">border</td><td class="mono">border: OutlineInputBorder()</td><td>рамка навколо поля</td></tr>
+      <tr><td class="mono">errorText</td><td class="mono">errorText: _bad ? 'Only digits' : null</td><td>червоний текст під полем, <span class="en">null</span> — немає</td></tr>
+      <tr><td class="mono">keyboardType</td><td class="mono">TextInputType.number</td><td>на телефоні — клавіатура з цифрами</td></tr>
+      <tr><td class="mono">obscureText</td><td class="mono">obscureText: true</td><td>крапки замість літер — пароль</td></tr>
+    </table>
+    <div class="hbox ho mt"><span class="en">keyboardType</span> не забороняє літери: на компʼютері в поле <span class="en">Quantity</span> можна вписати <span class="en">two</span>. Перевіряємо в коді — наступний слайд</div>
+  </div></section>
+
+  <!-- ══════════ 6 ══════════ -->
+  <section class="slide" id="s5"><div class="slide-inner">
+    <div class="sh"><div class="si">🔢</div><div>
+      <span class="label lm">Текст → число</span>
+      <h2>У полі завжди String</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1fr">
+      <table class="tb">
+        <tr><th>Що введено</th><th>int.tryParse</th><th>double.tryParse</th></tr>
+        <tr><td class="mono">'12'</td><td class="mono">12</td><td class="mono">12.0</td></tr>
+        <tr><td class="mono">' 7 '</td><td class="mono">7</td><td class="mono">7.0</td></tr>
+        <tr><td class="mono">'12.5'</td><td class="mono">null</td><td class="mono">12.5</td></tr>
+        <tr><td class="mono">'19,99'</td><td class="mono">null</td><td class="mono">null</td></tr>
+        <tr><td class="mono">'two'</td><td class="mono">null</td><td class="mono">null</td></tr>
+        <tr><td class="mono">''</td><td class="mono">null</td><td class="mono">null</td></tr>
+      </table>
+<div class="dp">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">кількість з поля</span></div>
+<div class="dp-code"><span class="sk">int</span>? qty = <span class="sk">int</span>.<span class="sf">tryParse</span>(_qty.text);
+<span class="sk">if</span> (qty == <span class="sk">null</span> || qty &lt;= <span class="sn">0</span>) {
+  _result = <span class="ss">'Enter a number from 1'</span>;
+} <span class="sk">else</span> {
+  _result = <span class="ss">'Total: ${qty * <span class="sn">19.99</span>}'</span>;
+}</div>
+</div>
+    </div>
+    <div class="hbox hm mt"><span class="en">tryParse</span> — «спробуй»: не число → <span class="en">null</span> (урок 12, <span class="en">int?</span>). <span class="en">int.parse('two')</span> без <span class="en">try</span> валить застосунок: <span class="en err">FormatException: Invalid radix-10 number</span></div>
+  </div></section>
+
+  <!-- ══════════ 7 ══════════ -->
+  <section class="slide" id="s6"><div class="slide-inner">
+    <div class="sh"><div class="si">🔮</div><div>
+      <span class="label lb">Передбач</span>
+      <h2>Що покаже Text?</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · Дробове в int</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:14.5px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">int? n = int.tryParse('12.5');
+Text('${n ?? 0}')</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p><b>0</b>. <span class="en">'12.5'</span> — не ціле, <span class="en">n</span> = <span class="en">null</span>, <span class="en">??</span> підставляє 0</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · Два поля</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:14.5px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">// у полях: 2 і 3
+Text(_a.text + _b.text)</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p><b>23</b>. Це два рядки, <span class="en">+</span> їх склеює. Число — тільки після <span class="en">tryParse</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · Кома</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:14.5px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">double? p =
+  double.tryParse('19,99');
+Text(p == null ? 'Error' : '$p')</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p><b>Error</b>. Дробова частина — через крапку: <span class="en">19.99</span></p></div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 8 ══════════ -->
+  <section class="slide" id="s7"><div class="slide-inner">
+    <div class="sh"><div class="si">✍️</div><div>
+      <span class="label lo">Практика 1 · 8 хв</span>
+      <h2>Приклад — і самостійно: привітання</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1fr 1.15fr;gap:16px">
+      <div class="demo" style="margin-bottom:0">
+        <span class="lbl">Приклад · учитель на дошці</span>
+<div class="dp-code"><span class="cm">// екран HelloScreen — StatefulWidget</span>
+<span class="sk">final</span> _name = <span class="sk">TextEditingController</span>();
+<span class="sk">String</span> _greeting = <span class="ss">''</span>;
+
+<span class="sk">void</span> <span class="sf">_sayHello</span>() {
+  <span class="sf">setState</span>(() {
+    _greeting = <span class="ss">'Hello, ${_name.text}!'</span>;
+  });
+}
+<span class="cm">// у build: SizedBox(width: 320, child: Column(</span>
+<span class="cm">//   TextField, ElevatedButton, Text(_greeting)</span></div>
+      </div>
+      <div class="solo">
+        <span class="lbl">Тепер самостійно</span>
+        <ul>
+          <li>Старт — порожній проєкт: у DartPad приклад Counter, у VS Code — <span class="en">first_app</span></li>
+          <li>Екран <span class="en">HelloScreen extends StatefulWidget</span>, у <span class="en">MaterialApp</span> — <span class="en">home: const HelloScreen()</span></li>
+          <li>Поле з підписом <span class="en">Name</span> і рамкою, кнопка <span class="en">Say hello</span>, під нею напис розміром 24</li>
+          <li>Не забудь <span class="en">dispose</span> для контролера</li>
+          <li>⭐⭐ Поле порожнє або лише пробіли — червоне <span class="en">Enter your name</span>. Пробіли прибирає <span class="en">_name.text.trim()</span></li>
+          <li>⭐⭐⭐ Кнопка <span class="en">Clear</span> (<span class="en">OutlinedButton</span>): <span class="en">_name.clear()</span> і порожній напис</li>
+        </ul>
+        <p class="note" style="margin-top:6px">Готовий код — <a href="https://sv2627.github.io/sc/aplus/10-flutter/u21/kod.html" target="_blank" rel="noopener" style="text-decoration:underline"><span class="en">sv2627.github.io/sc/aplus/10-flutter/u21/kod.html</span></a></p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 9 ══════════ -->
+  <section class="slide" id="s8"><div class="slide-inner">
+    <div class="sh"><div class="si">🔘</div><div>
+      <span class="label lm">Так / ні</span>
+      <h2>Switch і Checkbox</h2>
+    </div></div>
+
+    <div class="two" style="grid-template-columns:1.15fr 1fr">
+<div class="dp small">
+<div class="dp-bar"><span class="dp-dot dr"></span><span class="dp-dot dy"></span><span class="dp-dot dg2"></span><span class="dp-title">поля стану: bool _gift = false; bool _student = false;</span></div>
+<div class="dp-code"><span class="sk">Switch</span>(
+  value: _gift,
+  onChanged: (<span class="sk">bool</span> v) {
+    <span class="sf">setState</span>(() { _gift = v; });
+  },
+),
+<span class="sk">Checkbox</span>(
+  value: _student,
+  onChanged: (<span class="sk">bool</span>? v) {
+    <span class="sf">setState</span>(() { _student = v ?? <span class="sk">false</span>; });
+  },
+),</div>
+</div>
+      <table class="tb">
+        <tr><th>Віджет</th><th>Значення</th><th>onChanged</th></tr>
+        <tr><td class="mono">Switch</td><td class="mono">bool</td><td class="mono">(bool v)</td></tr>
+        <tr><td class="mono">Checkbox</td><td class="mono">bool?</td><td class="mono">(bool? v) → v ?? false</td></tr>
+        <tr><td class="mono">SwitchListTile</td><td class="mono">bool</td><td>рядок: підпис + перемикач</td></tr>
+        <tr><td class="mono">CheckboxListTile</td><td class="mono">bool?</td><td>рядок: підпис + галочка</td></tr>
+        <tr><td class="mono">Slider</td><td class="mono">double</td><td class="mono">(double v), min, max</td></tr>
+      </table>
+    </div>
+    <div class="hbox hm mt">Сам віджет не памʼятає, увімкнений він чи ні: показує <span class="en">value</span>. Без <span class="en">setState</span> у <span class="en">onChanged</span> перемикач не зрушить</div>
+  </div></section>
+
+  <!-- ══════════ 10 ══════════ -->
+  <section class="slide" id="s9"><div class="slide-inner">
+    <div class="sh"><div class="si">🧬</div><div>
+      <span class="label lm">Уся родина</span>
+      <h2>Умовний рендер: п'ять способів</h2>
+    </div></div>
+
+    <table class="tb">
+      <tr><th>Спосіб</th><th>Код</th><th>Коли</th></tr>
+      <tr><td>if у children</td><td class="mono">if (_gift) const Text('🎁 +2 USD'),</td><td>віджет є або його немає</td></tr>
+      <tr><td>if … else у children</td><td class="mono">if (_error) Text('Error') else Text('OK'),</td><td>один із двох віджетів</td></tr>
+      <tr><td>? : у властивості</td><td class="mono">color: _error ? Colors.red : Colors.green</td><td>віджет той самий, міняється колір, розмір, текст</td></tr>
+      <tr><td>? : для child</td><td class="mono">child: _liked ? Icon(…) : Text('Like')</td><td>там, де можна лише один віджет</td></tr>
+      <tr><td>змінна перед return</td><td class="mono">Widget msg; if (…) { msg = …; } else { msg = …; }</td><td>умова довга, три й більше варіанти</td></tr>
+      <tr><td>null за умовою</td><td class="mono">onPressed: _name.text.isEmpty ? null : _order</td><td>кнопка сіра, поки умова не виконана</td></tr>
+    </table>
+    <div class="hbox ho mt"><span class="en">if</span> у <span class="en">children</span> — без фігурних дужок, як <span class="en">for</span> на уроці 19. Умови — ті самі, що в Dart: <span class="en">&amp;&amp;</span>, <span class="en">||</span>, <span class="en">!</span></div>
+  </div></section>
+
+  <!-- ══════════ 11 ══════════ -->
+  <section class="slide" id="s10"><div class="slide-inner">
+    <div class="sh"><div class="si">🔮</div><div>
+      <span class="label lb">Передбач</span>
+      <h2>Що на екрані?</h2>
+    </div></div>
+
+    <p class="note" style="margin-bottom:10px">Стан: <span class="en">_gift = true</span>, <span class="en">_student = false</span>, <span class="en">_result = ''</span></p>
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · Скільки віджетів</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:14.5px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">children: [
+  Text('Order'),
+  if (_gift) Text('Gift'),
+  if (_student) Text('-10%'),
+  if (_result.isNotEmpty)
+    Text(_result),
+],</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p><b>2</b>: <span class="en">Order</span> і <span class="en">Gift</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · if … else</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:14.5px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">if (_student)
+  Text('Student')
+else
+  Text('Full price'),</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p><span class="en">Full price</span> — <span class="en">_student</span> хибне</p></div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · Кнопка</h3>
+  <p class="mono" style="font-family:var(--f-mono);font-size:14.5px;color:var(--ink);white-space:pre-wrap;line-height:1.5;font-style:normal">ElevatedButton(
+  onPressed: _gift &amp;&amp; _student
+      ? _order : null,
+  child: Text('Order'),
+)</p>
+  <p class="rv-hint">Клацни — відповідь.</p>
+  <div class="rv-body"><p>Кнопка <b>сіра</b>: <span class="en">true &amp;&amp; false</span> = <span class="en">false</span> → <span class="en">null</span></p></div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 12 ══════════ -->
+  <section class="slide" id="s11"><div class="slide-inner">
+    <div class="sh"><div class="si">🛠️</div><div>
+      <span class="label lo">Поточна робота · 16 хв</span>
+      <h2>Замовлення гри</h2>
+    </div></div>
+
+    <div class="prac">
+      <div class="prac-h"><span class="badge">Самостійно</span><span class="t">Екран <span class="en">OrderScreen</span>: гра Celeste, ціна 19.99 USD</span></div>
+      <p class="prac-lead">Новий екран зі станом, як <span class="en">HelloScreen</span>. Першим рядком — коментар із прізвищем і рівнем</p>
+      <div class="lvl">
+        <div class="lv"><span class="lv-s">⭐</span><span class="lv-t">Поле <span class="en">Name</span> і кнопка <span class="en">Order</span> → напис <span class="en">Order for Olha</span>. <span class="en">Switch</span> «Gift wrap»: коли увімкнено, під ним зʼявляється <span class="en">🎁 +2 USD</span> (<span class="en">if</span> у <span class="en">children</span>)</span></div>
+        <div class="lv"><span class="lv-s">⭐⭐</span><span class="lv-t">Поле <span class="en">Quantity</span>: <span class="en">int.tryParse</span>. Не число або менше 1 — червоне <span class="en">Enter a number from 1</span>; інакше зелене <span class="en">Olha: 39.98 USD</span> (2 × 19.99). Колір — через <span class="en">? :</span></span></div>
+        <div class="lv"><span class="lv-s">⭐⭐⭐</span><span class="lv-t">Упаковка додає 2 USD, <span class="en">Checkbox</span> «Student» знімає 10 %; сума — <span class="en">toStringAsFixed(2)</span>. Поки імʼя порожнє, <span class="en">Order</span> сіра: <span class="en">onChanged</span> поля + <span class="en">null</span> за умовою</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 13 ══════════ -->
+  <section class="slide" id="s12"><div class="slide-inner">
+    <div class="sh"><div class="si">✅</div><div>
+      <span class="label lo">Поточна робота</span>
+      <h2>Що має працювати</h2>
+    </div></div>
+
+    <div class="can">
+      <div class="can-i"><span class="can-b"></span><span>Запускається без червоних помилок і без жовто-чорних смуг</span></div>
+      <div class="can-i"><span class="can-b"></span><span>Перемикач і галочка рухаються від кліку; <span class="en">🎁 +2 USD</span> зʼявляється і зникає</span></div>
+      <div class="can-i"><span class="can-b"></span><span>⭐⭐ <span class="en">two</span>, <span class="en">0</span>, порожнє поле — червоне повідомлення, а не червоний екран</span></div>
+      <div class="can-i"><span class="can-b"></span><span>⭐⭐⭐ Перевір числа: 2 шт. → <span class="en">39.98</span> · + упаковка → <span class="en">41.98</span> · + Student → <span class="en">37.78</span></span></div>
+      <div class="can-i"><span class="can-b"></span><span>⭐⭐⭐ Поки імʼя порожнє, <span class="en">Order</span> сіра; ввів літеру — кнопка ожила</span></div>
+      <div class="can-i"><span class="can-b"></span><span>Покажи вчителю на екрані. Код — у Google Classroom 10 класу, першим рядком <span class="en">// Прізвище · рівень ⭐⭐</span></span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 14 ══════════ -->
+  <section class="slide" id="s13"><div class="slide-inner">
+    <div class="sh"><div class="si">🔨</div><div>
+      <span class="label lo">Перевір себе · зламай і полагодь</span>
+      <h2>Що скаже редактор?</h2>
+    </div></div>
+
+    <div class="three">
+<div class="card cm reveal">
+  <h3>1 · bool у Checkbox</h3>
+  <p><span class="en">onChanged: (bool v) { … }</span> у <span class="en">Checkbox</span></p>
+  <p class="rv-hint">Що буде?</p>
+  <div class="rv-body"><p>Помилка: <span class="en err">The argument type 'void Function(bool)' can't be assigned to the parameter type 'ValueChanged&lt;bool?&gt;?'.</span> Пиши <span class="en">bool?</span> і <span class="en">v ?? false</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>2 · int без ?</h3>
+  <p><span class="en">int qty = int.tryParse(_qty.text);</span></p>
+  <p class="rv-hint">Що буде?</p>
+  <div class="rv-body"><p>Помилка: <span class="en err">A value of type 'int?' can't be assigned to a variable of type 'int'.</span> <span class="en">tryParse</span> може дати <span class="en">null</span> — пиши <span class="en">int?</span></p></div>
+</div>
+<div class="card cm reveal">
+  <h3>3 · Поле в Row</h3>
+  <p><span class="en">Row(children: [TextField(…), ElevatedButton(…)])</span></p>
+  <p class="rv-hint">Що буде?</p>
+  <div class="rv-body"><p>Червоний екран: <span class="en err">An InputDecorator, which is typically created by a TextField, cannot have an unbounded width.</span> Обгорни поле в <span class="en">Expanded</span></p></div>
+</div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 15 ══════════ -->
+  <section class="slide" id="s14"><div class="slide-inner">
+    <div class="sh"><div class="si">📋</div><div>
+      <span class="label lp">Тримати відкритим</span>
+      <h2>Довідник уроку</h2>
+    </div></div>
+
+    <div class="refg">
+      <div class="rf"><span class="rt">контролер</span><span class="rc">final _name = TextEditingController();</span></div>
+      <div class="rf"><span class="rt">поле вводу</span><span class="rc">TextField(controller: _name, decoration: InputDecoration(labelText: 'Name'))</span></div>
+      <div class="rf"><span class="rt">прочитати</span><span class="rc">_name.text  ·  _name.text.trim()</span></div>
+      <div class="rf"><span class="rt">очистити</span><span class="rc">_name.clear();</span></div>
+      <div class="rf"><span class="rt">прибрати</span><span class="rc">void dispose() { _name.dispose(); super.dispose(); }</span></div>
+      <div class="rf"><span class="rt">текст → число</span><span class="rc">int? n = int.tryParse(_qty.text);</span></div>
+      <div class="rf"><span class="rt">перемикач</span><span class="rc">Switch(value: _gift, onChanged: (bool v) { setState(…); })</span></div>
+      <div class="rf"><span class="rt">галочка</span><span class="rc">Checkbox(value: _s, onChanged: (bool? v) { … v ?? false … })</span></div>
+      <div class="rf"><span class="rt">є чи немає</span><span class="rc">if (_gift) const Text('🎁 +2 USD'),</span></div>
+      <div class="rf"><span class="rt">одне з двох</span><span class="rc">if (_error) Text('Error') else Text('OK'),</span></div>
+      <div class="rf"><span class="rt">колір за умовою</span><span class="rc">color: _error ? Colors.red : Colors.green</span></div>
+      <div class="rf"><span class="rt">кожна літера</span><span class="rc">onChanged: (String v) =&gt; setState(() {}),</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 16 ══════════ -->
+  <section class="slide" id="s15"><div class="slide-inner">
+    <div class="sh"><div class="si">🏦</div><div>
+      <span class="label lp">Банк завдань · для тих, хто закінчив</span>
+      <h2>Ще вісім доробок</h2>
+    </div></div>
+
+    <div class="bank">
+      <div class="bk"><b>1.</b> Помилка під полем, а не під кнопкою: <span class="en">errorText: _bad ? 'Only digits' : null</span></div>
+      <div class="bk"><b>2.</b> Сума рахується одразу, без кнопки: <span class="en">onChanged</span> у полі <span class="en">Quantity</span></div>
+      <div class="bk"><b>3.</b> <span class="en">Switch</span> і <span class="en">Checkbox</span> → <span class="en">SwitchListTile</span> і <span class="en">CheckboxListTile</span> з <span class="en">title: Text('Gift wrap')</span></div>
+      <div class="bk"><b>4.</b> Кількість повзунком: <span class="en">Slider(value: _q, min: 1, max: 10, divisions: 9, …)</span>, на екрані <span class="en">_q.round()</span></div>
+      <div class="bk"><b>5.</b> Поле <span class="en">Promo code</span>: якщо <span class="en">SALE</span> — ще −5 USD; регістр не важливий: <span class="en">toUpperCase()</span></div>
+      <div class="bk"><b>6.</b> Більше 5 штук — помаранчеве попередження <span class="en">Max 5 per order</span>, замовлення не рахується</div>
+      <div class="bk"><b>7.</b> Пароль: <span class="en">obscureText: _hide</span> і <span class="en">IconButton</span> з оком, що перемикає <span class="en">_hide</span></div>
+      <div class="bk"><b>8.</b> Вибір гри: три <span class="en">ChoiceChip</span> з назвами, <span class="en">selected: _game == 'Celeste'</span>; ціна береться з <span class="en">Map&lt;String, double&gt;</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 17 ══════════ -->
+  <section class="slide" id="s16"><div class="slide-inner">
+    <div class="sh"><div class="si">⚠️</div><div>
+      <span class="label lo">Пастки</span>
+      <h2>Найчастіші проблеми</h2>
+    </div></div>
+
+    <div class="steps" style="gap:9px">
+      <div class="step"><span class="step-n">1</span><span class="step-t"><b>Контролер створено в <span class="en">build</span></b> — після кожного <span class="en">setState</span> поле знову порожнє. Контролер — поле стану</span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t"><b>Перемикач не рухається</b> — в <span class="en">onChanged</span> немає <span class="en">setState</span> або забули <span class="en">_gift = v</span></span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t"><b>Червоний екран <span class="en">FormatException</span></b> — <span class="en">int.parse</span> замість <span class="en">int.tryParse</span></span></div>
+      <div class="step"><span class="step-n">4</span><span class="step-t"><b><span class="en err">cannot have an unbounded width</span></b> — <span class="en">TextField</span> у <span class="en">Row</span> без <span class="en">Expanded</span> або <span class="en">SizedBox(width: …)</span></span></div>
+      <div class="step"><span class="step-n">5</span><span class="step-t"><b>Сума <span class="en">99.94999999999999</span></b> (5 × 19.99) — дробові числа рахуються неточно. Показуй <span class="en">toStringAsFixed(2)</span></span></div>
+      <div class="step"><span class="step-n">6</span><span class="step-t"><b>Кнопка не оживає, коли вводиш імʼя</b> — без <span class="en">onChanged: (v) =&gt; setState(() {})</span> умова <span class="en">isEmpty</span> не перераховується</span></div>
+    </div>
+  </div></section>
+
+  <!-- ══════════ 18 ══════════ -->
+  <section class="slide" id="s17"><div class="slide-inner">
+    <div class="sh"><div class="si">🏠</div><div>
+      <span class="label lo">Домашнє завдання</span>
+      <h2>Квиток у кіно</h2>
+    </div></div>
+
+    <div class="hbox hm" style="margin-top:0">У <strong>DartPad</strong> — вдома Flutter SDK не потрібен. Стартовий код — <a href="https://sv2627.github.io/sc/aplus/10-flutter/u21/kod.html" target="_blank" rel="noopener" style="text-decoration:underline"><strong>sv2627.github.io/sc/aplus/10-flutter/u21/kod.html</strong></a>, перший блок: скопіюй, встав, Run.
+      Код — у <strong>Google Classroom</strong> до <strong>2 грудня</strong>, першим рядком — коментар із прізвищем.</div>
+    <div class="steps mt" style="gap:10px">
+      <div class="step"><span class="step-n">1</span><span class="step-t">
+        У <span class="en">_check</span> заміни рядок <span class="en">_result = 'Age: $age';</span> на <span class="en">if / else if / else</span>: не число → <span class="en">Enter your age</span>, менше 12 → <span class="en">Child ticket: 5 USD</span>, інакше → <span class="en">Adult ticket: 8 USD</span></span></div>
+      <div class="step"><span class="step-n">2</span><span class="step-t">
+        Під написом — рядок <span class="en">3D glasses included</span>, лише коли галочка <span class="en">3D</span> стоїть</span></div>
+      <div class="step"><span class="step-n">3</span><span class="step-t">
+        <b>Перевір:</b> <span class="en">10</span> → дитячий, <span class="en">12</span> → дорослий, <span class="en">abc</span> → <span class="en">Enter your age</span>; галочка — рядок про окуляри зʼявляється й зникає</span></div>
+    </div>
+    <div class="tip"><span class="tip-ico">💡</span><span>Місця позначені <span class="en">ДОПИШИ ТУТ</span>. Поле, галочка і кнопка вже працюють — міняти їх не треба</span></div>
+  </div></section>
+
+</div>
+
+<div id="nav">
+  <button class="nbtn" onclick="prev()">← Назад</button>
+  <div id="dots"></div>
+  <span id="ctr">1 / 1</span>
+  <button class="nbtn" onclick="next()">Далі →</button>
+</div>
+
+<script>
+/* ═════════ НАВІГАЦІЯ ═════════ */
+const TOTAL = document.querySelectorAll('.slide').length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.title = 'Слайд ' + (i + 1);
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function goTo(n) {
+  const from = document.getElementById('s' + cur);
+  from.classList.remove('active');
+  from.classList.add('out');
+  setTimeout(() => from.classList.remove('out'), 450);
+  cur = Math.max(0, Math.min(TOTAL - 1, n));
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('progress').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+  /* відео на іншому слайді — на паузу */
+  document.querySelectorAll('.slide:not(.active) iframe').forEach(f => {
+    try { f.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); } catch (e) {}
+  });
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0) goTo(cur - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+});
+
+document.querySelectorAll('.reveal').forEach(el => el.addEventListener('click', () => el.classList.toggle('open')));
+
+document.querySelectorAll('.tapzone.tl').forEach(b => b.onclick = prev);
+document.querySelectorAll('.tapzone.tr').forEach(b => b.onclick = next);
+
+/* свайп */
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const dy = ty - e.changedTouches[0].clientY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) dx > 0 ? next() : prev();
+}, {passive:true});
+
+/* ═════════ ПОКРОКОВІ АНІМАЦІЇ ═════════ */
+/* Що летить на кожному кроці. Група [ ] — летять разом, групи — одна за одною.
+   t — напис · c — колір · from/to — звідки й куди · miss — відскакує · knock — що збиває */
+const FLY = {
+  s3: {
+    3: [[{t:"'Olha'", c:'var(--blue)', from:'[data-k=fld]', to:'[data-k=ctl]'}]],
+    4: [[{t:"'Hello, Olha!'", c:'var(--orange)', from:'[data-k=ctl]', to:'[data-k=out]'}]]
+  }
+};
+const CALM = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const place = (x, y, sc, rot) => 'translate(' + x + 'px,' + y + 'px) translate(-50%,-50%) scale(' + sc + ') rotate(' + rot + 'deg)';
+
+function flyPart(a, el, frames, opts) {
+  const an = el.animate(frames, Object.assign({fill:'forwards'}, opts));
+  a.live.push(an);
+  return an;
+}
+function flyChip(fl) {
+  const chip = document.createElement('div');
+  chip.className = 'flyer';
+  chip.style.setProperty('--c', fl.c);
+  chip.innerHTML = '<i></i>';
+  chip.append(fl.t);
+  document.getElementById('stage').appendChild(chip);
+  return chip;
+}
+function flySplash(a, x, y, c) {
+  for (let i = 0; i < 10; i++) {
+    const d = document.createElement('div'), ang = i / 10 * Math.PI * 2, r = 45 + (i % 3) * 18;
+    d.className = 'flyer drop';
+    d.style.setProperty('--c', c);
+    document.getElementById('stage').appendChild(d);
+    flyPart(a, d, [{transform:place(x, y, 1, 0), opacity:1},
+                   {transform:place(x + Math.cos(ang) * r, y + Math.sin(ang) * r, .3, 0), opacity:0}],
+            {duration:520, easing:'ease-out'}).finished.then(() => d.remove()).catch(() => {});
+  }
+}
+async function flyOne(a, fl) {
+  const src = a.querySelector(fl.from), dst = a.querySelector(fl.to);
+  if (!src || !dst) return;
+  const box = document.getElementById('stage').getBoundingClientRect();
+  const r0 = src.getBoundingClientRect(), r1 = dst.getBoundingClientRect();
+  const x0 = r0.left + r0.width / 2 - box.left, y0 = r0.top + r0.height / 2 - box.top;
+  const x1 = r1.left + Math.min(r1.width / 2, 90) - box.left, y1 = r1.top + r1.height / 2 - box.top;
+  const topY = Math.max(24, Math.min(y0, y1) - 70);
+  let old = null;
+  if (fl.knock) {
+    old = flyChip(fl.knock);
+    flyPart(a, old, [{transform:place(x1, y1, 1, 0)}, {transform:place(x1, y1, 1, 0)}], {duration:1});
+  }
+  const chip = flyChip(fl);
+  try {
+    await flyPart(a, chip, [
+      {transform:place(x0, y0, .7, 0), opacity:0},
+      {transform:place((x0 + x1) / 2, topY, 1.3, -12), opacity:1, offset:.5},
+      {transform:place(x1, y1, 1, 0), opacity:1}
+    ], {duration:850, easing:'ease-in-out'}).finished;
+    if (fl.miss) {
+      flyPart(a, dst, [{transform:'translateX(0)'}, {transform:'translateX(-7px)'}, {transform:'translateX(7px)'},
+                       {transform:'translateX(-4px)'}, {transform:'translateX(0)'}], {duration:320, fill:'none'});
+      await flyPart(a, chip, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 + 70, y1 - 50, 1.05, 40), opacity:1, offset:.35},
+        {transform:place(x1 + 150, y1 + 170, .7, 200), opacity:0}
+      ], {duration:750, easing:'ease-in'}).finished;
+    } else {
+      flySplash(a, x1, y1, fl.c);
+      flyPart(a, dst, [{transform:'scale(1)'}, {transform:'scale(1.05)'}, {transform:'scale(1)'}], {duration:300, fill:'none'});
+      if (old) flyPart(a, old, [
+        {transform:place(x1, y1, 1, 0), opacity:1},
+        {transform:place(x1 - 130, y1 - 40, 1, -90), opacity:1, offset:.3},
+        {transform:place(x1 - 210, y1 + 240, .7, -320), opacity:0}
+      ], {duration:800, easing:'ease-in'}).finished.then(() => old.remove()).catch(() => {});
+    }
+  } catch (e) { /* політ перервано */ }
+  chip.remove();
+}
+function animStop(a) {
+  (a.live || []).forEach(an => an.cancel());
+  a.live = [];
+  a.run = (a.run || 0) + 1;
+  a.busy = false;
+  document.querySelectorAll('.flyer').forEach(f => f.remove());
+}
+/* Крок уперед: підпис і підсвітка одразу, а вигляд змінюється, коли значення долетить */
+async function animForward(a, s) {
+  animStop(a);
+  const plan = (FLY[a.closest('.slide').id] || {})[s];
+  if (!plan || CALM) { animShow(a, s); return; }
+  const run = a.run;
+  a.busy = true;
+  animShow(a, s, s - 1);
+  for (const group of plan) {
+    await Promise.all(group.map(fl => flyOne(a, fl)));
+    if (a.run !== run) return;
+  }
+  a.busy = false;
+  animShow(a, s);
+}
+function animShow(a, s, look = s) {
+  const max = +a.dataset.max;
+  a.dataset.s = s;
+  a.querySelectorAll('[data-from]').forEach(e => e.classList.toggle('pre', look < +e.dataset.from));
+  a.querySelectorAll('[data-bgfrom]').forEach(e => e.classList.toggle('prebg', look < +e.dataset.bgfrom));
+  a.querySelectorAll('[data-mid]').forEach(e => e.classList.toggle('mid', look >= +e.dataset.mid && look < +e.dataset.from));
+  a.querySelectorAll('[data-cue]').forEach(e => e.classList.toggle('now', e.dataset.cue.split(' ').includes(String(s))));
+  const btn = a.querySelector('[data-a="next"]');
+  /* кнопка лише веде далі; номер — у кроку, який зараз на екрані */
+  btn.textContent = s === 0 ? 'Почати →' : s < max ? 'Далі →' : 'Готово ✓';
+  a.querySelector('.acaps').dataset.step = s ? 'Крок ' + s + ' з ' + max : '';
+  btn.disabled = s >= max;
+}
+function animStep(a, d) {
+  const s = +a.dataset.s;
+  /* повторне натискання під час польоту — одразу показати результат */
+  if (a.busy && d > 0) { animStop(a); animShow(a, s); return; }
+  const n = Math.max(0, Math.min(+a.dataset.max, s + d));
+  if (n > s) animForward(a, n);
+  else { animStop(a); animShow(a, n); }
+}
+document.querySelectorAll('.anim').forEach(a => {
+  a.classList.add('armed');
+  animShow(a, 0);
+  a.querySelectorAll('.abtn').forEach(b => {
+    b.addEventListener('click', e => {
+      if (b.dataset.a === 'next') animStep(a, 1);
+      else { animStop(a); animShow(a, 0); }
+      if (e.detail > 0) b.blur();
+    });
+    /* пробіл на кнопці — це крок, а не наступний слайд */
+    b.addEventListener('keydown', e => { if (e.key === ' ') e.stopPropagation(); });
+  });
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  const a = document.querySelector('.slide.active .anim');
+  if (a) { e.preventDefault(); animStep(a, e.key === 'ArrowDown' ? 1 : -1); }
+});
+/* повернулись на слайд — анімація знову з початку */
+new MutationObserver(() => {
+  document.querySelectorAll('.slide:not(.active) .anim').forEach(a => { if (+a.dataset.s) { animStop(a); animShow(a, 0); } });
+}).observe(document.getElementById('stage'), {subtree:true, attributes:true, attributeFilter:['class'], childList:false});
+
+
+goTo(0);
+</script>
+</body>
+</html>

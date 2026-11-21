@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · Front-end I · 6 клас · Урок 12</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          Front-end I (HTML + CSS)
+  Клас          6
+  Урок          12 / 36 · 27.11.2026
+  Тема          Коробкова модель
+  Олівцем: підпиши шари коробки, padding чи margin, розшифруй
+  числа, чому не працює, запиши CSS за описом, ⭐⭐⭐ намалюй.
+  Приклади інші, ніж на слайдах і в ДЗ (книгарня).
+  ────────────────────────────────────────────────────────────────
+  ⚠️ ТІЛЬКИ ДЛЯ СХОВИЩА. На уроці не роздається: практика — за
+     ноутбуками, зі слайдів; ДЗ — на компʼютері (dz.html).
+  CSS           копія u11/rozdatka.html + блок «ДОДАНО ДЛЯ УРОКУ 12»
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок.
+  ОБСЯГ         Рівно одна сторінка A4. Перевірено вимірюванням.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+/* ─── довідка: єдиний стиснутий блок ─── */
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+/* ─── завдання ─── */
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b > h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+/* Селектор БЕЗ «>» (як у 10-flutter/u05): у блоках .b.two заголовок лежить
+   у колонці (.b > div > h2), дочірній селектор його не діставав — тег злипався
+   із заголовком. margin-left тримає зазор біля плаваючого тега. */
+.b > div > h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b h2 .tag{float:right; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700;
+  margin-left:4mm}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.4fr 1fr}
+.two.k46{grid-template-columns:1fr 1.4fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em; white-space:nowrap}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+/* лінійки для письма */
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7.2mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:10pt; font-weight:700; padding-bottom:.4mm}
+.sl.wide span{min-width:52mm}
+
+/* рамка для запису */
+.wb{border:var(--line); min-height:16mm; padding:1.4mm 2mm}
+.wb .cap{font-family:var(--fm); font-size:9pt; font-weight:700; text-transform:uppercase;
+  letter-spacing:.6px}
+
+/* схема з пропусками */
+.flow{display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:2mm; align-items:center}
+.fl-b{border:var(--line); min-height:17mm; padding:1.2mm 1.8mm; font-size:10pt; line-height:1.18}
+.fl-a{font-family:var(--fm); font-size:13pt; font-weight:800; text-align:center}
+
+/* таблиця «постав букву» */
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.8mm 1.8mm; font-size:10.5pt; text-align:left}
+table.t th{font-size:9.5pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:22mm; text-align:center}
+table.t td.b2{width:34mm}
+
+/* словник із порожньою колонкою */
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.5mm 0; font-size:11pt; vertical-align:bottom}
+table.voc td.en{width:44%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+pre.c{font-family:var(--fm); font-size:10.5pt; line-height:1.32; border:var(--line);
+  padding:1.6mm 2.2mm; white-space:pre-wrap; font-weight:700}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+
+
+/* ─── ДОДАНО ДЛЯ УРОКУ 12: схема коробки для підписів ─── */
+table.t.sm td,table.t.sm th{padding:1.1mm 1.8mm}
+.nest{font-size:10pt}
+.nest .l{display:flex; align-items:flex-end; gap:2mm; font-family:var(--fm); font-size:10pt; font-weight:700;
+  height:5.6mm; padding:0 1mm}
+.nest .l i{flex:0 0 38mm; border-bottom:var(--thin)}
+.nest .m{border:1.5px dashed #000; padding:0 4mm 3mm}
+.nest .b{border:4px solid #000; padding:0 4mm 3mm}
+.nest .p{border:1px dotted #000; padding:0 4mm 3mm}
+.nest .c{border:1px solid #000; padding:3mm; text-align:center; font-size:11pt}
+.draw{border:var(--line); height:21mm}
+</style></head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>Front-end I &#183; 6 клас &#183; Урок 12 / 36 &#183; 27 листопада</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Коробкова модель</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Шари коробки</p>
+        <p>вміст &#8594; <code>padding</code> &#8594; <code>border</code> &#8594; <code>margin</code></p>
+        <p>padding &#8212; всередині, margin &#8212; зовні</p>
+      </div>
+      <div>
+        <p class="rh">Рамка</p>
+        <p><code>border: 2px solid black;</code></p>
+        <p>товщина &#183; стиль &#183; колір; <code>border-top</code> &#8212; одна сторона</p>
+      </div>
+      <div>
+        <p class="rh">Числа відступу</p>
+        <p><code>10px</code> усі &#183; <code>10px 20px</code> верх-низ, боки</p>
+        <p><code>1px 2px 3px 4px</code> верх, право, низ, ліво</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b two">
+    <div>
+      <h2>1 &#183; Підпиши шари<span class="tag">4 слова</span></h2>
+      <div class="nest">
+        <div class="m"><div class="l">1 <i></i></div>
+          <div class="b"><div class="l">2 <i></i></div>
+            <div class="p"><div class="l">3 <i></i></div>
+              <div class="c">4 ______________ : Казки</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2>2 &#183; padding чи margin?<span class="tag">впиши</span></h2>
+      <table class="t">
+        <tr><th>Що треба</th><th style="width:30mm">Властивість</th></tr>
+        <tr><td>Текст прилип до рамки</td><td></td></tr>
+        <tr><td>Дві книжки злиплися рамками</td><td></td></tr>
+        <tr><td>Відсунути картку від краю вікна</td><td></td></tr>
+        <tr><td>Більше місця між рамкою і текстом ліворуч</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b">
+    <h2>3 &#183; Розшифруй числа<span class="tag">скільки пікселів з кожного боку</span></h2>
+    <table class="t sm">
+      <tr><th>Правило</th><th>Згори</th><th>Праворуч</th><th>Знизу</th><th>Ліворуч</th></tr>
+      <tr><td><code>padding: 12px;</code></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td><code>margin: 5px 20px;</code></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td><code>padding: 1px 2px 3px 4px;</code></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td><code>margin: 0 0 30px 0;</code></td><td></td><td></td><td></td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="b">
+    <h2>4 &#183; Чому не працює?<span class="tag">причина і як виправити</span></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4mm;align-items:start">
+      <div>
+        <pre class="c">.book {
+  border: 3px blue;
+}</pre>
+        <div class="ln s"></div><div class="ln s"></div>
+      </div>
+      <div>
+        <pre class="c">.book {
+  padding: 15 px;
+}</pre>
+        <div class="ln s"></div><div class="ln s"></div>
+      </div>
+      <div>
+        <pre class="c">.book {
+  margin: 10px, 20px;
+}</pre>
+        <div class="ln s"></div><div class="ln s"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="b two">
+    <div>
+      <h2>5 &#183; Запиши CSS<span class="tag">за описом</span></h2>
+      <p class="q">Сторінка &#171;Книгарня&#187;. Кожна книжка має клас <code>book</code>: рамка <code>2px</code>, пунктир <code>dashed</code>, колір <code>brown</code>; усередині &#8212; <code>10px</code> згори й знизу, <code>20px</code> по боках; знизу до сусідньої книжки &#8212; <code>25px</code>.</p>
+      <div class="wb" style="min-height:34mm"><span class="cap">style.css</span></div>
+    </div>
+    <div>
+      <h2>6 &#183; Намалюй<span class="tag">&#9733;&#9733;&#9733;</span></h2>
+      <pre class="c">&lt;p class="tag"&gt;Новинка&lt;/p&gt;
+.tag {
+  border: 3px dotted black;
+  padding: 0 20px;
+}</pre>
+      <p class="q" style="margin-top:1.2mm">Як виглядатиме слово на сторінці? Намалюй рамку і де стоїть текст.</p>
+      <div class="draw"></div>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>Front-end I &#183; 6 клас</span>
+    <span>Урок 12 &#183; 27.11.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

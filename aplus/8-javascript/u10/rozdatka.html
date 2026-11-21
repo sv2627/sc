@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роздатка · JavaScript · 8 клас · Урок 10</title>
+<!--
+  ────────────────────────────────────────────────────────────────
+  РОЗДАТКОВИЙ МАТЕРІАЛ · 80 % площі — робота олівцем
+  Курс          JavaScript I
+  Клас          8
+  Урок          10 / 35 · 23.11.2026 · понеділок
+  Тема          Функції: function · параметр і аргумент · виклик · return
+  ────────────────────────────────────────────────────────────────
+  ⚠️ СХОВИЩЕ. У класі не роздається (практика за ноутбуками),
+     друкується на випадок тривоги. Жодне завдання не потребує
+     комп'ютера. Слайди на аркуш не посилаються, аркуш — на слайди теж.
+     Числа й код — інші, ніж на слайдах.
+  КЛЮЧ  1) Так! · Ні!
+        2) відмінно · добре · старайся
+        3) w — параметр · 3 — аргумент · h — параметр · area(3, 4) → 12
+        4) 8 · 28 · true · false · undefined
+        5) 0 · === · return · 2  (count([2, 5, 2, 2], 2) → 3)
+        6) р.3 < замість <= · р.6 return sum; · р.8 total з малої → 120
+  Увесь код аркуша прогнано в node.
+  ────────────────────────────────────────────────────────────────
+  ДРУК          A4 книжкова · чорно-біло · Ctrl+P → «Зберегти як PDF»
+                Поля «За замовчуванням», фонову графіку НЕ вмикати
+  ПРАВИЛО       Жодного сірого тексту й жодних сірих заливок.
+  ОБСЯГ         Рівно одна сторінка A4. Перевірено вимірюванням.
+  ────────────────────────────────────────────────────────────────
+-->
+<style>
+@page { size: A4 portrait; margin: 12mm 14mm; }
+:root{
+  --line: 2px solid #000;
+  --thin: 1px solid #000;
+  --f: 'PT Sans', 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+  --fm: 'Courier New', 'DejaVu Sans Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:#fff; color:#000}
+body{font-family:var(--f); font-size:12.5pt; line-height:1.22}
+.page{width:210mm; min-height:297mm; margin:0 auto; padding:12mm 14mm; background:#fff;
+      display:flex; flex-direction:column}
+
+.hd{border-bottom:4px solid #000; padding-bottom:1.6mm; margin-bottom:2mm}
+.hd .meta{font-family:var(--fm); font-size:9.5pt; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px; margin-bottom:1mm;
+  display:flex; align-items:flex-end; gap:4mm}
+.hd .meta i{font-style:normal; flex:1; border-bottom:var(--thin); text-align:left}
+.hd h1{font-size:16.5pt; line-height:1.08; font-weight:800; letter-spacing:-.2px}
+
+.ref{border:3px solid #000; padding:1.3mm 2mm; margin-bottom:1.8mm}
+.ref h2{font-size:9.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:.8mm}
+.ref p.rh{font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:8.8pt}
+.ref .cols{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.4mm}
+.ref p{font-size:9.2pt; line-height:1.16; margin-bottom:.4mm}
+.ref b{font-weight:800}
+.ref code{font-family:var(--fm); font-weight:700; font-size:9.2pt}
+
+.b{margin-bottom:1.4mm; break-inside:avoid}
+.b > h2{font-size:11pt; font-weight:800; text-transform:uppercase; letter-spacing:.7px;
+  border-bottom:var(--line); padding-bottom:.4mm; margin-bottom:1.2mm}
+.b h2 .tag{float:right; margin-left:4mm; font-family:var(--fm); font-size:9.5pt; letter-spacing:0; font-weight:700}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:start}
+.two.k64{grid-template-columns:1.4fr 1fr}
+.two.k46{grid-template-columns:1fr 1.4fr}
+code{font-family:var(--fm); font-weight:700; font-size:.95em}
+.q{font-size:11pt; line-height:1.22; margin-bottom:.8mm}
+
+.ln{border-bottom:var(--thin); height:7mm}
+.ln.s{height:6.2mm}
+.sl{border-bottom:var(--thin); height:7.2mm; display:flex; align-items:flex-end; gap:2mm}
+.sl span{font-family:var(--fm); font-size:10pt; font-weight:700; padding-bottom:.4mm}
+
+table.t{width:100%; border-collapse:collapse}
+table.t td,table.t th{border:var(--thin); padding:1.6mm 1.8mm; font-size:10.5pt; text-align:left}
+table.t th{font-size:9.5pt; text-transform:uppercase; letter-spacing:.6px; font-weight:800}
+table.t td.a{width:30mm; text-align:center}
+table.t td.m{font-family:var(--fm); font-weight:700}
+
+table.voc{width:100%; border-collapse:collapse}
+table.voc td{border-bottom:var(--thin); padding:1.5mm 0; font-size:11pt; vertical-align:bottom}
+table.voc td.en{width:48%; font-family:var(--fm); font-weight:700; padding-right:2mm}
+
+pre.c{font-family:var(--fm); font-size:10pt; line-height:1.3; border:var(--line);
+  padding:1.6mm 2.2mm; white-space:pre-wrap; font-weight:700}
+
+.ft{border-top:var(--line); margin-top:auto; padding-top:1.6mm; font-family:var(--fm);
+  font-size:9.5pt; font-weight:700; display:flex; justify-content:space-between; gap:4mm}
+.shelter{background:#000; color:#fff; padding:1mm 2.5mm; margin-bottom:1.8mm;
+  font-size:10.5pt; font-weight:800; text-transform:uppercase; letter-spacing:1px}
+
+@media screen{body{background:#d8d8d8; padding:16px 0}
+  .page{box-shadow:0 2px 14px rgba(0,0,0,.3)}}
+@media print{html,body{background:#fff !important; -webkit-print-color-adjust:exact;
+  print-color-adjust:exact} body{padding:0}
+  .page{width:auto; min-height:0; margin:0; padding:0; box-shadow:none}
+  .b{break-inside:avoid}}
+.wb{border:var(--line); min-height:16mm; padding:1.4mm 2mm}
+.q code,.ref code{white-space:nowrap}
+.two.r4{grid-template-columns:1fr 1.12fr; gap:4mm}
+.r4 pre.c{font-size:9.5pt}
+table.t.tight td,table.t.tight th{padding:1.1mm 1.8mm}
+.wb .cap{font-family:var(--fm); font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:.6px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="meta"><span>JavaScript &#183; 8 клас &#183; Урок 10 / 35 &#183; 23 листопада</span>
+      <span>Ім&#39;я</span><i></i></div>
+    <h1>Функції: оголосити, викликати, повернути результат</h1>
+  </div>
+
+  <div class="ref">
+    <h2>Довідка</h2>
+    <div class="cols">
+      <div>
+        <p class="rh">Оголосити й викликати</p>
+        <p><code>function greet(name) { &#8230; }</code></p>
+        <p><code>name</code> &#8212; параметр</p>
+        <p><code>greet('Оля');</code> &#8212; виклик з аргументом</p>
+      </div>
+      <div>
+        <p class="rh">return</p>
+        <p><code>return n * n;</code> &#8212; віддати результат</p>
+        <p>після <code>return</code> &#8212; вихід із функції</p>
+        <p>немає <code>return</code> &#8212; <code>undefined</code></p>
+      </div>
+      <div>
+        <p class="rh">Масив &#8212; аргумент</p>
+        <p><code>let sum = 0;</code> до циклу</p>
+        <p><code>sum += a[i];</code> у циклі</p>
+        <p><code>return sum;</code> після циклу</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shelter">Далі &#8212; олівцем. Комп&#39;ютер не потрібен, можна в сховищі</div>
+
+  <div class="b two">
+    <div>
+      <h2>1 &#183; Що в консолі?</h2>
+      <pre class="c">function say(word) {
+  console.log(word + '!');
+}
+say('Так');
+say('Ні');</pre>
+      <div class="sl"><span>Рядок 1 →</span></div>
+      <div class="sl"><span>Рядок 2 →</span></div>
+    </div>
+    <div>
+      <h2>2 &#183; Кілька return</h2>
+      <pre class="c">function mark(n) {
+  if (n &gt;= 10) return 'відмінно';
+  if (n &gt;= 7) return 'добре';
+  return 'старайся';
+}</pre>
+      <div class="sl" style="height:6.2mm"><span>mark(12) →</span></div>
+      <div class="sl" style="height:6.2mm"><span>mark(7) →</span></div>
+      <div class="sl" style="height:6.2mm"><span>mark(3) →</span></div>
+    </div>
+  </div>
+
+  <div class="b two k46">
+    <div>
+      <h2>3 &#183; Параметр чи аргумент?</h2>
+      <pre class="c">function area(w, h) {
+  return w * h;
+}
+console.log(area(3, 4));</pre>
+    </div>
+    <div>
+      <table class="t tight">
+        <tr><th>Що</th><th>Параметр, аргумент чи число?</th></tr>
+        <tr><td class="m">w</td><td style="width:60%"></td></tr>
+        <tr><td class="m">3</td><td></td></tr>
+        <tr><td class="m">h</td><td></td></tr>
+        <tr><td class="m">area(3, 4) повертає</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b two k64">
+    <div>
+      <h2>4 &#183; Що поверне?</h2>
+      <pre class="c">function cube(n) { return n * n * n; }
+function isBig(n) { return n &gt; 100; }
+function noRet(n) { n + 1; }</pre>
+      <p class="q" style="margin-top:1.2mm">Функція у функції: <code>isBig(cube(5))</code> &#8212; спершу внутрішня.</p>
+    </div>
+    <div>
+      <table class="t tight">
+        <tr><th>Виклик</th><th>Значення</th></tr>
+        <tr><td class="m">cube(2)</td><td style="width:40%"></td></tr>
+        <tr><td class="m">cube(3) + 1</td><td></td></tr>
+        <tr><td class="m">isBig(cube(5))</td><td></td></tr>
+        <tr><td class="m">isBig(50)</td><td></td></tr>
+        <tr><td class="m">noRet(5)</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="b two r4">
+    <div>
+      <h2>5 &#183; Допиши<span class="tag">4 пропуски</span></h2>
+      <p class="q">Скільки разів число <code>x</code> є в масиві &#8212; має вийти 3.</p>
+      <pre class="c" style="line-height:1.5">function count(a, x) {
+  let n = ____;
+  for (let i = 0; i &lt; a.length; i++) {
+    if (a[i] ____ x) n++;
+  }
+  ____ n;
+}
+console.log(count([2, 5, 2, 2], ____));</pre>
+    </div>
+    <div>
+      <h2>6 &#183; Три помилки<span class="tag">має бути 120</span></h2>
+      <pre class="c">1  function total(a) {
+2    let sum = 0;
+3    for (let i = 0; i &lt;= a.length; i++) {
+4      sum += a[i];
+5    }
+6    console.log(sum);
+7  }
+8  console.log(Total([10, 20, 30]) * 2);</pre>
+      <div class="sl" style="height:6.2mm"><span>Рядок № ___ →</span></div>
+      <div class="sl" style="height:6.2mm"><span>Рядок № ___ →</span></div>
+      <div class="sl" style="height:6.2mm"><span>Рядок № ___ →</span></div>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>JavaScript &#183; 8 клас</span>
+    <span>Урок 10 &#183; 23.11.2026</span>
+  </div>
+
+</div>
+</body>
+</html>
