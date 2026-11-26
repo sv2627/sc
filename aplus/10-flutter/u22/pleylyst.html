@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 22 · застосунок «Плейлист» · Flutter 10 клас</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f7;--surface:#ffffff;--surf2:#eef1f8;--border:#dcdfe9;
+--brand:#591429;--blue:#0253b3;--rose:#af3b41;--plum:#602857;
+--pink:#f4a6b3;--orange:#ff9c00;--sky:#e2e7f6;
+--ink:#2e2f2b;--dim:#55564f;--faint:#7b7a74;--accent:var(--blue);
+--f-head:'Montserrat','Trebuchet MS','Segoe UI',system-ui,sans-serif;
+--f-body:'Montserrat','Segoe UI',system-ui,-apple-system,sans-serif;
+--f-ser:'Merriweather',Georgia,'Times New Roman',serif;
+--f-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);font-size:18px;background:var(--bg);color:var(--ink);
+min-height:100vh;padding:34px 26px 60px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:linear-gradient(rgba(2,83,179,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(2,83,179,.035) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:1000px;margin:0 auto;position:relative;z-index:1}
+a{color:inherit;text-decoration:none}
+.crumb{font-size:16px;color:var(--dim);margin-bottom:22px;display:flex;
+flex-wrap:wrap;align-items:center;gap:9px}
+.crumb a{color:var(--dim);border-bottom:1px solid transparent;padding:10px 0}
+.crumb a:hover{color:var(--accent);border-color:var(--accent)}
+.crumb .sep{color:#aab4cc}
+h1{font-family:var(--f-head);font-weight:900;font-size:2.6rem;letter-spacing:-.5px;
+color:var(--accent);line-height:1.12;margin-bottom:10px}
+h2.sec{font-family:var(--f-head);font-weight:800;font-size:1.6rem;color:var(--accent);margin:40px 0 6px}
+.lead{font-size:19px;color:var(--dim);margin-bottom:32px;max-width:760px}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--faint);margin-bottom:9px}
+.hero{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);
+border-radius:0 16px 16px 0;padding:22px 26px;margin-bottom:26px;
+box-shadow:0 1px 3px rgba(2,83,179,.05)}
+.hero .k{font-family:var(--f-mono);font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+color:var(--accent);display:block;margin-bottom:8px}
+.hero p{font-size:17px;color:var(--dim)}
+.hero ul{margin:0;padding-left:22px;font-size:17px;color:var(--dim)}
+.hero li{margin-bottom:6px}
+.hero li:last-child{margin-bottom:0}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--surf2);
+border:1px solid var(--border);padding:2px 7px;border-radius:5px}
+@media (max-width:640px){body{padding:24px 16px 44px}h1{font-size:2rem}.hero{padding:18px 20px}}
+
+/* ─── ЗНАКИ, А НЕ ЛІГАТУРИ: => і <= мають бути видні так, як їх набирають ─── */
+body,body *{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+.codebox{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-top:18px;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;
+  background:var(--surf2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.codebar b{font-family:var(--f-head);color:var(--accent)}
+.copy{font:700 16px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:10px 18px;min-height:44px;cursor:pointer}
+.copy.ok{background:#1d7a3a}
+pre.dart{font-family:var(--f-mono);font-size:15px;line-height:1.55;padding:18px;overflow-x:auto;
+  white-space:pre;tab-size:2;color:var(--ink)}
+.cm{color:#5c6b5e;font-style:italic}
+
+/* таблиця «що де» */
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;font-size:16px;margin-top:14px}
+.tbl th{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--faint);text-align:left;padding:12px 14px;background:var(--surf2);border-bottom:1px solid var(--border)}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--dim)}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td:first-child{white-space:nowrap}
+.tbl td:last-child{white-space:nowrap;color:var(--faint);font-size:14px}
+.tblwrap{overflow-x:auto}
+
+/* ідеї */
+.ideas{display:grid;gap:14px;margin-top:14px}
+.idea{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 22px}
+.idea h3{font-family:var(--f-head);font-size:1.15rem;font-weight:800;margin-bottom:6px;color:var(--ink)}
+.idea p{font-size:16.5px;color:var(--dim)}
+.idea p + p{margin-top:6px}
+.lvl{font-family:var(--f-mono);font-size:12px;letter-spacing:1.4px;color:var(--faint);margin-right:6px}
+.hint{color:#1d5c32}
+
+/* скріншоти */
+.shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:4px 0 30px}
+.shots figure{margin:0}
+.shots img{width:100%;height:auto;display:block;border-radius:22px;border:6px solid #1f2420;
+  box-shadow:0 6px 18px rgba(0,0,0,.18);background:#111}
+.shots figcaption{font-size:15.5px;color:var(--dim);margin-top:10px;line-height:1.45}
+.shots figcaption b{color:var(--ink)}
+@media (max-width:760px){.shots{grid-template-columns:minmax(0,320px);justify-content:center}}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="crumb"><a href="../../../">Матеріали</a><span class="sep">/</span><a href="../../">A+</a><span class="sep">/</span><a href="../">10 клас · Flutter</a><span class="sep">/</span><a href="./">Урок 22</a><span class="sep">/</span><span>Плейлист</span></nav>
+<div class="kicker">Урок 22 / 68 · 02.12.2026 · застосунок</div>
+<h1>Плейлист</h1>
+<p class="lead">Музичний застосунок у темній темі: список треків, пошук, серця, «тільки улюблені», міні-плеєр знизу і «перемішати». Зібраний лише з того, що ми вже пройшли, плюс сьогоднішній <code>ListView.builder</code>. Біля кожного рядка є коментар: що він робить і навіщо він тут.</p>
+
+<div class="kicker">Як виглядає</div>
+<div class="shots">
+  <figure><img src="img/pleylyst-1.png" width="390" height="780" alt="Список треків, Blinding Lights підсвічено зеленим, унизу червоний міні-плеєр із кнопками пауза і далі"><figcaption><b>Грає трек.</b> Назва світиться зеленим, знизу зʼявився міні-плеєр кольору обкладинки. Сердець у шапці — 3</figcaption></figure>
+  <figure><img src="img/pleylyst-2.png" width="390" height="780" alt="У полі пошуку введено ee, у списку чотири треки, праворуч у полі хрестик"><figcaption><b>Пошук.</b> Ввели <code>ee</code> — лишилися треки, де <code>ee</code> є в назві або у виконавця. Хрестик очищає поле</figcaption></figure>
+  <figure><img src="img/pleylyst-3.png" width="390" height="780" alt="Увімкнено Only liked, у списку два треки без альбомів, кнопка перемішати зелена, грає Bohemian Rhapsody"><figcaption><b>Тільки улюблені.</b> <i>Only liked</i> увімкнено, <i>Albums</i> знято — під назвою лише виконавець. 🔀 зелена: «далі» вибере випадковий трек</figcaption></figure>
+</div>
+
+<div class="hero">
+  <span class="k">Як запустити</span>
+  <ul>
+    <li><b>DartPad:</b> відкрий <a href="https://dartpad.dev/?sample=counter" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px solid">dartpad.dev</a>, натисни «Скопіювати» нижче, заміни весь код і натисни <b>Run</b></li>
+    <li><b>VS Code:</b> заміни весь <code>lib/main.dart</code>, Ctrl+S, hot restart, запуск <code>flutter run -d chrome</code></li>
+    <li><b>Спробуй:</b> натисни трек, потім «пауза» і «далі». Увімкни 🔀 і натисни «далі» кілька разів. Пошукай <code>queen</code>. Постав серце й увімкни <i>Only liked</i>. Зніми галочку <i>Albums</i></li>
+  </ul>
+</div>
+
+<h2 class="sec">Що де в коді</h2>
+<p class="lead" style="margin-bottom:0">Код поділено на чотири частини: <b>1. Дані</b> → <b>2. Застосунок</b> → <b>3. Екран зі станом</b> → <b>4. Малі віджети</b>. У таблиці — кожен знайомий елемент: де він стоїть і що робить.</p>
+<div class="tblwrap"><table class="tbl">
+<tr><th>Елемент</th><th>Що робить у плейлисті</th><th>Урок</th></tr>
+<tr><td><code>class Track</code></td><td>Трек — сутність: назва, виконавець, альбом, секунди, колір, серце</td><td>8, 10</td></tr>
+<tr><td><code>String? feat</code></td><td>Гість є лише в Uptown Funk, в інших треків тут <code>null</code></td><td>12</td></tr>
+<tr><td><code>get time</code></td><td>Перетворює 200 секунд на <code>3:20</code> через <code>~/</code> і <code>%</code></td><td>14</td></tr>
+<tr><td><code>List&lt;Track&gt;</code></td><td>Десять треків — дані для списку</td><td>11</td></tr>
+<tr><td><code>where</code></td><td>Пошук і «тільки улюблені» — дві умови разом</td><td>6, 11</td></tr>
+<tr><td><code>fold</code></td><td>Загальна тривалість у шапці: <code>39 min</code></td><td>11</td></tr>
+<tr><td><code>Random</code> + <code>do-while</code></td><td>«Перемішати»: наступний трек випадковий, але не той самий</td><td>3</td></tr>
+<tr><td><code>MaterialApp</code>, <code>ThemeData</code></td><td>Темна тема з зеленим відтінком</td><td>17</td></tr>
+<tr><td><code>Scaffold</code>, <code>AppBar</code></td><td>Каркас екрана, у шапці лічильник сердець (<code>actions</code>)</td><td>17</td></tr>
+<tr><td><code>Column</code>, <code>Row</code>, <code>SizedBox</code></td><td>Шапка → пошук → перемикачі → список; відступи між елементами</td><td>18</td></tr>
+<tr><td><code>Container</code> + <code>BoxDecoration</code></td><td>Обкладинки, шапка плейлиста й міні-плеєр із заокругленими кутами</td><td>18</td></tr>
+<tr><td><code>extends StatelessWidget</code></td><td>Власні віджети <code>Cover</code>, <code>PlaylistHeader</code>, <code>TrackTile</code>, <code>MiniPlayer</code></td><td>13, 19</td></tr>
+<tr><td><code>StatefulWidget</code> + <code>setState</code></td><td>Екран памʼятає пошук, серця, що грає і чи пауза</td><td>20</td></tr>
+<tr><td><code>IconButton</code></td><td>Серце, ▶ / ⏸, «далі», 🔀</td><td>20</td></tr>
+<tr><td><code>TextField</code> + controller</td><td>Пошук: список фільтрується з кожною літерою (<code>onChanged</code>)</td><td>21</td></tr>
+<tr><td><code>Switch</code></td><td><i>Only liked</i> — лише треки з серцем</td><td>21</td></tr>
+<tr><td><code>Checkbox</code> + <code>??</code></td><td><i>Albums</i> — показувати альбом у підписі</td><td>21</td></tr>
+<tr><td>Умовний показ <code>? :</code></td><td>Міні-плеєр лише тоді, коли щось грає; «Nothing found»; хрестик у пошуку</td><td>21</td></tr>
+<tr><td><code>Expanded</code></td><td>Дає <code>ListView</code> усе місце, що лишилося в <code>Column</code></td><td>22</td></tr>
+<tr><td><code>ListView.builder</code>, <code>Card</code>, <code>ListTile</code></td><td>Сам список: один рядок на трек</td><td>22</td></tr>
+</table></div>
+
+<div class="hero" style="margin-top:18px;border-left-color:#5c605e">
+  <span class="k" style="color:#5c605e">Нове — пояснено в коментарях</span>
+  <p><code>VoidCallback</code> — тип для дії, яку передаємо у віджет: «функція без параметрів, яка нічого не повертає». <code>prefixIcon</code> і <code>suffixIcon</code> — значки всередині поля. <code>bottomNavigationBar</code> — місце для міні-плеєра внизу <code>Scaffold</code>. <code>SafeArea</code> — щоб не заходити під «чубчик» телефона. <code>TextOverflow.ellipsis</code> — довгий текст закінчується на «…». <code>Transform.scale</code> — зменшує віджет: <code>Switch</code> на три чверті розміру.</p>
+</div>
+
+<h2 class="sec">Код</h2>
+<div class="codebox"><div class="codebar"><b>Плейлист · увесь застосунок</b>
+  <button class="copy" data-for="app">Скопіювати</button></div>
+<pre class="dart" id="app"><span class="cm">// Застосунок «Плейлист» · урок 22 · Flutter 10 клас.</span>
+<span class="cm">// Усе вивчене в одному застосунку: клас і список обʼєктів, where і fold, null-safety,</span>
+<span class="cm">// геттери, власні віджети, StatefulWidget і setState, TextField, Switch, Checkbox,</span>
+<span class="cm">// умовний показ і сьогоднішній ListView.builder.</span>
+<span class="cm">// DartPad: заміни весь код цим і натисни Run. VS Code: заміни весь lib/main.dart, Ctrl+S, hot restart.</span>
+<span class="cm">// Як читати: зверху вниз — спершу ДАНІ, потім ЕКРАН зі станом, потім МАЛІ ВІДЖЕТИ.</span>
+import 'dart:math'; <span class="cm">// Random — для «перемішати» (урок 3)</span>
+
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const PlaylistApp());
+
+<span class="cm">// ═══════════════════════════ 1. ДАНІ ═══════════════════════════</span>
+
+<span class="cm">// Трек — сутність -&gt; class (урок 8). Це дані, не віджет: тут немає build.</span>
+class Track {
+  final String title;
+  final String artist;
+  final String? feat; <span class="cm">// null-safety (урок 12): у більшості треків гостя немає -&gt; null</span>
+  final String album;
+  final int seconds; <span class="cm">// тривалість у секундах — так легко рахувати суму</span>
+  final Color color; <span class="cm">// колір «обкладинки» — картинок ще не було (урок 24)</span>
+  bool liked; <span class="cm">// НЕ final: серце можна поставити й зняти</span>
+
+  <span class="cm">// Перші пʼять — позиційні, feat і liked — іменовані зі значенням за замовчуванням (урок 10).</span>
+  Track(this.title, this.artist, this.album, this.seconds, this.color,
+      {this.feat, this.liked = false});
+
+  <span class="cm">// Геттер (урок 14): читаємо як поле — track.time, а рахується щоразу.</span>
+  <span class="cm">// 200 секунд -&gt; 200 ~/ 60 = 3 хвилини, 200 % 60 = 20 секунд -&gt; '3:20'.</span>
+  <span class="cm">// padLeft(2, '0') дописує нуль зліва: 5 -&gt; '05', щоб було '3:05', а не '3:5'.</span>
+  String get time =&gt; '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
+
+  <span class="cm">// Виконавець разом із гостем, якщо гість є.</span>
+  String get artists =&gt; feat == null ? artist : '$artist feat. $feat';
+}
+
+<span class="cm">// ═══════════════════════════ 2. ЗАСТОСУНОК ═══════════════════════════</span>
+
+<span class="cm">// Корінь: тема і перший екран. Стану немає -&gt; StatelessWidget.</span>
+class PlaylistApp extends StatelessWidget {
+  const PlaylistApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false, <span class="cm">// прибрати стрічку DEBUG у кутку</span>
+      <span class="cm">// Темна тема, як у музичних застосунках. Brightness.light -&gt; світла.</span>
+      <span class="cm">// colorSchemeSeed — один колір, з якого Flutter сам підбирає всю палітру.</span>
+      theme: ThemeData(brightness: Brightness.dark, colorSchemeSeed: Colors.green),
+      home: const PlaylistScreen(),
+    );
+  }
+}
+
+<span class="cm">// ═══════════════════════════ 3. ЕКРАН ЗІ СТАНОМ ═══════════════════════════</span>
+
+<span class="cm">// Екран памʼятає, що шукаємо, що грає, які серця стоять -&gt; StatefulWidget (урок 20).</span>
+class PlaylistScreen extends StatefulWidget {
+  const PlaylistScreen({super.key});
+
+  @override
+  State&lt;PlaylistScreen&gt; createState() =&gt; _PlaylistScreenState();
+}
+
+class _PlaylistScreenState extends State&lt;PlaylistScreen&gt; {
+  <span class="cm">// Список обʼєктів (урок 11). Не const: у треків міняється liked.</span>
+  final List&lt;Track&gt; _tracks = [
+    Track('Bohemian Rhapsody', 'Queen', 'A Night at the Opera', 355, Colors.deepPurple, liked: true),
+    Track('Blinding Lights', 'The Weeknd', 'After Hours', 200, Colors.red),
+    Track('Shape of You', 'Ed Sheeran', 'Divide', 233, Colors.lightBlue),
+    Track('Bad Guy', 'Billie Eilish', 'When We All Fall Asleep', 194, Colors.lime),
+    Track('Smells Like Teen Spirit', 'Nirvana', 'Nevermind', 301, Colors.blueGrey),
+    Track('Believer', 'Imagine Dragons', 'Evolve', 204, Colors.orange, liked: true),
+    Track('Levitating', 'Dua Lipa', 'Future Nostalgia', 203, Colors.pink),
+    Track('Numb', 'Linkin Park', 'Meteora', 187, Colors.brown),
+    Track('Uptown Funk', 'Mark Ronson', 'Uptown Special', 270, Colors.amber, feat: 'Bruno Mars'),
+    Track('Seven Nation Army', 'The White Stripes', 'Elephant', 231, Colors.teal),
+  ];
+
+  <span class="cm">// ── Стан екрана: усе, що може змінитися, поки застосунок відкритий ──</span>
+  final TextEditingController _search = TextEditingController(); <span class="cm">// що введено в пошук (урок 21)</span>
+  final Random _random = Random();
+  bool _onlyLiked = false; <span class="cm">// Switch «тільки улюблені»</span>
+  bool _showAlbum = true; <span class="cm">// Checkbox «показувати альбом»</span>
+  bool _shuffle = false; <span class="cm">// кнопка «перемішати»</span>
+  bool _playing = false; <span class="cm">// грає чи пауза</span>
+  Track? _current; <span class="cm">// що зараз грає; null — нічого не вибрано -&gt; міні-плеєра немає</span>
+
+  <span class="cm">// ── Логіка: звичайні функції Dart, без віджетів ──</span>
+
+  <span class="cm">// Які треки показати: where (урок 6) з двома умовами — пошук І серце.</span>
+  List&lt;Track&gt; _visible() {
+    String q = _search.text.trim().toLowerCase(); <span class="cm">// 'QUEEN ' -&gt; 'queen'</span>
+    return _tracks.where((Track t) {
+      bool found = t.title.toLowerCase().contains(q) || t.artist.toLowerCase().contains(q);
+      bool likedOk = !_onlyLiked || t.liked; <span class="cm">// перемикач вимкнено -&gt; підходить будь-який</span>
+      return found &amp;&amp; likedOk;
+    }).toList(); <span class="cm">// where дає Iterable, а ListView потрібен List</span>
+  }
+
+  <span class="cm">// Загальна тривалість: fold (урок 11) складає секунди всіх треків, старт — 0.</span>
+  int _totalMinutes() =&gt; _tracks.fold(0, (int sum, Track t) =&gt; sum + t.seconds) ~/ 60;
+
+  <span class="cm">// Скільки сердець — для шапки.</span>
+  int _likedCount() =&gt; _tracks.where((Track t) =&gt; t.liked).length;
+
+  <span class="cm">// Тап по треку: інший трек -&gt; вмикаємо його; той самий -&gt; пауза / грати далі.</span>
+  void _tapTrack(Track t) {
+    setState(() {
+      if (_current == t) {
+        _playing = !_playing;
+      } else {
+        _current = t;
+        _playing = true;
+      }
+    });
+  }
+
+  <span class="cm">// Серце: міняємо поле обʼєкта, а setState каже Flutter перемалювати екран.</span>
+  <span class="cm">// Без setState серце в даних зміниться, але на екрані — ні (урок 20).</span>
+  void _toggleLike(Track t) {
+    setState(() {
+      t.liked = !t.liked;
+    });
+  }
+
+  <span class="cm">// Наступний трек: по колу або випадковий.</span>
+  void _next() {
+    int i = _tracks.indexOf(_current!); <span class="cm">// ! — тут _current точно не null: кнопка є лише в міні-плеєрі</span>
+    setState(() {
+      if (_shuffle) {
+        int old = i;
+        <span class="cm">// do-while: спершу вибираємо, потім перевіряємо — щоб не випав той самий трек</span>
+        do {
+          i = _random.nextInt(_tracks.length);
+        } while (i == old);
+      } else {
+        i = (i + 1) % _tracks.length; <span class="cm">// після останнього — знову перший</span>
+      }
+      _current = _tracks[i];
+      _playing = true;
+    });
+  }
+
+  @override
+  void dispose() {
+    _search.dispose(); <span class="cm">// контролер прибираємо разом з екраном (урок 21)</span>
+    super.dispose();
+  }
+
+  <span class="cm">// ── Вигляд ──</span>
+  @override
+  Widget build(BuildContext context) {
+    List&lt;Track&gt; visible = _visible(); <span class="cm">// рахуємо один раз на кожне перемальовування</span>
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('My music'),
+        centerTitle: true,
+        <span class="cm">// actions — віджети праворуч у шапці</span>
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Row(
+              children: [
+                const Icon(Icons.favorite, color: Colors.pinkAccent, size: 20),
+                const SizedBox(width: 4),
+                Text('${_likedCount()}', style: const TextStyle(fontSize: 18)),
+              ],
+            ),
+          ),
+        ],
+      ),
+
+      <span class="cm">// Column: шапка плейлиста -&gt; пошук -&gt; перемикачі -&gt; список</span>
+      body: Column(
+        children: [
+          <span class="cm">// Власний віджет: дані й дії — через конструктор (урок 19).</span>
+          PlaylistHeader(
+            count: _tracks.length,
+            minutes: _totalMinutes(),
+            shuffle: _shuffle,
+            onShuffle: () {
+              setState(() {
+                _shuffle = !_shuffle;
+              });
+            },
+          ),
+
+          <span class="cm">// Пошук. onChanged спрацьовує на кожну літеру -&gt; setState -&gt; список фільтрується одразу.</span>
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextField(
+              controller: _search,
+              onChanged: (String text) {
+                setState(() {}); <span class="cm">// нових змінних немає: _visible() сам прочитає _search.text</span>
+              },
+              decoration: InputDecoration(
+                hintText: 'Song or artist',
+                prefixIcon: const Icon(Icons.search), <span class="cm">// значок усередині поля, ліворуч</span>
+                <span class="cm">// Хрестик лише тоді, коли в полі щось є — умовний показ через ?: (урок 21)</span>
+                suffixIcon: _search.text.isEmpty
+                    ? null
+                    : IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          _search.clear();
+                          setState(() {});
+                        },
+                      ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)), <span class="cm">// поле-«пігулка»</span>
+              ),
+            ),
+          ),
+
+          <span class="cm">// Перемикачі: ліва група і права група, між ними — вільне місце.</span>
+          <span class="cm">// Відступ зліва 16 — як у поля пошуку, щоб усе стояло по одній лінії.</span>
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 4, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.favorite, color: Colors.pinkAccent, size: 18),
+                    const SizedBox(width: 6),
+                    const Text('Only liked'),
+                    <span class="cm">// Transform.scale — зменшує віджет: 0.75 = три чверті розміру.</span>
+                    <span class="cm">// Звичайний Switch поруч із дрібним текстом виглядає завеликим.</span>
+                    Transform.scale(
+                      scale: 0.75,
+                      child: Switch(
+                        value: _onlyLiked,
+                        onChanged: (bool v) {
+                          setState(() {
+                            _onlyLiked = v;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                <span class="cm">// Права група — так само, як ліва: значок, підпис, потім елемент керування.</span>
+                Row(
+                  children: [
+                    const Icon(Icons.album, color: Colors.white70, size: 18),
+                    const SizedBox(width: 6),
+                    const Text('Albums'),
+                    Checkbox(
+                      value: _showAlbum,
+                      onChanged: (bool? v) {
+                        setState(() {
+                          _showAlbum = v ?? false; <span class="cm">// Checkbox дає bool? -&gt; ?? підставляє false замість null</span>
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          <span class="cm">// Expanded — «займи все місце, що лишилося». Без нього ListView у Column</span>
+          <span class="cm">// падає з помилкою «Vertical viewport was given unbounded height».</span>
+          Expanded(
+            <span class="cm">// Умовний показ: нічого не знайшли -&gt; напис, інакше -&gt; список.</span>
+            child: visible.isEmpty
+                ? const Center(child: Text('Nothing found', style: TextStyle(fontSize: 18)))
+                : ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                    itemCount: visible.length, <span class="cm">// скільки рядків — скільки треків після фільтра</span>
+                    itemBuilder: (BuildContext context, int i) {
+                      Track t = visible[i]; <span class="cm">// трек для рядка номер i</span>
+                      return TrackTile(
+                        track: t,
+                        isCurrent: t == _current,
+                        showAlbum: _showAlbum,
+                        onTap: () =&gt; _tapTrack(t),
+                        onLike: () =&gt; _toggleLike(t),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+
+      <span class="cm">// Міні-плеєр знизу — лише коли щось вибрано. null -&gt; Scaffold нічого не малює.</span>
+      bottomNavigationBar: _current == null
+          ? null
+          : MiniPlayer(
+              track: _current!,
+              playing: _playing,
+              onPlayPause: () {
+                setState(() {
+                  _playing = !_playing;
+                });
+              },
+              onNext: _next, <span class="cm">// передаємо саму функцію, без дужок: виклик буде при натисканні</span>
+            ),
+    );
+  }
+}
+
+<span class="cm">// ═══════════════════════════ 4. МАЛІ ВІДЖЕТИ ═══════════════════════════</span>
+<span class="cm">// Усі вони StatelessWidget: самі нічого не памʼятають, усе отримують через конструктор.</span>
+<span class="cm">// Дія приходить як VoidCallback — «функція без параметрів, яка нічого не повертає».</span>
+
+<span class="cm">// Квадратна «обкладинка»: кольоровий Container із заокругленими кутами й нотою.</span>
+class Cover extends StatelessWidget {
+  final Color color;
+  final double size;
+
+  const Cover({super.key, required this.color, this.size = 48});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8)), <span class="cm">// урок 18</span>
+      child: Icon(Icons.music_note, color: Colors.white, size: size * 0.55), <span class="cm">// нота — більше половини квадрата</span>
+    );
+  }
+}
+
+<span class="cm">// Шапка плейлиста: велика обкладинка, назва, кількість і тривалість, кнопка «перемішати».</span>
+class PlaylistHeader extends StatelessWidget {
+  final int count;
+  final int minutes;
+  final bool shuffle;
+  final VoidCallback onShuffle;
+
+  const PlaylistHeader({
+    super.key,
+    required this.count,
+    required this.minutes,
+    required this.shuffle,
+    required this.onShuffle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16), <span class="cm">// відступ ЗОВНІ — від країв екрана</span>
+      padding: const EdgeInsets.all(16), <span class="cm">// відступ ВСЕРЕДИНІ — від країв картки</span>
+      decoration: BoxDecoration(color: Colors.green.shade900, borderRadius: BorderRadius.circular(16)),
+      child: Row(
+        children: [
+          const Cover(color: Colors.green, size: 72),
+          const SizedBox(width: 16),
+          <span class="cm">// Expanded: текст займає місце між обкладинкою і кнопкою, а не виштовхує кнопку за екран.</span>
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, <span class="cm">// текст по лівому краю</span>
+              children: [
+                const Text('PLAYLIST', style: TextStyle(fontSize: 12, letterSpacing: 2, color: Colors.white70)),
+                const Text('Evening mix', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                Text('$count tracks · $minutes min', style: const TextStyle(color: Colors.white70)),
+              ],
+            ),
+          ),
+          <span class="cm">// Кнопка-значок. Увімкнено -&gt; яскраво-зелена, вимкнено -&gt; бліда.</span>
+          IconButton(
+            icon: const Icon(Icons.shuffle),
+            iconSize: 30,
+            color: shuffle ? Colors.greenAccent : Colors.white38,
+            tooltip: 'Shuffle', <span class="cm">// підказка, якщо навести мишку</span>
+            onPressed: onShuffle,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+<span class="cm">// Один рядок списку: Card + ListTile (сьогоднішній урок).</span>
+class TrackTile extends StatelessWidget {
+  final Track track;
+  final bool isCurrent;
+  final bool showAlbum;
+  final VoidCallback onTap;
+  final VoidCallback onLike;
+
+  const TrackTile({
+    super.key,
+    required this.track,
+    required this.isCurrent,
+    required this.showAlbum,
+    required this.onTap,
+    required this.onLike,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: Cover(color: track.color), <span class="cm">// ліворуч — обкладинка</span>
+        title: Text(
+          track.title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isCurrent ? Colors.greenAccent : null, <span class="cm">// null -&gt; колір теми за замовчуванням</span>
+          ),
+        ),
+        <span class="cm">// Checkbox «Albums» знято -&gt; лише виконавець.</span>
+        subtitle: Text(
+          showAlbum ? '${track.artists} · ${track.album}' : track.artists,
+          maxLines: 1, <span class="cm">// довгий підпис — в один рядок...</span>
+          overflow: TextOverflow.ellipsis, <span class="cm">// ...а хвіст замінюємо на «…»</span>
+        ),
+        <span class="cm">// trailing — праворуч: тривалість і серце. mainAxisSize.min — Row рівно на свій вміст.</span>
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(track.time),
+            IconButton(
+              icon: Icon(
+                track.liked ? Icons.favorite : Icons.favorite_border, <span class="cm">// повне серце чи контур</span>
+                color: track.liked ? Colors.pinkAccent : null,
+              ),
+              onPressed: onLike,
+            ),
+          ],
+        ),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
+<span class="cm">// Міні-плеєр унизу: колір — як в обкладинки трека, що грає.</span>
+class MiniPlayer extends StatelessWidget {
+  final Track track;
+  final bool playing;
+  final VoidCallback onPlayPause;
+  final VoidCallback onNext;
+
+  const MiniPlayer({
+    super.key,
+    required this.track,
+    required this.playing,
+    required this.onPlayPause,
+    required this.onNext,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    <span class="cm">// SafeArea — не залазити під «чубчик» і смужку жестів на телефоні.</span>
+    return SafeArea(
+      child: Container(
+        margin: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(color: track.color, borderRadius: BorderRadius.circular(12)),
+        child: Row(
+          children: [
+            const Cover(color: Colors.black26, size: 44), <span class="cm">// напівпрозорий чорний поверх кольору</span>
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min, <span class="cm">// Column лише заввишки зі свій текст</span>
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(track.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text(track.artists, maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white70)),
+                ],
+              ),
+            ),
+            <span class="cm">// Один і той самий IconButton, різний значок: грає -&gt; пауза, пауза -&gt; грати.</span>
+            IconButton(
+              icon: Icon(playing ? Icons.pause : Icons.play_arrow),
+              color: Colors.white,
+              iconSize: 32,
+              onPressed: onPlayPause,
+            ),
+            IconButton(
+              icon: const Icon(Icons.skip_next),
+              color: Colors.white,
+              iconSize: 32,
+              onPressed: onNext,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</pre></div>
+
+<h2 class="sec">Що покращити</h2>
+<p class="lead" style="margin-bottom:0">Обери одне, зроби, запусти і бери наступне. Біля кожної ідеї — підказка, де саме міняти.</p>
+<div class="ideas">
+  <div class="idea"><h3><span class="lvl">⭐</span>Свій плейлист</h3>
+    <p>Заміни треки на свої, перейменуй <code>Evening mix</code>, підбери кольори обкладинок.</p>
+    <p class="hint">Де: список <code>_tracks</code> і <code>PlaylistHeader</code>.</p></div>
+  <div class="idea"><h3><span class="lvl">⭐</span>Світла тема або інший колір</h3>
+    <p>Зроби застосунок світлим або фіолетовим.</p>
+    <p class="hint">Де: <code>Brightness.light</code> і <code>colorSchemeSeed</code> у <code>PlaylistApp</code>. Подивись, які кольори тепер погано видно, і виправ їх.</p></div>
+  <div class="idea"><h3><span class="lvl">⭐</span>Номер трека</h3>
+    <p>Перед обкладинкою або замість неї — номер: 1, 2, 3…</p>
+    <p class="hint">Де: <code>itemBuilder</code> знає <code>i</code>. Передай <code>i + 1</code> у <code>TrackTile</code> новим полем.</p></div>
+
+  <div class="idea"><h3><span class="lvl">⭐⭐</span>Кнопка «попередній»</h3>
+    <p>У міні-плеєрі ⏮ ліворуч від ▶. Після першого трека — останній.</p>
+    <p class="hint">Де: нова функція <code>_previous()</code>, дзеркальна до <code>_next()</code>: <code>(i - 1 + _tracks.length) % _tracks.length</code>. Значок — <code>Icons.skip_previous</code>.</p></div>
+  <div class="idea"><h3><span class="lvl">⭐⭐</span>Скільки разів слухали</h3>
+    <p>Поле <code>int plays</code> у класі, +1 щоразу, коли трек вмикається. Показати в підписі: <code>12 plays</code>.</p>
+    <p class="hint">Де: <code>class Track</code>, <code>_tapTrack</code> і <code>_next</code>, <code>subtitle</code> у <code>TrackTile</code>.</p></div>
+  <div class="idea"><h3><span class="lvl">⭐⭐</span>Пошук і за альбомом</h3>
+    <p>Пишеш <code>nevermind</code> — знаходиться Nirvana.</p>
+    <p class="hint">Де: третя умова через <code>||</code> у <code>_visible()</code>.</p></div>
+  <div class="idea"><h3><span class="lvl">⭐⭐</span>Тривалість улюблених</h3>
+    <p>У шапці другий рядок: <code>Liked: 2 tracks · 9 min</code>.</p>
+    <p class="hint">Де: <code>where</code>, потім <code>fold</code> — як у <code>_totalMinutes()</code>.</p></div>
+
+  <div class="idea"><h3><span class="lvl">⭐⭐⭐</span>Сортування</h3>
+    <p>Кнопка в <code>AppBar</code>: за назвою А→Я або за тривалістю.</p>
+    <p class="hint">Де: <code>_tracks.sort((a, b) =&gt; a.title.compareTo(b.title))</code> усередині <code>setState</code> (урок 11).</p></div>
+  <div class="idea"><h3><span class="lvl">⭐⭐⭐</span>Видалити трек</h3>
+    <p>Довге натискання на рядок прибирає трек зі списку.</p>
+    <p class="hint">Де: <code>onLongPress</code> у <code>ListTile</code>, <code>_tracks.remove(t)</code>. Пастка: якщо видалити трек, що грає, <code>_current</code> треба зробити <code>null</code>, інакше «далі» впаде.</p></div>
+  <div class="idea"><h3><span class="lvl">⭐⭐⭐</span>Подкасти через спадкування</h3>
+    <p><code>class Podcast extends Track</code> з полем <code>episode</code>. У списку в подкаста значок 🎙 замість ноти й підпис <code>Episode 5</code>.</p>
+    <p class="hint">Де: перевірка <code>track is Podcast</code> у <code>TrackTile</code> і <code>Cover</code> (урок 13).</p></div>
+  <div class="idea"><h3><span class="lvl">⭐⭐⭐</span>Додати трек з поля</h3>
+    <p>Два поля — назва і виконавець — і кнопка «+». Новий трек зʼявляється в кінці списку.</p>
+    <p class="hint">Де: ще два <code>TextEditingController</code>, <code>_tracks.add(...)</code> у <code>setState</code>. Порожні поля — не додавати.</p></div>
+</div>
+
+<h2 class="sec">Переробити на свою тему</h2>
+<div class="hero" style="margin-top:14px">
+  <span class="k">Той самий каркас — інший застосунок</span>
+  <ul>
+    <li><b>Watchlist фільмів:</b> <code>Track</code> → <code>Movie</code> (рік, жанр, хвилини), серце → «подивився», міні-плеєр → «дивлюся зараз»</li>
+    <li><b>Книжкова полиця:</b> автор, сторінки замість секунд, <code>fold</code> рахує сторінки за рік, <i>Only liked</i> → «прочитані»</li>
+    <li><b>Тренування:</b> вправа, хвилини, «далі» → наступна вправа, «перемішати» → випадкове тренування</li>
+    <li><b>Меню кавʼярні:</b> напій, ціна, серце → «у кошик», у шапці сума кошика через <code>fold</code></li>
+  </ul>
+</div>
+
+<div class="hero" style="margin-top:16px;border-left-color:#5c605e">
+  <span class="k" style="color:#5c605e">Згодом у курсі</span>
+  <p>Справжні обкладинки замість кольорових квадратів — <b>урок 24</b> (<code>Image.network</code>, <code>Image.asset</code>). Назва поверх обкладинки — <b>урок 25</b> (<code>Stack</code>). Окремий екран трека — <b>урок 28</b> (<code>Navigator</code>).</p>
+</div>
+
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.for).innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+  b.textContent = 'Скопійовано ✓'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Скопіювати'; b.classList.remove('ok'); }, 2000);
+});
+</script>
+</body>
+</html>
